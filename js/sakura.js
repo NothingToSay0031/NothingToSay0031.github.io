@@ -137,7 +137,7 @@ window.onresize = function () {
 }
 img.onload = function () {
     let url = window.location.href; // 替换为你的URL
-    let pattern = /\/2\d\d\d\/\w+\/$/; // 正则表达式
+    let pattern = /^https:\/\/nothingtosay0031\.github\.io\/2\d\d\d\/\w+\/$/; // 正则表达式
 
     if (!pattern.test(url)) {
         startSakura();
