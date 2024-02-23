@@ -103,12 +103,6 @@ function startSakura() {
     var canvas = document.createElement('canvas'),
         cxt;
 
-    // var currentURL = window.location.href;
-    // var pattern = /\/2\d\d\d\//;
-    // console.log(currentURL);
-    // if (pattern.test(currentURL)) {
-    //     return;
-    // }
     staticx = true;
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
@@ -118,6 +112,12 @@ function startSakura() {
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
 
+    var currentURL = window.location.href;
+    var pattern = /\/2\d\d\d\//;
+    console.log(currentURL);
+    if (pattern.test(currentURL)) {
+        return;
+    }
     for (var i = 0; i < 50; i++) {
         var sakura, randomX, randomY, randomS, randomR, randomFnx, randomFny;
         randomX = getRandom('x');
