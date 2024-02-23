@@ -10,11 +10,7 @@ function Sakura(x, y, s, r, fn) {
     this.fn = fn;
 }
 Sakura.prototype.draw = function (cxt) {
-    var currentURL = window.location.href;
-    let pattern = /\/2\d\d\d\//;
-    if (pattern.test(currentURL)) {
-        return;
-    }
+
     cxt.save();
     var xc = 40 * this.s / 4;
     cxt.translate(this.x, this.y);
@@ -23,6 +19,7 @@ Sakura.prototype.draw = function (cxt) {
     cxt.restore();
 }
 Sakura.prototype.update = function () {
+
     this.x = this.fn.x(this.x, this.y);
     this.y = this.fn.y(this.y, this.y);
     this.r = this.fn.r(this.r);
@@ -102,9 +99,17 @@ function getRandom(option) {
 }
 
 function startSakura() {
+    var currentURL = window.location.href;
+    var pattern = /\/2\d\d\d\//;
+    // console.log(currentURL);
+    if (pattern.test(currentURL)) {
+        return;
+    }
     requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
     var canvas = document.createElement('canvas'),
         cxt;
+
+
     staticx = true;
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
