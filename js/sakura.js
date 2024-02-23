@@ -99,17 +99,16 @@ function getRandom(option) {
 }
 
 function startSakura() {
-    var currentURL = window.location.href;
-    var pattern = /\/2\d\d\d\//;
-    // console.log(currentURL);
-    if (pattern.test(currentURL)) {
-        return;
-    }
     requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
     var canvas = document.createElement('canvas'),
         cxt;
 
-
+    var currentURL = window.location.href;
+    var pattern = /\/2\d\d\d\//;
+    console.log(currentURL);
+    if (pattern.test(currentURL)) {
+        return;
+    }
     staticx = true;
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
