@@ -108,13 +108,8 @@ function startSakura() {
     document.getElementsByTagName('body')[0].appendChild(canvas);
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
-    let url = window.location.href;
-    console.error(url);
-    let pattern = /^https:\/\/nothingtosay0031\.github\.io\/2\d\d\d\/\w+\/$/;
-    if (pattern.test(url)) {
-        return;
-    }
-    for (var i = 0; i < 50; i++) {
+
+    for (var i = 0; i < 25; i++) {
         var sakura, randomX, randomY, randomS, randomR, randomFnx, randomFny;
         randomX = getRandom('x');
         randomY = getRandom('y');
