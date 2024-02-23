@@ -109,7 +109,7 @@ function startSakura() {
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
     let url = window.location.href;
-    console.log(url);
+    console.error(url);
     let pattern = /^https:\/\/nothingtosay0031\.github\.io\/2\d\d\d\/\w+\/$/;
     if (pattern.test(url)) {
         return;
