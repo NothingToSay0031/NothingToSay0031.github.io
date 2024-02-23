@@ -136,7 +136,12 @@ window.onresize = function () {
     var canvasSnow = document.getElementById('canvas_snow');
 }
 img.onload = function () {
-    startSakura();
+    let url = window.location.href; // 替换为你的URL
+    let pattern = /\/2\d\d\d\/\w+\/$/; // 正则表达式
+
+    if (!pattern.test(url)) {
+        startSakura();
+    }
 }
 
 function stopp() {
