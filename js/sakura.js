@@ -10,6 +10,11 @@ function Sakura(x, y, s, r, fn) {
     this.fn = fn;
 }
 Sakura.prototype.draw = function (cxt) {
+    var currentURL = window.location.href;
+    let pattern = /\/2\d\d\d\//;
+    if (pattern.test(currentURL)) {
+        return;
+    }
     cxt.save();
     var xc = 40 * this.s / 4;
     cxt.translate(this.x, this.y);
@@ -108,9 +113,7 @@ function startSakura() {
     document.getElementsByTagName('body')[0].appendChild(canvas);
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
-    var currentURL = window.location.href;
-    console.log("1");
-    console.log(currentURL);
+
     for (var i = 0; i < 50; i++) {
         var sakura, randomX, randomY, randomS, randomR, randomFnx, randomFny;
         randomX = getRandom('x');
