@@ -108,6 +108,12 @@ function startSakura() {
     document.getElementsByTagName('body')[0].appendChild(canvas);
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
+    let url = window.location.href;
+    console.log(url);
+    let pattern = /^https:\/\/nothingtosay0031\.github\.io\/2\d\d\d\/\w+\/$/;
+    if (pattern.test(url)) {
+        return;
+    }
     for (var i = 0; i < 50; i++) {
         var sakura, randomX, randomY, randomS, randomR, randomFnx, randomFny;
         randomX = getRandom('x');
@@ -136,12 +142,8 @@ window.onresize = function () {
     var canvasSnow = document.getElementById('canvas_snow');
 }
 img.onload = function () {
-    let url = window.location.href; // 替换为你的URL
-    let pattern = /^https:\/\/nothingtosay0031\.github\.io\/2\d\d\d\/\w+\/$/; // 正则表达式
 
-    if (!pattern.test(url)) {
-        startSakura();
-    }
+    startSakura();
 }
 
 function stopp() {
