@@ -188,7 +188,6 @@
 </ul>
 <h3 id="配置代理"><a href="#配置代理" class="headerlink" title="配置代理"></a>配置代理</h3><p>在 <code>~/.zshrc</code> 或你使用的 Shell 的配置文件中添加内容，实现自动化配置代理：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Fetch Windows ip address inside WSL environment</span></span><br><span class="line">WINDOWS_IP=$(ip route | grep default | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span>)</span><br><span class="line">PROXY_HTTP=<span class="string">&quot;http://<span class="variable">$&#123;WINDOWS_IP&#125;</span>:7890&quot;</span></span><br><span class="line">PROXY_SOCKS5=<span class="string">&quot;<span class="variable">$&#123;WINDOWS_IP&#125;</span>:7890&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Git &amp; SSH for Git proxy</span></span><br><span class="line"><span class="function"><span class="title">proxy_git</span></span> () &#123;</span><br><span class="line">  git config --global http.https://github.com.proxy <span class="variable">$&#123;PROXY_HTTP&#125;</span></span><br><span class="line">  <span class="keyword">if</span> ! grep -qF <span class="string">&quot;Host github.com&quot;</span> ~/.ssh/config ; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Host github.com&quot;</span> &gt;&gt; ~/.ssh/config</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;  User git&quot;</span> &gt;&gt; ~/.ssh/config</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;  ProxyCommand nc -X 5 -x <span class="variable">$&#123;PROXY_SOCKS5&#125;</span> %h %p&quot;</span> &gt;&gt; ~/.ssh/config</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    lino=$(($(awk &#x27;/Host github.com/&#123;print NR&#125;&#x27;  ~/.ssh/config)+<span class="number">2</span>))</span><br><span class="line">    sed -i <span class="string">&quot;<span class="variable">$&#123;lino&#125;</span>c\  ProxyCommand nc -X 5 -x <span class="variable">$&#123;PROXY_SOCKS5&#125;</span> %h %p&quot;</span> ~/.ssh/config</span><br><span class="line">  <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set proxy</span></span><br><span class="line"><span class="function"><span class="title">set_proxy</span></span> () &#123;</span><br><span class="line">  <span class="built_in">export</span> http_proxy=<span class="string">&quot;<span class="variable">$&#123;PROXY_HTTP&#125;</span>&quot;</span></span><br><span class="line">  <span class="built_in">export</span> https_proxy=<span class="string">&quot;<span class="variable">$&#123;PROXY_HTTP&#125;</span>&quot;</span></span><br><span class="line">  proxy_git</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Unset proxy</span></span><br><span class="line"><span class="function"><span class="title">unset_proxy</span></span> () &#123;</span><br><span class="line">  <span class="built_in">unset</span> http_proxy</span><br><span class="line">  <span class="built_in">unset</span> https_proxy</span><br><span class="line">  git config --global --<span class="built_in">unset</span> http.https://github.com.proxy</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set alias</span></span><br><span class="line"><span class="built_in">alias</span> proxy=set_proxy</span><br><span class="line"><span class="built_in">alias</span> deproxy=unset_proxy</span><br></pre></td></tr></table></figure>
-
 <p>其中：</p>
 <ul>
 <li>第一行 <code>WINDOWS_IP=$(ip route | grep default | awk &#39;&#123;print $3&#125;&#39;)</code> 让我们使用 WSL 2 时可以自动获取最新的 WSL IP 地址，WSL 1 可以直接将 <code>WINDOWS_IP</code> 设置为 <code>127.0.0.1</code>；</li>
@@ -202,20 +201,20 @@
 <li><strong>Fira Code</strong></li>
 <li>Fira Code</li>
 <li>FiraCode Nerd Font Mono</li>
-<li>JetBrains Mono</li>
+<li>JetBrains Mono </li>
 </ul>
 <p>主题</p>
 <ul>
 <li><strong>GitHub Theme</strong></li>
 <li><strong>Material Icon Theme</strong></li>
 <li>Dracula Refined</li>
-<li>Everforest</li>
+<li>Everforest </li>
 </ul>
 <h3 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h3><ul>
 <li>LeetCode</li>
 <li>Vim</li>
 <li>Code Runner</li>
-<li>C&#x2F;C++ (Pre-Release Version)</li>
+<li>C/C++ (Pre-Release Version)</li>
 <li>CMake</li>
 <li>CMake Tools (Pre-Release Version)</li>
 <li>WSL</li>
