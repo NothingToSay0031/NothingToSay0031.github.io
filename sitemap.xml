@@ -2,7 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://nothingtosay0031.github.io/2024/RUST/</loc>
+    <loc>https://nothingtosay0031.github.io/2024/ShaderToy/</loc>
+    
+    <lastmod>2024-09-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://nothingtosay0031.github.io/2024/Rust/</loc>
     
     <lastmod>2024-09-18</lastmod>
     
@@ -20,7 +29,7 @@
   </url>
   
   <url>
-    <loc>https://nothingtosay0031.github.io/2024/ARM/</loc>
+    <loc>https://nothingtosay0031.github.io/2024/Arm/</loc>
     
     <lastmod>2024-08-21</lastmod>
     
@@ -112,7 +121,7 @@
 
   <url>
     <loc>https://nothingtosay0031.github.io/</loc>
-    <lastmod>2024-09-18</lastmod>
+    <lastmod>2024-09-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -120,7 +129,7 @@
   
   <url>
     <loc>https://nothingtosay0031.github.io/tags/USC/</loc>
-    <lastmod>2024-09-18</lastmod>
+    <lastmod>2024-09-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
