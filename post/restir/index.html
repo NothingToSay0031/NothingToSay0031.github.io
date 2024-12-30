@@ -1,0 +1,1621 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  ReSTIR GI Path Resampling for Real-Time Path Tracing | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="Reservoir Sampling, Weighted Reservoir Sampling, and RIS for Monte Carlo Integration."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ReSTIR GI Path Resampling for Real-Time Path Tracing | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="Reservoir Sampling, Weighted Reservoir Sampling, and RIS for Monte Carlo Integration."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/restir/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2024-12-21T17:23:03&#43;00:00" />
+  <meta property="article:modified_time" content="2024-12-21T17:23:03&#43;00:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="ReSTIR GI Path Resampling for Real-Time Path Tracing">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">ReSTIR GI Path Resampling for Real-Time Path Tracing</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/restir/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2024-12-21 17:23:03 &#43;0000 UTC" itemprop="datePublished"
+      >2024-12-21</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2024-12-21</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">
+<a class="header-anchor" href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation"></a>
+Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation
+</h1><h2 id="correctness-of-monte-carlo-integration">
+<a class="header-anchor" href="#correctness-of-monte-carlo-integration"></a>
+Correctness of Monte Carlo Integration
+</h2><p>Given a probability density function $p(x)$ over the interval $[a, b]$, we sample a dataset $\{X_1, X_2, \dots, X_N\}$.</p>
+<p>Define $F_N$:</p>
+$$F_N = \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}$$<p><strong>Expected value of $F_N$:</strong></p>
+$$\begin{aligned}  
+E[F_N] &= E\left[\frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}\right] \\  
+&= \frac{1}{N} \sum_{i=1}^N E\left[\frac{f(X_i)}{p(X_i)}\right] \\  
+&= \frac{1}{N} \sum_{i=1}^N \int_a^b \frac{f(x)}{p(x)} p(x) dx \\  
+&= \int_a^b f(x) dx.  
+\end{aligned}$$<p>Thus, <strong>Monte Carlo integration converges to the true integral</strong> as $N \to \infty$:</p>
+$$\int_D f(x) dx = \lim_{N \to \infty} \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}.$$<h2 id="convergence-and-variance-analysis">
+<a class="header-anchor" href="#convergence-and-variance-analysis"></a>
+Convergence and Variance Analysis
+</h2><p>Let $Y = \frac{f(X)}{p(X)}$. The variance of $F_N$ is derived as:</p>
+$$\begin{aligned}  
+\sigma^2(F_N) &= \sigma^2\left[\frac{1}{N} \sum_{i=1}^N Y_i\right] \\  
+&= \frac{1}{N^2} \sum_{i=1}^N \sigma^2[Y_i] \\  
+&= \frac{1}{N^2}(N \cdot \sigma^2[Y]) \\  
+&= \frac{1}{N} \sigma^2[Y].  
+\end{aligned}$$<p>Hence, the standard deviation:</p>
+$$\sigma(F_N) = \frac{\sigma[Y]}{\sqrt{N}}.$$<ul>
+<li>As $N \to \infty$, <strong>$\sigma(F_N) \to 0$</strong>, proving <strong>convergence</strong>.</li>
+</ul>
+<p><strong>Impact of variance ($\sigma^2[Y]$):</strong></p>
+<ul>
+<li><strong>Smoothness of $Y$:</strong> If $Y$ has large variations, $\sigma^2[Y]$ increases, slowing convergence.</li>
+<li><strong>Choice of $p(x)$:</strong> If $p(x) \propto f(x)$, $\sigma^2[Y] \to 0$, and convergence is optimal.</li>
+</ul>
+<h2 id="monte-carlo-integration-for-the-rendering-equation">
+<a class="header-anchor" href="#monte-carlo-integration-for-the-rendering-equation"></a>
+Monte Carlo Integration for the Rendering Equation
+</h2><p><strong>Rendering equation</strong>:</p>
+$$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i \, \mathrm{d}\omega_i$$<p><strong>Monte Carlo approximation</strong>:</p>
+$$L_o(x, \omega_o) = L_e(x, \omega_o) + \frac{1}{N} \sum_{j=1}^N \frac{L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i}{\text{pdf}(\omega_i)}$$<h3 id="key-insights">
+<a class="header-anchor" href="#key-insights"></a>
+Key Insights
+</h3><ol>
+<li>
+<p><strong>Variance reduction</strong>:</p>
+<ul>
+<li>If $\text{pdf}(\omega_i)$ is chosen to closely match the product $L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$, variance is minimized.</li>
+</ul>
+</li>
+<li>
+<p><strong>Importance sampling</strong>:</p>
+<ul>
+<li>Select $\text{pdf}(\omega_i) \propto L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$ for optimal convergence and stability.</li>
+</ul>
+</li>
+</ol>
+<h3 id="importance-sampling">
+<a class="header-anchor" href="#importance-sampling"></a>
+Importance Sampling
+</h3><ul>
+<li>
+<p><strong>Principle</strong>:<br>
+Importance sampling selects a probability density function $p(x)$ that closely resembles or is proportional to the integrand $f(x)$. This reduces variance and improves convergence speed.</p>
+</li>
+<li>
+<p><strong>Monte Carlo Approximation with Importance Sampling</strong>:</p>
+$$I = \int f(x) \, dx \approx \frac{1}{N} \sum_{i=1}^{N} \frac{f(x_i)}{p(x_i)} \quad \text{where } x_i \sim p(x)$$<ul>
+<li>A good choice of $p(x)$ minimizes variance.</li>
+<li>Optimal case: $p(x) \propto f(x)$, which results in zero variance.</li>
+</ul>
+</li>
+</ul>
+<h1 id="resampled-importance-sampling-ris">
+<a class="header-anchor" href="#resampled-importance-sampling-ris"></a>
+Resampled Importance Sampling (RIS)
+</h1><ul>
+<li><strong>Motivation</strong>:<br>
+When directly sampling from a complex or unnormalized distribution $g(x)$ is difficult, <strong>Resampled Importance Sampling (RIS)</strong> provides an effective alternative.<br>
+RIS generates approximate samples for $g(x)$ by leveraging another easier-to-sample distribution $p(x)$.</li>
+</ul>
+<h2 id="steps-for-ris">
+<a class="header-anchor" href="#steps-for-ris"></a>
+Steps for RIS
+</h2><ol>
+<li><strong>Generate candidate samples</strong>:
+<ul>
+<li>Draw $M$ samples $\{x_1, x_2, \dots, x_M\}$ from a simple distribution $p(x)$.</li>
+</ul>
+</li>
+<li><strong>Compute weights for candidates</strong>:
+<ul>
+<li>Assign weights to each sample: $$w_j = \frac{g(x_j)}{p(x_j)}, \quad j \in [1, M]$$</li>
+</ul>
+</li>
+<li><strong>Resample $N$ samples</strong>:
+<ul>
+<li>
+<p>Resample $\{y_1, y_2, \dots, y_N\}$ from the candidate set $\{x_1, x_2, \dots, x_M\}$ based on the weights $w_j$.</p>
+</li>
+<li>
+<p>The new samples $\{y_i\}$ approximate the distribution $g(x)$.</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="monte-carlo-integration-with-ris">
+<a class="header-anchor" href="#monte-carlo-integration-with-ris"></a>
+Monte Carlo Integration with RIS
+</h2><ul>
+<li>
+<p><strong>Estimator with Resampled Weights</strong>:<br>
+If $g(x)$ is normalized and its samples are available, the Monte Carlo estimator can be written as:</p>
+$$\hat{I}_{MC} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{g(y_i)}$$</li>
+<li>
+<p><strong>Estimator with Candidate Weights</strong>:<br>
+When $g(x)$ is unnormalized, RIS introduces a weighting function $\omega^*(\cdot)$ based on the $M$ candidates and $N$ resampled points:</p>
+$$\hat{I}_{RIS} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{\hat{q}(y_i)} \cdot \omega^*$$<ul>
+<li><strong>Weighting function</strong>: $$\omega^* = \frac{1}{M} \sum_{j=1}^{M} w(x_j)$$</li>
+</ul>
+</li>
+<li>
+<p><strong>Final RIS Formula</strong>:</p>
+$$\hat{I}_{RIS} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{q}(y_i)} \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j)$$</li>
+<li>
+<p><strong>Conditions for Unbiasedness</strong></p>
+<ol>
+<li>$g(x) > 0$ and $p(x) > 0$ wherever $f(x) \neq 0$.</li>
+<li>Both $M > 0$ (number of candidates) and $N > 0$ (number of resampled points).</li>
+</ol>
+</li>
+</ul>
+<h2 id="proof-of-unbiasedness-for-ris-sampling">
+<a class="header-anchor" href="#proof-of-unbiasedness-for-ris-sampling"></a>
+Proof of Unbiasedness for RIS Sampling
+</h2><p>To prove that the estimator is unbiased, we need to demonstrate that its expected value equals the true value. The core idea is based on the property:</p>
+$$E_{XY}(XY) = E_X \left( E_Y(Y \mid X) \cdot X \right)$$<p>Starting with the RIS estimator, we have:</p>
+$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ E\left( \frac{1}{N} \sum_{i=1}^N \frac{f(Y_i)}{g(Y_i)} \;\middle|\; X_1, \dots, X_M \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>Since $Y$ is randomly selected from the sample, the expectation simplifies as:</p>
+$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ E\left( \frac{f(Y)}{g(Y)} \;\middle|\; X_1, \dots, X_M \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>Given $Y$ is sampled from $X_1, \dots, X_M$, the inner expectation can be expressed as a sum over the weights of the samples:</p>
+$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ \sum_{k=1}^M \left( \frac{f(X_k)}{g(X_k)} \cdot \frac{w(X_k)}{\sum_{j=1}^M w(X_j)} \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>The denominator in the weight normalization cancels with the outer sum, resulting in:</p>
+$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ \frac{1}{M} \sum_{k=1}^M \frac{f(X_k)}{g(X_k)} \cdot w(X_k) \right]$$<p>Switching to the expectation over a single sample $X$, we get:</p>
+$$E\left( \hat{L}_{\text{ris}} \right) = E\left( \frac{f(X)}{g(X)} \cdot w(X) \right)$$<p>Thus, the RIS estimator is unbiased as its expected value equals the true value.</p>
+<h2 id="applications-in-ray-tracing">
+<a class="header-anchor" href="#applications-in-ray-tracing"></a>
+Applications in Ray Tracing
+</h2><ul>
+<li>
+<p><strong>Integrand</strong>:<br>
+The rendering equation integrand for Monte Carlo evaluation:</p>
+$$L_i(x, \omega_o) f(\omega_i, \omega_o) \cos \theta$$</li>
+<li>
+<p><strong>Process</strong>:</p>
+<ul>
+<li>Generate $M$ candidate directions $\omega_i$ using a simple distribution $p(\omega_i)$.</li>
+<li>Compute weights $w_j = \frac{g(\omega_j)}{p(\omega_j)}$.</li>
+<li>Resample $N = 1$ direction for each query to compute an unbiased estimate of the integral.</li>
+</ul>
+</li>
+<li>
+<p><strong>Outcome</strong>:<br>
+RIS reduces variance and ensures unbiased estimation, even when $g(x)$ is not normalized.</p>
+</li>
+</ul>
+<h1 id="reservoir-sampling-and-weighted-reservoir-sampling">
+<a class="header-anchor" href="#reservoir-sampling-and-weighted-reservoir-sampling"></a>
+Reservoir Sampling and Weighted Reservoir Sampling
+</h1><h2 id="reservoir-sampling">
+<a class="header-anchor" href="#reservoir-sampling"></a>
+Reservoir Sampling
+</h2><p><strong>Reservoir Sampling</strong> is a class of algorithms used to randomly select $N$ elements from a stream of data (or from a set where $M$ is very large and cannot be stored entirely). The value of $N$ is usually small, and $M$ is typically large, meaning the entire dataset may not be stored in memory.</p>
+<h3 id="basic-algorithm">
+<a class="header-anchor" href="#basic-algorithm"></a>
+Basic Algorithm
+</h3><p>Given a sequence of size $M$, or when the total size is unknown and data is being streamed, you need to sample $N$ elements.</p>
+<ol>
+<li>
+<p><strong>Initialization</strong>:</p>
+<ul>
+<li>Create an array that can hold $N$ elements.</li>
+<li>Populate this array with the first $N$ elements from the stream.</li>
+</ul>
+</li>
+<li>
+<p><strong>Subsequent Elements</strong>:</p>
+<ul>
+<li>Starting from element $N+1$, for each new element in the stream, decide with a probability of $\frac{N}{M_{\text{so far}}}$ (where $M_{\text{so far}}$ is the total number of elements seen so far) whether the element should replace one of the elements in the array.</li>
+<li>The probability of replacement for any element in the reservoir is equal across the array.</li>
+</ul>
+</li>
+<li>
+<p><strong>Final Result</strong>:</p>
+<ul>
+<li>Once all elements have been processed, the array will contain $N$ elements, which are the required samples.</li>
+</ul>
+</li>
+</ol>
+<h3 id="derivation-of-the-probability">
+<a class="header-anchor" href="#derivation-of-the-probability"></a>
+Derivation of the Probability
+</h3><p>For each element in the reservoir, the probability of it being retained is derived as follows:</p>
+<ul>
+<li>
+<p>Before any new elements are encountered, all elements in the reservoir have a probability of 1 of being retained.</p>
+</li>
+<li>
+<p>At step $N+1$, the probability that an element in the reservoir is replaced by the $N+1$-th element is:</p>
+$$\text{probability of replacement} = \frac{N}{N+1} \times \frac{1}{N} = \frac{1}{N+1}$$<p>Therefore, the probability of not being replaced is:</p>
+$$1 - \frac{N}{N+1} \times \frac{1}{N} = \frac{N}{N+1}$$</li>
+<li>
+<p>At step $N+2$, the probability of not being replaced is:</p>
+$$1 - \frac{N}{N+2} \times \frac{1}{N} = \frac{N+1}{N+2}$$</li>
+<li>
+<p>This process continues, and after $M$ elements have been processed, the probability of an element being retained in the reservoir is:</p>
+$$\text{probability of being retained} = 1 \times \frac{N}{N+1} \times \frac{N+1}{N+2} \times \frac{N+2}{N+3} \times \ldots \times \frac{M-1}{M}=\frac{N}{M}$$</li>
+</ul>
+<p>Hence, every element has an equal probability of $\frac{N}{M}$ of being retained in the final sample.</p>
+<p>When the total number of elements, $M_{\text{so far}}$, is unknown, this probability becomes $\frac{N}{M_{\text{so far}}}$ at any point during the sampling process.</p>
+<h2 id="weighted-reservoir-sampling">
+<a class="header-anchor" href="#weighted-reservoir-sampling"></a>
+Weighted Reservoir Sampling
+</h2><p><strong>Weighted Reservoir Sampling</strong> extends the basic algorithm by allowing each element to have an associated weight $w_i$, which determines its likelihood of being included in the sample.</p>
+<h3 id="pseudocode-for-weighted-reservoir-sampling">
+<a class="header-anchor" href="#pseudocode-for-weighted-reservoir-sampling"></a>
+Pseudocode for Weighted Reservoir Sampling
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-plaintext" data-lang="plaintext"><span class="line"><span class="cl"># Reservoir Sampling Algorithm with Weights
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">class Reservoir:
+</span></span><span class="line"><span class="cl">    y = 0                # Output sample
+</span></span><span class="line"><span class="cl">    w_sum = 0            # Sum of weights
+</span></span><span class="line"><span class="cl">    M = 0                # Number of samples seen so far
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    function update(x_i, w_i):
+</span></span><span class="line"><span class="cl">        w_sum = w_sum + w_i
+</span></span><span class="line"><span class="cl">        M = M + 1
+</span></span><span class="line"><span class="cl">        if rand() &lt; (w_i / w_sum):
+</span></span><span class="line"><span class="cl">            y = x_i
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">function reservoirSampling(S):
+</span></span><span class="line"><span class="cl">    Reservoir r
+</span></span><span class="line"><span class="cl">    for i = 1 to M:
+</span></span><span class="line"><span class="cl">        r.update(S[i], weight(S[i]))
+</span></span><span class="line"><span class="cl">    return r
+</span></span></code></pre></div><h3 id="derivation-of-the-probability-1">
+<a class="header-anchor" href="#derivation-of-the-probability-1"></a>
+Derivation of the Probability
+</h3><p>To understand why the probability of the last element being selected in <strong>Weighted Reservoir Sampling</strong> is $\frac{w_i}{w_{\text{total}}}$, let’s break it down step by step.</p>
+<h4 id="definitions">
+<a class="header-anchor" href="#definitions"></a>
+Definitions
+</h4><ul>
+<li>$S = \{x_1, x_2, \dots, x_M\}$: A sequence of elements.</li>
+<li>$w_i$: Weight associated with element $x_i$.</li>
+<li>$w_{\text{sofar}} = \sum_{k=1}^{j} w_k$: Total weight of elements processed up to $x_j$.</li>
+<li>$y$: Current reservoir sample.</li>
+</ul>
+<h4 id="key-idea">
+<a class="header-anchor" href="#key-idea"></a>
+Key Idea
+</h4><p>Each element $x_i$ has a weight $w_i$, which determines the probability it gets selected into the reservoir <strong>at the time it is processed</strong>. For $x_i$ to remain in the reservoir, it must survive the updates from all subsequent elements $x_{i+1}, x_{i+2}, \dots, x_M$.</p>
+<h4 id="selection-probability-for-x_i">
+<a class="header-anchor" href="#selection-probability-for-x_i"></a>
+Selection Probability for $x_i$
+</h4><ol>
+<li>
+<p><strong>Initial Selection</strong><br>
+When $x_i$ is processed, it has a probability of being selected as $y$:</p>
+$$P(\text{select } x_i \text{ at step } i) = \frac{w_i}{w_{\text{sofar}}}$$<p>Here, $w_{\text{sofar}}$ is the sum of weights of the elements processed up to $x_i$.</p>
+</li>
+<li>
+<p><strong>Survival Probability</strong><br>
+After $x_i$ is selected, it must <strong>survive replacement</strong> by $x_{i+1}, x_{i+2}, \dots, x_M$. At each subsequent step $j$, $x_i$ is replaced with probability:</p>
+$$P(\text{replace } x_i \text{ at step } j) = \frac{w_j}{w_{\text{sofar}}^{(j)}}$$<p>where $w_{\text{sofar}}^{(j)}$ is the cumulative weight after including $x_j$.</p>
+<p>The probability that $x_i$ <strong>survives</strong> step $j$ is:</p>
+$$P(\text{survive step } j) = 1 - \frac{w_j}{w_{\text{sofar}}^{(j)}} = \frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}}$$</li>
+<li>
+<p><strong>Combined Survival Probability</strong><br>
+For $x_i$ to remain the final reservoir sample, it must survive all replacements from $x_{i+1}$ to $x_M$. The overall survival probability is:</p>
+$$P(\text{survive } x_{i+1}, \dots, x_M) = \prod_{j=i+1}^M \left( \frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}} \right)$$</li>
+<li>
+<p><strong>Final Probability for $x_i$</strong><br>
+Combining the probability of being selected at step $i$ with the probability of surviving subsequent steps, we have:</p>
+$$P(x_i \text{ is final sample}) = P(\text{select } x_i \text{ at step } i) \cdot P(\text{survive } x_{i+1}, \dots, x_M)$$<p>Substituting the expressions:</p>
+$$P(x_i \text{ is final sample}) = \frac{w_i}{w_{\text{sofar}}} \cdot \prod_{j=i+1}^M \left( \frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}} \right)$$</li>
+</ol>
+<h4 id="simplification-using-recursion">
+<a class="header-anchor" href="#simplification-using-recursion"></a>
+Simplification Using Recursion
+</h4><p>The term $\frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}}$ can be rewritten as:</p>
+$$\frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}} = \frac{w_{\text{sofar}}^{(j-1)}}{w_{\text{sofar}}^{(j)}}$$<p>This reflects the fact that removing the weight $w_j$ leaves the cumulative weight of the previous step. Substituting this into the product:</p>
+$$\prod_{j=i+1}^M \left( \frac{w_{\text{sofar}}^{(j)} - w_j}{w_{\text{sofar}}^{(j)}} \right) = \prod_{j=i+1}^M \left( \frac{w_{\text{sofar}}^{(j-1)}}{w_{\text{sofar}}^{(j)}} \right)$$<p>This is a telescoping product, where intermediate terms cancel out, leaving:</p>
+$$\prod_{j=i+1}^M \left( \frac{w_{\text{sofar}}^{(j-1)}}{w_{\text{sofar}}^{(j)}} \right) = \frac{w_{\text{sofar}}^{(i)}}{w_{\text{sofar}}^{(M)}}$$<h4 id="substituting-back">
+<a class="header-anchor" href="#substituting-back"></a>
+Substituting Back
+</h4><p>Substituting this result into the original formula:</p>
+$$P(x_i \text{ is final sample}) = \frac{w_i}{w_{\text{sofar}}^{(i)}} \cdot \frac{w_{\text{sofar}}^{(i)}}{w_{\text{sofar}}^{(M)}}$$<p>The $w_{\text{sofar}}^{(i)}$ terms cancel, leaving:</p>
+$$P(x_i \text{ is final sample}) = \frac{w_i}{w_{\text{sofar}}^{(M)}}$$<p>Since $w_{\text{sofar}}^{(M)} = w_{\text{total}}$, we conclude:</p>
+$$P(x_i \text{ is final sample}) = \frac{w_i}{w_{\text{total}}}$$<h3 id="combining-weighted-reservoir-sampling-with-ris">
+<a class="header-anchor" href="#combining-weighted-reservoir-sampling-with-ris"></a>
+Combining Weighted Reservoir Sampling with RIS
+</h3><p>The following steps illustrate how this combination works:</p>
+<ol>
+<li>Generate a sample stream for each pixel, neighboring pixels, and time-reusable pixels in the image.</li>
+<li>Update the reservoir with the sample, weight, and the total count of samples each time.</li>
+<li>After updating, use the <strong>RIS unbiased estimator</strong> to perform the final sampling.</li>
+</ol>
+<h1 id="restir-gi-path-resampling-for-real-time-path-tracinghttpsresearchnvidiacompublication2021-06_restir-gi-path-resampling-real-time-path-tracing">
+<a class="header-anchor" href="#restir-gi-path-resampling-for-real-time-path-tracinghttpsresearchnvidiacompublication2021-06_restir-gi-path-resampling-real-time-path-tracing"></a>
+<a href="https://research.nvidia.com/publication/2021-06_restir-gi-path-resampling-real-time-path-tracing">ReSTIR GI: Path Resampling for Real-Time Path Tracing</a>
+</h1>
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Real-Time High Quality Rendering"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/games202/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Real-Time High Quality Rendering
+          
+        </h3>
+      </div>
+    
+
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Sampling Techniques for Hemispheres"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/sampling/"></a>
+        <div class="article-nav-caption">Older</div>
+        <h3 class="article-nav-title">
+          
+            Sampling Techniques for Hemispheres
+          
+        </h3>
+      </div>
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
+      <ul>
+        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
+        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
+        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
+          <ul>
+            <li><a href="#key-insights">Key Insights</a></li>
+            <li><a href="#importance-sampling">Importance Sampling</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
+      <ul>
+        <li><a href="#steps-for-ris">Steps for RIS</a></li>
+        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a></li>
+        <li><a href="#proof-of-unbiasedness-for-ris-sampling">Proof of Unbiasedness for RIS Sampling</a></li>
+        <li><a href="#applications-in-ray-tracing">Applications in Ray Tracing</a></li>
+      </ul>
+    </li>
+    <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>
+      <ul>
+        <li><a href="#reservoir-sampling">Reservoir Sampling</a>
+          <ul>
+            <li><a href="#basic-algorithm">Basic Algorithm</a></li>
+            <li><a href="#derivation-of-the-probability">Derivation of the Probability</a></li>
+          </ul>
+        </li>
+        <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
+          <ul>
+            <li><a href="#pseudocode-for-weighted-reservoir-sampling">Pseudocode for Weighted Reservoir Sampling</a></li>
+            <li><a href="#derivation-of-the-probability-1">Derivation of the Probability</a>
+              <ul>
+                <li><a href="#definitions">Definitions</a></li>
+                <li><a href="#key-idea">Key Idea</a></li>
+                <li><a href="#selection-probability-for-x_i">Selection Probability for </a></li>
+                <li><a href="#simplification-using-recursion">Simplification Using Recursion</a></li>
+                <li><a href="#substituting-back">Substituting Back</a></li>
+              </ul>
+            </li>
+            <li><a href="#combining-weighted-reservoir-sampling-with-ris">Combining Weighted Reservoir Sampling with RIS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#restir-gi-path-resampling-for-real-time-path-tracinghttpsresearchnvidiacompublication2021-06_restir-gi-path-resampling-real-time-path-tracing"><a href="https://research.nvidia.com/publication/2021-06_restir-gi-path-resampling-real-time-path-tracing">ReSTIR GI: Path Resampling for Real-Time Path Tracing</a></a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2024
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            36.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:00
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
+      <ul>
+        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
+        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
+        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
+          <ul>
+            <li><a href="#key-insights">Key Insights</a></li>
+            <li><a href="#importance-sampling">Importance Sampling</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
+      <ul>
+        <li><a href="#steps-for-ris">Steps for RIS</a></li>
+        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a></li>
+        <li><a href="#proof-of-unbiasedness-for-ris-sampling">Proof of Unbiasedness for RIS Sampling</a></li>
+        <li><a href="#applications-in-ray-tracing">Applications in Ray Tracing</a></li>
+      </ul>
+    </li>
+    <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>
+      <ul>
+        <li><a href="#reservoir-sampling">Reservoir Sampling</a>
+          <ul>
+            <li><a href="#basic-algorithm">Basic Algorithm</a></li>
+            <li><a href="#derivation-of-the-probability">Derivation of the Probability</a></li>
+          </ul>
+        </li>
+        <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
+          <ul>
+            <li><a href="#pseudocode-for-weighted-reservoir-sampling">Pseudocode for Weighted Reservoir Sampling</a></li>
+            <li><a href="#derivation-of-the-probability-1">Derivation of the Probability</a>
+              <ul>
+                <li><a href="#definitions">Definitions</a></li>
+                <li><a href="#key-idea">Key Idea</a></li>
+                <li><a href="#selection-probability-for-x_i">Selection Probability for </a></li>
+                <li><a href="#simplification-using-recursion">Simplification Using Recursion</a></li>
+                <li><a href="#substituting-back">Substituting Back</a></li>
+              </ul>
+            </li>
+            <li><a href="#combining-weighted-reservoir-sampling-with-ris">Combining Weighted Reservoir Sampling with RIS</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#restir-gi-path-resampling-for-real-time-path-tracinghttpsresearchnvidiacompublication2021-06_restir-gi-path-resampling-real-time-path-tracing"><a href="https://research.nvidia.com/publication/2021-06_restir-gi-path-resampling-real-time-path-tracing">ReSTIR GI: Path Resampling for Real-Time Path Tracing</a></a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+      
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8" crossorigin="anonymous"
+  ></script>
+
+
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/contrib/auto-render.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05" crossorigin="anonymous"
+  ></script>
+
+
+        <script data-pjax>
+          var renderMath = () => {
+            if (!window.renderMathInElement) return;
+            window.renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+            });
+          };
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderMath, { once: true });
+          } else {
+            renderMath();
+          }
+        </script>
+      
+      
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>

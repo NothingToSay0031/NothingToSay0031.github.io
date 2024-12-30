@@ -1,0 +1,1775 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Interesting Code Snippets | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="From My ARM GPU Software Internship."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Interesting Code Snippets | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="From My ARM GPU Software Internship."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/arm/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2024-06-18T22:27:03&#43;00:00" />
+  <meta property="article:modified_time" content="2024-06-18T22:27:03&#43;00:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Interesting Code Snippets">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">Interesting Code Snippets</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/arm/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2024-06-18 22:27:03 &#43;0000 UTC" itemprop="datePublished"
+      >2024-06-18</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2024-06-18</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <p>A couple of fun and intriguing C++ code snippets I explored while developing a Vulkan trace tool at ARM.</p>
+<h1 id="compile-time-type-to-type-map">
+<a class="header-anchor" href="#compile-time-type-to-type-map"></a>
+Compile-Time Type-to-Type Map
+</h1><p>While working on translating the Vulkan API into our own data structure, I developed a compile-time type-to-type map. This map allows us to retrieve the corresponding CreateInfo type for a given Vulkan object type. Here’s the implementation:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;tuple&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;type_traits&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">TypeTag</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">T</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">K</span><span class="p">,</span> <span class="k">typename</span><span class="p">...</span> <span class="n">V</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Pair</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">FirstType</span> <span class="o">=</span> <span class="n">K</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">SecondType</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">V</span><span class="p">...</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pair</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Element</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">K</span><span class="p">,</span> <span class="k">typename</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">K</span><span class="p">,</span> <span class="k">typename</span> <span class="n">Pair</span><span class="o">::</span><span class="n">FirstType</span><span class="o">&gt;&gt;&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static</span> <span class="k">auto</span> <span class="n">Value</span><span class="p">(</span><span class="n">TypeTag</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TypeTag</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Pair</span><span class="o">::</span><span class="n">SecondType</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Elems</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">TypeMap</span> <span class="o">:</span> <span class="n">Element</span><span class="o">&lt;</span><span class="n">Elems</span><span class="o">&gt;</span><span class="p">...</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">Element</span><span class="o">&lt;</span><span class="n">Elems</span><span class="o">&gt;::</span><span class="n">Value</span><span class="p">...;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">K</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">struct</span> <span class="nc">FindHelper</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">using</span> <span class="n">Type</span> <span class="o">=</span> <span class="k">typename</span> <span class="k">decltype</span><span class="p">(</span><span class="n">TypeMap</span><span class="o">::</span><span class="n">Value</span><span class="p">(</span><span class="n">TypeTag</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;</span><span class="p">{}))</span><span class="o">::</span><span class="n">Type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">K</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">Find</span> <span class="o">=</span> <span class="k">typename</span> <span class="n">FindHelper</span><span class="o">&lt;</span><span class="n">K</span><span class="o">&gt;::</span><span class="n">Type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Key types
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">TypeA</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">TypeB</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Value types
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">InfoA1</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">InfoA2</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">InfoB</span> <span class="p">{};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Create a TypeMap with types
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">using</span> <span class="n">TypeToInfoMap</span> <span class="o">=</span> <span class="n">TypeMap</span><span class="o">&lt;</span><span class="n">Pair</span><span class="o">&lt;</span><span class="n">TypeA</span><span class="p">,</span> <span class="n">InfoA1</span><span class="p">,</span> <span class="n">InfoA2</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">Pair</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="p">,</span> <span class="n">InfoB</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Helper to get the type at a specific index in a tuple
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">size_t</span> <span class="n">Index</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">TupleElementType</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple_element_t</span><span class="o">&lt;</span><span class="n">Index</span><span class="p">,</span> <span class="n">Tuple</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">ValueA</span> <span class="o">=</span> <span class="n">TypeToInfoMap</span><span class="o">::</span><span class="n">Find</span><span class="o">&lt;</span><span class="n">TypeA</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">ValueA</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">InfoA1</span><span class="p">,</span> <span class="n">InfoA2</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="s">&#34;Type mismatch!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">ValueB</span> <span class="o">=</span> <span class="n">TypeToInfoMap</span><span class="o">::</span><span class="n">Find</span><span class="o">&lt;</span><span class="n">TypeB</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">ValueB</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple</span><span class="o">&lt;</span><span class="n">InfoB</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="s">&#34;Type mismatch!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">FirstTypeValueA</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple_element_t</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="n">ValueA</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">FirstTypeValueA</span><span class="p">,</span> <span class="n">InfoA1</span><span class="o">&gt;</span><span class="p">,</span> <span class="s">&#34;Type mismatch!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">SecondTypeValueA</span> <span class="o">=</span> <span class="n">TupleElementType</span><span class="o">&lt;</span><span class="n">ValueA</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static_assert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same_v</span><span class="o">&lt;</span><span class="n">SecondTypeValueA</span><span class="p">,</span> <span class="n">InfoA2</span><span class="o">&gt;</span><span class="p">,</span> <span class="s">&#34;Type mismatch!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">constexpr</span> <span class="n">std</span><span class="o">::</span><span class="n">size_t</span> <span class="n">size</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">tuple_size_v</span><span class="o">&lt;</span><span class="n">ValueA</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static_assert</span><span class="p">(</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#34;Tuple size mismatch!&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="easily-ignoring-implicit-conversions">
+<a class="header-anchor" href="#easily-ignoring-implicit-conversions"></a>
+Easily Ignoring Implicit Conversions
+</h1><p>Here&rsquo;s an odd case where passing an lvalue to a function expecting an rvalue doesn&rsquo;t always cause a compiler complaint, depending on how it&rsquo;s used. This snippet illustrates how you might unintentionally bypass this check:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">base</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">virtual</span> <span class="o">~</span><span class="n">base</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">virtual</span> <span class="kt">void</span> <span class="nf">print</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;base&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">base</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">print</span><span class="p">()</span> <span class="k">const</span> <span class="k">override</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;derived&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">base</span><span class="o">&gt;&amp;&amp;</span> <span class="n">sp</span><span class="p">)</span> <span class="p">{</span> <span class="n">sp</span><span class="o">-&gt;</span><span class="n">print</span><span class="p">();</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">sp_base</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">base</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">sp_derived</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">derived</span><span class="o">&gt;</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// func(sp_base);             // This line will cause a compile-time error
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">func</span><span class="p">(</span><span class="n">sp_derived</span><span class="p">);</span>             <span class="c1">// This line works
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">sp_base</span><span class="p">));</span>     <span class="c1">// This line works
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">sp_derived</span><span class="p">));</span>  <span class="c1">// This line works
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>In this example, the function func expects an rvalue (<code>std::shared_ptr&lt;base&gt;&amp;&amp;</code>). Attempting to pass an lvalue directly to this function results in a compile-time error, as expected. However, when passing <code>sp_derived</code>, it works without a complaint because <code>std::shared_ptr&lt;derived&gt;</code> can be implicitly converted to <code>std::shared_ptr&lt;base&gt;</code>, even though it’s not an rvalue. Using <code>std::move</code> explicitly converts lvalues to rvalues, allowing the function to work as intended.</p>
+<h1 id="managing-vulkan-handles-across-architectures-a-unified-approach">
+<a class="header-anchor" href="#managing-vulkan-handles-across-architectures-a-unified-approach"></a>
+Managing Vulkan Handles Across Architectures: A Unified Approach
+</h1><p>Vulkan, the low-overhead, cross-platform API for high-performance 3D graphics, uses handles to represent devices, queues, and other entities. These handles come in two flavors: dispatchable and non-dispatchable.</p>
+<h2 id="handle-types-in-vulkan">
+<a class="header-anchor" href="#handle-types-in-vulkan"></a>
+Handle Types in Vulkan
+</h2><h3 id="dispatchable-handles">
+<a class="header-anchor" href="#dispatchable-handles"></a>
+Dispatchable Handles
+</h3><p>Dispatchable handles are pointers to opaque types and are used as the first parameter in API commands, allowing layers to intercept and process API calls. Each dispatchable object must have a unique handle value during its lifetime. On both 32-bit and 64-bit systems, these handles are represented as pointers to a struct, such as struct VkDevice_T *.</p>
+<h3 id="non-dispatchable-handles">
+<a class="header-anchor" href="#non-dispatchable-handles"></a>
+Non-Dispatchable Handles
+</h3><p>Non-dispatchable handles are 64-bit integer types whose values can be implementation-dependent. If the privateData feature is enabled for a <code>VkDevice</code>, each non-dispatchable handle must be unique during its lifetime on that device. Otherwise, these handles can encode object information directly, potentially leading to non-unique values. This encoding is a performance optimization, enabling direct usage without dereferencing or indirection, even on 32-bit operating systems. Thus, 32-bit systems use <code>uint64_t</code> to represent non-dispatchable handles.</p>
+<h2 id="problem">
+<a class="header-anchor" href="#problem"></a>
+Problem
+</h2><p>We can&rsquo;t use <code>void*</code> to represent all handles. On 32-bit systems, non-dispatchable handles are <code>uint64_t</code> values, which cannot be directly cast to <code>void*</code> without causing errors. We need a unified approach to manage the handles on both 32-bit and 64-bit systems.</p>
+<h2 id="solution">
+<a class="header-anchor" href="#solution"></a>
+Solution
+</h2><p>To address the differences in handle representations, we can use C++17&rsquo;s <code>std::variant</code> to create a unified <code>VkHandle</code> type that can hold either a <code>void*</code> or a <code>uint64_t</code>. This approach ensures that our code remains portable and handles Vulkan objects correctly across different architectures.</p>
+<h2 id="implementation">
+<a class="header-anchor" href="#implementation"></a>
+Implementation
+</h2><p>Here&rsquo;s a step-by-step implementation of the solution:</p>
+<h3 id="define-the-unified-handle-type">
+<a class="header-anchor" href="#define-the-unified-handle-type"></a>
+Define the Unified Handle Type
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">using</span> <span class="n">VkHandle</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span></code></pre></div><h3 id="define-hashing-and-equality-for-vkhandle">
+<a class="header-anchor" href="#define-hashing-and-equality-for-vkhandle"></a>
+Define Hashing and Equality for VkHandle
+</h3><p>Actually we can use the default hash and equality functions provided for <code>std::variant</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">VkHandleHash</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">size_t</span> <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">hash</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">{}(</span><span class="n">t</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Types</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">size_t</span> <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Types</span><span class="p">...</span><span class="o">&gt;&amp;</span> <span class="n">v</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">visit</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="p">[](</span><span class="k">const</span> <span class="k">auto</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">hash</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="p">{}(</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="n">v</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">VkHandleEqual</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Types</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="k">operator</span><span class="p">()(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Types</span><span class="p">...</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Types</span><span class="p">...</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">lhs</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h3 id="demonstrating-usage-function-parameters-and-map-keys">
+<a class="header-anchor" href="#demonstrating-usage-function-parameters-and-map-keys"></a>
+Demonstrating Usage: Function Parameters and Map Keys
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cstdint&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;unordered_map&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;variant&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Define a variant type for Vulkan handles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">using</span> <span class="n">VkHandle</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to demonstrate handling of VkHandle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">DemoFunction</span><span class="p">(</span><span class="k">const</span> <span class="n">VkHandle</span><span class="o">&amp;</span> <span class="n">handle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Define Vulkan handle types
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">typedef</span> <span class="kt">uint64_t</span> <span class="n">VkBuffer</span><span class="p">;</span>  <span class="c1">// Non-dispatchable handle (on 32-bit machine,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                            <span class="c1">// otherwise it would be struct VkBuffer_T *)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">typedef</span> <span class="k">struct</span> <span class="nc">VkDevice_T</span><span class="o">*</span> <span class="n">VkDevice</span><span class="p">;</span>  <span class="c1">// Dispatchable handle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Initialize handles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">VkBuffer</span> <span class="n">non_dispatchable_handle</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">VkDevice</span> <span class="n">dispatchable_handle</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Create a map to associate VkHandles with integers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">VkHandle</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">handle_map</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">handle_map</span><span class="p">[</span><span class="n">non_dispatchable_handle</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">handle_map</span><span class="p">[</span><span class="n">dispatchable_handle</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// Demonstrate the function handling both types of handles
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">DemoFunction</span><span class="p">(</span><span class="n">non_dispatchable_handle</span><span class="p">);</span>  <span class="c1">// Output: 42
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">DemoFunction</span><span class="p">(</span><span class="n">dispatchable_handle</span><span class="p">);</span>      <span class="c1">// Output: 0 (nullptr)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Output the values stored in the map for each handle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">handle_map</span><span class="p">[</span><span class="n">non_dispatchable_handle</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>  <span class="c1">// Output: 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">handle_map</span><span class="p">[</span><span class="n">dispatchable_handle</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>      <span class="c1">// Output: 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="extract-vulkan-raw-handle-from-vkhandle">
+<a class="header-anchor" href="#extract-vulkan-raw-handle-from-vkhandle"></a>
+Extract Vulkan Raw Handle from VkHandle
+</h3><p>We can easily construct VkHandle from a Vulkan handle, but extracting the raw handle requires a bit more work. Here’s how we can do it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">T</span> <span class="n">Handle</span><span class="p">(</span><span class="k">const</span> <span class="n">VkHandle</span> <span class="o">&amp;</span><span class="n">handle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="nf">constexpr</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">is_same</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="kt">uint64_t</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">))</span> <span class="p">{</span>  <span class="c1">// For non-dispatchable handle on 32-bit systems
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">return</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">void</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">void</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">handle</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">VK_NULL_HANDLE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">uint64_t</span> <span class="n">buffer_address</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span><span class="n">device_address</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">VkDevice</span> <span class="n">device</span> <span class="o">=</span> <span class="n">Handle</span><span class="o">&lt;</span><span class="n">VkDevice</span><span class="o">&gt;</span><span class="p">(</span><span class="n">device_address</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">VkBuffer</span> <span class="n">buffer</span> <span class="o">=</span> <span class="n">Handle</span><span class="o">&lt;</span><span class="n">VkBuffer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">buffer_address</span><span class="p">);</span>
+</span></span></code></pre></div><h3 id="print-it-out">
+<a class="header-anchor" href="#print-it-out"></a>
+Print it out
+</h3><p>To print the address of the handle, whether it&rsquo;s a Vulkan raw handle or our <code>VkHandle</code>, we can use a unified method:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">HandleToHexString</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*</span><span class="p">,</span> <span class="kt">uint64_t</span><span class="o">&gt;&amp;</span> <span class="n">vkhandle</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">stringstream</span> <span class="n">ss</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">vkhandle</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span> <span class="n">value</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">uint64_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">vkhandle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;0x&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span><span class="o">*</span> <span class="n">value</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">vkhandle</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ss</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;0x&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">hex</span> <span class="o">&lt;&lt;</span> <span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>If the input is a pointer to a struct, it will be converted to <code>void*</code> before being passed into the <code>std::variant</code>. Otherwise, the <code>VkHandle</code> will be passed or constructed in directly.</p>
+<h1 id="flexible-type-deduction-with-is_constructible_v">
+<a class="header-anchor" href="#flexible-type-deduction-with-is_constructible_v"></a>
+Flexible Type Deduction with <code>is_constructible_v</code>
+</h1><p>I use <code>std::conditional_t</code> and <code>std::is_constructible_v</code> to automatically select the appropriate struct based on the argument types provided, while <code>std::enable_if_t</code> is used to constrain the template function definition.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;type_traits&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">BufferRenderInfo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">BufferRenderInfo</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">float</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;BufferRenderInfo constructed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;BufferRenderInfo verification passed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">ImageRenderInfo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ImageRenderInfo</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;ImageRenderInfo constructed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;ImageRenderInfo verification passed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">AsRenderInfo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">AsRenderInfo</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;AsRenderInfo constructed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">bool</span> <span class="nf">Verify</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;AsRenderInfo verification passed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="k">using</span> <span class="n">deduced_type_t</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">is_constructible_v</span><span class="o">&lt;</span><span class="n">BufferRenderInfo</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">BufferRenderInfo</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">is_constructible_v</span><span class="o">&lt;</span><span class="n">ImageRenderInfo</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">ImageRenderInfo</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">conditional_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_constructible_v</span><span class="o">&lt;</span><span class="n">AsRenderInfo</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                           <span class="n">AsRenderInfo</span><span class="p">,</span> <span class="kt">void</span><span class="o">&gt;&gt;&gt;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">template</span> <span class="o">&lt;</span><span class="k">typename</span><span class="p">...</span> <span class="n">Args</span><span class="p">,</span> <span class="k">typename</span> <span class="n">T</span> <span class="o">=</span> <span class="n">deduced_type_t</span><span class="o">&lt;</span><span class="n">Args</span><span class="p">...</span><span class="o">&gt;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;!</span><span class="n">std</span><span class="o">::</span><span class="n">is_void_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">void</span><span class="o">&gt;</span> <span class="n">Merge</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">render_info</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">render_info</span><span class="o">-&gt;</span><span class="n">Verify</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Merge successful.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Merge failed: Verification failed.&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Merge</span><span class="p">(</span><span class="mf">2.718</span><span class="p">,</span> <span class="s">&#34;example&#34;</span><span class="p">);</span>  <span class="c1">// Constructs ImageRenderInfo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Merge</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="mf">3.14f</span><span class="p">);</span>         <span class="c1">// Constructs BufferRenderInfo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">Merge</span><span class="p">(</span><span class="s">&#34;example&#34;</span><span class="p">);</span>         <span class="c1">// Constructs AsRenderInfo
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="understanding-vulkan-image-memory-layout-a-deep-dive-into-a2b10g10r10_unorm_pack32">
+<a class="header-anchor" href="#understanding-vulkan-image-memory-layout-a-deep-dive-into-a2b10g10r10_unorm_pack32"></a>
+Understanding Vulkan Image Memory Layout: A Deep Dive into A2B10G10R10_UNORM_PACK32
+</h1><p>When working with Vulkan, understanding how image data is laid out in memory is crucial for correct image processing. Let&rsquo;s analyze a specific example of <code>VK_FORMAT_A2B10G10R10_UNORM_PACK32</code> format and how to interpret the raw memory data.</p>
+<h2 id="the-format-specification">
+<a class="header-anchor" href="#the-format-specification"></a>
+The Format Specification
+</h2><p>First, let&rsquo;s understand what <code>VK_FORMAT_A2B10G10R10_UNORM_PACK32</code> means:</p>
+<ul>
+<li>It&rsquo;s a 32-bit packed format</li>
+<li>Contains four components (A, B, G, R)</li>
+<li>Bit distribution:
+<ul>
+<li>Alpha (A): 2 bits (bits 30-31)</li>
+<li>Blue (B): 10 bits (bits 20-29)</li>
+<li>Green (G): 10 bits (bits 10-19)</li>
+<li>Red (R): 10 bits (bits 0-9)</li>
+</ul>
+</li>
+</ul>
+<h2 id="memory-layout-analysis">
+<a class="header-anchor" href="#memory-layout-analysis"></a>
+Memory Layout Analysis
+</h2><p>Let&rsquo;s analyze a real memory example. We have four bytes in little-endian order:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[0]: 10101101
+</span></span><span class="line"><span class="cl">addr[1]: 01111000
+</span></span><span class="line"><span class="cl">addr[2]: 00110010
+</span></span><span class="line"><span class="cl">addr[3]: 11000011
+</span></span></code></pre></div><h3 id="little-endian-interpretation">
+<a class="header-anchor" href="#little-endian-interpretation"></a>
+Little-Endian Interpretation
+</h3><p>In little-endian systems, the least significant byte comes first. So our 32-bit value is arranged as:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[3]    addr[2]    addr[1]    addr[0]
+</span></span><span class="line"><span class="cl">11000011   00110010   01111000   10101101
+</span></span></code></pre></div><h3 id="component-extraction">
+<a class="header-anchor" href="#component-extraction"></a>
+Component Extraction
+</h3><p>Let&rsquo;s break down how each component is extracted:</p>
+<h4 id="red-component-bits-0-9">
+<a class="header-anchor" href="#red-component-bits-0-9"></a>
+Red Component (bits 0-9)
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[0]        addr[1]
+</span></span><span class="line"><span class="cl">10101101       01111000
+</span></span><span class="line"><span class="cl">                    ⬇
+</span></span><span class="line"><span class="cl">10101101       xxxxxx00 = 00 10101101 = 173
+</span></span></code></pre></div><ul>
+<li>Takes all 8 bits from addr[0]: 10101101</li>
+<li>Takes lowest 2 bits from addr[1]: 00</li>
+<li>Total value: 173 out of 1023 possible values (2¹⁰-1)</li>
+<li>Normalized value = 173/1023 ≈ 0.16911</li>
+</ul>
+<h4 id="green-component-bits-10-19">
+<a class="header-anchor" href="#green-component-bits-10-19"></a>
+Green Component (bits 10-19)
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[1]        addr[2]
+</span></span><span class="line"><span class="cl">01111000       00110010
+</span></span><span class="line"><span class="cl">    ⬇             ⬇
+</span></span><span class="line"><span class="cl">011110xx       xxxx0010 = 0010 011110 = 158
+</span></span></code></pre></div><ul>
+<li>Takes upper 6 bits from addr[1]: 011110</li>
+<li>Takes lower 4 bits from addr[2]: 0010</li>
+<li>Total value: 158 out of 1023 possible values</li>
+<li>Normalized value = 158/1023 ≈ 0.15445</li>
+</ul>
+<h4 id="blue-component-bits-20-29">
+<a class="header-anchor" href="#blue-component-bits-20-29"></a>
+Blue Component (bits 20-29)
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[2]        addr[3]
+</span></span><span class="line"><span class="cl">00110010       11000011
+</span></span><span class="line"><span class="cl">    ⬇             ⬇
+</span></span><span class="line"><span class="cl">0011xxxx       xx000011 = 000011 0011 = 51
+</span></span></code></pre></div><ul>
+<li>Takes upper 4 bits from addr[2]: 0011</li>
+<li>Takes lower 6 bits from addr[3]: 000011</li>
+<li>Total value: 51 out of 1023 possible values</li>
+<li>Normalized value = 51/1023 ≈ 0.04985</li>
+</ul>
+<h4 id="alpha-component-bits-30-31">
+<a class="header-anchor" href="#alpha-component-bits-30-31"></a>
+Alpha Component (bits 30-31)
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">addr[3]
+</span></span><span class="line"><span class="cl">11000011
+</span></span><span class="line"><span class="cl">    ⬇
+</span></span><span class="line"><span class="cl">11xxxxxx = 3
+</span></span></code></pre></div><ul>
+<li>Takes upper 2 bits from addr[3]: 11</li>
+<li>Total value: 3 out of 3 possible values (2²-1)</li>
+<li>Normalized value = 3/3 = 1.0</li>
+</ul>
+<h2 id="final-color-values">
+<a class="header-anchor" href="#final-color-values"></a>
+Final Color Values
+</h2><p>The final normalized color values are:</p>
+<ul>
+<li>R: 0.16911</li>
+<li>G: 0.15445</li>
+<li>B: 0.04985</li>
+<li>A: 1.0</li>
+</ul>
+<h2 id="code-implementation-example">
+<a class="header-anchor" href="#code-implementation-example"></a>
+Code Implementation Example
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cstdint&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iomanip&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Structure representing a packed 32-bit value in A2B10G10R10_UNORM format
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">struct</span> <span class="nc">A2B10G10R10_UNORM</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint32_t</span> <span class="n">raw</span><span class="p">;</span> <span class="c1">// 32-bit packed color value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to extract the red component (R) and normalize it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="nf">extract_r</span><span class="p">(</span><span class="n">A2B10G10R10_UNORM</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">value</span><span class="p">.</span><span class="n">raw</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1023.0f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to extract the green component (G) and normalize it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="nf">extract_g</span><span class="p">(</span><span class="n">A2B10G10R10_UNORM</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">((</span><span class="n">value</span><span class="p">.</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1023.0f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to extract the blue component (B) and normalize it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="nf">extract_b</span><span class="p">(</span><span class="n">A2B10G10R10_UNORM</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">((</span><span class="n">value</span><span class="p">.</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="mi">20</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3FF</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1023.0f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Function to extract the alpha component (A) and normalize it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="nf">extract_a</span><span class="p">(</span><span class="n">A2B10G10R10_UNORM</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">((</span><span class="n">value</span><span class="p">.</span><span class="n">raw</span> <span class="o">&gt;&gt;</span> <span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x3</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// Helper function to print the raw binary form of the 32-bit value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">print_binary</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">31</span><span class="p">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="p">((</span><span class="n">value</span> <span class="o">&gt;&gt;</span> <span class="n">i</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">8</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span><span class="p">;</span> <span class="c1">// Add space every byte
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">A2B10G10R10_UNORM</span> <span class="n">test_value</span> <span class="p">{</span> <span class="mh">0xC33278ADu</span> <span class="p">};</span> <span class="c1">// Memory: [0xAD, 0x78, 0x32, 0xC3]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Print raw binary data for inspection
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;Raw binary data:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">print_binary</span><span class="p">(</span><span class="n">test_value</span><span class="p">.</span><span class="n">raw</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Set output precision to 5 decimal places
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">fixed</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">setprecision</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Extract and display each color component
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">float</span> <span class="n">r</span> <span class="o">=</span> <span class="n">extract_r</span><span class="p">(</span><span class="n">test_value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">float</span> <span class="n">g</span> <span class="o">=</span> <span class="n">extract_g</span><span class="p">(</span><span class="n">test_value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">float</span> <span class="n">b</span> <span class="o">=</span> <span class="n">extract_b</span><span class="p">(</span><span class="n">test_value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">float</span> <span class="n">a</span> <span class="o">=</span> <span class="n">extract_a</span><span class="p">(</span><span class="n">test_value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;</span><span class="se">\n</span><span class="s">Extracted values:</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;R = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">r</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; (expected: 0.16911)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;G = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">g</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; (expected: 0.15445)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;B = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; (expected: 0.04985)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;A = &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; (expected: 1.00000)</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Verify results against expected values
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">const</span> <span class="kt">float</span> <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.00001f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">bool</span> <span class="n">success</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mf">0.16911f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;R value mismatch!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">success</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">g</span> <span class="o">-</span> <span class="mf">0.15445f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;G value mismatch!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">success</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="mf">0.04985f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;B value mismatch!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">success</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="mf">1.0f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;A value mismatch!</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">success</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">success</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;</span><span class="se">\n</span><span class="s">All tests passed! Extraction functions work correctly.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;</span><span class="se">\n</span><span class="s">Some tests failed! Please check the implementation.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="program-output">
+<a class="header-anchor" href="#program-output"></a>
+Program Output
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">Raw binary data:
+</span></span><span class="line"><span class="cl">11000011 00110010 01111000 10101101 
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Extracted values:
+</span></span><span class="line"><span class="cl">R = 0.16911 (expected: 0.16911)
+</span></span><span class="line"><span class="cl">G = 0.15445 (expected: 0.15445)
+</span></span><span class="line"><span class="cl">B = 0.04985 (expected: 0.04985)
+</span></span><span class="line"><span class="cl">A = 1.00000 (expected: 1.00000)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">All tests passed! Extraction functions work correctly.
+</span></span></code></pre></div>
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-sizes="auto"
+              alt="Rendering and Game Engine Projects"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/games/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Rendering and Game Engine Projects
+          
+        </h3>
+      </div>
+    
+
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Rust Essentials"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/rust/"></a>
+        <div class="article-nav-caption">Older</div>
+        <h3 class="article-nav-title">
+          
+            Rust Essentials
+          
+        </h3>
+      </div>
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#compile-time-type-to-type-map">Compile-Time Type-to-Type Map</a></li>
+    <li><a href="#easily-ignoring-implicit-conversions">Easily Ignoring Implicit Conversions</a></li>
+    <li><a href="#managing-vulkan-handles-across-architectures-a-unified-approach">Managing Vulkan Handles Across Architectures: A Unified Approach</a>
+      <ul>
+        <li><a href="#handle-types-in-vulkan">Handle Types in Vulkan</a>
+          <ul>
+            <li><a href="#dispatchable-handles">Dispatchable Handles</a></li>
+            <li><a href="#non-dispatchable-handles">Non-Dispatchable Handles</a></li>
+          </ul>
+        </li>
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#implementation">Implementation</a>
+          <ul>
+            <li><a href="#define-the-unified-handle-type">Define the Unified Handle Type</a></li>
+            <li><a href="#define-hashing-and-equality-for-vkhandle">Define Hashing and Equality for VkHandle</a></li>
+            <li><a href="#demonstrating-usage-function-parameters-and-map-keys">Demonstrating Usage: Function Parameters and Map Keys</a></li>
+            <li><a href="#extract-vulkan-raw-handle-from-vkhandle">Extract Vulkan Raw Handle from VkHandle</a></li>
+            <li><a href="#print-it-out">Print it out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#flexible-type-deduction-with-is_constructible_v">Flexible Type Deduction with <code>is_constructible_v</code></a></li>
+    <li><a href="#understanding-vulkan-image-memory-layout-a-deep-dive-into-a2b10g10r10_unorm_pack32">Understanding Vulkan Image Memory Layout: A Deep Dive into A2B10G10R10_UNORM_PACK32</a>
+      <ul>
+        <li><a href="#the-format-specification">The Format Specification</a></li>
+        <li><a href="#memory-layout-analysis">Memory Layout Analysis</a>
+          <ul>
+            <li><a href="#little-endian-interpretation">Little-Endian Interpretation</a></li>
+            <li><a href="#component-extraction">Component Extraction</a>
+              <ul>
+                <li><a href="#red-component-bits-0-9">Red Component (bits 0-9)</a></li>
+                <li><a href="#green-component-bits-10-19">Green Component (bits 10-19)</a></li>
+                <li><a href="#blue-component-bits-20-29">Blue Component (bits 20-29)</a></li>
+                <li><a href="#alpha-component-bits-30-31">Alpha Component (bits 30-31)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#final-color-values">Final Color Values</a></li>
+        <li><a href="#code-implementation-example">Code Implementation Example</a>
+          <ul>
+            <li><a href="#program-output">Program Output</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2024
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            36.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:00
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#compile-time-type-to-type-map">Compile-Time Type-to-Type Map</a></li>
+    <li><a href="#easily-ignoring-implicit-conversions">Easily Ignoring Implicit Conversions</a></li>
+    <li><a href="#managing-vulkan-handles-across-architectures-a-unified-approach">Managing Vulkan Handles Across Architectures: A Unified Approach</a>
+      <ul>
+        <li><a href="#handle-types-in-vulkan">Handle Types in Vulkan</a>
+          <ul>
+            <li><a href="#dispatchable-handles">Dispatchable Handles</a></li>
+            <li><a href="#non-dispatchable-handles">Non-Dispatchable Handles</a></li>
+          </ul>
+        </li>
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#implementation">Implementation</a>
+          <ul>
+            <li><a href="#define-the-unified-handle-type">Define the Unified Handle Type</a></li>
+            <li><a href="#define-hashing-and-equality-for-vkhandle">Define Hashing and Equality for VkHandle</a></li>
+            <li><a href="#demonstrating-usage-function-parameters-and-map-keys">Demonstrating Usage: Function Parameters and Map Keys</a></li>
+            <li><a href="#extract-vulkan-raw-handle-from-vkhandle">Extract Vulkan Raw Handle from VkHandle</a></li>
+            <li><a href="#print-it-out">Print it out</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#flexible-type-deduction-with-is_constructible_v">Flexible Type Deduction with <code>is_constructible_v</code></a></li>
+    <li><a href="#understanding-vulkan-image-memory-layout-a-deep-dive-into-a2b10g10r10_unorm_pack32">Understanding Vulkan Image Memory Layout: A Deep Dive into A2B10G10R10_UNORM_PACK32</a>
+      <ul>
+        <li><a href="#the-format-specification">The Format Specification</a></li>
+        <li><a href="#memory-layout-analysis">Memory Layout Analysis</a>
+          <ul>
+            <li><a href="#little-endian-interpretation">Little-Endian Interpretation</a></li>
+            <li><a href="#component-extraction">Component Extraction</a>
+              <ul>
+                <li><a href="#red-component-bits-0-9">Red Component (bits 0-9)</a></li>
+                <li><a href="#green-component-bits-10-19">Green Component (bits 10-19)</a></li>
+                <li><a href="#blue-component-bits-20-29">Blue Component (bits 20-29)</a></li>
+                <li><a href="#alpha-component-bits-30-31">Alpha Component (bits 30-31)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#final-color-values">Final Color Values</a></li>
+        <li><a href="#code-implementation-example">Code Implementation Example</a>
+          <ul>
+            <li><a href="#program-output">Program Output</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,1861 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Shadertoy Projects | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="Build and Share your best shaders with the world and get Inspired."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Shadertoy Projects | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="Build and Share your best shaders with the world and get Inspired."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/shadertoy/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2024-09-20T21:01:37&#43;00:00" />
+  <meta property="article:modified_time" content="2024-09-20T21:01:37&#43;00:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Shadertoy Projects">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">Shadertoy Projects</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/shadertoy/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2024-09-20 21:01:37 &#43;0000 UTC" itemprop="datePublished"
+      >2024-09-20</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2024-09-20</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <p>Recently, I took part in Arm’s Shadertoy hackathon, where my team won the only Professional Award out of 11 teams. Here, I’ll document the projects I created and experimented with on Shadertoy.</p>
+<h1 id="drawing-chinese-characters-with-bézier-curves">
+<a class="header-anchor" href="#drawing-chinese-characters-with-b%c3%a9zier-curves"></a>
+Drawing Chinese Characters with Bézier Curves
+</h1><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202409202131797.png" alt=""></p>
+<p>By utilizing the signed distance field (SDF) of Bézier curves—which include start and end points, start and end thickness, and curvature—we can create smooth, intricate lines. This technique is ideal for drawing the complex strokes of Chinese characters.</p>
+<p>For a closer look at this shader, check out the demo on Shadertoy: <a href="https://www.shadertoy.com/view/Xf2BWG">Shadertoy Demo</a>.</p>
+<h1 id="fireworks-forming-chinese-characters">
+<a class="header-anchor" href="#fireworks-forming-chinese-characters"></a>
+Fireworks Forming Chinese Characters
+</h1><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202409252009518.gif" alt=""></p>
+<p>The initial idea was to generate fireworks that form Chinese characters by sampling from the <code>sdfCurvedLine</code> function to define basic shapes. However, two main challenges arose: slow rendering, which impacted real-time performance, and rough character shapes, leading to poor visual quality.</p>
+<p>To address these issues, I implemented <strong>importance sampling</strong> to distribute points more evenly across the strokes.</p>
+<h2 id="key-steps">
+<a class="header-anchor" href="#key-steps"></a>
+Key Steps:
+</h2><ol>
+<li><strong>Segment Assignment:</strong> Assign points to each curve segment based on its relative length.</li>
+<li><strong>Time Parameter (t):</strong> Calculate the interpolation parameter <code>t</code> within each segment.</li>
+<li><strong>Position Calculation:</strong> Use the start point, end point, curvature, and <code>t</code> to compute the exact position of each point.</li>
+</ol>
+<p>The result is a more accurate and efficient rendering of characters formed by fireworks.</p>
+<p>For a detailed demonstration, see the shader on Shadertoy: <a href="https://www.shadertoy.com/view/XXScz1">Shadertoy Demo</a>.</p>
+<h1 id="mid-autumn-fireworks">
+<a class="header-anchor" href="#mid-autumn-fireworks"></a>
+Mid-Autumn Fireworks
+</h1><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202409252008683.gif" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202409252008346.gif" alt=""></p>
+<p>For a detailed view of this shader implementation, check out the demo on Shadertoy: <a href="https://www.shadertoy.com/view/MXjcDR">Shadertoy Demo</a>, or watch the <a href="https://youtu.be/ZwiVGLMRdt0">video</a>.</p>
+<h1 id="resources-for-learning-shadertoy">
+<a class="header-anchor" href="#resources-for-learning-shadertoy"></a>
+Resources for Learning Shadertoy
+</h1><ol>
+<li>
+<p><strong>InspirNathan&rsquo;s Shader Topics</strong>: A fantastic starting point for <a href="https://inspirnathan.com/topics/shaders">ShaderToy</a>.</p>
+</li>
+<li>
+<p><strong>Inigo Quilez&rsquo;s Dist Function Articles</strong>: A deep dive into signed distance functions (SDF), which are essential for creating smooth shapes and curves. Check out <a href="https://iquilezles.org/articles/distfunctions2d/">Dist Functions 2D</a> and <a href="https://iquilezles.org/articles/distfunctions/">Dist Functions</a>.</p>
+</li>
+<li>
+<p><strong>Inigo Quilez&rsquo;s Shadertoy Page</strong>: A collection of impressive shader examples that demonstrate the power and versatility of Shadertoy. Explore <a href="https://www.shadertoy.com/user/iq">Inigo&rsquo;s Shadertoy</a>.</p>
+</li>
+<li>
+<p><strong>The Book of Shaders</strong>: An excellent online resource for learning the fundamentals of shaders. Visit <a href="https://thebookofshaders.com/">The Book of Shaders</a>.</p>
+</li>
+</ol>
+<h1 id="guide-for-shadertoy">
+<a class="header-anchor" href="#guide-for-shadertoy"></a>
+Guide for Shadertoy
+</h1><p>This guide covers the parts of GLSL ES relevant for Shadertoy. For the complete specification, refer to the <a href="https://www.khronos.org/registry/OpenGL/specs/es/3.0/GLSL_ES_Specification_3.00.pdf">GLSL ES Specification</a>.</p>
+<h2 id="arithmetic-operators">
+<a class="header-anchor" href="#arithmetic-operators"></a>
+Arithmetic Operators
+</h2><ul>
+<li><code>() + - ! * / %</code></li>
+</ul>
+<h2 id="logicalrelational-operators">
+<a class="header-anchor" href="#logicalrelational-operators"></a>
+Logical/Relational Operators
+</h2><ul>
+<li><code>~ &lt; &gt; &lt;= &gt;= == != &amp;&amp; ||</code></li>
+</ul>
+<h2 id="bit-operators">
+<a class="header-anchor" href="#bit-operators"></a>
+Bit Operators
+</h2><ul>
+<li><code>&amp; ^ | &lt;&lt; &gt;&gt;</code></li>
+</ul>
+<h2 id="comments">
+<a class="header-anchor" href="#comments"></a>
+Comments
+</h2><ul>
+<li><code>//</code> for single-line</li>
+<li><code>/* */</code> for multi-line</li>
+</ul>
+<h2 id="types">
+<a class="header-anchor" href="#types"></a>
+Types
+</h2><ul>
+<li><code>void</code></li>
+<li><code>bool</code></li>
+<li><code>int</code></li>
+<li><code>uint</code></li>
+<li><code>float</code></li>
+<li><code>vec2</code>, <code>vec3</code>, <code>vec4</code></li>
+<li><code>bvec2</code>, <code>bvec3</code>, <code>bvec4</code></li>
+<li><code>ivec2</code>, <code>ivec3</code>, <code>ivec4</code></li>
+<li><code>uvec2</code>, <code>uvec3</code>, <code>uvec4</code></li>
+<li><code>mat2</code>, <code>mat3</code>, <code>mat4</code></li>
+<li><code>sampler2D</code>, <code>sampler3D</code>, <code>samplerCube</code></li>
+</ul>
+<h2 id="format">
+<a class="header-anchor" href="#format"></a>
+Format
+</h2><ul>
+<li><code>float a = 1.0;</code></li>
+<li><code>int b = 1;</code></li>
+<li><code>uint i = 1U;</code></li>
+<li><code>int i = 0x1;</code></li>
+</ul>
+<h2 id="function-parameter-qualifiers">
+<a class="header-anchor" href="#function-parameter-qualifiers"></a>
+Function Parameter Qualifiers
+</h2><ul>
+<li><code>in</code>, <code>out</code>, <code>inout</code></li>
+</ul>
+<h2 id="global-variable-qualifiers">
+<a class="header-anchor" href="#global-variable-qualifiers"></a>
+Global Variable Qualifiers
+</h2><ul>
+<li><code>const</code></li>
+</ul>
+<h2 id="vector-components">
+<a class="header-anchor" href="#vector-components"></a>
+Vector Components
+</h2><ul>
+<li><code>.xyzw</code>, <code>.rgba</code>, <code>.stpq</code></li>
+</ul>
+<h2 id="flow-control">
+<a class="header-anchor" href="#flow-control"></a>
+Flow Control
+</h2><ul>
+<li><code>if</code>, <code>else</code>, <code>for</code>, <code>return</code>, <code>break</code>, <code>continue</code>, <code>switch/case</code></li>
+</ul>
+<h2 id="output">
+<a class="header-anchor" href="#output"></a>
+Output
+</h2><ul>
+<li><code>vec4 fragColor</code></li>
+</ul>
+<h2 id="input">
+<a class="header-anchor" href="#input"></a>
+Input
+</h2><ul>
+<li><code>vec2 fragCoord</code></li>
+</ul>
+<h2 id="preprocessor-directives">
+<a class="header-anchor" href="#preprocessor-directives"></a>
+Preprocessor Directives
+</h2><ul>
+<li><code>#</code></li>
+<li><code>#define</code></li>
+<li><code>#undef</code></li>
+<li><code>#if</code></li>
+<li><code>#ifdef</code></li>
+<li><code>#ifndef</code></li>
+<li><code>#else</code></li>
+<li><code>#elif</code></li>
+<li><code>#endif</code></li>
+<li><code>#error</code></li>
+<li><code>#pragma</code></li>
+<li><code>#line</code></li>
+</ul>
+<h2 id="built-in-functions">
+<a class="header-anchor" href="#built-in-functions"></a>
+Built-in Functions
+</h2><table>
+  <thead>
+      <tr>
+          <th>Function</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/radians.xhtml">radians</a> (type degrees)</td>
+          <td>Converts degrees to radians</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/degrees.xhtml">degrees</a> (type radians)</td>
+          <td>Converts radians to degrees</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/sin.xhtml">sin</a> (type angle)</td>
+          <td>Computes sine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/cos.xhtml">cos</a> (type angle)</td>
+          <td>Computes cosine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/tan.xhtml">tan</a> (type angle)</td>
+          <td>Computes tangent</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/asin.xhtml">asin</a> (type x)</td>
+          <td>Computes arcsine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/acos.xhtml">acos</a> (type x)</td>
+          <td>Computes arccosine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/atan.xhtml">atan</a> (type y, type x)</td>
+          <td>Computes arctangent</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/atan.xhtml">atan</a> (type y_over_x)</td>
+          <td>Computes arctangent of y/x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/sinh.xhtml">sinh</a> (type x)</td>
+          <td>Computes hyperbolic sine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/cosh.xhtml">cosh</a> (type x)</td>
+          <td>Computes hyperbolic cosine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/tanh.xhtml">tanh</a> (type x)</td>
+          <td>Computes hyperbolic tangent</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/asinh.xhtml">asinh</a> (type x)</td>
+          <td>Computes hyperbolic arcsine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/acosh.xhtml">acosh</a> (type x)</td>
+          <td>Computes hyperbolic arccosine</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/atanh.xhtml">atanh</a> (type x)</td>
+          <td>Computes hyperbolic arctangent</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/pow.xhtml">pow</a> (type x, type y)</td>
+          <td>Computes x raised to the power of y</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/exp.xhtml">exp</a> (type x)</td>
+          <td>Computes e raised to the power of x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/log.xhtml">log</a> (type x)</td>
+          <td>Computes the natural logarithm</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/exp2.xhtml">exp2</a> (type x)</td>
+          <td>Computes 2 raised to the power of x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/log2.xhtml">log2</a> (type x)</td>
+          <td>Computes the base-2 logarithm</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/sqrt.xhtml">sqrt</a> (type x)</td>
+          <td>Computes the square root</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/inversesqrt.xhtml">inversesqrt</a> (type x)</td>
+          <td>Computes the inverse square root</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/abs.xhtml">abs</a> (type x)</td>
+          <td>Computes the absolute value</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/sign.xhtml">sign</a> (type x)</td>
+          <td>Computes the sign of x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/floor.xhtml">floor</a> (type x)</td>
+          <td>Rounds down to the nearest integer</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/ceil.xhtml">ceil</a> (type x)</td>
+          <td>Rounds up to the nearest integer</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/trunc.xhtml">trunc</a> (type x)</td>
+          <td>Truncates to the nearest integer</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/fract.xhtml">fract</a> (type x)</td>
+          <td>Computes the fractional part of x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/mod.xhtml">mod</a> (type x, float y)</td>
+          <td>Computes the modulo</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/modf.xhtml">modf</a> (type x, out type i)</td>
+          <td>Decomposes x into integer and fractional parts</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/min.xhtml">min</a> (type x, type y)</td>
+          <td>Returns the minimum of x and y</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/max.xhtml">max</a> (type x, type y)</td>
+          <td>Returns the maximum of x and y</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/clamp.xhtml">clamp</a> (type x, type minV, type maxV)</td>
+          <td>Clamps x to the range [minV, maxV]</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/mix.xhtml">mix</a> (type x, type y, type a)</td>
+          <td>Computes a linear interpolation between x and y</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/step.xhtml">step</a> (type edge, type x)</td>
+          <td>Performs step function</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/smoothstep.xhtml">smoothstep</a> (type a, type b, type x)</td>
+          <td>Performs smooth interpolation</td>
+      </tr>
+      <tr>
+          <td>float <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/length.xhtml">length</a> (type x)</td>
+          <td>Computes the length of x</td>
+      </tr>
+      <tr>
+          <td>float <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/distance.xhtml">distance</a> (type p0, type p1)</td>
+          <td>Computes distance between p0 and p1</td>
+      </tr>
+      <tr>
+          <td>float <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/dot.xhtml">dot</a> (type x, type y)</td>
+          <td>Computes the dot product</td>
+      </tr>
+      <tr>
+          <td>vec3 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/cross.xhtml">cross</a> (vec3 x, vec3 y)</td>
+          <td>Computes the cross product</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/normalize.xhtml">normalize</a> (type x)</td>
+          <td>Normalizes x</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/faceforward.xhtml">faceforward</a> (type N, type I, type Nref)</td>
+          <td>Computes the forward face</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/reflect.xhtml">reflect</a> (type I, type N)</td>
+          <td>Computes reflection</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/refract.xhtml">refract</a> (type I, type N, float eta)</td>
+          <td>Computes refraction</td>
+      </tr>
+      <tr>
+          <td>float <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/determinant.xhtml">determinant</a> (mat? m)</td>
+          <td>Computes the determinant</td>
+      </tr>
+      <tr>
+          <td>mat?x? <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/outerProduct.xhtml">outerProduct</a> (vec? c, vec? r)</td>
+          <td>Computes the outer product</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/matrixCompMult.xhtml">matrixCompMult</a> (type x, type y)</td>
+          <td>Computes component-wise matrix multiplication</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/inverse.xhtml">inverse</a> (type inverse)</td>
+          <td>Computes the inverse of a matrix</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/transpose.xhtml">transpose</a> (type inverse)</td>
+          <td>Computes the transpose of a matrix</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml">texture</a> (sampler?, vec? coord [, float bias])</td>
+          <td>Samples a texture</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureLod.xhtml">textureLod</a> (sampler, vec? coord, float lod)</td>
+          <td>Samples a texture at a specific level of detail.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureLodOffset.xhtml">textureLodOffset</a> (sampler?, vec? coord, float lod, ivec? offset)</td>
+          <td>Samples a texture at a specified LOD with an offset.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureGrad.xhtml">textureGrad</a> (sampler?, vec? coord, vec2 dPdx, vec2 dPdy)</td>
+          <td>Samples a texture using derivatives for gradient computation.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureGradOffset.xhtml">textureGradOffset</a> (sampler?, vec? coord, vec2 dPdx, vec2 dPdy, vec? offset)</td>
+          <td>Samples a texture with gradients and an offset.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProj.xhtml">textureProj</a> (sampler?, vec? coord [, float bias])</td>
+          <td>Projects a texture.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProjLod.xhtml">textureProjLod</a> (sampler?, vec? coord, float lod)</td>
+          <td>Projects a texture at a specific level of detail.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProjLodOffset.xhtml">textureProjLodOffset</a> (sampler?, vec? coord, float lod, vec? offset)</td>
+          <td>Projects a texture at LOD with an offset.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureProjGrad.xhtml">textureProjGrad</a> (sampler?, vec? coord, vec2 dPdx, vec2 dPdy)</td>
+          <td>Projects a texture using gradients.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texelFetch.xhtml">texelFetch</a> (sampler?, ivec? coord, int lod)</td>
+          <td>Fetches a texel from a texture.</td>
+      </tr>
+      <tr>
+          <td>vec4 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texelFetchOffset.xhtml">texelFetchOffset</a> (sampler?, ivec? coord, int lod, ivec? offset)</td>
+          <td>Fetches a texel with an offset.</td>
+      </tr>
+      <tr>
+          <td>ivec? <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/textureSize.xhtml">textureSize</a> (sampler?, int lod)</td>
+          <td>Returns the size of a texture.</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/dFdx.xhtml">dFdx</a> (type x)</td>
+          <td>Computes the derivative in the x direction.</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/dFdy.xhtml">dFdy</a> (type x)</td>
+          <td>Computes the derivative in the y direction.</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/fwidth.xhtml">fwidth</a> (type p)</td>
+          <td>Computes the sum of absolute derivatives in x and y.</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/isnan.xhtml">isnan</a> (type x)</td>
+          <td>Checks if x is NaN.</td>
+      </tr>
+      <tr>
+          <td>type <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/isinf.xhtml">isinf</a> (type x)</td>
+          <td>Checks if x is infinite.</td>
+      </tr>
+      <tr>
+          <td>float <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/intBitsToFloat.xhtml">intBitsToFloat</a> (int v)</td>
+          <td>Converts int bit representation to float.</td>
+      </tr>
+      <tr>
+          <td>uint <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/uintBitsToFloat.xhtml">uintBitsToFloat</a> (uint v)</td>
+          <td>Converts uint bit representation to float.</td>
+      </tr>
+      <tr>
+          <td>int <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/floatBitsToInt.xhtml">floatBitsToInt</a> (float v)</td>
+          <td>Converts float bit representation to int.</td>
+      </tr>
+      <tr>
+          <td>uint <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/floatBitsToUint.xhtml">floatBitsToUint</a> (float v)</td>
+          <td>Converts float bit representation to uint.</td>
+      </tr>
+      <tr>
+          <td>uint <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/packUnorm.xhtml">packSnorm2x16</a> (vec2 v)</td>
+          <td>Packs a normalized signed 2D vector into 16 bits.</td>
+      </tr>
+      <tr>
+          <td>uint <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/packUnorm.xhtml">packUnorm2x16</a> (vec2 v)</td>
+          <td>Packs a normalized unsigned 2D vector into 16 bits.</td>
+      </tr>
+      <tr>
+          <td>vec2 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/unpackUnorm.xhtml">unpackSnorm2x16</a> (uint p)</td>
+          <td>Unpacks a normalized signed 2D vector from 16 bits.</td>
+      </tr>
+      <tr>
+          <td>vec2 <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/unpackUnorm.xhtml">unpackUnorm2x16</a> (uint p)</td>
+          <td>Unpacks a normalized unsigned 2D vector from 16 bits.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/lessThan.xhtml">lessThan</a> (type x, type y)</td>
+          <td>Checks if x is less than y.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/lessThanEqual.xhtml">lessThanEqual</a> (type x, type y)</td>
+          <td>Checks if x is less than or equal to y.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/greaterThan.xhtml">greaterThan</a> (type x, type y)</td>
+          <td>Checks if x is greater than y.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/greaterThanEqual.xhtml">greaterThanEqual</a> (type x, type y)</td>
+          <td>Checks if x is greater than or equal to y.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/equal.xhtml">equal</a> (type x, type y)</td>
+          <td>Checks if x is equal to y.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/notEqual.xhtml">notEqual</a> (type x, type y)</td>
+          <td>Checks if x is not equal to y.</td>
+      </tr>
+      <tr>
+          <td>bool <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/any.xhtml">any</a> (bvec x)</td>
+          <td>Checks if any component of x is true.</td>
+      </tr>
+      <tr>
+          <td>bool <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/all.xhtml">all</a> (bvec x)</td>
+          <td>Checks if all components of x are true.</td>
+      </tr>
+      <tr>
+          <td>bvec <a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/not.xhtml">not</a> (bvec x)</td>
+          <td>Computes the logical NOT of x.</td>
+      </tr>
+  </tbody>
+</table>
+<p>Here&rsquo;s the formatted version for the conversions and Shadertoy inputs/outputs in Markdown:</p>
+<h2 id="conversions">
+<a class="header-anchor" href="#conversions"></a>
+Conversions
+</h2><ul>
+<li>Int to Float: <code>int(uv.x * 3.0)</code></li>
+</ul>
+<h2 id="how-to">
+<a class="header-anchor" href="#how-to"></a>
+How to
+</h2><p><strong>Use structs:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">myDataType</span> <span class="p">{</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">occlusion</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">color</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="p">};</span> 
+</span></span><span class="line"><span class="cl"><span class="n">myDataType</span> <span class="n">myData</span> <span class="o">=</span> <span class="n">myDataType</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">));</span>  
+</span></span></code></pre></div><p><strong>Initialize arrays:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">float</span><span class="p">[]</span> <span class="n">x</span> <span class="o">=</span> <span class="k">float</span><span class="p">[](</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">);</span>  
+</span></span></code></pre></div><p><strong>Do conversions:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">b</span> <span class="o">=</span> <span class="k">float</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>  
+</span></span></code></pre></div><p><strong>Do component swizzling:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">vec4</span> <span class="n">a</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">);</span> 
+</span></span><span class="line"><span class="cl"><span class="k">vec4</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">zyyw</span><span class="p">;</span>  
+</span></span></code></pre></div><p><strong>Access matrix components:</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="n">mat4</span> <span class="n">m</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="mf">2.0</span><span class="p">);</span> 
+</span></span><span class="line"><span class="cl"><span class="n">m</span><span class="p">[</span><span class="mo">0</span><span class="p">][</span><span class="mo">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl"><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">;</span>  
+</span></span></code></pre></div><blockquote>
+<p><strong>Be careful!</strong></p>
+</blockquote>
+<ul>
+<li><strong>The f suffix for floating point numbers:</strong> <code>1.0f</code> is illegal in GLSL. Use <code>1.0</code>.</li>
+<li><strong>saturate():</strong> <code>saturate(x)</code> doesn&rsquo;t exist in GLSL. Use <code>clamp(x, 0.0, 1.0)</code> instead.</li>
+<li><strong>pow/sqrt:</strong> Please don&rsquo;t feed <code>sqrt()</code> and <code>pow()</code> with negative numbers. Add <code>abs()</code> or <code>max(0.0, x)</code> to the argument.</li>
+<li><strong>mod:</strong> Please don&rsquo;t do <code>mod(x, 0.0)</code>. This is undefined on some platforms.</li>
+<li><strong>Variables:</strong> Initialize your variables! Don&rsquo;t assume they&rsquo;ll be set to zero by default.</li>
+<li><strong>Functions:</strong> Don&rsquo;t name your functions the same as some of your variables.</li>
+</ul>
+<h2 id="shadertoy-inputs">
+<a class="header-anchor" href="#shadertoy-inputs"></a>
+Shadertoy Inputs
+</h2><table>
+  <thead>
+      <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>vec3</td>
+          <td>iResolution</td>
+          <td>Image/buffer: The viewport resolution (z is pixel aspect ratio, usually 1.0)</td>
+      </tr>
+      <tr>
+          <td>float</td>
+          <td>iTime</td>
+          <td>Image/sound/buffer: Current time in seconds</td>
+      </tr>
+      <tr>
+          <td>float</td>
+          <td>iTimeDelta</td>
+          <td>Image/buffer: Time it takes to render a frame, in seconds</td>
+      </tr>
+      <tr>
+          <td>int</td>
+          <td>iFrame</td>
+          <td>Image/buffer: Current frame</td>
+      </tr>
+      <tr>
+          <td>float</td>
+          <td>iFrameRate</td>
+          <td>Image/buffer: Number of frames rendered per second</td>
+      </tr>
+      <tr>
+          <td>float</td>
+          <td>iChannelTime[4]</td>
+          <td>Image/buffer: Time for channel (if video or sound), in seconds</td>
+      </tr>
+      <tr>
+          <td>vec3</td>
+          <td>iChannelResolution[4]</td>
+          <td>Image/buffer/sound: Input texture resolution for each channel</td>
+      </tr>
+      <tr>
+          <td>vec4</td>
+          <td>iMouse</td>
+          <td>Image/buffer: xy = current pixel coords (if LMB is down). zw = click pixel</td>
+      </tr>
+      <tr>
+          <td>sampler2D</td>
+          <td>iChannel{i}</td>
+          <td>Image/buffer/sound: Sampler for input textures i</td>
+      </tr>
+      <tr>
+          <td>vec4</td>
+          <td>iDate</td>
+          <td>Image/buffer/sound: Year, month, day, time in seconds in .xyzw</td>
+      </tr>
+      <tr>
+          <td>float</td>
+          <td>iSampleRate</td>
+          <td>Image/buffer/sound: The sound sample rate (typically 44100)</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="shadertoy-outputs">
+<a class="header-anchor" href="#shadertoy-outputs"></a>
+Shadertoy Outputs
+</h2><h4 id="image-shaders">
+<a class="header-anchor" href="#image-shaders"></a>
+Image shaders:
+</h4><p><code>fragColor</code> is used as output channel. It is not mandatory, but recommended to leave the alpha channel to 1.0.</p>
+<h4 id="sound-shaders">
+<a class="header-anchor" href="#sound-shaders"></a>
+Sound shaders:
+</h4><p>The <code>mainSound()</code> function returns a <code>vec2</code> containing the left and right (stereo) sound channel wave data.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Rust Essentials"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/rust/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Rust Essentials
+          
+        </h3>
+      </div>
+    
+
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Real-Time High Quality Rendering"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/games202/"></a>
+        <div class="article-nav-caption">Older</div>
+        <h3 class="article-nav-title">
+          
+            Real-Time High Quality Rendering
+          
+        </h3>
+      </div>
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#drawing-chinese-characters-with-bézier-curves">Drawing Chinese Characters with Bézier Curves</a></li>
+    <li><a href="#fireworks-forming-chinese-characters">Fireworks Forming Chinese Characters</a>
+      <ul>
+        <li><a href="#key-steps">Key Steps:</a></li>
+      </ul>
+    </li>
+    <li><a href="#mid-autumn-fireworks">Mid-Autumn Fireworks</a></li>
+    <li><a href="#resources-for-learning-shadertoy">Resources for Learning Shadertoy</a></li>
+    <li><a href="#guide-for-shadertoy">Guide for Shadertoy</a>
+      <ul>
+        <li><a href="#arithmetic-operators">Arithmetic Operators</a></li>
+        <li><a href="#logicalrelational-operators">Logical/Relational Operators</a></li>
+        <li><a href="#bit-operators">Bit Operators</a></li>
+        <li><a href="#comments">Comments</a></li>
+        <li><a href="#types">Types</a></li>
+        <li><a href="#format">Format</a></li>
+        <li><a href="#function-parameter-qualifiers">Function Parameter Qualifiers</a></li>
+        <li><a href="#global-variable-qualifiers">Global Variable Qualifiers</a></li>
+        <li><a href="#vector-components">Vector Components</a></li>
+        <li><a href="#flow-control">Flow Control</a></li>
+        <li><a href="#output">Output</a></li>
+        <li><a href="#input">Input</a></li>
+        <li><a href="#preprocessor-directives">Preprocessor Directives</a></li>
+        <li><a href="#built-in-functions">Built-in Functions</a></li>
+        <li><a href="#conversions">Conversions</a></li>
+        <li><a href="#how-to">How to</a></li>
+        <li><a href="#shadertoy-inputs">Shadertoy Inputs</a></li>
+        <li><a href="#shadertoy-outputs">Shadertoy Outputs</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#image-shaders">Image shaders:</a></li>
+                <li><a href="#sound-shaders">Sound shaders:</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2024
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            36.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:00
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#drawing-chinese-characters-with-bézier-curves">Drawing Chinese Characters with Bézier Curves</a></li>
+    <li><a href="#fireworks-forming-chinese-characters">Fireworks Forming Chinese Characters</a>
+      <ul>
+        <li><a href="#key-steps">Key Steps:</a></li>
+      </ul>
+    </li>
+    <li><a href="#mid-autumn-fireworks">Mid-Autumn Fireworks</a></li>
+    <li><a href="#resources-for-learning-shadertoy">Resources for Learning Shadertoy</a></li>
+    <li><a href="#guide-for-shadertoy">Guide for Shadertoy</a>
+      <ul>
+        <li><a href="#arithmetic-operators">Arithmetic Operators</a></li>
+        <li><a href="#logicalrelational-operators">Logical/Relational Operators</a></li>
+        <li><a href="#bit-operators">Bit Operators</a></li>
+        <li><a href="#comments">Comments</a></li>
+        <li><a href="#types">Types</a></li>
+        <li><a href="#format">Format</a></li>
+        <li><a href="#function-parameter-qualifiers">Function Parameter Qualifiers</a></li>
+        <li><a href="#global-variable-qualifiers">Global Variable Qualifiers</a></li>
+        <li><a href="#vector-components">Vector Components</a></li>
+        <li><a href="#flow-control">Flow Control</a></li>
+        <li><a href="#output">Output</a></li>
+        <li><a href="#input">Input</a></li>
+        <li><a href="#preprocessor-directives">Preprocessor Directives</a></li>
+        <li><a href="#built-in-functions">Built-in Functions</a></li>
+        <li><a href="#conversions">Conversions</a></li>
+        <li><a href="#how-to">How to</a></li>
+        <li><a href="#shadertoy-inputs">Shadertoy Inputs</a></li>
+        <li><a href="#shadertoy-outputs">Shadertoy Outputs</a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#image-shaders">Image shaders:</a></li>
+                <li><a href="#sound-shaders">Sound shaders:</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>

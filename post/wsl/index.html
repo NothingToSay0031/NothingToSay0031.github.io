@@ -1,0 +1,2125 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Windows Development Environment | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="工欲善其事，必先利其器。"
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Windows Development Environment | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="工欲善其事，必先利其器。"
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/wsl/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2023-03-26T15:04:10&#43;00:00" />
+  <meta property="article:modified_time" content="2023-03-26T15:04:10&#43;00:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Windows Development Environment">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">Windows Development Environment</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/wsl/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2023-03-26 15:04:10 &#43;0000 UTC" itemprop="datePublished"
+      >2023-03-26</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2023-03-26</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="windows">
+<a class="header-anchor" href="#windows"></a>
+Windows
+</h1><p>VS Code</p>
+<p>Typora (Theme: Notion)</p>
+<p>PowerToys</p>
+<p>Snipaste</p>
+<p>PicGo</p>
+<p>WSL2</p>
+<p>TeX Live</p>
+<h1 id="windows-subsystem-for-linux">
+<a class="header-anchor" href="#windows-subsystem-for-linux"></a>
+Windows Subsystem for Linux
+</h1><h2 id="shell">
+<a class="header-anchor" href="#shell"></a>
+Shell
+</h2><h3 id="zsh">
+<a class="header-anchor" href="#zsh"></a>
+zsh
+</h3><p>将zsh作为默认的 Shell 环境 <code>chsh -s $(which zsh)</code></p>
+<p>插件</p>
+<ul>
+<li><a href="https://ohmyz.sh/">oh-my-zsh</a></li>
+<li><a href="https://github.com/romkatv/powerlevel10k">powerlevel10k</a></li>
+<li><a href="https://github.com/zsh-users/zsh-syntax-highlighting">zsh-syntax-highlighting</a></li>
+<li><a href="https://github.com/zsh-users/zsh-autosuggestions">zsh-autosuggestions</a></li>
+<li><a href="https://github.com/zsh-users/zsh-history-substring-search">zsh-history-substring-search</a></li>
+<li>z</li>
+<li>sudo</li>
+<li>extract</li>
+<li>docker</li>
+</ul>
+<h3 id="配置与-github-连接的-ssh-密钥">
+<a class="header-anchor" href="#%e9%85%8d%e7%bd%ae%e4%b8%8e-github-%e8%bf%9e%e6%8e%a5%e7%9a%84-ssh-%e5%af%86%e9%92%a5"></a>
+配置与 GitHub 连接的 SSH 密钥
+</h3><ul>
+<li>
+<p>在 WSL 下生成 SSH 公钥 — 私钥对（将邮箱替换为你的邮箱），此时生成的 SSH 密钥默认位于 <code>~/.ssh</code> 路径下，公钥为 <code>id_rsa.pub</code>，私钥为 <code>id_rsa</code>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ssh-keygen -t rsa -b <span class="m">4096</span> -C <span class="s2">&#34;email@ex.com&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>打开 ssh-agent 使之在后台运行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ <span class="nb">eval</span> <span class="s2">&#34;</span><span class="k">$(</span>ssh-agent -s<span class="k">)</span><span class="s2">&#34;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>将私钥添加到 ssh-agent 之中：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ssh-add ~/.ssh/id_rsa
+</span></span></code></pre></div></li>
+<li>
+<p>查看公钥并将之复制到剪贴板：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># 查看公钥内容</span>
+</span></span><span class="line"><span class="cl">$ cat ~/.ssh/id_rsa.pub
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 将公钥复制到剪贴板</span>
+</span></span><span class="line"><span class="cl">$ cat ~/.ssh/id_rsa.pub <span class="p">|</span> clip.exe
+</span></span></code></pre></div></li>
+<li>
+<p>将复制好的公钥添加到 GitHub 账户密钥里面：<a href="https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account">Adding a new SSH key to your GitHub account - GitHub Help</a>.</p>
+</li>
+<li>
+<p>通过命令 <code>ssh -T git@github.com</code> 来测试是否能够登录成功。</p>
+</li>
+</ul>
+<h3 id="配置代理">
+<a class="header-anchor" href="#%e9%85%8d%e7%bd%ae%e4%bb%a3%e7%90%86"></a>
+配置代理
+</h3><p>在 <code>~/.zshrc</code> 或你使用的 Shell 的配置文件中添加内容，实现自动化配置代理：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Fetch Windows ip address inside WSL environment</span>
+</span></span><span class="line"><span class="cl"><span class="nv">WINDOWS_IP</span><span class="o">=</span><span class="k">$(</span>ip route <span class="p">|</span> grep default <span class="p">|</span> awk <span class="s1">&#39;{print $3}&#39;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PROXY_HTTP</span><span class="o">=</span><span class="s2">&#34;http://</span><span class="si">${</span><span class="nv">WINDOWS_IP</span><span class="si">}</span><span class="s2">:7890&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PROXY_SOCKS5</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">WINDOWS_IP</span><span class="si">}</span><span class="s2">:7890&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Git &amp; SSH for Git proxy</span>
+</span></span><span class="line"><span class="cl">proxy_git <span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  git config --global http.https://github.com.proxy <span class="si">${</span><span class="nv">PROXY_HTTP</span><span class="si">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> ! grep -qF <span class="s2">&#34;Host github.com&#34;</span> ~/.ssh/config <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;Host github.com&#34;</span> &gt;&gt; ~/.ssh/config
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;  User git&#34;</span> &gt;&gt; ~/.ssh/config
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;  ProxyCommand nc -X 5 -x </span><span class="si">${</span><span class="nv">PROXY_SOCKS5</span><span class="si">}</span><span class="s2"> %h %p&#34;</span> &gt;&gt; ~/.ssh/config
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">lino</span><span class="o">=</span><span class="k">$(($(</span>awk <span class="s1">&#39;/Host github.com/{print NR}&#39;</span>  ~/.ssh/config<span class="k">)</span><span class="o">+</span><span class="m">2</span><span class="k">))</span>
+</span></span><span class="line"><span class="cl">    sed -i <span class="s2">&#34;</span><span class="si">${</span><span class="nv">lino</span><span class="si">}</span><span class="s2">c\  ProxyCommand nc -X 5 -x </span><span class="si">${</span><span class="nv">PROXY_SOCKS5</span><span class="si">}</span><span class="s2"> %h %p&#34;</span> ~/.ssh/config
+</span></span><span class="line"><span class="cl">  <span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Set proxy</span>
+</span></span><span class="line"><span class="cl">set_proxy <span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">PROXY_HTTP</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">PROXY_HTTP</span><span class="si">}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">  proxy_git
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Unset proxy</span>
+</span></span><span class="line"><span class="cl">unset_proxy <span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">unset</span> http_proxy
+</span></span><span class="line"><span class="cl">  <span class="nb">unset</span> https_proxy
+</span></span><span class="line"><span class="cl">  git config --global --unset http.https://github.com.proxy
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Set alias</span>
+</span></span><span class="line"><span class="cl"><span class="nb">alias</span> <span class="nv">proxy</span><span class="o">=</span>set_proxy
+</span></span><span class="line"><span class="cl"><span class="nb">alias</span> <span class="nv">deproxy</span><span class="o">=</span>unset_proxy
+</span></span></code></pre></div><p>其中：</p>
+<ul>
+<li>第一行 <code>WINDOWS_IP=$(ip route | grep default | awk '{print $3}')</code> 让我们使用 WSL 2 时可以自动获取最新的 WSL IP 地址，WSL 1 可以直接将 <code>WINDOWS_IP</code> 设置为 <code>127.0.0.1</code>；</li>
+<li>之后的 <code>PROXY_HTTP</code> 和 <code>PROXY_SOCKS5</code> 分别是我们代理的 HTTP 协议地址和 SOCKS5 地址；</li>
+<li>函数 <code>proxy_git()</code> 让我们直接设置 Git 自己的代理和 ssh 登录 GitHub 的代理；</li>
+<li>后续的 <code>set_proxy()</code> 和 <code>unset_proxy()</code> 就分别是设定 Git 代理和环境变量，以及取消 Git 代理、删除环境变量；</li>
+</ul>
+<p>使用命令 <code>proxy</code> 和 <code>deproxy</code> 即可开启、关闭 WSL 中工具使用代理的功能。</p>
+<h2 id="vs-code">
+<a class="header-anchor" href="#vs-code"></a>
+VS Code
+</h2><h3 id="个性化">
+<a class="header-anchor" href="#%e4%b8%aa%e6%80%a7%e5%8c%96"></a>
+个性化
+</h3><p>字体</p>
+<ul>
+<li><strong>Fira Code</strong></li>
+<li><strong>FiraCode Nerd Font Mono</strong></li>
+<li>JetBrains Mono</li>
+</ul>
+<p>主题</p>
+<ul>
+<li><strong>GitHub Theme</strong></li>
+<li><strong>Material Icon Theme</strong></li>
+<li>Dracula Refined</li>
+<li>Everforest</li>
+<li><strong>Dracula</strong></li>
+</ul>
+<h3 id="插件">
+<a class="header-anchor" href="#%e6%8f%92%e4%bb%b6"></a>
+插件
+</h3><ul>
+<li>LeetCode</li>
+<li>Vim</li>
+<li>Code Runner</li>
+<li>C/C++ (Pre-Release Version)</li>
+<li>CMake</li>
+<li>CMake Tools (Pre-Release Version)</li>
+<li>WSL</li>
+<li>vscode-hexo</li>
+<li>Error Lens</li>
+<li>CodeLLDB</li>
+</ul>
+<h2 id="hexo-博客">
+<a class="header-anchor" href="#hexo-%e5%8d%9a%e5%ae%a2"></a>
+Hexo 博客
+</h2><ol>
+<li>安装Node.js</li>
+<li><code>npm install -g hexo-cli</code>安装Hexo</li>
+<li>迁移文件
+<ul>
+<li>配置<code>_config.yml</code></li>
+<li>主题<code>theme/</code></li>
+<li>文章<code>source/</code></li>
+<li>模板<code>scaffolds/</code></li>
+<li>插件<code>package.json</code></li>
+</ul>
+</li>
+<li><code>npm install</code>安装<code>package.json</code>中的插件</li>
+<li><code>hexo g -d</code></li>
+</ol>
+<p>使用MathJax时, 普通Tex公式内的 <code>\</code>用<code>\\</code>转义, <code>_</code>用<code>\_</code>转义.</p>
+<h1 id="vs-code-json">
+<a class="header-anchor" href="#vs-code-json"></a>
+VS Code JSON
+</h1><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// settings.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;editor.fontFamily&#34;</span><span class="p">:</span> <span class="s2">&#34;&#39;Fira Code Retina&#39;, &#39;Cascadia Mono&#39;, &#39;思源宋体&#39;&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;terminal.integrated.fontFamily&#34;</span><span class="p">:</span> <span class="s2">&#34;&#39;FiraCode Nerd Font Mono&#39;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;workbench.colorTheme&#34;</span><span class="p">:</span> <span class="s2">&#34;GitHub Light&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;workbench.iconTheme&#34;</span><span class="p">:</span> <span class="s2">&#34;material-icon-theme&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.useSystemClipboard&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.sneak&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.camelCaseMotion.enable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.easymotion&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.highlightedyank.enable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.hlsearch&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.handleKeys&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;&lt;C-c&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;&lt;C-z&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;&lt;C-y&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;&lt;C-x&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;&lt;C-v&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.replaceWithRegister&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.smartRelativeLine&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.sneakUseIgnorecaseAndSmartcase&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.targets.enable&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;vim.visualstar&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// keybindings.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;alt+j&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;selectNextSuggestion&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;when&#34;</span><span class="p">:</span> <span class="s2">&#34;suggestWidgetMultipleSuggestions &amp;&amp; suggestWidgetVisible &amp;&amp; textInputFocus || suggestWidgetVisible &amp;&amp; textInputFocus &amp;&amp; !suggestWidgetHasFocusedSuggestion&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;alt+k&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;selectPrevSuggestion&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;when&#34;</span><span class="p">:</span> <span class="s2">&#34;suggestWidgetMultipleSuggestions &amp;&amp; suggestWidgetVisible &amp;&amp; textInputFocus || suggestWidgetVisible &amp;&amp; textInputFocus &amp;&amp; !suggestWidgetHasFocusedSuggestion&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div><h1 id="vim-shortcuts">
+<a class="header-anchor" href="#vim-shortcuts"></a>
+Vim Shortcuts
+</h1><p><strong>A Good Tutorial Video: <a href="https://www.youtube.com/watch?v=5nHdG0MdK1Y">Youtube</a>, <a href="https://www.bilibili.com/video/BV1qD4y1W7aG/?spm_id_from=333.999.0.0&amp;vd_source=a32bcb316a5f16efd4a398938b585caf">Bilibili</a></strong></p>
+<p><code>n</code> stands for <code>NORMAL</code> mode, <code>i</code> stands for <code>INSERT</code> mode, <code>v</code> stands for <code>VISUAL</code> mode.</p>
+<h3 id="open-and-close-files">
+<a class="header-anchor" href="#open-and-close-files"></a>
+Open and Close Files
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:w</code></td>
+          <td>Write(save) current buffer</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:q</code></td>
+          <td>Close current buffer (would fail if you don&rsquo;t save first)</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:wq</code></td>
+          <td>Save and close current buffer</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:q!</code></td>
+          <td>Exit current buffer without saving</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:qa!</code></td>
+          <td>Exit all open buffers without saving</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:wqa</code></td>
+          <td>Save and exit all open buffers</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="navigation">
+<a class="header-anchor" href="#navigation"></a>
+Navigation
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>h</code></td>
+          <td>Move left</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>j</code></td>
+          <td>Move down</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>k</code></td>
+          <td>Move up</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>l</code></td>
+          <td>Move right</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>w</code></td>
+          <td>One word forward</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>b</code></td>
+          <td>One word backward</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>^</code></td>
+          <td>Beginning of line</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>$</code></td>
+          <td>End of line</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>gg</code></td>
+          <td>Beginning of file</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>G</code></td>
+          <td>End of file</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>{</code></td>
+          <td>One paragraph backward</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>}</code></td>
+          <td>One paragraph forward</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>f</code> + <code>[char]</code></td>
+          <td>Move to next occurence of <code>[char]</code> in current line (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>F</code> + <code>[char]</code></td>
+          <td>Move to prev occurence of <code>[char]</code> in current line (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>Ctrl</code>+<code>u</code></td>
+          <td>Move Up half a Page (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>Ctrl</code>+<code>d</code></td>
+          <td>Move Down half a Page (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>Ctrl</code>+<code>b</code></td>
+          <td>Move Up a Full Page (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>Ctrl</code>+<code>f</code></td>
+          <td>Move Down a Full Page (Covered in Part 2 video)</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:[num-of-line]</code> + <code>Enter</code></td>
+          <td>Go to a specific line</td>
+      </tr>
+      <tr>
+          <td><code>n</code>, <code>v</code></td>
+          <td><code>/[search-item]</code> + <code>Enter</code> + <code>n</code></td>
+          <td>Find pattern and go to next match</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="enter-insert-mode-from-normal-mode">
+<a class="header-anchor" href="#enter-insert-mode-from-normal-mode"></a>
+Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>i</code></td>
+          <td>Insert before cursor</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>a</code></td>
+          <td>Append after cursor</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>I</code></td>
+          <td>Insert at the beginning of the line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>A</code></td>
+          <td>Append at the end of the line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>o</code></td>
+          <td>Insert to next line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>O</code></td>
+          <td>Insert to previous line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>[Navigation]</code></td>
+          <td>Delete from before the cursor to <code>[Navigation]</code> and insert. Examples are as follow</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>w</code></td>
+          <td>Delete from before the cursor to end of current word and insert</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>i</code> + <code>w</code></td>
+          <td>Delete current word and insert</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>$</code></td>
+          <td>Delete from before the cursor to end of the line and insert</td>
+      </tr>
+      <tr>
+          <td><code>i</code></td>
+          <td><code>&lt;Esc&gt;</code></td>
+          <td>Go back to Normal Mode, remap to <code>jk</code> recommended</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="enter-insert-mode-from-normal-mode-1">
+<a class="header-anchor" href="#enter-insert-mode-from-normal-mode-1"></a>
+Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>i</code></td>
+          <td>Insert before cursor</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>a</code></td>
+          <td>Append after cursor</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>I</code></td>
+          <td>Insert at the beginning of the line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>A</code></td>
+          <td>Append at the end of the line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>o</code></td>
+          <td>Insert to next line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>O</code></td>
+          <td>Insert to previous line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>[Navigation]</code></td>
+          <td>Delete from before the cursor to <code>[Navigation]</code> and insert. Examples are as follow</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>w</code></td>
+          <td>Delete from before the cursor to end of current word and insert</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>i</code> + <code>w</code></td>
+          <td>Delete current word and insert</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>c</code> + <code>$</code></td>
+          <td>Delete from before the cursor to end of the line and insert</td>
+      </tr>
+      <tr>
+          <td><code>i</code></td>
+          <td><code>&lt;Esc&gt;</code></td>
+          <td>Go back to Normal Mode, remap to <code>jk</code> recommended</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="edit-in-normal-mode">
+<a class="header-anchor" href="#edit-in-normal-mode"></a>
+Edit in <code>NORMAL</code> Mode
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>dd</code></td>
+          <td>Delete(cut) current line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>d</code> + <code>[Number]</code> + <code>d</code> Or <code>[Number]</code> + <code>dd</code></td>
+          <td>Delete(cut) following <code>[Number]</code> of lines</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>d</code> + <code>[Navigation]</code></td>
+          <td>Delete(cut) from before the cursor to <code>[Navigation]</code>, similar to <code>c</code> + <code>[Navigation]</code> above</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>yy</code></td>
+          <td>Yank(copy) current line</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>y</code> + <code>[Number]</code> + <code>y</code> Or <code>[number]</code> + <code>yy</code></td>
+          <td>Yank(copy) following <code>[Number]</code> of lines</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>y</code> + <code>[Navigation]</code></td>
+          <td>Yank(copy) from before the cursor to <code>[Navigation]</code>, similar to <code>c</code> + <code>[Navigation]</code> above</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>p</code></td>
+          <td>Paste from what you delete or yank</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>x</code></td>
+          <td>Delete(cut) the character under the cursor</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>u</code></td>
+          <td>Undo changes</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>Ctrl</code>+<code>r</code></td>
+          <td>Redo changes</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>:%s/[foo]/[bar]/g</code></td>
+          <td>Find each occurrence of <code>[foo]</code> (in all lines), and replace it with <code>[bar]</code>. More substitute commands <a href="https://vim.fandom.com/wiki/Search_and_replace">here</a>.</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="visual-mode-shortcuts">
+<a class="header-anchor" href="#visual-mode-shortcuts"></a>
+<code>VISUAL</code> mode shortcuts
+</h3><table>
+  <thead>
+      <tr>
+          <th>Mode</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>v</code></td>
+          <td>Enter Visual Character Mode</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>V</code></td>
+          <td>Enter Visual Line Mode</td>
+      </tr>
+      <tr>
+          <td><code>V-Line</code></td>
+          <td><code>&gt;</code>; <code>&lt;</code></td>
+          <td>Increase Indent; Decrease Indent</td>
+      </tr>
+      <tr>
+          <td><code>n</code></td>
+          <td><code>Ctrl</code>+<code>v</code></td>
+          <td>Enter Visual Block Mode</td>
+      </tr>
+      <tr>
+          <td><code>v</code></td>
+          <td><code>&lt;Esc&gt;</code></td>
+          <td>Exit Visual Mode, remap to <code>jk</code> recommended</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="vim-settings-under-vscode">
+<a class="header-anchor" href="#vim-settings-under-vscode"></a>
+Vim settings under VSCode
+</h3><ol>
+<li>Press <code>Ctrl/Cmd+Shift+p</code> in VSCode</li>
+<li>Find <code>Preferences: Open User Settings (JSON)</code>, open <code>settings.json</code></li>
+<li>Configure the file, all options are <a href="https://github.com/VSCodeVim/Vim">here</a></li>
+</ol>
+<h1 id="vscode-vim">
+<a class="header-anchor" href="#vscode-vim"></a>
+VScode Vim
+</h1><h3 id="edit-in-normal">
+<a class="header-anchor" href="#edit-in-normal"></a>
+Edit in <code>NORMAL</code>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Package</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+          <th>Remap Needed?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Vim</td>
+          <td><code>gb</code></td>
+          <td>Mutlicursor operation</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>VScode</td>
+          <td><code>Ctrl+n</code></td>
+          <td>Rename all the pattern that is under the cursor</td>
+          <td><code>keybindings.json</code></td>
+      </tr>
+      <tr>
+          <td>Vim Commentary</td>
+          <td><code>gcc</code> / <code>gc5j</code></td>
+          <td>Toggle comment on this line / next 5 line(not including current line)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>EasyMotion</td>
+          <td><code>&lt;leader&gt;&lt;leader&gt;s+[char]</code></td>
+          <td>Quick navigation to <code>[char]</code> on the screen(more motion on doc)</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim-surround</td>
+          <td><code>ys[motion][symbol]</code>, <code>ysiw)</code></td>
+          <td>Yank <code>[symbol]</code> around <code>[motion]</code>, the example means surround the word under the cursor with <code>()</code></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim-surround</td>
+          <td><code>cs[symbol][newsymbol]</code></td>
+          <td>Change <code>[symbol]</code> to <code>[newsymbol]</code> when your cursor is within the <code>[symbol]</code></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim Sneak</td>
+          <td><code>&lt;operator&gt;z&lt;char&gt;&lt;char&gt;</code></td>
+          <td>Do <code>[operator]</code> until the next occurence of <code>&lt;char&gt;&lt;char&gt;</code></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim Sneak</td>
+          <td><code>3dzqt</code></td>
+          <td>An example: Delete everything until the next 3rd occurence of <code>qt</code></td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="tab-file-and-window-navigation">
+<a class="header-anchor" href="#tab-file-and-window-navigation"></a>
+Tab, File and Window Navigation
+</h3><table>
+  <thead>
+      <tr>
+          <th>Package</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+          <th>Remap Needed?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>VSCode</td>
+          <td><code>ctrl + d</code></td>
+          <td>Toggle peek definition</td>
+          <td><code>keybindings.json</code></td>
+      </tr>
+      <tr>
+          <td>Vim</td>
+          <td><code>gd</code></td>
+          <td>Go to Definition</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim</td>
+          <td><code>gh</code></td>
+          <td>Hover doc</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>VScode</td>
+          <td><code>cmd/ctrl+p</code></td>
+          <td>Search file by name and open</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>Vim</td>
+          <td><code>tp</code>, <code>tn</code>, <code>tf</code>, <code>tl</code></td>
+          <td>In the current editor group: prev tab, next tab, first tab, last tab</td>
+          <td><code>settings.json</code></td>
+      </tr>
+      <tr>
+          <td>VScode</td>
+          <td><code>ctrl+z</code></td>
+          <td>Switch focus between editor and terminal</td>
+          <td><code>keybindings.json</code></td>
+      </tr>
+      <tr>
+          <td>VScode</td>
+          <td><code>cmd/ctrl+j</code></td>
+          <td>Hide Terminal</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>VScode</td>
+          <td><code>cmd/ctrl+b</code></td>
+          <td>Toggle File explorer</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="editor-group-navigation">
+<a class="header-anchor" href="#editor-group-navigation"></a>
+Editor Group Navigation
+</h3><table>
+  <thead>
+      <tr>
+          <th>Package</th>
+          <th>Shortcut</th>
+          <th>Description</th>
+          <th>Remap Needed?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>VSCode</td>
+          <td><code>ctrl + \</code></td>
+          <td>Split Editor</td>
+          <td><code>keybindings.json</code></td>
+      </tr>
+      <tr>
+          <td>VSCode</td>
+          <td><code>ctrl + h/l</code></td>
+          <td>Move to left/right editor group</td>
+          <td><code>keybindings.json</code></td>
+      </tr>
+      <tr>
+          <td>VSCode</td>
+          <td><code>cmd/ctrl + k + w</code></td>
+          <td>Close all tabs in active editor group</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<p>For the emulated Vim plugins, some of them need to turn them on in <code>settings.json</code> as well, refer to the doc to see if that is required.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// settings.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.useCtrlKeys&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.handleKeys&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-c&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-z&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-x&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-v&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-f&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;&lt;C-y&gt;&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.useSystemClipboard&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.insertModeKeyBindings&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;i&#34;</span><span class="p">,</span> <span class="s2">&#34;i&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;after&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;Esc&gt;&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.visualModeKeyBindings&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;i&#34;</span><span class="p">,</span> <span class="s2">&#34;i&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;after&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;Esc&gt;&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.normalModeKeyBindings&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;leader&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;t&#34;</span><span class="p">,</span> <span class="s2">&#34;n&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;commands&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;:tabnext&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;leader&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;t&#34;</span><span class="p">,</span> <span class="s2">&#34;p&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;commands&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;:tabprev&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;leader&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;t&#34;</span><span class="p">,</span> <span class="s2">&#34;f&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;commands&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;:tabfirst&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;before&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;&lt;leader&gt;&#34;</span><span class="p">,</span> <span class="s2">&#34;t&#34;</span><span class="p">,</span> <span class="s2">&#34;l&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;commands&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;:tablast&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.ignorecase&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.leader&#34;</span><span class="p">:</span> <span class="s2">&#34; &#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.easymotion&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.sneak&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.surround&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.statusBarColorControl&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;vim.statusBarColors&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;normal&#34;</span><span class="p">:</span> <span class="s2">&#34;#005f5f&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;insert&#34;</span><span class="p">:</span> <span class="s2">&#34;#5f0000&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;visual&#34;</span><span class="p">:</span> <span class="s2">&#34;#5f00af&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;visualline&#34;</span><span class="p">:</span> <span class="s2">&#34;#005f87&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;visualblock&#34;</span><span class="p">:</span> <span class="s2">&#34;#86592d&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;replace&#34;</span><span class="p">:</span> <span class="s2">&#34;#000000&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;workbench.colorCustomizations&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;statusBar.background&#34;</span><span class="p">:</span> <span class="s2">&#34;#5f0000&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;statusBar.noFolderBackground&#34;</span><span class="p">:</span> <span class="s2">&#34;#5f0000&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;statusBar.debuggingBackground&#34;</span><span class="p">:</span> <span class="s2">&#34;#5f0000&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// keybindings.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+d&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;editor.action.peekDefinition&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+d&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;editor.closeTestPeek&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;when&#34;</span><span class="p">:</span> <span class="s2">&#34;testing.isInPeek &amp;&amp; !config.editor.stablePeek || testing.isPeekVisible &amp;&amp; !config.editor.stablePeek&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+n&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;editor.action.rename&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+z&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.terminal.focus&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+z&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.focusActiveEditorGroup&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;when&#34;</span><span class="p">:</span> <span class="s2">&#34;terminalFocus&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+m&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.toggleEditorWidths&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+\\&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.splitEditor&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+h&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.navigateLeft&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+l&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.navigateRight&#34;</span> <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="p">{</span> <span class="nt">&#34;key&#34;</span><span class="p">:</span> <span class="s2">&#34;ctrl+w&#34;</span><span class="p">,</span> <span class="nt">&#34;command&#34;</span><span class="p">:</span> <span class="s2">&#34;workbench.action.closeEditorsAndGroup&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span>
+</span></span></code></pre></div>
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="TOEFL GRE"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/tg/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            TOEFL GRE
+          
+        </h3>
+      </div>
+    
+
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Multimedia Systems Design"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/csci-576/"></a>
+        <div class="article-nav-caption">Older</div>
+        <h3 class="article-nav-title">
+          
+            Multimedia Systems Design
+          
+        </h3>
+      </div>
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#windows">Windows</a></li>
+    <li><a href="#windows-subsystem-for-linux">Windows Subsystem for Linux</a>
+      <ul>
+        <li><a href="#shell">Shell</a>
+          <ul>
+            <li><a href="#zsh">zsh</a></li>
+            <li><a href="#配置与-github-连接的-ssh-密钥">配置与 GitHub 连接的 SSH 密钥</a></li>
+            <li><a href="#配置代理">配置代理</a></li>
+          </ul>
+        </li>
+        <li><a href="#vs-code">VS Code</a>
+          <ul>
+            <li><a href="#个性化">个性化</a></li>
+            <li><a href="#插件">插件</a></li>
+          </ul>
+        </li>
+        <li><a href="#hexo-博客">Hexo 博客</a></li>
+      </ul>
+    </li>
+    <li><a href="#vs-code-json">VS Code JSON</a></li>
+    <li><a href="#vim-shortcuts">Vim Shortcuts</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#open-and-close-files">Open and Close Files</a></li>
+            <li><a href="#navigation">Navigation</a></li>
+            <li><a href="#enter-insert-mode-from-normal-mode">Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode</a></li>
+            <li><a href="#enter-insert-mode-from-normal-mode-1">Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode</a></li>
+            <li><a href="#edit-in-normal-mode">Edit in <code>NORMAL</code> Mode</a></li>
+            <li><a href="#visual-mode-shortcuts"><code>VISUAL</code> mode shortcuts</a></li>
+            <li><a href="#vim-settings-under-vscode">Vim settings under VSCode</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#vscode-vim">VScode Vim</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#edit-in-normal">Edit in <code>NORMAL</code></a></li>
+            <li><a href="#tab-file-and-window-navigation">Tab, File and Window Navigation</a></li>
+            <li><a href="#editor-group-navigation">Editor Group Navigation</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2024
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            36.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:00
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#windows">Windows</a></li>
+    <li><a href="#windows-subsystem-for-linux">Windows Subsystem for Linux</a>
+      <ul>
+        <li><a href="#shell">Shell</a>
+          <ul>
+            <li><a href="#zsh">zsh</a></li>
+            <li><a href="#配置与-github-连接的-ssh-密钥">配置与 GitHub 连接的 SSH 密钥</a></li>
+            <li><a href="#配置代理">配置代理</a></li>
+          </ul>
+        </li>
+        <li><a href="#vs-code">VS Code</a>
+          <ul>
+            <li><a href="#个性化">个性化</a></li>
+            <li><a href="#插件">插件</a></li>
+          </ul>
+        </li>
+        <li><a href="#hexo-博客">Hexo 博客</a></li>
+      </ul>
+    </li>
+    <li><a href="#vs-code-json">VS Code JSON</a></li>
+    <li><a href="#vim-shortcuts">Vim Shortcuts</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#open-and-close-files">Open and Close Files</a></li>
+            <li><a href="#navigation">Navigation</a></li>
+            <li><a href="#enter-insert-mode-from-normal-mode">Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode</a></li>
+            <li><a href="#enter-insert-mode-from-normal-mode-1">Enter <code>INSERT</code> Mode from <code>NORMAL</code> Mode</a></li>
+            <li><a href="#edit-in-normal-mode">Edit in <code>NORMAL</code> Mode</a></li>
+            <li><a href="#visual-mode-shortcuts"><code>VISUAL</code> mode shortcuts</a></li>
+            <li><a href="#vim-settings-under-vscode">Vim settings under VSCode</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#vscode-vim">VScode Vim</a>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#edit-in-normal">Edit in <code>NORMAL</code></a></li>
+            <li><a href="#tab-file-and-window-navigation">Tab, File and Window Navigation</a></li>
+            <li><a href="#editor-group-navigation">Editor Group Navigation</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>

@@ -1,0 +1,1484 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Geometric Shape Modeling | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="Developing geometry processing algorithms from scratch."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Geometric Shape Modeling | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="Developing geometry processing algorithms from scratch."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/csci-599/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2024-02-22T22:56:51&#43;00:00" />
+  <meta property="article:modified_time" content="2024-02-22T22:56:51&#43;00:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Geometric Shape Modeling">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">Geometric Shape Modeling</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/csci-599/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2024-02-22 22:56:51 &#43;0000 UTC" itemprop="datePublished"
+      >2024-02-22</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2024-02-22</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="reconstruction">
+<a class="header-anchor" href="#reconstruction"></a>
+Reconstruction
+</h1><p>Implement a simplified version of the method in &ldquo;Poisson Surface Reconstruction&rdquo; by Kazhdan et al. 2006.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222342552.gif" alt=""></p>
+<h1 id="registration">
+<a class="header-anchor" href="#registration"></a>
+Registration
+</h1><p>Implement a version of the iterative closest point (ICP).</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222344314.gif" alt=""></p>
+<h1 id="smoothing">
+<a class="header-anchor" href="#smoothing"></a>
+Smoothing
+</h1><p>Smooth a data signal defined over a curved surface.</p>
+<p>This data could be a scalar field on the surface and smoothing corresponds to data denoising.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222344633.gif" alt=""></p>
+<p>Or the data could be the vector field of the surface&rsquo;s own geometry. This corresponds to geometric smoothing.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222344457.gif" alt=""></p>
+<h1 id="subdivision">
+<a class="header-anchor" href="#subdivision"></a>
+Subdivision
+</h1><p>Produce a high-resolution, smooth surface from any coarse triangle mesh by upsampling and loop subdivision.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222345927.gif" alt=""></p>
+<h1 id="decimation">
+<a class="header-anchor" href="#decimation"></a>
+Decimation
+</h1><p>Reduce faces and vertices through shortest edge collapse and quadric error minimization.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222345310.gif" alt=""></p>
+<h1 id="deformation">
+<a class="header-anchor" href="#deformation"></a>
+Deformation
+</h1><p>Implement biharmonic deformation and as-rigid-as-possible deformation algorithms for interactive surface deformation.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403180241804.gif" alt=""></p>
+<h1 id="parameterization">
+<a class="header-anchor" href="#parameterization"></a>
+Parameterization
+</h1><p>Compute a 2D parameterization utilizing Tutte&rsquo;s mapping as well as the &ldquo;least squares conformal&rdquo; energy.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403222018164.gif" alt=""></p>
+<h1 id="distances">
+<a class="header-anchor" href="#distances"></a>
+Distances
+</h1><p>Implement the heat geodesics algorithm.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403290302589.gif" alt=""></p>
+<h1 id="curvature">
+<a class="header-anchor" href="#curvature"></a>
+Curvature
+</h1><p>Compute discrete curvature quantities on a surface.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202404130638471.gif" alt=""></p>
+<h1 id="normal-driven-spherical-shape-analogies">
+<a class="header-anchor" href="#normal-driven-spherical-shape-analogies"></a>
+Normal-Driven Spherical Shape Analogies
+</h1><p>Implement the paper &ldquo;Normal-Driven Spherical Shape Analogies&rdquo; (SGP 2021).</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202404201324685.gif" alt=""></p>
+<h2 id="introduction">
+<a class="header-anchor" href="#introduction"></a>
+Introduction
+</h2><h3 id="related-work">
+<a class="header-anchor" href="#related-work"></a>
+Related Work
+</h3><p>Before the publication of &ldquo;Normal-Driven Spherical Shape Analogies&rdquo;, the field lacked a comprehensive method for transferring geometric styles effectively. Previous approaches mainly targeted specific stylization styles for 3D objects, like collage art, manga style, or cubic style, but lacked a unified framework for achieving diverse results. Some techniques focused on transferring 3D geometric details, such as patch-based assembly and voxel-based texture synthesis, while others utilized surface normals in various geometry processing tasks like PolyCube deformation or mesh denoising.</p>
+<p>However, there was a notable absence of methods that employed analogy-based approaches for stylization across different styles within a single framework. Additionally, existing techniques for surface normal-based deformations struggled to generalize to various stylization styles beyond specific cases like PolyCube deformation or cubic stylization. The paper addressed these limitations by introducing a novel approach that effectively leveraged analogy-based methods for diverse stylization styles and surface normal-based deformations.</p>
+<h3 id="paper-contribution">
+<a class="header-anchor" href="#paper-contribution"></a>
+Paper Contribution
+</h3><p>The paper proposes a novel method for shape analogy, focusing on transferring geometric styles using surface normals. The approach formulates the problem as finding correspondences between a reference shape (a sphere) and a style shape, and subsequently transferring these correspondences to an input shape to generate an output shape with desired stylistic attributes.</p>
+<h3 id="methodology">
+<a class="header-anchor" href="#methodology"></a>
+Methodology
+</h3><p>The paper employs a three-step process:</p>
+<ul>
+<li><strong>Computing Correspondences:</strong> Correspondences between the style shape and a sphere are computed using either the Gauss map or curvature flow, depending on the complexity of the shape.</li>
+<li><strong>Transferring Correspondences:</strong> Correspondences between the sphere and the input shape are computed, allowing for the transfer of surface normals from the style shape to the input shape.</li>
+<li><strong>Normal-Driven Optimization:</strong> An optimization problem is formulated to deform the input shape based on target normals, ensuring that the output shape possesses desired stylistic attributes.</li>
+</ul>
+<h3 id="impressive-results">
+<a class="header-anchor" href="#impressive-results"></a>
+Impressive Results
+</h3><p>The paper demonstrates the efficacy of the proposed method through various examples, showcasing the ability to generate diverse and stylized outputs from input shapes. The method allows for the transformation of shapes with intricate details, such as a cow, into styles represented by simpler geometric forms like cones or cubes. The approach&rsquo;s flexibility in handling different shapes and styles, as well as its efficiency in computation, are among its most impressive results.</p>
+<h2 id="implementation">
+<a class="header-anchor" href="#implementation"></a>
+Implementation
+</h2><p>The algorithm comprises three simple steps:</p>
+<ol>
+<li>Map the surface normal of the target style shape $A'$ to a unit sphere $A$ to compute target normals on this sphere ($\widetilde{N}_{A'}$).</li>
+<li>Construct analogous target normals ($T$) that relate to the normals of input shape $B$ ($N_B$) in the same way that the mapped target normals ($\widetilde{N}_{A'}$) relate to $N_A$.</li>
+<li>Utilizing inputs $B$ and $T$, generate the stylized shape $B'$ whose normals approximate $T$ through optimization.</li>
+</ol>
+<h3 id="generating-widetilden_a">
+<a class="header-anchor" href="#generating-widetilden_a"></a>
+Generating $\widetilde{N}_{A'}$
+</h3><p>Depending on the provided style shape $A'$ , a set of target normals on a sphere $\widetilde{N}_{A'}$ is obtained by closest normals. For simple convex shapes like an icosahedron, $ \widetilde{N}_{A'} $ is computed by snapping the normals of the sphere to the nearest normal in the style shape ${N}_{A'}$ .</p>
+<h3 id="generating-t">
+<a class="header-anchor" href="#generating-t"></a>
+Generating $T$
+</h3><p>Generating target normals $T$ on the input shape $B$ using analogy necessitates correspondences between $A$ and $B$. This is achieved through the <em>Gauss map</em>, leveraging the fact that $A$ is always a unit sphere. The unit normal vector of each element on the input shape $B$ can be interpreted as a point on $A$, enabling the mapping of signals from $A$ back to $B$. Once the correspondences are obtained via the normals of input shape $N_B$, $T$ can be computed by aligning $\widetilde{N}_{A'}$ with $B$. In code implementation, this process can be streamlined into a single function. The function directly derives $T$ from the surface normals of the target style shape $A'$.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">setTargetN</span><span class="p">(</span><span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">styleN</span><span class="p">,</span> <span class="k">const</span> <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">currentN</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="o">&amp;</span> <span class="n">targetN</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">targetN</span><span class="p">.</span><span class="n">resizeLike</span><span class="p">(</span><span class="n">currentN</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">currentN</span><span class="p">.</span><span class="n">rows</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">minIdx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(</span><span class="n">styleN</span><span class="p">.</span><span class="n">rowwise</span><span class="p">()</span> <span class="o">-</span> <span class="n">currentN</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">rowwise</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">squaredNorm</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">minCoeff</span><span class="p">(</span><span class="o">&amp;</span><span class="n">minIdx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">targetN</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">=</span> <span class="n">styleN</span><span class="p">.</span><span class="n">row</span><span class="p">(</span><span class="n">minIdx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="generating-b">
+<a class="header-anchor" href="#generating-b"></a>
+Generating $B'$
+</h3><p>After obtaining a set of target normals $T=\{\mathrm{t}_k\}$ for each vertex $k$, the objective is to derive a deformed output shape $B'$ that approximates the surface normals to $T$. Let&rsquo;s denote $V$ as a matrix comprising vertex locations with a size of $|V|$-by-3. As a deformation of the input shape, our output shape $B'$ uses $V^{\prime}$ to signify the $|V|$-by-3 matrix of the deformed vertex locations. The energy optimization process, driven by normal deformation, can be expressed as:</p>
+$$
+\min_{\mathbf{V}^{\prime}}\sum_{k\in\mathbf{V}}E_R(\mathbf{v}_k,\mathbf{u}_k)+\lambda a_k\|\hat{n}_k(\mathbf{V}^{\prime})-\mathbf{t}_k\|_2^2,
+$$<p>Here, $E_R$ symbolizes a regularization energy preserving the details of the input mesh, while the second portion quantifies the squared distance from the output unit surface normal $\hat{n}_k(\mathbb{V}^{\prime})$ to the target output normal $t_{k}$ at vertex $k$. To denote the Voronoi area of vertex $k$, we use $a_k$, with $\lambda$ serving as a weighting parameter that mediates between the two terms. The variables $\mathrm{v}_k\left(\mathrm{u}_k\right)$ outline the input (output) location of vertex $k$. With a smaller value of $\lambda$, the method maintains the input shape $B$; employing a larger $\lambda$ promotes shape deformation towards the style of $A^{\prime}$. The selection of $E_R$ is dependent on the user&rsquo;s objectives and different results can be achieved with varying regularizations.</p>
+<h3 id="normal-driven-optimization-with-arap">
+<a class="header-anchor" href="#normal-driven-optimization-with-arap"></a>
+Normal-Driven Optimization with ARAP
+</h3><p>We can use $\mathrm{e}_{ij}:=\mathrm{v}_j-\mathrm{v}_i\in\mathbb{R}^3$ to denote the edge vector between vertices $i,j$ on the original mesh, and e$^{\prime}_{ij}:=v_j^{\prime}-v_i^{\prime}$ for the edge vectors on the deformed mesh. We can write down the energy that uses ARAP regularization as</p>
+$$
+\min_{\mathrm{V',R}}\sum_{k\in V}\underbrace{\sum_{i,j\in\mathcal{N}_k}w_{ij}\|\mathrm{R}_k\mathrm{e}_{ij}-\mathrm{e'}_{ij}\|_2^2}_{\text{$E_{\mathrm{ARAP}}$}} +\lambda a_k\|\hat{n}_k(\mathrm{V'})-\mathrm{t}_k\|_2^2,
+$$<p>We use $\mathcal{N}_k$ to denote the edge vectors of the spokes and rims at vertex $k$, $\mathbb{R}_k\in\mathbb{SO}(3)$ to denote a 3-by-3 rotation matrix defined on $k$, and $w_{ij}$ is the cotangent weight of edge $i,j$. However, this energy is difficult to optimize because the term $\hat{n}_k(V^{\prime})$ is non-linear in $V'$.</p>
+<p>We adapt the observation that the space of unit vectors can be captured by rotations. Thus, we can perform a change of variables by replacing $\hat{n}_k(V^{\prime})$ with the <em>rotated</em> unit normal of the input mesh $\mathbb{R}_k\hat{\mathbf{n}}_k$ as</p>
+$$
+\boxed{\min_{\mathrm{V',R}}\sum_{k\in V}\sum_{i,j\in\mathcal{N}_k}w_{ij}\|\mathrm{R}_k\mathrm{e}_{ij}-\mathrm{e'}_{ij}\|_2^2+\lambda a_k\|\mathrm{R}_k\hat{\mathrm{n}}_k-\mathrm{t}_k\|_2^2,}
+$$<p>where $\hat{\mathrm{n}}_k$ is the $k$th unit vertex normal of the input mesh computed via area-weighted average of face normals, which is constant throughout the optimization. This $\mathbb{R}_k\hat{n}_k$ can be perceived as an approximation of the area-weighted vertex normals of the output mesh $\hat{n}_k(\mathbb{V}^{\prime}).$</p>
+<p>We minimize this energy via the local/global strategy, where the local step involves solving a set of small Orthogonal Procrustes problems and the global step amounts to a linear solve.</p>
+<h3 id="local-step-with-e_mathrmarap">
+<a class="header-anchor" href="#local-step-with-e_mathrmarap"></a>
+Local Step with $E_\mathrm{ARAP}$
+</h3><p>Given a fixed $V'$, we obtain the optimal rotation for each vertex $k$ by solving the following minimization problem</p>
+$$
+\mathrm{R}_k=\underset{\mathrm{R}_k\in\mathrm{SO}(3)}{\operatorname*{\arg\min}}\sum_{i,j\in\mathcal{N}_k}w_{ij}\|\mathrm{R}_k\mathrm{e}_{ij}-\mathrm{e}^{\prime}{}_{ij}\|_2^2+\lambda a_k\|\mathrm{R}_k\hat{\mathrm{n}}_k-\mathrm{t}_k\|_2^2
+$$<p>The above optimization is an instance of the <em>Orthogonal Procrustes</em> which finds the best rotation matrix $\mathbb{R}_k$ to map a set of vectors $(\mathbf{e}_{ij},\mathbf{\hat{n}}_k)$ to another set of vectors $(\mathbf{e}^{\prime}_{ij},\mathbf{t}_k)$. We can re-write it into a more compact expression as:</p>
+$$
+\mathbb{R}_k^\star = \operatorname*{argmax}_{\mathbb{R}_k\in\mathrm{SO}(3)}\mathrm{Tr}(\mathbb{R}_k\mathbb{X}_k)
+$$$$
+\mathbf{X}_k=\begin{bmatrix}\mathbf{E}_k&\hat{\mathbf{n}}_k\end{bmatrix}
+\begin{bmatrix}\mathbf{W}_k&\\
+&\lambda a_k\end{bmatrix}
+\begin{bmatrix} \mathbf{E}_k^{\prime\top} \\
+\mathbf{t}_k^\top\end{bmatrix}.
+$$<p>where $\mathbf{W}_k$ is a $|N_k|$-by-$|N_k|$ diagonal matrix of the cotangent weights $w_{ij}$, $\mathbb{E}_k$ and $\mathbb{E}^{\prime}_k$ are $3$-by-$|N_k|$ matrices concatenating the edge vectors of the face one-ring at the rest and deformed states, respectively. One can then derive the optimal $\mathbb{R}_k$ from the SVD of $\mathcal{X}_k=\mathcal{U}_k\Sigma_k\mathcal{V}_k^\top$:</p>
+$$
+\mathbb{R}_k=\mathcal{V}_k\mathcal{U}_k^\top,
+$$<p>up to changing the sign of the column of $\mathcal{U}_k$ so that $\det(\mathbb{R}_k)>0$.</p>
+<h3 id="global-step-with-e_mathrmarap">
+<a class="header-anchor" href="#global-step-with-e_mathrmarap"></a>
+Global Step with $E_\mathrm{ARAP}$
+</h3><p>The global step updates the deformed vertex positions $V'$ from a
+fixed set of rotations $R$ obtained via the local step. This boils down to solving the following problem</p>
+$$
+\mathrm{V}^{\prime\star}=\arg\min_{\mathrm{V}^{\prime}}\sum_{k\in V}\sum_{i,j\in\mathcal{N}_k}w_{ij}\|\mathrm{R}_k\mathrm{e}_{ij}-\mathrm{e}^{\prime}_{ij}\|_2^2
+$$<p>We can expand this energy as</p>
+$$
+\sum_{k\in V}\sum_{i,j\in\mathcal{N}_k}w_{ij}\|\mathrm{R}_k\mathrm{e}_{ij}-\mathrm{e}'_{ij}\|_2^2
+$$$$
+=\sum_{k\in V}\sum_{i,j\in f_k}w_{ij}\mathrm{e'}_{ij}^\top\mathrm{e'}_{ij}-2w_{ij}\mathrm{e'}_{ij}^\top\mathrm{R}_k\mathrm{e}_{ij}+\mathrm{constant}
+$$<p>It is often convenient to express the summation in terms of matrices.
+We introduce a directed incidence matrix $\mathcal{A}_k$ with size $|V|$-by-$|\mathcal{N}_k|$ to represent the edge vectors in $\mathcal{N}_k$ as $V^\top\mathcal{A}_k$, and we use $\mathrm{M}_k$ to represent a $|\mathcal{N}_k|$-by-$|\mathcal{N}_k|$ diagonal matrix of the weights $w_{ij}$. Then we can re-write the energy in terms of matrices as</p>
+$$
+\begin{aligned}
+&\sum_{k\in V}\operatorname{Tr}(\mathrm{M}_k\mathrm{A}_k^T\mathrm{V}^{\prime}\mathrm{V}^{\prime T}\mathrm{A}_k)-2\operatorname{Tr}(\mathrm{M}_k\mathrm{A}_k^T\mathrm{V}^{\prime}\mathrm{R}_k\mathrm{V}^T\mathrm{A}_k)  \\
+&=\sum_{k\in V}\operatorname{Tr}(\mathrm{V'}^\top\mathrm{A}_k\mathrm{M}_k\mathrm{A}_k^\top\mathrm{V'})-2\operatorname{Tr}(\mathrm{R}_k\mathrm{V}^\top\mathrm{A}_k\mathrm{M}_k\mathrm{A}_k^\top\mathrm{V'})  \\
+&=\operatorname{Tr}\left(\mathrm{V^{\prime}}^\top\left(\sum_k\mathrm{A}_k\mathrm{M}_k\mathrm{A}_k^\top\right)\mathrm{V^{\prime}}\right)-2\operatorname{Tr}\left(\left(\sum_k\mathrm{R}_k\mathrm{V}^\top\mathrm{A}_k\mathrm{M}_k\mathrm{A}_k^\top\right)\mathrm{V^{\prime}}\right)  \\
+&=\operatorname{Tr}(\mathrm{V^{\prime}}^\top\mathrm{QV^{\prime}})-2\operatorname{Tr}(\mathrm{RKV^{\prime}}),
+\end{aligned}
+$$<p>where $\mathbb{R}=\{\mathbb{R}_k\}$ is the concatenation of all the rotations, $Q$ is a $|V|$-by-$|V|$ symmetric matrix, and $K$ is a $|9V|$-by-$|3V|$ matrix stacking the constant terms which can be computed during the precomputation. We can then find the optimal $V'$ by solving a linear system</p>
+$$
+\mathrm{QV^{\prime}=K^{\top}R^{\top}}
+$$<p>$Q$ is the cotangent Laplacian. We can pre-factorize $Q$ to speed up runtime performance. With these pieces in hand, we can minimize our energy by iteratively performing the local and the global steps.</p>
+<h2 id="validation">
+<a class="header-anchor" href="#validation"></a>
+Validation
+</h2><h3 id="results">
+<a class="header-anchor" href="#results"></a>
+Results
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202404192112365.png" alt="Higher lambda values result in greater style changes."></p>
+<p>By changing $\lambda$, it was observed that the degree to which style affects the original object can indeed be adjusted, with larger $\lambda$ values resulting in more significant changes.</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202404192113505.png" alt="Different target normal settings lead to distinct results."></p>
+<p>Setting the target normal $T$ as a constant or treating it as a function of the output mesh $B'$ leads to different local minima. Therefore, setting $T$ as a constant may yield different results in some cases, such as the ears of the bunny.</p>
+<p>In terms of convergence, when $T$ is constant, the convergence behaves similarly to the original ARAP, with the energy decreasing monotonically. However, when $T$ depends on $B'$, a monotonic decrease in energy is not guaranteed. But the optimization still converges in my experiments.</p>
+<h3 id="limitations">
+<a class="header-anchor" href="#limitations"></a>
+Limitations
+</h3><p>While the proposed algorithm presents a direct and efficient approach to style transfer, it still grapples with several unresolved issues. For instance, it remains uncertain whether randomly provided target normals can be achieved through deformation, and if so, whether such alterations might result in surface inversion or other undesired behaviors.</p>
+<p>Presently, the method struggles with high-genus style shapes, which entail topological changes. For instance, attempting to utilize curvature flow to morph such shapes into spheres proves unfeasible without addressing essential topological adjustments.</p>
+<p>Additionally, the method overlooks area distortion concerns. The adoption of techniques like curvature flow or Gauss maps can induce significant area distortions.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Multimedia Systems Design"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/csci-576/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Multimedia Systems Design
+          
+        </h3>
+      </div>
+    
+
+    
+      <div class="article-nav-link-wrap article-nav-link-right">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-sizes="auto"
+              alt="Rendering and Game Engine Projects"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/games/"></a>
+        <div class="article-nav-caption">Older</div>
+        <h3 class="article-nav-title">
+          
+            Rendering and Game Engine Projects
+          
+        </h3>
+      </div>
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#reconstruction">Reconstruction</a></li>
+    <li><a href="#registration">Registration</a></li>
+    <li><a href="#smoothing">Smoothing</a></li>
+    <li><a href="#subdivision">Subdivision</a></li>
+    <li><a href="#decimation">Decimation</a></li>
+    <li><a href="#deformation">Deformation</a></li>
+    <li><a href="#parameterization">Parameterization</a></li>
+    <li><a href="#distances">Distances</a></li>
+    <li><a href="#curvature">Curvature</a></li>
+    <li><a href="#normal-driven-spherical-shape-analogies">Normal-Driven Spherical Shape Analogies</a>
+      <ul>
+        <li><a href="#introduction">Introduction</a>
+          <ul>
+            <li><a href="#related-work">Related Work</a></li>
+            <li><a href="#paper-contribution">Paper Contribution</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#impressive-results">Impressive Results</a></li>
+          </ul>
+        </li>
+        <li><a href="#implementation">Implementation</a>
+          <ul>
+            <li><a href="#generating-widetilden_a">Generating </a></li>
+            <li><a href="#generating-t">Generating </a></li>
+            <li><a href="#generating-b">Generating </a></li>
+            <li><a href="#normal-driven-optimization-with-arap">Normal-Driven Optimization with ARAP</a></li>
+            <li><a href="#local-step-with-e_mathrmarap">Local Step with </a></li>
+            <li><a href="#global-step-with-e_mathrmarap">Global Step with </a></li>
+          </ul>
+        </li>
+        <li><a href="#validation">Validation</a>
+          <ul>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2024
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            36.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:00
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#reconstruction">Reconstruction</a></li>
+    <li><a href="#registration">Registration</a></li>
+    <li><a href="#smoothing">Smoothing</a></li>
+    <li><a href="#subdivision">Subdivision</a></li>
+    <li><a href="#decimation">Decimation</a></li>
+    <li><a href="#deformation">Deformation</a></li>
+    <li><a href="#parameterization">Parameterization</a></li>
+    <li><a href="#distances">Distances</a></li>
+    <li><a href="#curvature">Curvature</a></li>
+    <li><a href="#normal-driven-spherical-shape-analogies">Normal-Driven Spherical Shape Analogies</a>
+      <ul>
+        <li><a href="#introduction">Introduction</a>
+          <ul>
+            <li><a href="#related-work">Related Work</a></li>
+            <li><a href="#paper-contribution">Paper Contribution</a></li>
+            <li><a href="#methodology">Methodology</a></li>
+            <li><a href="#impressive-results">Impressive Results</a></li>
+          </ul>
+        </li>
+        <li><a href="#implementation">Implementation</a>
+          <ul>
+            <li><a href="#generating-widetilden_a">Generating </a></li>
+            <li><a href="#generating-t">Generating </a></li>
+            <li><a href="#generating-b">Generating </a></li>
+            <li><a href="#normal-driven-optimization-with-arap">Normal-Driven Optimization with ARAP</a></li>
+            <li><a href="#local-step-with-e_mathrmarap">Local Step with </a></li>
+            <li><a href="#global-step-with-e_mathrmarap">Global Step with </a></li>
+          </ul>
+        </li>
+        <li><a href="#validation">Validation</a>
+          <ul>
+            <li><a href="#results">Results</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">13</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+      
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8" crossorigin="anonymous"
+  ></script>
+
+
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/contrib/auto-render.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05" crossorigin="anonymous"
+  ></script>
+
+
+        <script data-pjax>
+          var renderMath = () => {
+            if (!window.renderMathInElement) return;
+            window.renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+            });
+          };
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderMath, { once: true });
+          } else {
+            renderMath();
+          }
+        </script>
+      
+      
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>
