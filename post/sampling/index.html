@@ -19,7 +19,7 @@
   
 
 <title>
-  Sampling Techniques for Hemispheres | NothingToSay0031
+  Sampling Techniques for Hemisphere and Disk | NothingToSay0031
 </title>
 <meta
   name="description"
@@ -107,7 +107,7 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Sampling Techniques for Hemispheres | NothingToSay0031" />
+  <meta property="og:title" content="Sampling Techniques for Hemisphere and Disk | NothingToSay0031" />
   <meta
     property="og:description"
     content="Generating Random Directions."
@@ -317,7 +317,7 @@
 </div>
 <header id="header">
   
-    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Sampling Techniques for Hemispheres">
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Sampling Techniques for Hemisphere and Disk">
   
 
   <div id="header-outer">
@@ -330,7 +330,7 @@
   
         
           <a href="https://nothingtosay0031.github.io/" id="logo">
-            <h1 data-aos="slide-up">Sampling Techniques for Hemispheres</h1>
+            <h1 data-aos="slide-up">Sampling Techniques for Hemisphere and Disk</h1>
           </a>
         
       
@@ -384,63 +384,181 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="sampling-random-directions-on-a-hemisphere">
-<a class="header-anchor" href="#sampling-random-directions-on-a-hemisphere"></a>
-Sampling Random Directions on a Hemisphere
-</h1><p>When working with spherical coordinates and light scattering, understanding how to sample random directions efficiently and correctly is crucial. This blog post explores the derivation of probability density functions (PDFs) for spherical and hemispherical sampling, covering uniform and cosine-weighted sampling.</p>
-<h2 id="probability-density-function-on-the-sphere">
-<a class="header-anchor" href="#probability-density-function-on-the-sphere"></a>
-Probability Density Function on the Sphere
-</h2><p>The probability density function (PDF) on a sphere is typically expressed as $p(\omega) = f(\theta)$, defined over the differential solid angle $d\omega = \sin(\theta) \, d\theta \, d\phi$. The overall distribution can be decomposed into independent components for $\theta$ (the angle from the normal) and $\phi$ (the azimuthal angle):</p>
-<ol>
+        <h1 id="deriving-pdf-for-hemisphere-sampling">
+<a class="header-anchor" href="#deriving-pdf-for-hemisphere-sampling"></a>
+Deriving PDF for Hemisphere Sampling
+</h1><ul>
 <li>
-<p><strong>Azimuthal Angle ($\phi$):</strong> $\phi$ is usually uniformly distributed due to symmetry, with the PDF:</p>
-$$a(\phi) = \frac{1}{2\pi}$$</li>
-<li>
-<p><strong>Marginal PDF for $\theta$:</strong></p>
-$$b(\theta) = f(\theta) \sin(\theta) \cdot 2\pi$$<p>Here, $\sin(\theta)$ accounts for the area weighting in spherical coordinates.</p>
+<p><strong>Target distribution</strong> in $\omega$, which is $(x, y, z)$ with $\sqrt{x^2 + y^2 + z^2} = 1$.</p>
 </li>
-</ol>
-<h2 id="generating-random-directions">
-<a class="header-anchor" href="#generating-random-directions"></a>
-Generating Random Directions
-</h2><p>To sample directions, we solve the cumulative distribution function (CDF) for both $\phi$ and $\theta$, then invert it to derive random numbers.</p>
-<h3 id="sampling-phi">
-<a class="header-anchor" href="#sampling-phi"></a>
-Sampling $\phi$
+<li>
+<p><strong>The transformation $T$</strong> from $(r, \theta, \phi)$ to $(x, y, z)$:</p>
+</li>
+</ul>
+$$x = r \sin \theta \cos \phi$$$$y = r \sin \theta \sin \phi$$$$z = r \cos \theta$$<ul>
+<li>
+<p><strong>The Jacobian</strong> of the transformation $T$ gives $|J_T| = r^2 \sin \theta$.</p>
+</li>
+<li>
+<p>$r = 1$, so we have:</p>
+$$p(1, \theta, \phi) = \sin \theta \, p(x, y, z) = \sin \theta \, p(\omega)$$</li>
+</ul>
+<h2 id="jacobian-determinant-derivation">
+<a class="header-anchor" href="#jacobian-determinant-derivation"></a>
+Jacobian Determinant Derivation
+</h2><p><strong>Transformation from spherical to Cartesian coordinates</strong>:</p>
+$$x = r \sin \theta \cos \phi, \quad y = r \sin \theta \sin \phi, \quad z = r \cos \theta$$<p><strong>Jacobian matrix $J_T$</strong>:</p>
+$$J_T =  
+\begin{bmatrix}  
+\frac{\partial x}{\partial r} & \frac{\partial x}{\partial \theta} & \frac{\partial x}{\partial \phi} \\  
+\frac{\partial y}{\partial r} & \frac{\partial y}{\partial \theta} & \frac{\partial y}{\partial \phi} \\  
+\frac{\partial z}{\partial r} & \frac{\partial z}{\partial \theta} & \frac{\partial z}{\partial \phi}  
+\end{bmatrix}$$<p>Compute each partial derivative:</p>
+<ul>
+<li>$\frac{\partial x}{\partial r} = \sin \theta \cos \phi, \quad \frac{\partial x}{\partial \theta} = r \cos \theta \cos \phi, \quad \frac{\partial x}{\partial \phi} = -r \sin \theta \sin \phi$</li>
+<li>$\frac{\partial y}{\partial r} = \sin \theta \sin \phi, \quad \frac{\partial y}{\partial \theta} = r \cos \theta \sin \phi, \quad \frac{\partial y}{\partial \phi} = r \sin \theta \cos \phi$</li>
+<li>$\frac{\partial z}{\partial r} = \cos \theta, \quad \frac{\partial z}{\partial \theta} = -r \sin \theta, \quad \frac{\partial z}{\partial \phi} = 0$</li>
+</ul>
+<p>Substituting into $J_T$:</p>
+$$J_T =  
+\begin{bmatrix}  
+\sin \theta \cos \phi & r \cos \theta \cos \phi & -r \sin \theta \sin \phi \\  
+\sin \theta \sin \phi & r \cos \theta \sin \phi & r \sin \theta \cos \phi \\  
+\cos \theta & -r \sin \theta & 0  
+\end{bmatrix}$$<p><strong>Determinant</strong>:</p>
+$$|J_T| = \text{det}(J_T)$$<p>Using Laplace expansion along the third row:</p>
+$$|J_T| = \cos \theta \cdot M_{31} + (-r \sin \theta) \cdot M_{32}$$<p>Computing $M_{31}$ and $M_{32}$:</p>
+$$M_{31} = r^2 \cos \theta \sin \theta, \quad M_{32} = r \sin^2 \theta$$<p>Substituting:</p>
+$$|J_T| = r^2 \sin \theta (\cos^2 \theta + \sin^2 \theta)$$<p>Using $\cos^2 \theta + \sin^2 \theta = 1$:</p>
+$$|J_T| = r^2 \sin \theta$$<p>For $r = 1$:</p>
+$$|J_T| = \sin \theta$$<h1 id="uniformly-sampling-the-unit-hemisphere">
+<a class="header-anchor" href="#uniformly-sampling-the-unit-hemisphere"></a>
+Uniformly Sampling the Unit Hemisphere
+</h1><h2 id="domain-and-probability-density">
+<a class="header-anchor" href="#domain-and-probability-density"></a>
+Domain and Probability Density
+</h2><ul>
+<li>
+<p><strong>The domain</strong>, i.e., the unit hemisphere surface area, is $2\pi$.<br>
+Uniformly sampling the domain over $\omega$ implies:</p>
+$$p(\omega) = \frac{1}{2\pi}$$</li>
+<li>
+<p>Since $p(1, \theta, \phi) = \sin \theta \, p(\omega)$, we want:</p>
+$$p(\theta, \phi) = \frac{\sin \theta}{2\pi}$$</li>
+</ul>
+<h2 id="marginal-and-conditional-densities">
+<a class="header-anchor" href="#marginal-and-conditional-densities"></a>
+Marginal and Conditional Densities
+</h2><h3 id="marginal-density-p_thetatheta">
+<a class="header-anchor" href="#marginal-density-p_thetatheta"></a>
+Marginal Density $p_\Theta(\theta)$:
+</h3>$$\int_{0}^{2\pi} p(\theta, \phi) \, d\phi = \sin \theta$$<h3 id="conditional-density-pphi--theta">
+<a class="header-anchor" href="#conditional-density-pphi--theta"></a>
+Conditional Density $p(\phi | \theta)$:
+</h3>$$p(\phi | \theta) = \frac{p(\theta, \phi)}{p_\Theta(\theta)} = \frac{1}{2\pi}$$<h2 id="antiderivatives">
+<a class="header-anchor" href="#antiderivatives"></a>
+Antiderivatives
+</h2><h3 id="antiderivative-of-p_thetatheta">
+<a class="header-anchor" href="#antiderivative-of-p_thetatheta"></a>
+Antiderivative of $p_\Theta(\theta)$:
+</h3>$$\int \sin \theta \, d\theta = 1 - \cos \theta \, (\text{added constant 1})$$<h3 id="antiderivative-of-pphi--theta">
+<a class="header-anchor" href="#antiderivative-of-pphi--theta"></a>
+Antiderivative of $p(\phi | \theta)$:
+</h3>$$\int \frac{1}{2\pi} \, d\phi = \frac{\phi}{2\pi}$$<h2 id="inversion-and-sampling">
+<a class="header-anchor" href="#inversion-and-sampling"></a>
+Inversion and Sampling
+</h2><h3 id="invert-to-get-theta-and-phi">
+<a class="header-anchor" href="#invert-to-get-theta-and-phi"></a>
+Invert to Get $\theta$ and $\phi$:
+</h3>$$\theta = \cos^{-1} \xi_1 \, (\text{cos is symmetric}), \quad \phi = 2\pi \xi_2$$<h3 id="apply-transformation">
+<a class="header-anchor" href="#apply-transformation"></a>
+Apply Transformation:
+</h3><p>Apply transformation $T$ on $(\theta, \phi)$ to obtain uniformly distributed $\omega$.</p>
+<h1 id="cosine-weighted-sampling-on-the-unit-hemisphere">
+<a class="header-anchor" href="#cosine-weighted-sampling-on-the-unit-hemisphere"></a>
+Cosine-Weighted Sampling on the Unit Hemisphere
+</h1><h2 id="define-the-target-pdf">
+<a class="header-anchor" href="#define-the-target-pdf"></a>
+Define the Target PDF
+</h2><p>The cosine-weighted sampling is based on a probability density function (PDF) proportional to the cosine of the angle between the sample direction $\omega$ and the normal $\mathbf{n}$:</p>
+$$p(\omega) = \frac{\cos \theta}{\pi}$$<p>where $\cos \theta = \mathbf{n} \cdot \mathbf{\omega}$.</p>
+<h2 id="express-the-pdf-in-spherical-coordinates">
+<a class="header-anchor" href="#express-the-pdf-in-spherical-coordinates"></a>
+Express the PDF in Spherical Coordinates
+</h2><p>The PDF in spherical coordinates becomes:</p>
+$$p(\theta, \phi) = \frac{\cos \theta \sin \theta}{\pi}$$<p>where $\cos \theta$ represents the cosine of the angle between the sample direction and the normal, and $\sin \theta$ is the Jacobian determinant.</p>
+<h2 id="marginal-density-p_thetatheta-1">
+<a class="header-anchor" href="#marginal-density-p_thetatheta-1"></a>
+Marginal Density $p_\Theta(\theta)$
+</h2><p>To obtain the marginal density $p_\Theta(\theta)$, integrate over $\phi$:</p>
+$$p_\Theta(\theta) = \int_0^{2\pi} \frac{\cos \theta \sin \theta}{\pi} \, d\phi = 2 \cos \theta \sin \theta$$<h2 id="conditional-density-pphi--theta-1">
+<a class="header-anchor" href="#conditional-density-pphi--theta-1"></a>
+Conditional Density $p(\phi | \theta)$
+</h2><p>The conditional density of $\phi$ given $\theta$ is uniform:</p>
+$$p(\phi | \theta) = \frac{1}{2\pi}$$<h2 id="inverse-transform-sampling">
+<a class="header-anchor" href="#inverse-transform-sampling"></a>
+Inverse Transform Sampling
+</h2><h3 id="marginal-p_thetatheta">
+<a class="header-anchor" href="#marginal-p_thetatheta"></a>
+Marginal $p_\Theta(\theta)$
+</h3><p>The cumulative distribution function (CDF) for $\theta$ is:</p>
+$$C_\Theta(\theta) = 1 - \cos^2(\theta)$$<p>By setting $C_\Theta(\theta) = \xi_1$, where $\xi_1$ is a random variable, we obtain:</p>
+$$ \cos \theta = \sqrt{1 - \xi_1}$$<h3 id="conditional-pphi--theta">
+<a class="header-anchor" href="#conditional-pphi--theta"></a>
+Conditional $p(\phi | \theta)$
 </h3><p>The CDF for $\phi$ is:</p>
-$$r_1 = \int_{0}^{\phi} a(\phi') \, d\phi' = \int_{0}^{\phi} \frac{1}{2\pi} \, d\phi' = \frac{\phi}{2\pi}$$<p>Inverting this:</p>
-$$\phi = 2\pi \cdot r_1$$<p>Thus, to sample $\phi$, we use a uniform random number $r_1 \in [0, 1]$ and multiply by $2\pi$.</p>
-<h3 id="sampling-theta">
-<a class="header-anchor" href="#sampling-theta"></a>
-Sampling $\theta$
-</h3><p>The CDF for $\theta$ is:</p>
-$$r_2 = \int_{0}^{\theta} b(\theta') \, d\theta' = \int_{0}^{\theta} 2\pi f(\theta') \sin(\theta') \, d\theta'$$<p>For specific distributions like uniform or cosine-weighted, the function $f(\theta)$ simplifies the integral.</p>
-<h2 id="uniform-sampling-a-hemisphere">
-<a class="header-anchor" href="#uniform-sampling-a-hemisphere"></a>
-Uniform Sampling a Hemisphere
-</h2><p>For uniform sampling over a hemisphere, the PDF is:</p>
-$$p(\omega) = f(\theta) = \frac{1}{2\pi}$$<p>Substituting $f(\theta)$ into the CDF for $\theta$:</p>
-$$r_2 = \int_{0}^{\theta} 2\pi \frac{1}{2\pi} \sin(\theta') \, d\theta' = \int_{0}^{\theta} \sin(\theta') \, d\theta'$$<p>Solving this integral:</p>
-$$r_2 = 1 - \cos(\theta)$$<p>Inverting:</p>
-$$z = \cos(\theta) = 1 - r_2$$<h2 id="cosine-weighted-sampling-a-hemisphere">
-<a class="header-anchor" href="#cosine-weighted-sampling-a-hemisphere"></a>
-Cosine-Weighted Sampling a Hemisphere
-</h2><p>To generate directions with a cosine-weighted PDF:</p>
-$$p(\omega) = f(\theta) = \frac{\cos(\theta)}{\pi}$$<p>Substituting into the CDF:</p>
-$$r_2 = \int_{0}^{\theta} 2\pi \frac{\cos(\theta')}{\pi} \sin(\theta') \, d\theta'$$<p>Simplifying:</p>
-$$r_2 = \int_{0}^{\theta} 2 \cos(\theta') \sin(\theta') \, d\theta' = 1 - \cos^2(\theta)$$<p>Inverting:</p>
-$$z = \cos(\theta) = \sqrt{1 - r_2}$$<h2 id="implementation">
+$$C_\Phi(\phi) = \frac{\phi}{2\pi}$$<p>Set $C_\Phi(\phi) = \xi_2$, where $\xi_2$ is a random variable, leading to:</p>
+$$\phi = 2\pi \xi_2$$<h2 id="final-sampling-transformation">
+<a class="header-anchor" href="#final-sampling-transformation"></a>
+Final Sampling Transformation
+</h2><p>Using $\xi_1$ and $\xi_2$, we compute:</p>
+$$\theta =  \cos^{-1}(\sqrt{1 - \xi_1}), \quad \phi = 2\pi \xi_2$$<p>Converting these spherical coordinates to Cartesian coordinates:</p>
+$$x = \sin \theta \cos \phi, \quad y = \sin \theta \sin \phi, \quad z = \cos \theta$$<h2 id="why-use-this-target-pdf-pomega--fraccos-thetapi">
+<a class="header-anchor" href="#why-use-this-target-pdf-pomega--fraccos-thetapi"></a>
+Why use this target PDF $p(\omega) = \frac{\cos \theta}{\pi}$?
+</h2><ol>
+<li>
+<p><strong>Physical Background:</strong> In optics and rendering, cosine-weighted sampling is commonly used to simulate diffuse reflection of light. This kind of reflection follows Lambert&rsquo;s Cosine Law, which can be described as:</p>
+<ul>
+<li>The brightness of light reflected from a surface is proportional to the cosine of the angle $\theta$ between the light ray and the surface normal.</li>
+<li>The energy density of the reflected light should be weighted by $\cos \theta$ to more accurately simulate diffuse reflection behavior.</li>
+</ul>
+</li>
+<li>
+<p><strong>Diffuse Energy Distribution:</strong> Consider a small area element $d\omega$ on the unit hemisphere (measured in solid angle). The energy flux (radiance) in the direction of this element is proportional to $\cos \theta$, where $\theta$ is the angle between the direction and the normal.</p>
+<ul>
+<li>To satisfy the definition of a probability density function, the total probability distribution $p(\omega)$ must be normalized so that its integral over the entire hemisphere equals 1.</li>
+</ul>
+</li>
+<li>
+<p><strong>Normalization Derivation:</strong></p>
+<p><strong>(1) Unnormalized PDF:</strong> Since the distribution needs to be proportional to $\cos \theta$, we have $p(\omega) \propto \cos \theta$.</p>
+<p><strong>(2) Integral over the unit hemisphere:</strong> In spherical coordinates, the solid angle element is given by $d\omega = \sin \theta \, d\theta \, d\phi$. Therefore:</p>
+$$\int_\text{hemisphere} p(\omega) \, d\omega = 1$$<p>Substituting $p(\omega) = \frac{\cos \theta}{C}$ (where $C$ is the normalization factor), the integral becomes:</p>
+$$\int_\text{hemisphere} \frac{\cos \theta}{C} \, d\omega = 1$$<p>Substituting $d\omega = \sin \theta \, d\theta \, d\phi$:</p>
+$$\int_0^{2\pi} \int_0^{\pi/2} \frac{\cos \theta}{C} \sin \theta \, d\theta \, d\phi = 1$$<p>Separating the variables:</p>
+$$\frac{1}{C} \int_0^{2\pi} d\phi \int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = 1$$<p><strong>(3) Computing the Integral:</strong></p>
+<p>First, integrate with respect to $\phi$:</p>
+$$\int_0^{2\pi} d\phi = 2\pi$$<p>Next, for $\theta$, use $\cos \theta \sin \theta = \frac{1}{2} \sin(2\theta)$:</p>
+$$\int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = \frac{1}{2} \int_0^{\pi/2} \sin(2\theta) \, d\theta$$$$\int_0^{\pi/2} \sin(2\theta) \, d\theta = \frac{-\cos(2\theta)}{2} \Big|_0^{\pi/2} = \frac{-\cos(\pi) + \cos(0)}{2} = \frac{-(-1) + 1}{2} = 1$$<p>Therefore:</p>
+$$\frac{1}{C} \cdot 2\pi \cdot \frac{1}{2} = 1$$<p>Solving for $C$, we get $C = \pi$.</p>
+</li>
+<li>
+<p><strong>Final PDF:</strong></p>
+<p>After normalization, the probability density function becomes:</p>
+$$p(\omega) = \frac{\cos \theta}{\pi}$$</li>
+</ol>
+<h1 id="implementation">
 <a class="header-anchor" href="#implementation"></a>
 Implementation
-</h2><p>The following C++ functions generate random directions based on uniform and cosine-weighted sampling:</p>
+</h1><p>The following C++ functions generate random directions based on uniform and cosine-weighted sampling:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">vec3</span> <span class="nf">random_cosine_direction</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">random_double</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">random_double</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">phi</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">phi</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r2</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">z</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r2</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">z</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="n">r1</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin_theta</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">y</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin_theta</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
@@ -450,22 +568,157 @@ Implementation
 </span></span><span class="line"><span class="cl"><span class="n">vec3</span> <span class="nf">random_uniform_direction</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">random_double</span><span class="p">();</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">random_double</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">phi</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">phi</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r2</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">r2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">r1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">x</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin_theta</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">y</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin_theta</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">vec3</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="summary">
-<a class="header-anchor" href="#summary"></a>
-Summary
-</h2><ul>
-<li>For uniform sampling, $p(\omega) = \frac{1}{2\pi}$, and $\cos(\theta) = 1 - r_2$.</li>
-<li>For cosine-weighted sampling, $p(\omega) = \frac{\cos(\theta)}{\pi}$, and $\cos(\theta) = \sqrt{1 - r_2}$.</li>
+</span></span></code></pre></div><h1 id="sampling-the-unit-disk">
+<a class="header-anchor" href="#sampling-the-unit-disk"></a>
+Sampling the Unit Disk
+</h1><h2 id="computing-the-pdf-of-a-transformation">
+<a class="header-anchor" href="#computing-the-pdf-of-a-transformation"></a>
+Computing the PDF of a Transformation
+</h2><p>To transform polar coordinates to Cartesian coordinates, we use:</p>
+$$ \begin{pmatrix} x \\  y  
+\end{pmatrix} = T \begin{pmatrix}  r \\  \theta  
+\end{pmatrix} = \begin{pmatrix} r \cos \theta \\ r \sin \theta  \end{pmatrix}. $$$$ \left| \frac{\partial T \begin{pmatrix} r \\ \theta \end{pmatrix} }{\partial \begin{pmatrix} r \\ \theta \end{pmatrix}} \right| 
+= |J_T| 
+= \begin{vmatrix} 
+\frac{\partial x}{\partial r} & \frac{\partial x}{\partial \theta} \\ 
+\frac{\partial y}{\partial r} & \frac{\partial y}{\partial \theta} 
+\end{vmatrix} 
+= \begin{vmatrix} 
+\cos \theta & -r \sin \theta \\ 
+\sin \theta & r \cos \theta 
+\end{vmatrix} 
+= r. $$<p>Thus, the relationship between probability densities in Cartesian and polar coordinates is:</p>
+$$ p(x, y) = \frac{p(r, \theta)}{r}, \quad \text{or } p(r, \theta) = r \, p(x, y), $$<p>indicating that the change in probability density from $(r, \theta)$ to $(x, y)$ is <strong>inversely proportional to $r$</strong>.</p>
+<h2 id="uniform-pdf-in-cartesian-coordinates">
+<a class="header-anchor" href="#uniform-pdf-in-cartesian-coordinates"></a>
+Uniform PDF in Cartesian Coordinates
+</h2><p>The proportionality constant is the area of the unit disk, $\pi$. For uniform sampling, the target PDF in Cartesian coordinates is:</p>
+$$p(x, y) = \frac{1}{\pi}.$$<h2 id="pdf-in-polar-coordinates">
+<a class="header-anchor" href="#pdf-in-polar-coordinates"></a>
+PDF in Polar Coordinates
+</h2><p>Using the Jacobian determinant:</p>
+$$p(r, \theta) = r \, p(x, y),$$<p>we get:</p>
+$$p(r, \theta) = \frac{r}{\pi}.$$<h2 id="marginal-and-conditional-pdfs">
+<a class="header-anchor" href="#marginal-and-conditional-pdfs"></a>
+Marginal and Conditional PDFs
+</h2><p>The marginal PDF for $r$ is:</p>
+$$p_R(r) = \int_0^{2\pi} p(r, \theta) \, d\theta = 2r,$$<p>The conditional PDF for $\theta$ given $r$ is:</p>
+$$p(\theta | r) = \frac{p(r, \theta)}{p_R(r)} = \frac{1}{2\pi}.$$<h2 id="sampling-from-the-pdfs">
+<a class="header-anchor" href="#sampling-from-the-pdfs"></a>
+Sampling from the PDFs
+</h2><p>To sample $r$ and $\theta$, integrate the marginal and conditional PDFs:</p>
+$$r = P_R^{-1}(\xi_1) = \sqrt{\xi_1}, \quad \theta = P_\Theta^{-1}(\xi_2) = 2\pi \xi_2,$$<p>where $\xi_1, \xi_2 \sim U(0, 1)$. This ensures:</p>
+<ul>
+<li>$p(\theta | r)$ is constant: all positions on a ring of radius $r$ are equally likely.</li>
 </ul>
+<h1 id="malleys-method-a-quick-solution">
+<a class="header-anchor" href="#malleys-method-a-quick-solution"></a>
+Malley&rsquo;s Method: A Quick Solution
+</h1><p>Malley&rsquo;s method provides an easy way to generate cosine-weighted samples on the unit hemisphere. The steps are:</p>
+<ol>
+<li>
+<p><strong>Uniform Sampling on the Unit Disk</strong><br>
+Generate uniform samples on the unit disk. This process is well-established.</p>
+</li>
+<li>
+<p><strong>Projection to the Hemisphere</strong><br>
+Project the disk samples onto the surface of the hemisphere. This results in:</p>
+<ul>
+<li>A sample distribution over the hemisphere&rsquo;s surface that is weighted by the cosine of $\theta$.</li>
+</ul>
+</li>
+</ol>
+<h2 id="why-does-this-work">
+<a class="header-anchor" href="#why-does-this-work"></a>
+Why Does This Work?
+</h2><p>The projection ensures the resulting distribution aligns with the cosine weighting due to the geometry of the hemisphere and the relationship between the disk and spherical coordinates.</p>
+<p>To derive this explicitly:</p>
+<ol>
+<li>
+<p><strong>Coordinate Transformation:</strong><br>
+Express the hemisphere&rsquo;s surface coordinates $(\theta, \phi)$ in terms of disk coordinates $(r, \phi)$. The Jacobian determinant of the transformation accounts for the change in density.</p>
+</li>
+<li>
+<p><strong>Jacobian Determinant:</strong><br>
+Compute the Jacobian determinant when transforming from $(r, \phi)$ to $(\theta, \phi)$. It reveals that the density transforms proportionally to $\cos\theta$, aligning with cosine weighting.</p>
+</li>
+<li>
+<p><strong>Projection:</strong><br>
+Uniform sampling on the disk ($p(x, y) = \frac{1}{\pi}$) naturally transforms into cosine-weighted sampling ($p(\omega) = \frac{\cos\theta}{\pi}$) over the hemisphere due to this relationship and the geometry of the projection.</p>
+</li>
+</ol>
+<p>By starting with the uniform distribution on the disk and projecting, the resulting samples inherit the cosine weighting without requiring additional adjustments.</p>
+<h2 id="computing-the-jacobian-determinant-for-the-transformation-r-phi-to-theta-phi">
+<a class="header-anchor" href="#computing-the-jacobian-determinant-for-the-transformation-r-phi-to-theta-phi"></a>
+Computing the Jacobian Determinant for the Transformation $(r, \phi) \to (\theta, \phi)$
+</h2><p>We are projecting points from the unit disk $(r, \phi)$ to the hemisphere $(\theta, \phi)$, where:</p>
+<ul>
+<li>$r$ is the radial distance in the disk,</li>
+<li>$\phi$ is the azimuthal angle in the disk,</li>
+<li>$\theta$ is the polar angle in the hemisphere,</li>
+<li>$\phi$ remains unchanged.</li>
+</ul>
+<h4 id="step-1-define-the-relationship-between-r-phi-and-theta-phi">
+<a class="header-anchor" href="#step-1-define-the-relationship-between-r-phi-and-theta-phi"></a>
+Step 1: Define the Relationship Between $(r, \phi)$ and $(\theta, \phi)$
+</h4><p>From the projection, the radial distance $r$ maps to $\sin \theta$:</p>
+$$r = \sin \theta \quad \text{or equivalently} \quad \theta = \arcsin(r).$$<p>Thus, the transformation is:</p>
+$$\begin{pmatrix}  
+r \\  
+\phi  
+\end{pmatrix}  
+\to  
+\begin{pmatrix}  
+\theta \\  
+\phi  
+\end{pmatrix},$$<p>with:</p>
+$$\theta = \arcsin(r), \quad \phi = \phi.$$<h4 id="step-2-write-the-jacobian-matrix">
+<a class="header-anchor" href="#step-2-write-the-jacobian-matrix"></a>
+Step 2: Write the Jacobian Matrix
+</h4><p>The Jacobian matrix $J_T$ for the transformation is:</p>
+$$J_T =  
+\begin{pmatrix}  
+\frac{\partial \theta}{\partial r} & \frac{\partial \theta}{\partial \phi} \\  
+\frac{\partial \phi}{\partial r} & \frac{\partial \phi}{\partial \phi}  
+\end{pmatrix}.$$<p>From the transformation equations:</p>
+<ul>
+<li>$\frac{\partial \theta}{\partial r} = \frac{d}{dr} (\arcsin(r)) = \frac{1}{\sqrt{1 - r^2}} = \frac{1}{\cos \theta},$</li>
+<li>$\frac{\partial \theta}{\partial \phi} = 0$,</li>
+<li>$\frac{\partial \phi}{\partial r} = 0$,</li>
+<li>$\frac{\partial \phi}{\partial \phi} = 1.$</li>
+</ul>
+<p>Thus, the Jacobian matrix becomes:</p>
+$$J_T =  
+\begin{pmatrix}  
+\frac{1}{\cos \theta} & 0 \\  
+0 & 1  
+\end{pmatrix}.$$<h4 id="step-3-compute-the-determinant">
+<a class="header-anchor" href="#step-3-compute-the-determinant"></a>
+Step 3: Compute the Determinant
+</h4><p>The Jacobian determinant is the absolute value of the determinant of $J_T$:</p>
+$$\left| J_T \right| = \left|  
+\begin{vmatrix}  
+\frac{1}{\cos \theta} & 0 \\  
+0 & 1  
+\end{vmatrix}  
+\right| = \frac{1}{\cos \theta}.$$<h4 id="step-4-adjust-for-density-transformation">
+<a class="header-anchor" href="#step-4-adjust-for-density-transformation"></a>
+Step 4: Adjust for Density Transformation
+</h4><p>The relationship between densities is proportional to the inverse of the Jacobian determinant. Thus, the transformation of probability density scales proportionally to $\cos \theta$:</p>
+$$p(\theta, \phi) = p(r, \phi) \cdot \left| J_T \right|^{-1} = p(r, \phi) \cdot \cos \theta.$$<h3 id="final-result">
+<a class="header-anchor" href="#final-result"></a>
+Final Result
+</h3><p>The Jacobian determinant for the transformation $(r, \phi) \to (\theta, \phi)$ is:</p>
+$$\left| J_T \right| = \frac{1}{\cos \theta}.$$<p>The density transforms proportionally to $\cos \theta$, aligning with the cosine-weighted sampling over the hemisphere.</p>
 
       
     </div>
@@ -524,7 +777,7 @@ Summary
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Exploring False Sharing"
               class="lazyload"
@@ -570,19 +823,76 @@ Summary
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#sampling-random-directions-on-a-hemisphere">Sampling Random Directions on a Hemisphere</a>
+    <li><a href="#deriving-pdf-for-hemisphere-sampling">Deriving PDF for Hemisphere Sampling</a>
       <ul>
-        <li><a href="#probability-density-function-on-the-sphere">Probability Density Function on the Sphere</a></li>
-        <li><a href="#generating-random-directions">Generating Random Directions</a>
+        <li><a href="#jacobian-determinant-derivation">Jacobian Determinant Derivation</a></li>
+      </ul>
+    </li>
+    <li><a href="#uniformly-sampling-the-unit-hemisphere">Uniformly Sampling the Unit Hemisphere</a>
+      <ul>
+        <li><a href="#domain-and-probability-density">Domain and Probability Density</a></li>
+        <li><a href="#marginal-and-conditional-densities">Marginal and Conditional Densities</a>
           <ul>
-            <li><a href="#sampling-phi">Sampling </a></li>
-            <li><a href="#sampling-theta">Sampling </a></li>
+            <li><a href="#marginal-density-p_thetatheta">Marginal Density :</a></li>
+            <li><a href="#conditional-density-pphi--theta">Conditional Density :</a></li>
           </ul>
         </li>
-        <li><a href="#uniform-sampling-a-hemisphere">Uniform Sampling a Hemisphere</a></li>
-        <li><a href="#cosine-weighted-sampling-a-hemisphere">Cosine-Weighted Sampling a Hemisphere</a></li>
-        <li><a href="#implementation">Implementation</a></li>
-        <li><a href="#summary">Summary</a></li>
+        <li><a href="#antiderivatives">Antiderivatives</a>
+          <ul>
+            <li><a href="#antiderivative-of-p_thetatheta">Antiderivative of :</a></li>
+            <li><a href="#antiderivative-of-pphi--theta">Antiderivative of :</a></li>
+          </ul>
+        </li>
+        <li><a href="#inversion-and-sampling">Inversion and Sampling</a>
+          <ul>
+            <li><a href="#invert-to-get-theta-and-phi">Invert to Get  and :</a></li>
+            <li><a href="#apply-transformation">Apply Transformation:</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#cosine-weighted-sampling-on-the-unit-hemisphere">Cosine-Weighted Sampling on the Unit Hemisphere</a>
+      <ul>
+        <li><a href="#define-the-target-pdf">Define the Target PDF</a></li>
+        <li><a href="#express-the-pdf-in-spherical-coordinates">Express the PDF in Spherical Coordinates</a></li>
+        <li><a href="#marginal-density-p_thetatheta-1">Marginal Density </a></li>
+        <li><a href="#conditional-density-pphi--theta-1">Conditional Density </a></li>
+        <li><a href="#inverse-transform-sampling">Inverse Transform Sampling</a>
+          <ul>
+            <li><a href="#marginal-p_thetatheta">Marginal </a></li>
+            <li><a href="#conditional-pphi--theta">Conditional </a></li>
+          </ul>
+        </li>
+        <li><a href="#final-sampling-transformation">Final Sampling Transformation</a></li>
+        <li><a href="#why-use-this-target-pdf-pomega--fraccos-thetapi">Why use this target PDF ?</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation">Implementation</a></li>
+    <li><a href="#sampling-the-unit-disk">Sampling the Unit Disk</a>
+      <ul>
+        <li><a href="#computing-the-pdf-of-a-transformation">Computing the PDF of a Transformation</a></li>
+        <li><a href="#uniform-pdf-in-cartesian-coordinates">Uniform PDF in Cartesian Coordinates</a></li>
+        <li><a href="#pdf-in-polar-coordinates">PDF in Polar Coordinates</a></li>
+        <li><a href="#marginal-and-conditional-pdfs">Marginal and Conditional PDFs</a></li>
+        <li><a href="#sampling-from-the-pdfs">Sampling from the PDFs</a></li>
+      </ul>
+    </li>
+    <li><a href="#malleys-method-a-quick-solution">Malley&rsquo;s Method: A Quick Solution</a>
+      <ul>
+        <li><a href="#why-does-this-work">Why Does This Work?</a></li>
+        <li><a href="#computing-the-jacobian-determinant-for-the-transformation-r-phi-to-theta-phi">Computing the Jacobian Determinant for the Transformation </a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#step-1-define-the-relationship-between-r-phi-and-theta-phi">Step 1: Define the Relationship Between  and </a></li>
+                <li><a href="#step-2-write-the-jacobian-matrix">Step 2: Write the Jacobian Matrix</a></li>
+                <li><a href="#step-3-compute-the-determinant">Step 3: Compute the Determinant</a></li>
+                <li><a href="#step-4-adjust-for-density-transformation">Step 4: Adjust for Density Transformation</a></li>
+              </ul>
+            </li>
+            <li><a href="#final-result">Final Result</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
@@ -814,7 +1124,7 @@ Summary
       <div>
         <span class="icon-brush"
           >&nbsp;
-            37.2k
+            38.7k
           </span
         >
         &nbsp;|&nbsp;
@@ -822,7 +1132,7 @@ Summary
           
           
 
-          03:04
+          03:11
         </span>
       </div>
     
@@ -865,19 +1175,76 @@ Summary
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#sampling-random-directions-on-a-hemisphere">Sampling Random Directions on a Hemisphere</a>
+    <li><a href="#deriving-pdf-for-hemisphere-sampling">Deriving PDF for Hemisphere Sampling</a>
       <ul>
-        <li><a href="#probability-density-function-on-the-sphere">Probability Density Function on the Sphere</a></li>
-        <li><a href="#generating-random-directions">Generating Random Directions</a>
+        <li><a href="#jacobian-determinant-derivation">Jacobian Determinant Derivation</a></li>
+      </ul>
+    </li>
+    <li><a href="#uniformly-sampling-the-unit-hemisphere">Uniformly Sampling the Unit Hemisphere</a>
+      <ul>
+        <li><a href="#domain-and-probability-density">Domain and Probability Density</a></li>
+        <li><a href="#marginal-and-conditional-densities">Marginal and Conditional Densities</a>
           <ul>
-            <li><a href="#sampling-phi">Sampling </a></li>
-            <li><a href="#sampling-theta">Sampling </a></li>
+            <li><a href="#marginal-density-p_thetatheta">Marginal Density :</a></li>
+            <li><a href="#conditional-density-pphi--theta">Conditional Density :</a></li>
           </ul>
         </li>
-        <li><a href="#uniform-sampling-a-hemisphere">Uniform Sampling a Hemisphere</a></li>
-        <li><a href="#cosine-weighted-sampling-a-hemisphere">Cosine-Weighted Sampling a Hemisphere</a></li>
-        <li><a href="#implementation">Implementation</a></li>
-        <li><a href="#summary">Summary</a></li>
+        <li><a href="#antiderivatives">Antiderivatives</a>
+          <ul>
+            <li><a href="#antiderivative-of-p_thetatheta">Antiderivative of :</a></li>
+            <li><a href="#antiderivative-of-pphi--theta">Antiderivative of :</a></li>
+          </ul>
+        </li>
+        <li><a href="#inversion-and-sampling">Inversion and Sampling</a>
+          <ul>
+            <li><a href="#invert-to-get-theta-and-phi">Invert to Get  and :</a></li>
+            <li><a href="#apply-transformation">Apply Transformation:</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#cosine-weighted-sampling-on-the-unit-hemisphere">Cosine-Weighted Sampling on the Unit Hemisphere</a>
+      <ul>
+        <li><a href="#define-the-target-pdf">Define the Target PDF</a></li>
+        <li><a href="#express-the-pdf-in-spherical-coordinates">Express the PDF in Spherical Coordinates</a></li>
+        <li><a href="#marginal-density-p_thetatheta-1">Marginal Density </a></li>
+        <li><a href="#conditional-density-pphi--theta-1">Conditional Density </a></li>
+        <li><a href="#inverse-transform-sampling">Inverse Transform Sampling</a>
+          <ul>
+            <li><a href="#marginal-p_thetatheta">Marginal </a></li>
+            <li><a href="#conditional-pphi--theta">Conditional </a></li>
+          </ul>
+        </li>
+        <li><a href="#final-sampling-transformation">Final Sampling Transformation</a></li>
+        <li><a href="#why-use-this-target-pdf-pomega--fraccos-thetapi">Why use this target PDF ?</a></li>
+      </ul>
+    </li>
+    <li><a href="#implementation">Implementation</a></li>
+    <li><a href="#sampling-the-unit-disk">Sampling the Unit Disk</a>
+      <ul>
+        <li><a href="#computing-the-pdf-of-a-transformation">Computing the PDF of a Transformation</a></li>
+        <li><a href="#uniform-pdf-in-cartesian-coordinates">Uniform PDF in Cartesian Coordinates</a></li>
+        <li><a href="#pdf-in-polar-coordinates">PDF in Polar Coordinates</a></li>
+        <li><a href="#marginal-and-conditional-pdfs">Marginal and Conditional PDFs</a></li>
+        <li><a href="#sampling-from-the-pdfs">Sampling from the PDFs</a></li>
+      </ul>
+    </li>
+    <li><a href="#malleys-method-a-quick-solution">Malley&rsquo;s Method: A Quick Solution</a>
+      <ul>
+        <li><a href="#why-does-this-work">Why Does This Work?</a></li>
+        <li><a href="#computing-the-jacobian-determinant-for-the-transformation-r-phi-to-theta-phi">Computing the Jacobian Determinant for the Transformation </a>
+          <ul>
+            <li>
+              <ul>
+                <li><a href="#step-1-define-the-relationship-between-r-phi-and-theta-phi">Step 1: Define the Relationship Between  and </a></li>
+                <li><a href="#step-2-write-the-jacobian-matrix">Step 2: Write the Jacobian Matrix</a></li>
+                <li><a href="#step-3-compute-the-determinant">Step 3: Compute the Determinant</a></li>
+                <li><a href="#step-4-adjust-for-density-transformation">Step 4: Adjust for Density Transformation</a></li>
+              </ul>
+            </li>
+            <li><a href="#final-result">Final Result</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
   </ul>
