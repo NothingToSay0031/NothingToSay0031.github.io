@@ -404,7 +404,8 @@ Understanding False Sharing: A Subtle Performance Killer in Multithreaded Progra
 </span></span><span class="line"><span class="cl">    <span class="c1">// Thread 2
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="n">point</span><span class="p">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>At first glance, nothing seems amiss—it looks like a straightforward implementation where two threads increment <code>x</code> and <code>y</code> independently. But as the Twitter post claimed, identifying the issue puts you ahead of 99.99% of CS graduates. Intrigued, I decided to investigate further.</p>
+</span></span></code></pre></div><p>At first glance, nothing seems amiss—it looks like a straightforward implementation where two threads increment <code>x</code> and <code>y</code> independently.
+But as the Twitter post boldly claimed, just figuring out the issue puts you ahead of 99.99% of CS graduates. Naturally, I couldn&rsquo;t resist diving deeper to see what all the fuss was about!</p>
 <h2 id="the-culprit-false-sharing">
 <a class="header-anchor" href="#the-culprit-false-sharing"></a>
 The Culprit: False Sharing
@@ -561,7 +562,7 @@ Takeaways
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Sampling Techniques for Hemisphere and Disk"
               class="lazyload"
@@ -854,7 +855,7 @@ Takeaways
       <div>
         <span class="icon-brush"
           >&nbsp;
-            38.7k
+            38.8k
           </span
         >
         &nbsp;|&nbsp;
