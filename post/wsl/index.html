@@ -493,7 +493,31 @@ zsh
 <li>函数 <code>proxy_git()</code> 让我们直接设置 Git 自己的代理和 ssh 登录 GitHub 的代理；</li>
 <li>后续的 <code>set_proxy()</code> 和 <code>unset_proxy()</code> 就分别是设定 Git 代理和环境变量，以及取消 Git 代理、删除环境变量；</li>
 </ul>
-<p>使用命令 <code>proxy</code> 和 <code>deproxy</code> 即可开启、关闭 WSL 中工具使用代理的功能。</p>
+<h4 id="v2ray">
+<a class="header-anchor" href="#v2ray"></a>
+v2ray
+</h4><p>查看宿主机IP和端口，使用命令：ip route | grep default | awk &lsquo;{print $3}，在v2ray主界面可以看到http代理端口。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-gdscript3" data-lang="gdscript3"><span class="line"><span class="cl"><span class="k">export</span> <span class="n">hostip</span><span class="o">=$</span><span class="p">(</span><span class="n">ip</span> <span class="n">route</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">default</span> <span class="o">|</span> <span class="n">awk</span> <span class="s1">&#39;{print $3}&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">export</span> <span class="n">hostport</span><span class="o">=</span><span class="mi">10809</span>
+</span></span><span class="line"><span class="cl"><span class="n">alias</span> <span class="n">proxy</span><span class="o">=</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">export</span> <span class="n">https_proxy</span><span class="o">=</span><span class="s2">&#34;http://${hostip}:${hostport}&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">export</span> <span class="n">http_proxy</span><span class="o">=</span><span class="s2">&#34;http://${hostip}:${hostport}&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">export</span> <span class="n">all_proxy</span><span class="o">=</span><span class="s2">&#34;http://${hostip}:${hostport}&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">http</span><span class="o">.</span><span class="n">proxy</span> <span class="s2">&#34;http://${hostip}:${hostport}&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="n">https</span><span class="o">.</span><span class="n">proxy</span> <span class="s2">&#34;http://${hostip}:${hostport}&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">echo</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&#34;Acquire::http::Proxy </span><span class="se">\&#34;</span><span class="s2">http://${hostip}:${hostport}</span><span class="se">\&#34;</span><span class="s2">;&#34;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">apt</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">proxy</span><span class="o">.</span><span class="n">conf</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">echo</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&#34;Acquire::https::Proxy </span><span class="se">\&#34;</span><span class="s2">http://${hostip}:${hostport}</span><span class="se">\&#34;</span><span class="s2">;&#34;</span> <span class="o">|</span> <span class="n">sudo</span> <span class="n">tee</span> <span class="o">-</span><span class="n">a</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">apt</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">proxy</span><span class="o">.</span><span class="n">conf</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">null</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">alias</span> <span class="n">deproxy</span><span class="o">=</span><span class="s1">&#39;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">unset</span> <span class="n">https_proxy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">unset</span> <span class="n">http_proxy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">unset</span> <span class="n">all_proxy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="o">--</span><span class="n">unset</span> <span class="n">http</span><span class="o">.</span><span class="n">proxy</span>
+</span></span><span class="line"><span class="cl">    <span class="n">git</span> <span class="n">config</span> <span class="o">--</span><span class="n">global</span> <span class="o">--</span><span class="n">unset</span> <span class="n">https</span><span class="o">.</span><span class="n">proxy</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sudo</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;/Acquire::http::Proxy/d&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">apt</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">proxy</span><span class="o">.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sudo</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="o">-</span><span class="n">e</span> <span class="s1">&#39;/Acquire::https::Proxy/d&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">apt</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">proxy</span><span class="o">.</span><span class="n">conf</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="s1">&#39;</span>
+</span></span></code></pre></div><p>使用命令 <code>proxy</code> 和 <code>deproxy</code> 即可开关代理。</p>
 <h2 id="vs-code">
 <a class="header-anchor" href="#vs-code"></a>
 VS Code
@@ -1268,7 +1292,7 @@ Editor Group Navigation
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Experience of TOEFL and GRE Preparation"
               class="lazyload"
@@ -1344,7 +1368,11 @@ Editor Group Navigation
           <ul>
             <li><a href="#zsh">zsh</a></li>
             <li><a href="#配置与-github-连接的-ssh-密钥">配置与 GitHub 连接的 SSH 密钥</a></li>
-            <li><a href="#配置代理">配置代理</a></li>
+            <li><a href="#配置代理">配置代理</a>
+              <ul>
+                <li><a href="#v2ray">v2ray</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li><a href="#vs-code">VS Code</a>
@@ -1617,7 +1645,7 @@ Editor Group Navigation
       <div>
         <span class="icon-brush"
           >&nbsp;
-            40.2k
+            40.3k
           </span
         >
         &nbsp;|&nbsp;
@@ -1675,7 +1703,11 @@ Editor Group Navigation
           <ul>
             <li><a href="#zsh">zsh</a></li>
             <li><a href="#配置与-github-连接的-ssh-密钥">配置与 GitHub 连接的 SSH 密钥</a></li>
-            <li><a href="#配置代理">配置代理</a></li>
+            <li><a href="#配置代理">配置代理</a>
+              <ul>
+                <li><a href="#v2ray">v2ray</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
         <li><a href="#vs-code">VS Code</a>
