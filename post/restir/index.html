@@ -460,96 +460,97 @@ $$I = \int f(x) \, dx \approx \frac{1}{N} \sum_{i=1}^{N} \frac{f(x_i)}{p(x_i)} \
 </ul>
 </li>
 </ul>
+<p>Certainly! Here&rsquo;s your fully unified English explanation of <strong>Resampled Importance Sampling (RIS)</strong> with all <strong>inline math</strong> wrapped in <code>$...$</code> and <strong>block equations</strong> in <code>$$...$$</code> as per your formatting request:</p>
+<hr>
 <h1 id="resampled-importance-sampling-ris">
 <a class="header-anchor" href="#resampled-importance-sampling-ris"></a>
 Resampled Importance Sampling (RIS)
-</h1><ul>
-<li><strong>Motivation</strong>:<br>
-When directly sampling from a complex or unnormalized distribution $g(x)$ is difficult, <strong>Resampled Importance Sampling (RIS)</strong> provides an effective alternative.<br>
-RIS generates approximate samples for $g(x)$ by leveraging another easier-to-sample distribution $p(x)$.</li>
-</ul>
-<h2 id="steps-for-ris">
-<a class="header-anchor" href="#steps-for-ris"></a>
-Steps for RIS
+</h1><p><strong>Motivation</strong><br>
+When direct sampling from a complex or unnormalized target distribution $p(x)$ is difficult, <strong>Resampled Importance Sampling (RIS)</strong> provides an efficient alternative. RIS approximates samples from $p(x)$ by leveraging an easier-to-sample <strong>proposal distribution</strong> $q(x)$.</p>
+<h2 id="ris-procedure">
+<a class="header-anchor" href="#ris-procedure"></a>
+RIS Procedure
 </h2><ol>
-<li><strong>Generate candidate samples</strong>:
-<ul>
-<li>Draw $M$ samples $\{x_1, x_2, \dots, x_M\}$ from a simple distribution $p(x)$.</li>
-</ul>
-</li>
-<li><strong>Compute weights for candidates</strong>:
-<ul>
-<li>Assign weights to each sample: $$w_j = \frac{g(x_j)}{p(x_j)}, \quad j \in [1, M]$$</li>
-</ul>
-</li>
-<li><strong>Resample $N$ samples</strong>:
-<ul>
 <li>
-<p>Resample $\{y_1, y_2, \dots, y_N\}$ from the candidate set $\{x_1, x_2, \dots, x_M\}$ based on the weights $w_j$.</p>
-</li>
+$$
+   x_j \sim q(x), \quad j = 1, \dots, M
+   $$</li>
 <li>
-<p>The new samples $\{y_i\}$ approximate the distribution $g(x)$.</p>
-</li>
-</ul>
+$$
+   w_j = \frac{p(x_j)}{q(x_j)}
+   $$</li>
+<li>
+<p><strong>Resample $N$ samples</strong><br>
+Resample $N$ samples $\{y_1, y_2, \dots, y_N\}$ from the candidate set $\{x_j\}$ with probability proportional to their weights $w_j$. These resampled points $y_i$ approximate the target distribution $p(x)$.</p>
 </li>
 </ol>
 <h2 id="monte-carlo-integration-with-ris">
 <a class="header-anchor" href="#monte-carlo-integration-with-ris"></a>
 Monte Carlo Integration with RIS
-</h2><ul>
-<li>
-<p><strong>Estimator with Resampled Weights</strong>:<br>
-If $g(x)$ is normalized and its samples are available, the Monte Carlo estimator can be written as:</p>
-$$\hat{I}_{MC} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{g(y_i)}$$</li>
-<li>
-<p><strong>Estimator with Candidate Weights</strong>:<br>
-When $g(x)$ is unnormalized, RIS introduces a weighting function $\omega^*(\cdot)$ based on the $M$ candidates and $N$ resampled points:</p>
-$$\hat{I}_{RIS} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{\hat{q}(y_i)} \cdot \omega^*$$<ul>
-<li><strong>Weighting function</strong>: $$\omega^* = \frac{1}{M} \sum_{j=1}^{M} w(x_j)$$</li>
-</ul>
-</li>
-<li>
-<p><strong>Final RIS Formula</strong>:</p>
-$$\hat{I}_{RIS} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{q}(y_i)} \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j)$$</li>
-<li>
-<p><strong>Conditions for Unbiasedness</strong></p>
-<ol>
-<li>$g(x) > 0$ and $p(x) > 0$ wherever $f(x) \neq 0$.</li>
-<li>Both $M > 0$ (number of candidates) and $N > 0$ (number of resampled points).</li>
-</ol>
-</li>
-</ul>
-<h2 id="proof-of-unbiasedness-for-ris-sampling">
-<a class="header-anchor" href="#proof-of-unbiasedness-for-ris-sampling"></a>
-Proof of Unbiasedness for RIS Sampling
-</h2><p>To prove that the estimator is unbiased, we need to demonstrate that its expected value equals the true value. The core idea is based on the property:</p>
-$$E_{XY}(XY) = E_X \left( E_Y(Y \mid X) \cdot X \right)$$<p>Starting with the RIS estimator, we have:</p>
-$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ E\left( \frac{1}{N} \sum_{i=1}^N \frac{f(Y_i)}{g(Y_i)} \;\middle|\; X_1, \dots, X_M \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>Since $Y$ is randomly selected from the sample, the expectation simplifies as:</p>
-$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ E\left( \frac{f(Y)}{g(Y)} \;\middle|\; X_1, \dots, X_M \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>Given $Y$ is sampled from $X_1, \dots, X_M$, the inner expectation can be expressed as a sum over the weights of the samples:</p>
-$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ \sum_{k=1}^M \left( \frac{f(X_k)}{g(X_k)} \cdot \frac{w(X_k)}{\sum_{j=1}^M w(X_j)} \right) \cdot \frac{1}{M} \sum_{j=1}^M w(X_j) \right]$$<p>The denominator in the weight normalization cancels with the outer sum, resulting in:</p>
-$$E\left( \hat{L}_{\text{ris}} \right) = E\left[ \frac{1}{M} \sum_{k=1}^M \frac{f(X_k)}{g(X_k)} \cdot w(X_k) \right]$$<p>Switching to the expectation over a single sample $X$, we get:</p>
-$$E\left( \hat{L}_{\text{ris}} \right) = E\left( \frac{f(X)}{g(X)} \cdot w(X) \right)$$<p>Thus, the RIS estimator is unbiased as its expected value equals the true value.</p>
-<h2 id="applications-in-ray-tracing">
-<a class="header-anchor" href="#applications-in-ray-tracing"></a>
-Applications in Ray Tracing
-</h2><ul>
-<li>
-<p><strong>Integrand</strong>:<br>
-The rendering equation integrand for Monte Carlo evaluation:</p>
-$$L_i(x, \omega_o) f(\omega_i, \omega_o) \cos \theta$$</li>
-<li>
-<p><strong>Process</strong>:</p>
+</h2>$$
+I = \int f(x) \, dx = \mathbb{E}_{x \sim p(x)}[f(x)]
+$$<p>Since we cannot sample $x \sim p(x)$ directly, we use RIS to approximate this expectation.</p>
+<h3 id="1-when-px-is-normalized">
+<a class="header-anchor" href="#1-when-px-is-normalized"></a>
+1. When $p(x)$ is normalized
+</h3>$$
+\hat{I}_{\text{MC}} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{p(y_i)}
+$$<h3 id="2-when-px-is-unnormalized">
+<a class="header-anchor" href="#2-when-px-is-unnormalized"></a>
+2. When $p(x)$ is unnormalized
+</h3><p>We estimate the normalization via the weighted candidate set.</p>
 <ul>
-<li>Generate $M$ candidate directions $\omega_i$ using a simple distribution $p(\omega_i)$.</li>
-<li>Compute weights $w_j = \frac{g(\omega_j)}{p(\omega_j)}$.</li>
-<li>Resample $N = 1$ direction for each query to compute an unbiased estimate of the integral.</li>
+<li>Define importance weights:
+$$
+  w(x_j) = \frac{p(x_j)}{q(x_j)}
+  $$</li>
+<li>Compute the average weight:
+$$
+  \omega^* = \frac{1}{M} \sum_{j=1}^{M} w(x_j)
+  $$</li>
 </ul>
-</li>
-<li>
-<p><strong>Outcome</strong>:<br>
-RIS reduces variance and ensures unbiased estimation, even when $g(x)$ is not normalized.</p>
-</li>
-</ul>
+$$
+\hat{I}_{\text{RIS}} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{p}(y_i)} \right) \cdot \omega^*
+$$<p>Here, $\hat{p}(y_i)$ is the empirical distribution from which $y_i$ was drawn via resampling.</p>
+$$
+\hat{I}_{\text{RIS}} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{p}(y_i)} \right) \cdot \left( \frac{1}{M} \sum_{j=1}^{M} \frac{p(x_j)}{q(x_j)} \right)
+$$<h2 id="proof-of-unbiasedness">
+<a class="header-anchor" href="#proof-of-unbiasedness"></a>
+Proof of Unbiasedness
+</h2>$$
+\mathbb{E}[\hat{I}_{\text{RIS}}] = \int f(x) \, dx
+$$$$
+\mathbb{E}[\hat{I}_{\text{RIS}}] = \mathbb{E}\left[ \mathbb{E} \left( \frac{1}{N} \sum_{i=1}^{N} \frac{f(Y_i)}{p(Y_i)} \;\middle|\; x_1, \dots, x_M \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j) \right]
+$$$$
+\mathbb{E}\left( \frac{f(Y)}{p(Y)} \;\middle|\; \{x_j\} \right) = \sum_{k=1}^{M} \frac{f(x_k)}{p(x_k)} \cdot \frac{w(x_k)}{\sum_{j=1}^{M} w(x_j)}
+$$$$
+\mathbb{E}[\hat{I}_{\text{RIS}}] = \mathbb{E}\left[ \sum_{k=1}^{M} \left( \frac{f(x_k)}{p(x_k)} \cdot \frac{w(x_k)}{\sum_j w(x_j)} \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j) \right]
+$$$$
+= \mathbb{E} \left[ \frac{1}{M} \sum_{k=1}^{M} \frac{f(x_k)}{p(x_k)} \cdot w(x_k) \right]
+= \mathbb{E}_{x \sim q(x)} \left[ \frac{f(x)}{p(x)} \cdot \frac{p(x)}{q(x)} \right]
+= \mathbb{E}_{x \sim q(x)} \left[ \frac{f(x)}{q(x)} \right]
+= \int f(x) \, dx
+$$<p>Therefore, RIS is <strong>unbiased</strong>.</p>
+<h2 id="application-in-ray-tracing">
+<a class="header-anchor" href="#application-in-ray-tracing"></a>
+Application in Ray Tracing
+</h2>$$
+L_i(x, \omega_o) \cdot f(\omega_i, \omega_o) \cdot \cos \theta
+$$<h3 id="process">
+<a class="header-anchor" href="#process"></a>
+Process
+</h3><ol>
+<li>Generate $M$ candidate directions $\omega_i$ from a simple distribution $q(\omega_i)$</li>
+<li>Compute weights:
+$$
+   w_j = \frac{p(\omega_j)}{q(\omega_j)}
+   $$</li>
+<li>Resample $N = 1$ direction per query to estimate the integral.</li>
+</ol>
+<h3 id="outcome">
+<a class="header-anchor" href="#outcome"></a>
+Outcome
+</h3><p>RIS offers a <strong>variance-reducing</strong>, <strong>unbiased</strong> estimation method even when the target distribution $p(x)$ is unnormalized — making it very practical for rendering and global illumination.</p>
 <h1 id="reservoir-sampling-and-weighted-reservoir-sampling">
 <a class="header-anchor" href="#reservoir-sampling-and-weighted-reservoir-sampling"></a>
 Reservoir Sampling and Weighted Reservoir Sampling
@@ -811,10 +812,20 @@ Combining Weighted Reservoir Sampling with RIS
     </li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#steps-for-ris">Steps for RIS</a></li>
-        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a></li>
-        <li><a href="#proof-of-unbiasedness-for-ris-sampling">Proof of Unbiasedness for RIS Sampling</a></li>
-        <li><a href="#applications-in-ray-tracing">Applications in Ray Tracing</a></li>
+        <li><a href="#ris-procedure">RIS Procedure</a></li>
+        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a>
+          <ul>
+            <li><a href="#1-when-px-is-normalized">1. When  is normalized</a></li>
+            <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
+          </ul>
+        </li>
+        <li><a href="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
+        <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
+          <ul>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#outcome">Outcome</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>
@@ -1077,7 +1088,7 @@ Combining Weighted Reservoir Sampling with RIS
       <div>
         <span class="icon-brush"
           >&nbsp;
-            40.3k
+            40.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -1085,7 +1096,7 @@ Combining Weighted Reservoir Sampling with RIS
           
           
 
-          03:19
+          03:18
         </span>
       </div>
     
@@ -1143,10 +1154,20 @@ Combining Weighted Reservoir Sampling with RIS
     </li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#steps-for-ris">Steps for RIS</a></li>
-        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a></li>
-        <li><a href="#proof-of-unbiasedness-for-ris-sampling">Proof of Unbiasedness for RIS Sampling</a></li>
-        <li><a href="#applications-in-ray-tracing">Applications in Ray Tracing</a></li>
+        <li><a href="#ris-procedure">RIS Procedure</a></li>
+        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a>
+          <ul>
+            <li><a href="#1-when-px-is-normalized">1. When  is normalized</a></li>
+            <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
+          </ul>
+        </li>
+        <li><a href="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
+        <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
+          <ul>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#outcome">Outcome</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
     <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>

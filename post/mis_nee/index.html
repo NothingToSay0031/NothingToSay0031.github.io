@@ -584,24 +584,9 @@ Efficient Path Tracing (NEE) with the Balance Heuristic
 <a class="header-anchor" href="#core-idea"></a>
 Core Idea
 </h3><ul>
-<li>Combine <strong>light source sampling</strong> and <strong>BRDF sampling</strong> at every bounce.</li>
-<li>Do not choose one method over the other; use both techniques simultaneously for better results.</li>
-</ul>
-<h3 id="key-steps-in-the-process">
-<a class="header-anchor" href="#key-steps-in-the-process"></a>
-Key Steps in the Process
-</h3><ul>
-<li><strong>Light Source Sampling:</strong>
-<ul>
-<li>Always performed at each bounce to gather direct light contributions.</li>
-</ul>
-</li>
-<li><strong>BRDF Sampling:</strong>
-<ul>
-<li>Used to determine indirect lighting.</li>
-<li>Indirect BRDF samples can be treated as direct BRDF samples for the next bounce.</li>
-</ul>
-</li>
+<li>Consider both light sampling methods in every bounce.</li>
+<li>Weight on first intersection must still be 1 for BRDF sampling.</li>
+<li>Compute probabilities for selected sample with both techniques, use the balance heuristic to compute adequate MIS weights.</li>
 </ul>
 <h3 id="the-role-of-the-balance-heuristic">
 <a class="header-anchor" href="#the-role-of-the-balance-heuristic"></a>
@@ -615,20 +600,10 @@ The Role of the Balance Heuristic
 <a class="header-anchor" href="#challenges-and-solutions"></a>
 Challenges and Solutions
 </h3><ul>
-<li><strong>Different Evaluation Times:</strong>
+<li><strong>different sampling methods are evaluated at different times</strong>
 <ul>
 <li>BRDF sample contributions are calculated when hitting an emitting surface.</li>
 <li>Light source sampling contributions are computed one bounce earlier.</li>
-</ul>
-</li>
-<li><strong>Proper MIS Weight Application:</strong>
-<ul>
-<li>When using a BRDF sample to compute direct light for the previous bounce:
-<ul>
-<li>Ensure that the MIS weight from the <strong>previous bounce</strong> is applied to the calculated emittance.</li>
-<li>Track relevant properties of the previous bounce to apply the correct computations one bounce later.</li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -690,7 +665,7 @@ Challenges and Solutions
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Compression-Oriented Programming"
               class="lazyload"
@@ -771,7 +746,6 @@ Challenges and Solutions
         <li><a href="#efficient-path-tracing-nee-with-the-balance-heuristic">Efficient Path Tracing (NEE) with the Balance Heuristic</a>
           <ul>
             <li><a href="#core-idea">Core Idea</a></li>
-            <li><a href="#key-steps-in-the-process">Key Steps in the Process</a></li>
             <li><a href="#the-role-of-the-balance-heuristic">The Role of the Balance Heuristic</a></li>
             <li><a href="#challenges-and-solutions">Challenges and Solutions</a></li>
           </ul>
@@ -1013,7 +987,7 @@ Challenges and Solutions
       <div>
         <span class="icon-brush"
           >&nbsp;
-            40.3k
+            40.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -1021,7 +995,7 @@ Challenges and Solutions
           
           
 
-          03:19
+          03:18
         </span>
       </div>
     
@@ -1099,7 +1073,6 @@ Challenges and Solutions
         <li><a href="#efficient-path-tracing-nee-with-the-balance-heuristic">Efficient Path Tracing (NEE) with the Balance Heuristic</a>
           <ul>
             <li><a href="#core-idea">Core Idea</a></li>
-            <li><a href="#key-steps-in-the-process">Key Steps in the Process</a></li>
             <li><a href="#the-role-of-the-balance-heuristic">The Role of the Balance Heuristic</a></li>
             <li><a href="#challenges-and-solutions">Challenges and Solutions</a></li>
           </ul>
