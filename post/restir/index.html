@@ -514,24 +514,7 @@ $$
 $$<p>Here, $\hat{p}(y_i)$ is the empirical distribution from which $y_i$ was drawn via resampling.</p>
 $$
 \hat{I}_{\text{RIS}} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{p}(y_i)} \right) \cdot \left( \frac{1}{M} \sum_{j=1}^{M} \frac{p(x_j)}{q(x_j)} \right)
-$$<h2 id="proof-of-unbiasedness">
-<a class="header-anchor" href="#proof-of-unbiasedness"></a>
-Proof of Unbiasedness
-</h2>$$
-\mathbb{E}[\hat{I}_{\text{RIS}}] = \int f(x) \, dx
-$$$$
-\mathbb{E}[\hat{I}_{\text{RIS}}] = \mathbb{E}\left[ \mathbb{E} \left( \frac{1}{N} \sum_{i=1}^{N} \frac{f(Y_i)}{p(Y_i)} \;\middle|\; x_1, \dots, x_M \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j) \right]
-$$$$
-\mathbb{E}\left( \frac{f(Y)}{p(Y)} \;\middle|\; \{x_j\} \right) = \sum_{k=1}^{M} \frac{f(x_k)}{p(x_k)} \cdot \frac{w(x_k)}{\sum_{j=1}^{M} w(x_j)}
-$$$$
-\mathbb{E}[\hat{I}_{\text{RIS}}] = \mathbb{E}\left[ \sum_{k=1}^{M} \left( \frac{f(x_k)}{p(x_k)} \cdot \frac{w(x_k)}{\sum_j w(x_j)} \right) \cdot \frac{1}{M} \sum_{j=1}^{M} w(x_j) \right]
-$$$$
-= \mathbb{E} \left[ \frac{1}{M} \sum_{k=1}^{M} \frac{f(x_k)}{p(x_k)} \cdot w(x_k) \right]
-= \mathbb{E}_{x \sim q(x)} \left[ \frac{f(x)}{p(x)} \cdot \frac{p(x)}{q(x)} \right]
-= \mathbb{E}_{x \sim q(x)} \left[ \frac{f(x)}{q(x)} \right]
-= \int f(x) \, dx
-$$<p>Therefore, RIS is <strong>unbiased</strong>.</p>
-<h2 id="application-in-ray-tracing">
+$$<h2 id="application-in-ray-tracing">
 <a class="header-anchor" href="#application-in-ray-tracing"></a>
 Application in Ray Tracing
 </h2>$$
@@ -751,7 +734,7 @@ Combining Weighted Reservoir Sampling with RIS
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -819,7 +802,6 @@ Combining Weighted Reservoir Sampling with RIS
             <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
           </ul>
         </li>
-        <li><a href="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
         <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
           <ul>
             <li><a href="#process">Process</a></li>
@@ -1088,7 +1070,7 @@ Combining Weighted Reservoir Sampling with RIS
       <div>
         <span class="icon-brush"
           >&nbsp;
-            40.1k
+            40.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -1161,7 +1143,6 @@ Combining Weighted Reservoir Sampling with RIS
             <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
           </ul>
         </li>
-        <li><a href="#proof-of-unbiasedness">Proof of Unbiasedness</a></li>
         <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
           <ul>
             <li><a href="#process">Process</a></li>
