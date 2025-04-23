@@ -384,7 +384,78 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="multiple-importance-sampling-estimator">
+        <h1 id="monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">
+<a class="header-anchor" href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation"></a>
+Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation
+</h1><h2 id="correctness-of-monte-carlo-integration">
+<a class="header-anchor" href="#correctness-of-monte-carlo-integration"></a>
+Correctness of Monte Carlo Integration
+</h2><p>Given a probability density function $p(x)$ over the interval $[a, b]$, we sample a dataset $\{X_1, X_2, \dots, X_N\}$.</p>
+<p>Define $F_N$:</p>
+$$F_N = \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}$$<p><strong>Expected value of $F_N$:</strong></p>
+$$\begin{aligned}  
+E[F_N] &= E\left[\frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}\right] \\  
+&= \frac{1}{N} \sum_{i=1}^N E\left[\frac{f(X_i)}{p(X_i)}\right] \\  
+&= \frac{1}{N} \sum_{i=1}^N \int_a^b \frac{f(x)}{p(x)} p(x) dx \\  
+&= \int_a^b f(x) dx.  
+\end{aligned}$$<p>Thus, <strong>Monte Carlo integration converges to the true integral</strong> as $N \to \infty$:</p>
+$$\int_D f(x) dx = \lim_{N \to \infty} \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}.$$<h2 id="convergence-and-variance-analysis">
+<a class="header-anchor" href="#convergence-and-variance-analysis"></a>
+Convergence and Variance Analysis
+</h2><p>Let $Y = \frac{f(X)}{p(X)}$. The variance of $F_N$ is derived as:</p>
+$$\begin{aligned}  
+\sigma^2(F_N) &= \sigma^2\left[\frac{1}{N} \sum_{i=1}^N Y_i\right] \\  
+&= \frac{1}{N^2} \sum_{i=1}^N \sigma^2[Y_i] \\  
+&= \frac{1}{N^2}(N \cdot \sigma^2[Y]) \\  
+&= \frac{1}{N} \sigma^2[Y].  
+\end{aligned}$$<p>Hence, the standard deviation:</p>
+$$\sigma(F_N) = \frac{\sigma[Y]}{\sqrt{N}}.$$<ul>
+<li>As $N \to \infty$, <strong>$\sigma(F_N) \to 0$</strong>, proving <strong>convergence</strong>.</li>
+</ul>
+<p><strong>Impact of variance ($\sigma^2[Y]$):</strong></p>
+<ul>
+<li><strong>Smoothness of $Y$:</strong> If $Y$ has large variations, $\sigma^2[Y]$ increases, slowing convergence.</li>
+<li><strong>Choice of $p(x)$:</strong> If $p(x) \propto f(x)$, $\sigma^2[Y] \to 0$, and convergence is optimal.</li>
+</ul>
+<h2 id="monte-carlo-integration-for-the-rendering-equation">
+<a class="header-anchor" href="#monte-carlo-integration-for-the-rendering-equation"></a>
+Monte Carlo Integration for the Rendering Equation
+</h2><p><strong>Rendering equation</strong>:</p>
+$$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i \, \mathrm{d}\omega_i$$<p><strong>Monte Carlo approximation</strong>:</p>
+$$L_o(x, \omega_o) = L_e(x, \omega_o) + \frac{1}{N} \sum_{j=1}^N \frac{L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i}{\text{pdf}(\omega_i)}$$<h3 id="key-insights">
+<a class="header-anchor" href="#key-insights"></a>
+Key Insights
+</h3><ol>
+<li>
+<p><strong>Variance reduction</strong>:</p>
+<ul>
+<li>If $\text{pdf}(\omega_i)$ is chosen to closely match the product $L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$, variance is minimized.</li>
+</ul>
+</li>
+<li>
+<p><strong>Importance sampling</strong>:</p>
+<ul>
+<li>Select $\text{pdf}(\omega_i) \propto L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$ for optimal convergence and stability.</li>
+</ul>
+</li>
+</ol>
+<h3 id="importance-sampling">
+<a class="header-anchor" href="#importance-sampling"></a>
+Importance Sampling
+</h3><ul>
+<li>
+<p><strong>Principle</strong>:<br>
+Importance sampling selects a probability density function $p(x)$ that closely resembles or is proportional to the integrand $f(x)$. This reduces variance and improves convergence speed.</p>
+</li>
+<li>
+<p><strong>Monte Carlo Approximation with Importance Sampling</strong>:</p>
+$$I = \int f(x) \, dx \approx \frac{1}{N} \sum_{i=1}^{N} \frac{f(x_i)}{p(x_i)} \quad \text{where } x_i \sim p(x)$$<ul>
+<li>A good choice of $p(x)$ minimizes variance.</li>
+<li>Optimal case: $p(x) \propto f(x)$, which results in zero variance.</li>
+</ul>
+</li>
+</ul>
+<h1 id="multiple-importance-sampling-estimator">
 <a class="header-anchor" href="#multiple-importance-sampling-estimator"></a>
 Multiple Importance Sampling Estimator
 </h1><p>The estimator is defined as:</p>
@@ -711,6 +782,18 @@ Challenges and Solutions
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
+    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
+      <ul>
+        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
+        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
+        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
+          <ul>
+            <li><a href="#key-insights">Key Insights</a></li>
+            <li><a href="#importance-sampling">Importance Sampling</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><a href="#multiple-importance-sampling-estimator">Multiple Importance Sampling Estimator</a>
       <ul>
         <li><a href="#conditions-for-unbiasedness">Conditions for Unbiasedness</a>
@@ -995,7 +1078,7 @@ Challenges and Solutions
           
           
 
-          03:18
+          03:17
         </span>
       </div>
     
@@ -1038,6 +1121,18 @@ Challenges and Solutions
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
+    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
+      <ul>
+        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
+        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
+        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
+          <ul>
+            <li><a href="#key-insights">Key Insights</a></li>
+            <li><a href="#importance-sampling">Importance Sampling</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
     <li><a href="#multiple-importance-sampling-estimator">Multiple Importance Sampling Estimator</a>
       <ul>
         <li><a href="#conditions-for-unbiasedness">Conditions for Unbiasedness</a>

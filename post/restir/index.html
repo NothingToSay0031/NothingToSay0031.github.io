@@ -388,152 +388,62 @@
 <a class="header-anchor" href="#restir"></a>
 ReSTIR
 </h1><p><a href="https://intro-to-restir.cwyman.org/">A Gentle Introduction to ReSTIR: Path Reuse in Real-time</a></p>
-<p><a href="https://cs.dartmouth.edu/~wjarosz/publications/bitterli20spatiotemporal.html">Spatiotemporal reservoir resampling for real-time ray tracing with dynamic direct lighting</a></p>
-<h1 id="monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">
-<a class="header-anchor" href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation"></a>
-Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation
-</h1><h2 id="correctness-of-monte-carlo-integration">
-<a class="header-anchor" href="#correctness-of-monte-carlo-integration"></a>
-Correctness of Monte Carlo Integration
-</h2><p>Given a probability density function $p(x)$ over the interval $[a, b]$, we sample a dataset $\{X_1, X_2, \dots, X_N\}$.</p>
-<p>Define $F_N$:</p>
-$$F_N = \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}$$<p><strong>Expected value of $F_N$:</strong></p>
-$$\begin{aligned}  
-E[F_N] &= E\left[\frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}\right] \\  
-&= \frac{1}{N} \sum_{i=1}^N E\left[\frac{f(X_i)}{p(X_i)}\right] \\  
-&= \frac{1}{N} \sum_{i=1}^N \int_a^b \frac{f(x)}{p(x)} p(x) dx \\  
-&= \int_a^b f(x) dx.  
-\end{aligned}$$<p>Thus, <strong>Monte Carlo integration converges to the true integral</strong> as $N \to \infty$:</p>
-$$\int_D f(x) dx = \lim_{N \to \infty} \frac{1}{N} \sum_{i=1}^N \frac{f(X_i)}{p(X_i)}.$$<h2 id="convergence-and-variance-analysis">
-<a class="header-anchor" href="#convergence-and-variance-analysis"></a>
-Convergence and Variance Analysis
-</h2><p>Let $Y = \frac{f(X)}{p(X)}$. The variance of $F_N$ is derived as:</p>
-$$\begin{aligned}  
-\sigma^2(F_N) &= \sigma^2\left[\frac{1}{N} \sum_{i=1}^N Y_i\right] \\  
-&= \frac{1}{N^2} \sum_{i=1}^N \sigma^2[Y_i] \\  
-&= \frac{1}{N^2}(N \cdot \sigma^2[Y]) \\  
-&= \frac{1}{N} \sigma^2[Y].  
-\end{aligned}$$<p>Hence, the standard deviation:</p>
-$$\sigma(F_N) = \frac{\sigma[Y]}{\sqrt{N}}.$$<ul>
-<li>As $N \to \infty$, <strong>$\sigma(F_N) \to 0$</strong>, proving <strong>convergence</strong>.</li>
-</ul>
-<p><strong>Impact of variance ($\sigma^2[Y]$):</strong></p>
-<ul>
-<li><strong>Smoothness of $Y$:</strong> If $Y$ has large variations, $\sigma^2[Y]$ increases, slowing convergence.</li>
-<li><strong>Choice of $p(x)$:</strong> If $p(x) \propto f(x)$, $\sigma^2[Y] \to 0$, and convergence is optimal.</li>
-</ul>
-<h2 id="monte-carlo-integration-for-the-rendering-equation">
-<a class="header-anchor" href="#monte-carlo-integration-for-the-rendering-equation"></a>
-Monte Carlo Integration for the Rendering Equation
-</h2><p><strong>Rendering equation</strong>:</p>
-$$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i \, \mathrm{d}\omega_i$$<p><strong>Monte Carlo approximation</strong>:</p>
-$$L_o(x, \omega_o) = L_e(x, \omega_o) + \frac{1}{N} \sum_{j=1}^N \frac{L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i}{\text{pdf}(\omega_i)}$$<h3 id="key-insights">
-<a class="header-anchor" href="#key-insights"></a>
-Key Insights
-</h3><ol>
-<li>
-<p><strong>Variance reduction</strong>:</p>
-<ul>
-<li>If $\text{pdf}(\omega_i)$ is chosen to closely match the product $L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$, variance is minimized.</li>
-</ul>
-</li>
-<li>
-<p><strong>Importance sampling</strong>:</p>
-<ul>
-<li>Select $\text{pdf}(\omega_i) \propto L_i(x, \omega_i) f(x, \omega_i, \omega_o) \cos \theta_i$ for optimal convergence and stability.</li>
-</ul>
-</li>
-</ol>
-<h3 id="importance-sampling">
-<a class="header-anchor" href="#importance-sampling"></a>
-Importance Sampling
-</h3><ul>
-<li>
-<p><strong>Principle</strong>:<br>
-Importance sampling selects a probability density function $p(x)$ that closely resembles or is proportional to the integrand $f(x)$. This reduces variance and improves convergence speed.</p>
-</li>
-<li>
-<p><strong>Monte Carlo Approximation with Importance Sampling</strong>:</p>
-$$I = \int f(x) \, dx \approx \frac{1}{N} \sum_{i=1}^{N} \frac{f(x_i)}{p(x_i)} \quad \text{where } x_i \sim p(x)$$<ul>
-<li>A good choice of $p(x)$ minimizes variance.</li>
-<li>Optimal case: $p(x) \propto f(x)$, which results in zero variance.</li>
-</ul>
-</li>
-</ul>
-<p>Certainly! Here&rsquo;s your fully unified English explanation of <strong>Resampled Importance Sampling (RIS)</strong> with all <strong>inline math</strong> wrapped in <code>$...$</code> and <strong>block equations</strong> in <code>$$...$$</code> as per your formatting request:</p>
-<hr>
 <h1 id="resampled-importance-sampling-ris">
 <a class="header-anchor" href="#resampled-importance-sampling-ris"></a>
 Resampled Importance Sampling (RIS)
-</h1><p><strong>Motivation</strong><br>
-When direct sampling from a complex or unnormalized target distribution $p(x)$ is difficult, <strong>Resampled Importance Sampling (RIS)</strong> provides an efficient alternative. RIS approximates samples from $p(x)$ by leveraging an easier-to-sample <strong>proposal distribution</strong> $q(x)$.</p>
-<h2 id="ris-procedure">
-<a class="header-anchor" href="#ris-procedure"></a>
-RIS Procedure
-</h2><ol>
-<li>
+</h1><h2 id="proof-that-w_x-is-an-unbiased-contribution-weight">
+<a class="header-anchor" href="#proof-that-w_x-is-an-unbiased-contribution-weight"></a>
+Proof that $W_X$ is an Unbiased Contribution Weight
+</h2><p><a href="https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf">Course Notes</a> Equation 3.1 Proof</p>
+<p>Let $X, X_1, \dots, X_M \sim p(x)$ be i.i.d. samples from a probability distribution $p$.<br>
+We define:</p>
 $$
-   x_j \sim q(x), \quad j = 1, \dots, M
-   $$</li>
-<li>
+w_i = \frac{\hat{p}(X_i)}{p(X_i)}, \quad
+W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)
+$$<p>Our goal is to show that if we choose $\hat{p}(x) = f(x)$, then $W_X$ is an <strong>unbiased contribution weight</strong>, meaning it satisfies the following condition:</p>
 $$
-   w_j = \frac{p(x_j)}{q(x_j)}
-   $$</li>
-<li>
-<p><strong>Resample $N$ samples</strong><br>
-Resample $N$ samples $\{y_1, y_2, \dots, y_N\}$ from the candidate set $\{x_j\}$ with probability proportional to their weights $w_j$. These resampled points $y_i$ approximate the target distribution $p(x)$.</p>
-</li>
-</ol>
-<h2 id="monte-carlo-integration-with-ris">
-<a class="header-anchor" href="#monte-carlo-integration-with-ris"></a>
-Monte Carlo Integration with RIS
-</h2>$$
-I = \int f(x) \, dx = \mathbb{E}_{x \sim p(x)}[f(x)]
-$$<p>Since we cannot sample $x \sim p(x)$ directly, we use RIS to approximate this expectation.</p>
-<h3 id="1-when-px-is-normalized">
-<a class="header-anchor" href="#1-when-px-is-normalized"></a>
-1. When $p(x)$ is normalized
-</h3>$$
-\hat{I}_{\text{MC}} = \frac{1}{N} \sum_{i=1}^{N} \frac{f(y_i)}{p(y_i)}
-$$<h3 id="2-when-px-is-unnormalized">
-<a class="header-anchor" href="#2-when-px-is-unnormalized"></a>
-2. When $p(x)$ is unnormalized
-</h3><p>We estimate the normalization via the weighted candidate set.</p>
-<ul>
-<li>Define importance weights:
+\mathbb{E}[f(X) W_X] = \int f(x) \, dx
+$$<h3 id="step-1-compute-mathbbew_x">
+<a class="header-anchor" href="#step-1-compute-mathbbew_x"></a>
+Step 1: Compute $\mathbb{E}[W_X]$
+</h3><p>We start by computing the expectation of $W_X$ over the samples $X_1, \dots, X_M$:</p>
 $$
-  w(x_j) = \frac{p(x_j)}{q(x_j)}
-  $$</li>
-<li>Compute the average weight:
+\mathbb{E}_{X_1, \dots, X_M} \left[ W_X \right] = \mathbb{E} \left[ \frac{1}{\hat{p}(X)} \cdot \frac{1}{M} \sum_{i=1}^M \frac{\hat{p}(X_i)}{p(X_i)} \right]
+$$<p>Using linearity of expectation:</p>
 $$
-  \omega^* = \frac{1}{M} \sum_{j=1}^{M} w(x_j)
-  $$</li>
-</ul>
+= \frac{1}{\hat{p}(X)} \cdot \frac{1}{M} \sum_{i=1}^M \mathbb{E}_{X_i} \left[ \frac{\hat{p}(X_i)}{p(X_i)} \right]
+$$<p>Since $X_i \sim p$:</p>
 $$
-\hat{I}_{\text{RIS}} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{p}(y_i)} \right) \cdot \omega^*
-$$<p>Here, $\hat{p}(y_i)$ is the empirical distribution from which $y_i$ was drawn via resampling.</p>
+\mathbb{E}_{X_i} \left[ \frac{\hat{p}(X_i)}{p(X_i)} \right] = \int \frac{\hat{p}(x)}{p(x)} p(x) dx = \int \hat{p}(x) dx
+$$<p>Therefore:</p>
 $$
-\hat{I}_{\text{RIS}} = \frac{1}{N} \sum_{i=1}^{N} \left( \frac{f(y_i)}{\hat{p}(y_i)} \right) \cdot \left( \frac{1}{M} \sum_{j=1}^{M} \frac{p(x_j)}{q(x_j)} \right)
-$$<h2 id="application-in-ray-tracing">
-<a class="header-anchor" href="#application-in-ray-tracing"></a>
-Application in Ray Tracing
-</h2>$$
-L_i(x, \omega_o) \cdot f(\omega_i, \omega_o) \cdot \cos \theta
-$$<h3 id="process">
-<a class="header-anchor" href="#process"></a>
-Process
-</h3><ol>
-<li>Generate $M$ candidate directions $\omega_i$ from a simple distribution $q(\omega_i)$</li>
-<li>Compute weights:
+\mathbb{E}[W_X] = \frac{\int \hat{p}(x) dx}{\hat{p}(X)}
+$$<h3 id="step-2-let-hatpx--fx">
+<a class="header-anchor" href="#step-2-let-hatpx--fx"></a>
+Step 2: Let $\hat{p}(x) = f(x)$
+</h3><p>Substitute $\hat{p}(x)$ with $f(x)$:</p>
 $$
-   w_j = \frac{p(\omega_j)}{q(\omega_j)}
-   $$</li>
-<li>Resample $N = 1$ direction per query to estimate the integral.</li>
-</ol>
-<h3 id="outcome">
-<a class="header-anchor" href="#outcome"></a>
-Outcome
-</h3><p>RIS offers a <strong>variance-reducing</strong>, <strong>unbiased</strong> estimation method even when the target distribution $p(x)$ is unnormalized — making it very practical for rendering and global illumination.</p>
+\mathbb{E}[W_X] = \frac{\int f(x) dx}{f(X)}
+$$<h3 id="step-3-compute-mathbbefx-w_x">
+<a class="header-anchor" href="#step-3-compute-mathbbefx-w_x"></a>
+Step 3: Compute $\mathbb{E}[f(X) W_X]$
+</h3><p>We now evaluate:</p>
+$$
+\mathbb{E}[f(X) W_X] = \mathbb{E}_X \left[ f(X) \cdot \mathbb{E}_{X_1, \dots, X_M}[W_X \mid X] \right]
+$$<p>Substitute the result from Step 2:</p>
+$$
+= \mathbb{E}_X \left[ f(X) \cdot \frac{\int f(x) dx}{f(X)} \right] = \int f(x) dx
+$$<h3 id="conclusion">
+<a class="header-anchor" href="#conclusion"></a>
+Conclusion
+</h3><p>We have shown that:</p>
+$$
+\mathbb{E}[f(X) W_X] = \int f(x) dx
+$$<p>Hence, $W_X$ is an <strong>unbiased contribution weight</strong> according to the definition:</p>
+<blockquote>
+$$
+> \mathbb{E}[f(X) W_X] = \int f(x) dx.
+> $$</blockquote>
 <h1 id="reservoir-sampling-and-weighted-reservoir-sampling">
 <a class="header-anchor" href="#reservoir-sampling-and-weighted-reservoir-sampling"></a>
 Reservoir Sampling and Weighted Reservoir Sampling
@@ -719,7 +629,7 @@ References
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -742,7 +652,7 @@ References
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -789,31 +699,14 @@ References
     <nav id="TableOfContents">
   <ul>
     <li><a href="#restir">ReSTIR</a></li>
-    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
-      <ul>
-        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
-        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
-        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
-          <ul>
-            <li><a href="#key-insights">Key Insights</a></li>
-            <li><a href="#importance-sampling">Importance Sampling</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#ris-procedure">RIS Procedure</a></li>
-        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a>
+        <li><a href="#proof-that-w_x-is-an-unbiased-contribution-weight">Proof that  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#1-when-px-is-normalized">1. When  is normalized</a></li>
-            <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
-          </ul>
-        </li>
-        <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
-          <ul>
-            <li><a href="#process">Process</a></li>
-            <li><a href="#outcome">Outcome</a></li>
+            <li><a href="#step-1-compute-mathbbew_x">Step 1: Compute </a></li>
+            <li><a href="#step-2-let-hatpx--fx">Step 2: Let </a></li>
+            <li><a href="#step-3-compute-mathbbefx-w_x">Step 3: Compute </a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
       </ul>
@@ -1087,7 +980,7 @@ References
           
           
 
-          03:18
+          03:17
         </span>
       </div>
     
@@ -1131,31 +1024,14 @@ References
     <nav id="TableOfContents">
   <ul>
     <li><a href="#restir">ReSTIR</a></li>
-    <li><a href="#monte-carlo-integration-correctness-convergence-and-application-in-rendering-equation">Monte Carlo Integration: Correctness, Convergence, and Application in Rendering Equation</a>
-      <ul>
-        <li><a href="#correctness-of-monte-carlo-integration">Correctness of Monte Carlo Integration</a></li>
-        <li><a href="#convergence-and-variance-analysis">Convergence and Variance Analysis</a></li>
-        <li><a href="#monte-carlo-integration-for-the-rendering-equation">Monte Carlo Integration for the Rendering Equation</a>
-          <ul>
-            <li><a href="#key-insights">Key Insights</a></li>
-            <li><a href="#importance-sampling">Importance Sampling</a></li>
-          </ul>
-        </li>
-      </ul>
-    </li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#ris-procedure">RIS Procedure</a></li>
-        <li><a href="#monte-carlo-integration-with-ris">Monte Carlo Integration with RIS</a>
+        <li><a href="#proof-that-w_x-is-an-unbiased-contribution-weight">Proof that  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#1-when-px-is-normalized">1. When  is normalized</a></li>
-            <li><a href="#2-when-px-is-unnormalized">2. When  is unnormalized</a></li>
-          </ul>
-        </li>
-        <li><a href="#application-in-ray-tracing">Application in Ray Tracing</a>
-          <ul>
-            <li><a href="#process">Process</a></li>
-            <li><a href="#outcome">Outcome</a></li>
+            <li><a href="#step-1-compute-mathbbew_x">Step 1: Compute </a></li>
+            <li><a href="#step-2-let-hatpx--fx">Step 2: Let </a></li>
+            <li><a href="#step-3-compute-mathbbefx-w_x">Step 3: Compute </a></li>
+            <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
       </ul>
