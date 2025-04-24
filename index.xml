@@ -6,8 +6,15 @@
     <description>Recent content on NothingToSay0031</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 04 Jan 2025 22:47:09 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 21 Apr 2025 17:23:03 +0000</lastBuildDate>
     <atom:link href="https://nothingtosay0031.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ReSTIR - Path Reuse in Real-time</title>
+      <link>https://nothingtosay0031.github.io/post/restir/</link>
+      <pubDate>Mon, 21 Apr 2025 17:23:03 +0000</pubDate>
+      <guid>https://nothingtosay0031.github.io/post/restir/</guid>
+      <description>&lt;h1 id=&#34;restir&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#restir&#34;&gt;&lt;/a&gt;&#xD;&#xA;ReSTIR&#xD;&#xA;&lt;/h1&gt;&lt;p&gt;&lt;a href=&#34;https://intro-to-restir.cwyman.org/&#34;&gt;A Gentle Introduction to ReSTIR: Path Reuse in Real-time&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;resampled-importance-sampling-ris&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#resampled-importance-sampling-ris&#34;&gt;&lt;/a&gt;&#xD;&#xA;Resampled Importance Sampling (RIS)&#xD;&#xA;&lt;/h1&gt;&lt;h2 id=&#34;proof-that-w_x-is-an-unbiased-contribution-weight&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#proof-that-w_x-is-an-unbiased-contribution-weight&#34;&gt;&lt;/a&gt;&#xD;&#xA;Proof that $W_X$ is an Unbiased Contribution Weight&#xD;&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf&#34;&gt;Course Notes&lt;/a&gt; Equation 3.1 Proof&lt;/p&gt;&#xA;&lt;p&gt;Let $X, X_1, \dots, X_M \sim p(x)$ be i.i.d. samples from a probability distribution $p$.&lt;br&gt;&#xA;We define:&lt;/p&gt;&#xA;$$&#xA;w_i = \frac{\hat{p}(X_i)}{p(X_i)}, \quad&#xA;W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)&#xA;$$&lt;p&gt;Our goal is to show that if we choose $\hat{p}(x) = f(x)$, then $W_X$ is an &lt;strong&gt;unbiased contribution weight&lt;/strong&gt;, meaning it satisfies the following condition:&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Compression-Oriented Programming</title>
       <link>https://nothingtosay0031.github.io/post/compression/</link>
@@ -35,13 +42,6 @@
       <pubDate>Sat, 28 Dec 2024 16:55:53 +0800</pubDate>
       <guid>https://nothingtosay0031.github.io/post/sampling/</guid>
       <description>&lt;h1 id=&#34;deriving-pdf-for-hemisphere-sampling&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#deriving-pdf-for-hemisphere-sampling&#34;&gt;&lt;/a&gt;&#xD;&#xA;Deriving PDF for Hemisphere Sampling&#xD;&#xA;&lt;/h1&gt;&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;Target distribution&lt;/strong&gt; in $\omega$, which is $(x, y, z)$ with $\sqrt{x^2 + y^2 + z^2} = 1$.&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;The transformation $T$&lt;/strong&gt; from $(r, \theta, \phi)$ to $(x, y, z)$:&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;$$x = r \sin \theta \cos \phi$$$$y = r \sin \theta \sin \phi$$$$z = r \cos \theta$$&lt;ul&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;The Jacobian&lt;/strong&gt; of the transformation $T$ gives $|J_T| = r^2 \sin \theta$.&lt;/p&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;$r = 1$, so we have:&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>ReSTIR - Path Reuse in Real-time</title>
-      <link>https://nothingtosay0031.github.io/post/restir/</link>
-      <pubDate>Sat, 21 Dec 2024 17:23:03 +0000</pubDate>
-      <guid>https://nothingtosay0031.github.io/post/restir/</guid>
-      <description>&lt;h1 id=&#34;restir&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#restir&#34;&gt;&lt;/a&gt;&#xD;&#xA;ReSTIR&#xD;&#xA;&lt;/h1&gt;&lt;p&gt;&lt;a href=&#34;https://intro-to-restir.cwyman.org/&#34;&gt;A Gentle Introduction to ReSTIR: Path Reuse in Real-time&lt;/a&gt;&lt;/p&gt;&#xA;&lt;h1 id=&#34;resampled-importance-sampling-ris&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#resampled-importance-sampling-ris&#34;&gt;&lt;/a&gt;&#xD;&#xA;Resampled Importance Sampling (RIS)&#xD;&#xA;&lt;/h1&gt;&lt;h2 id=&#34;proof-that-w_x-is-an-unbiased-contribution-weight&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#proof-that-w_x-is-an-unbiased-contribution-weight&#34;&gt;&lt;/a&gt;&#xD;&#xA;Proof that $W_X$ is an Unbiased Contribution Weight&#xD;&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf&#34;&gt;Course Notes&lt;/a&gt; Equation 3.1 Proof&lt;/p&gt;&#xA;&lt;p&gt;Let $X, X_1, \dots, X_M \sim p(x)$ be i.i.d. samples from a probability distribution $p$.&lt;br&gt;&#xA;We define:&lt;/p&gt;&#xA;$$&#xA;w_i = \frac{\hat{p}(X_i)}{p(X_i)}, \quad&#xA;W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)&#xA;$$&lt;p&gt;Our goal is to show that if we choose $\hat{p}(x) = f(x)$, then $W_X$ is an &lt;strong&gt;unbiased contribution weight&lt;/strong&gt;, meaning it satisfies the following condition:&lt;/p&gt;</description>
     </item>
     <item>
       <title>Real-Time High Quality Rendering</title>
