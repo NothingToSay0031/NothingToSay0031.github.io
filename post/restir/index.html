@@ -419,9 +419,9 @@ W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)
 $$<p>Our goal is to show that $W_X$ is an <strong>unbiased contribution weight</strong>, meaning it satisfies:</p>
 $$
 \mathbb{E}_X[f(X) W_X] = \int f(x) \, dx
-$$<h3 id="step-1-compute-mathbbe_xfx-w_x">
-<a class="header-anchor" href="#step-1-compute-mathbbe_xfx-w_x"></a>
-Step 1: Compute $\mathbb{E}_X[f(X) W_X]$
+$$<h3 id="compute-mathbbe_xfx-w_x">
+<a class="header-anchor" href="#compute-mathbbe_xfx-w_x"></a>
+Compute $\mathbb{E}_X[f(X) W_X]$
 </h3><p>Since $W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_j w_j \right)$, we get:</p>
 $$
 f(X) W_X = f(X) \cdot \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_j w_j \right)
@@ -443,10 +443,7 @@ $$
 = \frac{1}{M} \sum_{i=1}^M f(X_i) \cdot \frac{w_i}{\hat{p}(X_i)} 
 = \frac{1}{M} \sum_{i=1}^M f(X_i) \cdot \frac{\hat{p}(X_i)}{p(X_i)} \cdot \frac{1}{\hat{p}(X_i)} 
 = \frac{1}{M} \sum_{i=1}^M \frac{f(X_i)}{p(X_i)}
-$$<h3 id="step-2-take-expectation-over-all-samples">
-<a class="header-anchor" href="#step-2-take-expectation-over-all-samples"></a>
-Step 2: Take Expectation Over All Samples
-</h3><p>Now:</p>
+$$<p>Now:</p>
 $$
 \mathbb{E}[f(X) W_X] = \mathbb{E}_{X_1, \dots, X_M} \left[ \frac{1}{M} \sum_{i=1}^M \frac{f(X_i)}{p(X_i)} \right]
 $$<p>Since each $X_i \sim p(x)$, we know:</p>
@@ -647,7 +644,7 @@ References
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Compression-Oriented Programming"
               class="lazyload"
@@ -701,8 +698,7 @@ References
         <li><a href="#proof-mathbbew_x-is-to-estimate-frac1hatpx">Proof:  is to estimate </a></li>
         <li><a href="#proof-w_x-is-an-unbiased-contribution-weight">Proof:  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#step-1-compute-mathbbe_xfx-w_x">Step 1: Compute </a></li>
-            <li><a href="#step-2-take-expectation-over-all-samples">Step 2: Take Expectation Over All Samples</a></li>
+            <li><a href="#compute-mathbbe_xfx-w_x">Compute </a></li>
             <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
@@ -1026,8 +1022,7 @@ References
         <li><a href="#proof-mathbbew_x-is-to-estimate-frac1hatpx">Proof:  is to estimate </a></li>
         <li><a href="#proof-w_x-is-an-unbiased-contribution-weight">Proof:  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#step-1-compute-mathbbe_xfx-w_x">Step 1: Compute </a></li>
-            <li><a href="#step-2-take-expectation-over-all-samples">Step 2: Take Expectation Over All Samples</a></li>
+            <li><a href="#compute-mathbbe_xfx-w_x">Compute </a></li>
             <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
