@@ -391,61 +391,80 @@ ReSTIR
 <h1 id="resampled-importance-sampling-ris">
 <a class="header-anchor" href="#resampled-importance-sampling-ris"></a>
 Resampled Importance Sampling (RIS)
-</h1><h2 id="proof-that-w_x-is-an-unbiased-contribution-weight">
-<a class="header-anchor" href="#proof-that-w_x-is-an-unbiased-contribution-weight"></a>
-Proof that $W_X$ is an Unbiased Contribution Weight
-</h2><p><a href="https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf">Course Notes</a> Equation 3.1 Proof</p>
-<p>Let $X, X_1, \dots, X_M \sim p(x)$ be i.i.d. samples from a probability distribution $p$.<br>
-We define:</p>
+</h1><h2 id="proof-mathbbew_x-is-to-estimate-frac1hatpx">
+<a class="header-anchor" href="#proof-mathbbew_x-is-to-estimate-frac1hatpx"></a>
+Proof: $\mathbb{E}[W_X]$ is to estimate $\frac{1}{\hat{p}(X)}$
+</h2><p>We begin by computing the expectation of $W_X$ over the samples $X_1, \dots, X_M$, conditioning on $X$:</p>
 $$
-w_i = \frac{\hat{p}(X_i)}{p(X_i)}, \quad
-W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)
-$$<p>Our goal is to show that if we choose $\hat{p}(x) = f(x)$, then $W_X$ is an <strong>unbiased contribution weight</strong>, meaning it satisfies the following condition:</p>
-$$
-\mathbb{E}[f(X) W_X] = \int f(x) \, dx
-$$<h3 id="step-1-compute-mathbbew_x">
-<a class="header-anchor" href="#step-1-compute-mathbbew_x"></a>
-Step 1: Compute $\mathbb{E}[W_X]$
-</h3><p>We start by computing the expectation of $W_X$ over the samples $X_1, \dots, X_M$:</p>
-$$
-\mathbb{E}_{X_1, \dots, X_M} \left[ W_X \right] = \mathbb{E} \left[ \frac{1}{\hat{p}(X)} \cdot \frac{1}{M} \sum_{i=1}^M \frac{\hat{p}(X_i)}{p(X_i)} \right]
+\mathbb{E}_{X_1, \dots, X_M} \left[ W_X \right] 
+= \mathbb{E} \left[ \frac{1}{\hat{p}(X)} \cdot \frac{1}{M} \sum_{i=1}^M \frac{\hat{p}(X_i)}{p(X_i)} \right]
 $$<p>Using linearity of expectation:</p>
 $$
 = \frac{1}{\hat{p}(X)} \cdot \frac{1}{M} \sum_{i=1}^M \mathbb{E}_{X_i} \left[ \frac{\hat{p}(X_i)}{p(X_i)} \right]
-$$<p>Since $X_i \sim p$:</p>
+$$<p>Since each $X_i \sim p(x)$:</p>
 $$
 \mathbb{E}_{X_i} \left[ \frac{\hat{p}(X_i)}{p(X_i)} \right] = \int \frac{\hat{p}(x)}{p(x)} p(x) dx = \int \hat{p}(x) dx
 $$<p>Therefore:</p>
 $$
-\mathbb{E}[W_X] = \frac{\int \hat{p}(x) dx}{\hat{p}(X)}
-$$<h3 id="step-2-let-hatpx--fx">
-<a class="header-anchor" href="#step-2-let-hatpx--fx"></a>
-Step 2: Let $\hat{p}(x) = f(x)$
-</h3><p>Substitute $\hat{p}(x)$ with $f(x)$:</p>
+\mathbb{E}_{X_1, \dots, X_M} \left[ W_X \right] = \frac{\int \hat{p}(x) dx}{\hat{p}(X)} = \frac{1}{\frac{\hat{p}(X)}{\int \hat{p}(x) dx}} = \frac{1}{\text{normalized } \hat{p}(X)}
+$$<h2 id="proof-w_x-is-an-unbiased-contribution-weight">
+<a class="header-anchor" href="#proof-w_x-is-an-unbiased-contribution-weight"></a>
+Proof: $W_X$ is an Unbiased Contribution Weight
+</h2><p>Based on <a href="https://intro-to-restir.cwyman.org/presentations/2023ReSTIR_Course_Notes.pdf">Course Notes</a>, Equation 3.1.</p>
+<p>Let $X_1, \dots, X_M \sim p(x)$ be i.i.d. samples from a probability distribution $p$.<br>
+We define:</p>
 $$
-\mathbb{E}[W_X] = \frac{\int f(x) dx}{f(X)}
-$$<h3 id="step-3-compute-mathbbefx-w_x">
-<a class="header-anchor" href="#step-3-compute-mathbbefx-w_x"></a>
-Step 3: Compute $\mathbb{E}[f(X) W_X]$
-</h3><p>We now evaluate:</p>
+w_i = \frac{\hat{p}(X_i)}{p(X_i)}, \quad
+W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_{i=1}^M w_i \right)
+$$<p>Our goal is to show that $W_X$ is an <strong>unbiased contribution weight</strong>, meaning it satisfies:</p>
 $$
-\mathbb{E}[f(X) W_X] = \mathbb{E}_X \left[ f(X) \cdot \mathbb{E}_{X_1, \dots, X_M}[W_X \mid X] \right]
-$$<p>Substitute the result from Step 2:</p>
+\mathbb{E}_X[f(X) W_X] = \int f(x) \, dx
+$$<h3 id="step-1-compute-mathbbe_xfx-w_x">
+<a class="header-anchor" href="#step-1-compute-mathbbe_xfx-w_x"></a>
+Step 1: Compute $\mathbb{E}_X[f(X) W_X]$
+</h3><p>Since $W_X = \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_j w_j \right)$, we get:</p>
 $$
-= \mathbb{E}_X \left[ f(X) \cdot \frac{\int f(x) dx}{f(X)} \right] = \int f(x) dx
+f(X) W_X = f(X) \cdot \frac{1}{\hat{p}(X)} \cdot \left( \frac{1}{M} \sum_j w_j \right)
+$$<p>We are interested in evaluating:</p>
+$$
+\mathbb{E}[f(X) W_X] = \mathbb{E}_{X_1, \dots, X_M}\left[ \mathbb{E}_{X \mid X_1,\dots,X_M}[f(X) W_X] \right]
+$$<p>Given that resampling selects $X = X_i$ with probability:</p>
+$$
+\Pr[X = X_i \mid X_1, \dots, X_M] = \frac{w_i}{\sum_{j=1}^M w_j}
+$$<p>We have:</p>
+$$
+\mathbb{E}[f(X) \mid X_1, \dots, X_M] = \sum_{i=1}^M \frac{w_i}{\sum_j w_j} f(X_i)
+$$<p>Therefore:</p>
+$$
+\mathbb{E}_{X \mid X_1,\dots,X_M}[f(X) W_X] 
+= \sum_{i=1}^M \left( \frac{w_i}{\sum_j w_j} \cdot f(X_i) \cdot \frac{1}{\hat{p}(X_i)} \cdot \left( \frac{1}{M} \sum_j w_j \right) \right)
+$$<p>Simplifying:</p>
+$$
+= \frac{1}{M} \sum_{i=1}^M f(X_i) \cdot \frac{w_i}{\hat{p}(X_i)} 
+= \frac{1}{M} \sum_{i=1}^M f(X_i) \cdot \frac{\hat{p}(X_i)}{p(X_i)} \cdot \frac{1}{\hat{p}(X_i)} 
+= \frac{1}{M} \sum_{i=1}^M \frac{f(X_i)}{p(X_i)}
+$$<h3 id="step-2-take-expectation-over-all-samples">
+<a class="header-anchor" href="#step-2-take-expectation-over-all-samples"></a>
+Step 2: Take Expectation Over All Samples
+</h3><p>Now:</p>
+$$
+\mathbb{E}[f(X) W_X] = \mathbb{E}_{X_1, \dots, X_M} \left[ \frac{1}{M} \sum_{i=1}^M \frac{f(X_i)}{p(X_i)} \right]
+$$<p>Since each $X_i \sim p(x)$, we know:</p>
+$$
+\mathbb{E} \left[ \frac{f(X_i)}{p(X_i)} \right] = \int \frac{f(x)}{p(x)} p(x) dx = \int f(x) dx
+$$<p>So:</p>
+$$
+\mathbb{E}[f(X) W_X] = \frac{1}{M} \cdot M \cdot \int f(x) dx = \int f(x) dx
 $$<h3 id="conclusion">
 <a class="header-anchor" href="#conclusion"></a>
 Conclusion
-</h3><p>We have shown that:</p>
+</h3><p>We have successfully proven:</p>
 $$
-\mathbb{E}[f(X) W_X] = \int f(x) dx
-$$<p>Hence, $W_X$ is an <strong>unbiased contribution weight</strong> according to the definition:</p>
-<p>A random variable $W_X$ is an unbiased contribution weight if for all $f$,</p>
-$$
-\mathbb{E}[f(X) W_X] = \int f(x) dx.
-$$<h1 id="reservoir-sampling-and-weighted-reservoir-sampling">
-<a class="header-anchor" href="#reservoir-sampling-and-weighted-reservoir-sampling"></a>
-Reservoir Sampling and Weighted Reservoir Sampling
+\mathbb{E}[f(X) W_X] = \int f(x)\, dx
+$$<p>This shows that $W_X$ is indeed an <strong>unbiased contribution weight</strong>, as stated in Equation 3.1 of the ReSTIR course notes.</p>
+<h1 id="weighted-reservoir-sampling">
+<a class="header-anchor" href="#weighted-reservoir-sampling"></a>
+Weighted Reservoir Sampling
 </h1><h2 id="reservoir-sampling">
 <a class="header-anchor" href="#reservoir-sampling"></a>
 Reservoir Sampling
@@ -497,8 +516,8 @@ $$\text{probability of being retained} = 1 \times \frac{N}{N+1} \times \frac{N+1
 </ul>
 <p>Hence, every element has an equal probability of $\frac{N}{M}$ of being retained in the final sample.</p>
 <p>When the total number of elements, $M_{\text{so far}}$, is unknown, this probability becomes $\frac{N}{M_{\text{so far}}}$ at any point during the sampling process.</p>
-<h2 id="weighted-reservoir-sampling">
-<a class="header-anchor" href="#weighted-reservoir-sampling"></a>
+<h2 id="weighted-reservoir-sampling-1">
+<a class="header-anchor" href="#weighted-reservoir-sampling-1"></a>
 Weighted Reservoir Sampling
 </h2><p><strong>Weighted Reservoir Sampling</strong> extends the basic algorithm by allowing each element to have an associated weight $w_i$, which determines its likelihood of being included in the sample.</p>
 <h3 id="pseudocode-for-weighted-reservoir-sampling">
@@ -679,17 +698,17 @@ References
     <li><a href="#restir">ReSTIR</a></li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#proof-that-w_x-is-an-unbiased-contribution-weight">Proof that  is an Unbiased Contribution Weight</a>
+        <li><a href="#proof-mathbbew_x-is-to-estimate-frac1hatpx">Proof:  is to estimate </a></li>
+        <li><a href="#proof-w_x-is-an-unbiased-contribution-weight">Proof:  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#step-1-compute-mathbbew_x">Step 1: Compute </a></li>
-            <li><a href="#step-2-let-hatpx--fx">Step 2: Let </a></li>
-            <li><a href="#step-3-compute-mathbbefx-w_x">Step 3: Compute </a></li>
+            <li><a href="#step-1-compute-mathbbe_xfx-w_x">Step 1: Compute </a></li>
+            <li><a href="#step-2-take-expectation-over-all-samples">Step 2: Take Expectation Over All Samples</a></li>
             <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>
+    <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
       <ul>
         <li><a href="#reservoir-sampling">Reservoir Sampling</a>
           <ul>
@@ -697,7 +716,7 @@ References
             <li><a href="#derivation-of-the-probability">Derivation of the Probability</a></li>
           </ul>
         </li>
-        <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
+        <li><a href="#weighted-reservoir-sampling-1">Weighted Reservoir Sampling</a>
           <ul>
             <li><a href="#pseudocode-for-weighted-reservoir-sampling">Pseudocode for Weighted Reservoir Sampling</a></li>
             <li><a href="#derivation-of-the-probability-1">Derivation of the Probability</a>
@@ -950,7 +969,7 @@ References
       <div>
         <span class="icon-brush"
           >&nbsp;
-            40.0k
+            40.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -958,7 +977,7 @@ References
           
           
 
-          03:17
+          03:18
         </span>
       </div>
     
@@ -1004,17 +1023,17 @@ References
     <li><a href="#restir">ReSTIR</a></li>
     <li><a href="#resampled-importance-sampling-ris">Resampled Importance Sampling (RIS)</a>
       <ul>
-        <li><a href="#proof-that-w_x-is-an-unbiased-contribution-weight">Proof that  is an Unbiased Contribution Weight</a>
+        <li><a href="#proof-mathbbew_x-is-to-estimate-frac1hatpx">Proof:  is to estimate </a></li>
+        <li><a href="#proof-w_x-is-an-unbiased-contribution-weight">Proof:  is an Unbiased Contribution Weight</a>
           <ul>
-            <li><a href="#step-1-compute-mathbbew_x">Step 1: Compute </a></li>
-            <li><a href="#step-2-let-hatpx--fx">Step 2: Let </a></li>
-            <li><a href="#step-3-compute-mathbbefx-w_x">Step 3: Compute </a></li>
+            <li><a href="#step-1-compute-mathbbe_xfx-w_x">Step 1: Compute </a></li>
+            <li><a href="#step-2-take-expectation-over-all-samples">Step 2: Take Expectation Over All Samples</a></li>
             <li><a href="#conclusion">Conclusion</a></li>
           </ul>
         </li>
       </ul>
     </li>
-    <li><a href="#reservoir-sampling-and-weighted-reservoir-sampling">Reservoir Sampling and Weighted Reservoir Sampling</a>
+    <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
       <ul>
         <li><a href="#reservoir-sampling">Reservoir Sampling</a>
           <ul>
@@ -1022,7 +1041,7 @@ References
             <li><a href="#derivation-of-the-probability">Derivation of the Probability</a></li>
           </ul>
         </li>
-        <li><a href="#weighted-reservoir-sampling">Weighted Reservoir Sampling</a>
+        <li><a href="#weighted-reservoir-sampling-1">Weighted Reservoir Sampling</a>
           <ul>
             <li><a href="#pseudocode-for-weighted-reservoir-sampling">Pseudocode for Weighted Reservoir Sampling</a></li>
             <li><a href="#derivation-of-the-probability-1">Derivation of the Probability</a>
