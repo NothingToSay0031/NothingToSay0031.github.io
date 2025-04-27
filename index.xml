@@ -16,7 +16,7 @@
       <description>&lt;h2 id=&#34;the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost&#34;&gt;&#xD;&#xA;&lt;a class=&#34;header-anchor&#34; href=&#34;#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost&#34;&gt;&lt;/a&gt;&#xD;&#xA;The Hidden Cost of &lt;code&gt;std::unique_ptr&lt;/code&gt;: Why It&amp;rsquo;s Not Always &amp;ldquo;Zero-Cost&amp;rdquo;&#xD;&#xA;&lt;/h2&gt;&lt;p&gt;&lt;a href=&#34;https://youtu.be/rHIkrotSwcc?si=ZZCm9hVf2a0UmMie&#34;&gt;CppCon 2019: Chandler Carruth “There Are No Zero-cost Abstractions”&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;One of the most beloved tools in the modern C++ developer&amp;rsquo;s toolbox is &lt;code&gt;std::unique_ptr&lt;/code&gt;. It dramatically simplifies resource management, especially memory, using the RAII (Resource Acquisition Is Initialization) paradigm, effectively preventing memory leaks. Many C++ developers operate under the assumption that &lt;code&gt;std::unique_ptr&lt;/code&gt; is a &amp;ldquo;zero-cost abstraction&amp;rdquo;—meaning its use incurs no additional runtime performance overhead compared to manually managing raw pointers.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>ReSTIR - Path Reuse in Real-time</title>
+      <title>ReSTIR: Path Reuse in Real-time</title>
       <link>https://nothingtosay0031.github.io/post/restir/</link>
       <pubDate>Mon, 21 Apr 2025 17:23:03 +0000</pubDate>
       <guid>https://nothingtosay0031.github.io/post/restir/</guid>
