@@ -19,11 +19,11 @@
   
 
 <title>
-  Rendering and Game Engine Projects | NothingToSay0031
+  Is unique_ptr Really Zero-Cost? | NothingToSay0031
 </title>
 <meta
   name="description"
-  content="Projects related to graphics, game engines, and real-time rendering."
+  content="The Hidden Overhead of unique_ptr: Why It&#39;s Not Always Zero-Cost"
 />
 
 
@@ -107,12 +107,12 @@
 
 
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Rendering and Game Engine Projects | NothingToSay0031" />
+  <meta property="og:title" content="Is unique_ptr Really Zero-Cost? | NothingToSay0031" />
   <meta
     property="og:description"
-    content="Projects related to graphics, game engines, and real-time rendering."
+    content="The Hidden Overhead of unique_ptr: Why It&#39;s Not Always Zero-Cost"
   />
-  <meta property="og:url" content="https://nothingtosay0031.github.io/post/games/" />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/unique/" />
   <meta
     property="og:site_name"
     content="NothingToSay0031"
@@ -317,7 +317,7 @@
 </div>
 <header id="header">
   
-    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Rendering and Game Engine Projects">
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Is unique_ptr Really Zero-Cost?">
   
 
   <div id="header-outer">
@@ -330,7 +330,7 @@
   
         
           <a href="https://nothingtosay0031.github.io/" id="logo">
-            <h1 data-aos="slide-up">Rendering and Game Engine Projects</h1>
+            <h1 data-aos="slide-up">Is unique_ptr Really Zero-Cost?</h1>
           </a>
         
       
@@ -361,7 +361,7 @@
     <div class="article-meta">
       <div class="article-date">
   <a
-    href="https://nothingtosay0031.github.io/post/games/"
+    href="https://nothingtosay0031.github.io/post/unique/"
     class="article-date-link"
     data-aos="zoom-in"
   >
@@ -384,37 +384,125 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="mini-game-engine">
-<a class="header-anchor" href="#mini-game-engine"></a>
-Mini Game Engine
-</h1><p><a href="https://github.com/NothingToSay0031/GAMES104/">Source Code</a></p>
-<h2 id="color-grading">
-<a class="header-anchor" href="#color-grading"></a>
-Color Grading
-</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403011741923.png" alt=""></p>
-<h2 id="annimation-and-character-controller">
-<a class="header-anchor" href="#annimation-and-character-controller"></a>
-Annimation and Character Controller
-</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403011744806.gif" alt=""></p>
-<h2 id="reflection">
-<a class="header-anchor" href="#reflection"></a>
-Reflection
-</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403011745388.gif" alt=""></p>
-<h1 id="screen-space-ray-tracing">
-<a class="header-anchor" href="#screen-space-ray-tracing"></a>
-Screen Space Ray Tracing
-</h1><p>Test Reflection</p>
-<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403070212708.gif" alt=""></p>
-<p>Sample = 8</p>
-<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403070216481.gif" alt=""></p>
-<p>Depth Mipmap</p>
-<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403130309474.gif" alt=""></p>
-<p>Sample = 16, with Hi-Z Optimization</p>
-<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202403070235487.gif" alt=""></p>
-<h1 id="shadow-map-pcf-and-pcss">
-<a class="header-anchor" href="#shadow-map-pcf-and-pcss"></a>
-Shadow Map, PCF, and PCSS
-</h1><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402251757206.gif" alt=""></p>
+        <h2 id="the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">
+<a class="header-anchor" href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost"></a>
+The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;
+</h2><p><a href="https://youtu.be/rHIkrotSwcc?si=ZZCm9hVf2a0UmMie">CppCon 2019: Chandler Carruth “There Are No Zero-cost Abstractions”</a></p>
+<p>One of the most beloved tools in the modern C++ developer&rsquo;s toolbox is <code>std::unique_ptr</code>. It dramatically simplifies resource management, especially memory, using the RAII (Resource Acquisition Is Initialization) paradigm, effectively preventing memory leaks. Many C++ developers operate under the assumption that <code>std::unique_ptr</code> is a &ldquo;zero-cost abstraction&rdquo;—meaning its use incurs no additional runtime performance overhead compared to manually managing raw pointers.</p>
+<p>But is that really true? Deeper analysis and compiler output, as highlighted in insightful talks, reveal a more nuanced reality: <strong><code>std::unique_ptr</code> isn&rsquo;t always zero-cost, especially when crossing function API boundaries.</strong></p>
+<h3 id="when-stdunique_ptr-is-close-to-zero-cost">
+<a class="header-anchor" href="#when-stdunique_ptr-is-close-to-zero-cost"></a>
+When <code>std::unique_ptr</code> Is (Close to) Zero-Cost
+</h3><p>First, let&rsquo;s be clear: in certain scenarios, <code>std::unique_ptr</code> does come very close to being zero-cost. When you use a <code>unique_ptr</code> <strong>solely within a single function scope</strong> to manage the lifetime of a local resource, modern compilers are typically brilliant at optimization.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">process_data</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">data</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... use data ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ... more operations ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Memory pointed to by data is automatically released at function end.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// In this case, compared to manual new/delete,
+</span></span></span><span class="line"><span class="cl"><span class="c1">// the overhead of unique_ptr is often optimized away.
+</span></span></span></code></pre></div><p>In this scenario, <code>unique_ptr</code> provides immense safety and convenience with virtually no runtime performance penalty. The compiler can effectively &ldquo;see through&rdquo; the abstraction and generate machine code very similar (or identical) to manual raw pointer management.</p>
+<h3 id="crossing-api-boundaries-where-the-overhead-appears">
+<a class="header-anchor" href="#crossing-api-boundaries-where-the-overhead-appears"></a>
+Crossing API Boundaries: Where the Overhead Appears
+</h3><p>One of the true powers of <code>std::unique_ptr</code> lies in its ability to clearly express ownership transfer at the API level. This is far safer and more explicit than the old style of relying on comments to indicate who is responsible for deleting memory.</p>
+<p>Consider the contrast between these two styles:</p>
+<p><strong>Old Style (Error-prone):</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">);</span> <span class="c1">// Does something with ptr within the function
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Takes ownership. &lt;--- Relies on comments for critical information!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">baz</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// foo receives a pointer, doesn&#39;t own it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">ptr</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bar</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>      <span class="c1">// Pass pointer, no ownership transfer
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">baz</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>          <span class="c1">// Call baz; according to the comment, ownership transfers here!
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                       <span class="c1">// foo must not use ptr after this call
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p><strong>Modern C++ Style (Safer):</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="n">ptr</span><span class="p">);</span> <span class="c1">// Can still take raw pointers for non-owning access
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Takes ownership. Explicitly stated via the type system.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">baz</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// foo receives ownership
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="o">*</span><span class="n">ptr</span> <span class="o">&gt;</span> <span class="mi">42</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bar</span><span class="p">(</span><span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">());</span> <span class="c1">// Use get() for non-owning raw pointer access
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">baz</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ptr</span><span class="p">));</span> <span class="c1">// Explicitly transfer ownership to baz using std::move
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                         <span class="c1">// ptr becomes null after this
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>The code on the right is undoubtedly clearer and safer. However, it&rsquo;s precisely when we pass <code>unique_ptr</code> between functions like this (especially via pass-by-value with <code>std::move</code> into <code>baz</code>) that the hidden costs can start to manifest.</p>
+<h3 id="analyzing-the-sources-of-overhead">
+<a class="header-anchor" href="#analyzing-the-sources-of-overhead"></a>
+Analyzing the Sources of Overhead
+</h3><p>The speaker analyzed scenarios similar to <code>foo</code> calling <code>baz</code> using Compiler Explorer and found the generated assembly code was surprisingly longer than expected. There are several reasons:</p>
+<ol>
+<li>
+<p><strong>Exception Safety Overhead (Implicit)</strong>:</p>
+<ul>
+<li>The <code>std::unique_ptr</code> version is inherently exception-safe. If <code>bar</code> or <code>baz</code> throws an exception within <code>foo</code>, the <code>unique_ptr</code>&rsquo;s destructor ensures the memory is correctly freed.</li>
+<li>The raw pointer version lacks this guarantee. If <code>bar</code> throws (assuming in the raw pointer version, <code>bar</code> could throw before <code>baz</code> is called), or if <code>baz</code> itself throws before taking ownership, the memory leaks.</li>
+<li>To implement this safety guarantee, the compiler generates extra exception handling code (e.g., involving <code>unwind resume</code> instructions), which is itself a form of overhead.</li>
+<li><em>Optimization</em>: If you can guarantee that the relevant functions (like <code>bar</code> and <code>baz</code>) will not throw exceptions, you can mark them <code>noexcept</code>. This can eliminate the exception handling overhead, shortening the assembly. But even then, the problem isn&rsquo;t fully solved.</li>
+</ul>
+</li>
+<li>
+<p><strong>Pass-by-Value Overhead for <code>unique_ptr</code> (ABI Constraints &amp; Temporaries)</strong>:</p>
+<ul>
+<li>Even with <code>noexcept</code>, passing a <code>unique_ptr</code> <strong>by value</strong> (even via <code>std::move</code>) is often <strong>not zero-cost</strong>.</li>
+<li>According to the C++ ABI (Application Binary Interface) on many platforms, &ldquo;non-trivial&rdquo; types like <code>unique_ptr</code> (because it has custom destructor and move constructor/assignment operators) are <strong>often passed indirectly via memory (the stack)</strong>, even when passed &ldquo;by value&rdquo;, rather than directly in registers.</li>
+<li>This results in a sequence of operations:
+<ul>
+<li>The pointer value inside the <code>unique_ptr</code> is <strong>stored onto the caller&rsquo;s (<code>foo</code>) stack</strong>.</li>
+<li>The <strong>address</strong> of this stack location is calculated.</li>
+<li>This <strong>address</strong> is passed to the callee (<code>baz</code>).</li>
+<li>Inside <code>baz</code>, the function needs to <strong>load</strong> the <code>unique_ptr</code>&rsquo;s contents (the actual pointer value) <strong>through this address</strong>. <strong>This is a double indirection</strong>.</li>
+<li>After <code>baz</code> returns, the caller (<code>foo</code>) needs to <strong>load</strong> the value of that (now potentially null) <code>unique_ptr</code> <strong>back from the stack</strong> and check if it needs to call the destructor (because C++ lacks destructive moves, it must assume <code>baz</code> <em>might not</em> have moved from it, even though we used <code>std::move</code>).</li>
+</ul>
+</li>
+<li>These extra memory loads and stores, particularly the double indirection, add instructions and potential memory latency, creating performance overhead.</li>
+</ul>
+</li>
+<li>
+<p><strong>Overhead when Trying R-value References (<code>&amp;&amp;</code>)</strong>:</p>
+<ul>
+<li>One might think: could using an r-value reference parameter <code>void baz(std::unique_ptr&lt;int&gt;&amp;&amp; ptr)</code> solve this?</li>
+<li>It does avoid some of the temporary object copy/move and stack-based destructor checks associated with pass-by-value. The generated assembly looks closer to the raw pointer version.</li>
+<li><strong>However</strong>, it introduces an <strong>explicit double indirection</strong>: you&rsquo;re passing a reference <em>to</em> a <code>unique_ptr</code>, which itself contains a pointer. This still results in two memory load operations (<code>load from memory</code> instructions) in the critical path, which are subject to memory subsystem latency and can be slower than the raw pointer version (which often involves only one load).</li>
+</ul>
+</li>
+</ol>
+<h3 id="why-cant-the-compiler-do-better">
+<a class="header-anchor" href="#why-cant-the-compiler-do-better"></a>
+Why Can&rsquo;t the Compiler Do Better?
+</h3><p>Eliminating these overheads is extremely difficult because it touches fundamental C++ mechanisms:</p>
+<ul>
+<li><strong>ABI Stability Constraints</strong>: Changing function calling conventions (e.g., allowing small objects like <code>unique_ptr</code> to be passed in registers) is a massive ABI break, shattering compatibility with existing compiled code. It&rsquo;s practically very difficult to implement widely.</li>
+<li><strong>Lack of Destructive Move Semantics</strong>: C++ move semantics are non-destructive. After a move, the source object still exists in a valid (usually empty) state, and its destructor will still be called. If C++ had destructive moves, the compiler would know the source object needs no further checks or destruction after being moved, potentially eliminating some overhead. But this would be a fundamental change to the language semantics. (Rust wins! XD)</li>
+</ul>
+<h3 id="conclusion-understanding-the-trade-offs">
+<a class="header-anchor" href="#conclusion-understanding-the-trade-offs"></a>
+Conclusion: Understanding the Trade-offs
+</h3><p><code>std::unique_ptr</code> is an incredibly valuable tool. The memory safety, clear ownership semantics, and exception safety it provides usually far outweigh its potential performance overhead.</p>
+<ul>
+<li><strong>When used locally within a function, it&rsquo;s typically zero-cost.</strong></li>
+<li><strong>When transferring ownership across function API boundaries, due to ABI limitations and the nature of C++ move semantics, it can introduce runtime overhead</strong> (memory loads/stores, double indirection, potential destructor checks).</li>
+</ul>
+<p>The key is to <strong>understand this trade-off</strong>. For the vast majority of applications, the benefits of <code>unique_ptr</code> in safety and code clarity are paramount, and the slight performance difference is often negligible. However, in extremely performance-sensitive code paths (e.g., low-level libraries, high-frequency functions), developers should be aware that <code>unique_ptr</code> might not be strictly &ldquo;zero-cost&rdquo; in these specific scenarios. Knowing these details can help you make informed decisions during performance tuning, but it absolutely does not mean we should revert wholesale to error-prone manual pointer management.</p>
+<p><strong><code>std::unique_ptr</code> remains the preferred way to manage dynamic memory in modern C++. Just remember that powerful abstractions sometimes come with subtle costs.</strong></p>
 
       
     </div>
@@ -452,16 +540,16 @@ Shadow Map, PCF, and PCSS
             <img
               data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
-              alt="Geometric Shape Modeling"
+              alt="Rendering and Game Engine Projects"
               class="lazyload"
             />
           
         
-        <a href="https://nothingtosay0031.github.io/post/csci-599/"></a>
+        <a href="https://nothingtosay0031.github.io/post/games/"></a>
         <div class="article-nav-caption">Newer</div>
         <h3 class="article-nav-title">
           
-            Geometric Shape Modeling
+            Rendering and Game Engine Projects
           
         </h3>
       </div>
@@ -473,18 +561,18 @@ Shadow Map, PCF, and PCSS
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
-              alt="Is unique_ptr Really Zero-Cost?"
+              alt="Interesting Code Snippets"
               class="lazyload"
             />
           
         
-        <a href="https://nothingtosay0031.github.io/post/unique/"></a>
+        <a href="https://nothingtosay0031.github.io/post/arm/"></a>
         <div class="article-nav-caption">Older</div>
         <h3 class="article-nav-title">
           
-            Is unique_ptr Really Zero-Cost?
+            Interesting Code Snippets
           
         </h3>
       </div>
@@ -519,15 +607,19 @@ Shadow Map, PCF, and PCSS
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#mini-game-engine">Mini Game Engine</a>
+    <li>
       <ul>
-        <li><a href="#color-grading">Color Grading</a></li>
-        <li><a href="#annimation-and-character-controller">Annimation and Character Controller</a></li>
-        <li><a href="#reflection">Reflection</a></li>
+        <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
+          <ul>
+            <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
+            <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
+            <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
+            <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
+            <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
-    <li><a href="#screen-space-ray-tracing">Screen Space Ray Tracing</a></li>
-    <li><a href="#shadow-map-pcf-and-pcss">Shadow Map, PCF, and PCSS</a></li>
   </ul>
 </nav>
   </div>
@@ -817,15 +909,19 @@ Shadow Map, PCF, and PCSS
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#mini-game-engine">Mini Game Engine</a>
+    <li>
       <ul>
-        <li><a href="#color-grading">Color Grading</a></li>
-        <li><a href="#annimation-and-character-controller">Annimation and Character Controller</a></li>
-        <li><a href="#reflection">Reflection</a></li>
+        <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
+          <ul>
+            <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
+            <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
+            <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
+            <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
+            <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
+          </ul>
+        </li>
       </ul>
     </li>
-    <li><a href="#screen-space-ray-tracing">Screen Space Ray Tracing</a></li>
-    <li><a href="#shadow-map-pcf-and-pcss">Shadow Map, PCF, and PCSS</a></li>
   </ul>
 </nav>
   </div>
