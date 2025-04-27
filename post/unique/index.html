@@ -384,16 +384,16 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h2 id="the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">
+        <h1 id="the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">
 <a class="header-anchor" href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost"></a>
 The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;
-</h2><p><a href="https://youtu.be/rHIkrotSwcc?si=ZZCm9hVf2a0UmMie">CppCon 2019: Chandler Carruth “There Are No Zero-cost Abstractions”</a></p>
+</h1><p><a href="https://youtu.be/rHIkrotSwcc?si=ZZCm9hVf2a0UmMie">CppCon 2019: Chandler Carruth “There Are No Zero-cost Abstractions”</a></p>
 <p>One of the most beloved tools in the modern C++ developer&rsquo;s toolbox is <code>std::unique_ptr</code>. It dramatically simplifies resource management, especially memory, using the RAII (Resource Acquisition Is Initialization) paradigm, effectively preventing memory leaks. Many C++ developers operate under the assumption that <code>std::unique_ptr</code> is a &ldquo;zero-cost abstraction&rdquo;—meaning its use incurs no additional runtime performance overhead compared to manually managing raw pointers.</p>
 <p>But is that really true? Deeper analysis and compiler output, as highlighted in insightful talks, reveal a more nuanced reality: <strong><code>std::unique_ptr</code> isn&rsquo;t always zero-cost, especially when crossing function API boundaries.</strong></p>
-<h3 id="when-stdunique_ptr-is-close-to-zero-cost">
+<h2 id="when-stdunique_ptr-is-close-to-zero-cost">
 <a class="header-anchor" href="#when-stdunique_ptr-is-close-to-zero-cost"></a>
 When <code>std::unique_ptr</code> Is (Close to) Zero-Cost
-</h3><p>First, let&rsquo;s be clear: in certain scenarios, <code>std::unique_ptr</code> does come very close to being zero-cost. When you use a <code>unique_ptr</code> <strong>solely within a single function scope</strong> to manage the lifetime of a local resource, modern compilers are typically brilliant at optimization.</p>
+</h2><p>First, let&rsquo;s be clear: in certain scenarios, <code>std::unique_ptr</code> does come very close to being zero-cost. When you use a <code>unique_ptr</code> <strong>solely within a single function scope</strong> to manage the lifetime of a local resource, modern compilers are typically brilliant at optimization.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
 </span></span></span><span class="line"><span class="cl"><span class="cp"></span>
 </span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">process_data</span><span class="p">()</span> <span class="p">{</span>
@@ -407,10 +407,10 @@ When <code>std::unique_ptr</code> Is (Close to) Zero-Cost
 </span></span><span class="line"><span class="cl"><span class="c1">// In this case, compared to manual new/delete,
 </span></span></span><span class="line"><span class="cl"><span class="c1">// the overhead of unique_ptr is often optimized away.
 </span></span></span></code></pre></div><p>In this scenario, <code>unique_ptr</code> provides immense safety and convenience with virtually no runtime performance penalty. The compiler can effectively &ldquo;see through&rdquo; the abstraction and generate machine code very similar (or identical) to manual raw pointer management.</p>
-<h3 id="crossing-api-boundaries-where-the-overhead-appears">
+<h2 id="crossing-api-boundaries-where-the-overhead-appears">
 <a class="header-anchor" href="#crossing-api-boundaries-where-the-overhead-appears"></a>
 Crossing API Boundaries: Where the Overhead Appears
-</h3><p>One of the true powers of <code>std::unique_ptr</code> lies in its ability to clearly express ownership transfer at the API level. This is far safer and more explicit than the old style of relying on comments to indicate who is responsible for deleting memory.</p>
+</h2><p>One of the true powers of <code>std::unique_ptr</code> lies in its ability to clearly express ownership transfer at the API level. This is far safer and more explicit than the old style of relying on comments to indicate who is responsible for deleting memory.</p>
 <p>Consider the contrast between these two styles:</p>
 <p><strong>Old Style (Error-prone):</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;memory&gt;</span><span class="cp">
@@ -445,10 +445,10 @@ Crossing API Boundaries: Where the Overhead Appears
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>                         <span class="c1">// ptr becomes null after this
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></div><p>The code on the right is undoubtedly clearer and safer. However, it&rsquo;s precisely when we pass <code>unique_ptr</code> between functions like this (especially via pass-by-value with <code>std::move</code> into <code>baz</code>) that the hidden costs can start to manifest.</p>
-<h3 id="analyzing-the-sources-of-overhead">
+<h2 id="analyzing-the-sources-of-overhead">
 <a class="header-anchor" href="#analyzing-the-sources-of-overhead"></a>
 Analyzing the Sources of Overhead
-</h3><p>The speaker analyzed scenarios similar to <code>foo</code> calling <code>baz</code> using Compiler Explorer and found the generated assembly code was surprisingly longer than expected. There are several reasons:</p>
+</h2><p>The speaker analyzed scenarios similar to <code>foo</code> calling <code>baz</code> using Compiler Explorer and found the generated assembly code was surprisingly longer than expected. There are several reasons:</p>
 <ol>
 <li>
 <p><strong>Exception Safety Overhead (Implicit)</strong>:</p>
@@ -485,18 +485,18 @@ Analyzing the Sources of Overhead
 </ul>
 </li>
 </ol>
-<h3 id="why-cant-the-compiler-do-better">
+<h2 id="why-cant-the-compiler-do-better">
 <a class="header-anchor" href="#why-cant-the-compiler-do-better"></a>
 Why Can&rsquo;t the Compiler Do Better?
-</h3><p>Eliminating these overheads is extremely difficult because it touches fundamental C++ mechanisms:</p>
+</h2><p>Eliminating these overheads is extremely difficult because it touches fundamental C++ mechanisms:</p>
 <ul>
 <li><strong>ABI Stability Constraints</strong>: Changing function calling conventions (e.g., allowing small objects like <code>unique_ptr</code> to be passed in registers) is a massive ABI break, shattering compatibility with existing compiled code. It&rsquo;s practically very difficult to implement widely.</li>
 <li><strong>Lack of Destructive Move Semantics</strong>: C++ move semantics are non-destructive. After a move, the source object still exists in a valid (usually empty) state, and its destructor will still be called. If C++ had destructive moves, the compiler would know the source object needs no further checks or destruction after being moved, potentially eliminating some overhead. But this would be a fundamental change to the language semantics. (Rust wins! XD)</li>
 </ul>
-<h3 id="conclusion-understanding-the-trade-offs">
+<h2 id="conclusion-understanding-the-trade-offs">
 <a class="header-anchor" href="#conclusion-understanding-the-trade-offs"></a>
 Conclusion: Understanding the Trade-offs
-</h3><p><code>std::unique_ptr</code> is an incredibly valuable tool. The memory safety, clear ownership semantics, and exception safety it provides usually far outweigh its potential performance overhead.</p>
+</h2><p><code>std::unique_ptr</code> is an incredibly valuable tool. The memory safety, clear ownership semantics, and exception safety it provides usually far outweigh its potential performance overhead.</p>
 <ul>
 <li><strong>When used locally within a function, it&rsquo;s typically zero-cost.</strong></li>
 <li><strong>When transferring ownership across function API boundaries, due to ABI limitations and the nature of C++ move semantics, it can introduce runtime overhead</strong> (memory loads/stores, double indirection, potential destructor checks).</li>
@@ -538,7 +538,7 @@ Conclusion: Understanding the Trade-offs
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="ReSTIR: Path Reuse in Real-time"
               class="lazyload"
@@ -586,17 +586,13 @@ Conclusion: Understanding the Trade-offs
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
       <ul>
-        <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
-          <ul>
-            <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
-            <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
-            <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
-            <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
-            <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
-          </ul>
-        </li>
+        <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
+        <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
+        <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
+        <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
+        <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
       </ul>
     </li>
   </ul>
@@ -888,17 +884,13 @@ Conclusion: Understanding the Trade-offs
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li>
+    <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
       <ul>
-        <li><a href="#the-hidden-cost-of-stdunique_ptr-why-its-not-always-zero-cost">The Hidden Cost of <code>std::unique_ptr</code>: Why It&rsquo;s Not Always &ldquo;Zero-Cost&rdquo;</a>
-          <ul>
-            <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
-            <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
-            <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
-            <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
-            <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
-          </ul>
-        </li>
+        <li><a href="#when-stdunique_ptr-is-close-to-zero-cost">When <code>std::unique_ptr</code> Is (Close to) Zero-Cost</a></li>
+        <li><a href="#crossing-api-boundaries-where-the-overhead-appears">Crossing API Boundaries: Where the Overhead Appears</a></li>
+        <li><a href="#analyzing-the-sources-of-overhead">Analyzing the Sources of Overhead</a></li>
+        <li><a href="#why-cant-the-compiler-do-better">Why Can&rsquo;t the Compiler Do Better?</a></li>
+        <li><a href="#conclusion-understanding-the-trade-offs">Conclusion: Understanding the Trade-offs</a></li>
       </ul>
     </li>
   </ul>
