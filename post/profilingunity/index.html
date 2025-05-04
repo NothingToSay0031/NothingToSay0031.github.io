@@ -1,0 +1,3024 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  Ultimate Guide to Profiling Unity Games | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="Understanding profiling in Unity."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Ultimate Guide to Profiling Unity Games | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="Understanding profiling in Unity."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/profilingunity/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2025-05-04T09:59:50-07:00" />
+  <meta property="article:modified_time" content="2025-05-04T09:59:50-07:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="Ultimate Guide to Profiling Unity Games">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">Ultimate Guide to Profiling Unity Games</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/profilingunity/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-05-04 09:59:50 -0700 PDT" itemprop="datePublished"
+      >2025-05-04</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-05-04</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <h1 id="unity-游戏性能优化要点总结">
+<a class="header-anchor" href="#unity-%e6%b8%b8%e6%88%8f%e6%80%a7%e8%83%bd%e4%bc%98%e5%8c%96%e8%a6%81%e7%82%b9%e6%80%bb%e7%bb%93"></a>
+Unity 游戏性能优化要点总结
+</h1><h2 id="核心目标">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e7%9b%ae%e6%a0%87"></a>
+核心目标
+</h2><ul>
+<li><strong>流畅性能</strong>是创造沉浸式游戏体验的基础。</li>
+<li>通过对游戏进行<strong>性能分析和优化</strong>，适配更广泛的平台和设备，从而扩大玩家基础，提高成功机会。</li>
+</ul>
+<h2 id="指南内容">
+<a class="header-anchor" href="#%e6%8c%87%e5%8d%97%e5%86%85%e5%ae%b9"></a>
+指南内容
+</h2><ul>
+<li>提供关于如何在 Unity 中进行应用<strong>性能分析</strong>、<strong>内存管理</strong>和<strong>功耗优化</strong>的高级建议。</li>
+</ul>
+<h2 id="性能分析工作流程-profiling-workflow">
+<a class="header-anchor" href="#%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-profiling-workflow"></a>
+性能分析工作流程 (Profiling Workflow)
+</h2><ul>
+<li>建立一个持续、端到端的性能分析工作流程对于高效游戏开发至关重要。</li>
+<li><strong>关键三步：</strong>
+<ol>
+<li><strong>重大变更前分析 (Profile before changes):</strong> 建立性能基准。</li>
+<li><strong>开发过程中分析 (Profile during development):</strong> 跟踪变更，确保不破坏性能或超出预算。</li>
+<li><strong>变更后分析 (Profile after changes):</strong> 验证变更是否达到预期效果。</li>
+</ol>
+</li>
+</ul>
+<h2 id="优化的益处">
+<a class="header-anchor" href="#%e4%bc%98%e5%8c%96%e7%9a%84%e7%9b%8a%e5%a4%84"></a>
+优化的益处
+</h2><ul>
+<li><strong>精简、高效的代码</strong>和<strong>优化的内存使用</strong>能提升低端和高端设备的性能表现。</li>
+<li>关注<strong>散热控制 (Thermal control)</strong> 有助于节省移动设备的宝贵电量。</li>
+<li>整体良好的性能可以提升<strong>玩家的舒适度</strong>，从而可能带来更高的<strong>用户接纳度 (Adoption)</strong> 和<strong>用户留存率 (Retention)</strong>。</li>
+</ul>
+<h1 id="profiling-101unity-性能分析基础要点">
+<a class="header-anchor" href="#profiling-101unity-%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%9f%ba%e7%a1%80%e8%a6%81%e7%82%b9"></a>
+Profiling 101：Unity 性能分析基础要点
+</h1><h2 id="什么是-profiler-性能分析器">
+<a class="header-anchor" href="#%e4%bb%80%e4%b9%88%e6%98%af-profiler-%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%99%a8"></a>
+什么是 Profiler (性能分析器)?
+</h2><ul>
+<li>是开发者工具箱中极其有用的工具，用于识别代码中的<strong>内存和性能瓶颈</strong>。</li>
+<li>如同侦探工具，帮助揭示应用性能滞后或内存分配过多的根本原因。</li>
+<li>有助于理解 Unity 引擎的底层运行机制。</li>
+</ul>
+<h2 id="unity-的-profiling-工具">
+<a class="header-anchor" href="#unity-%e7%9a%84-profiling-%e5%b7%a5%e5%85%b7"></a>
+Unity 的 Profiling 工具
+</h2><ul>
+<li>Unity 自带多种分析工具，可在编辑器内使用或连接到硬件设备。</li>
+<li><strong>主要工具包括：</strong>
+<ul>
+<li><strong>Unity Profiler:</strong> 测量编辑器、播放模式下或连接到设备的应用性能。</li>
+<li><strong>Profiling Core package:</strong> 提供 API，可向 Profiler 捕获的数据添加上下文信息。</li>
+<li><strong>Memory Profiler:</strong> 提供深入的内存性能分析。</li>
+<li><strong>Profile Analyzer:</strong> 用于比较两个性能分析数据集，评估代码更改对性能的影响。</li>
+</ul>
+</li>
+<li><em>建议同时使用目标平台的原生分析工具 (如 Arm, Apple, PlayStation, Xbox)。</em></li>
+</ul>
+<h2 id="性能分析方法-sample-based-vs-instrumentation">
+<a class="header-anchor" href="#%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e6%96%b9%e6%b3%95-sample-based-vs-instrumentation"></a>
+性能分析方法 (Sample-based vs. Instrumentation)
+</h2><ul>
+<li><strong>两种常见方法：</strong>
+<ol>
+<li><strong>基于采样 (Sample-based):</strong>
+<ul>
+<li>定期探测调用堆栈，收集统计数据。</li>
+<li>通过提高采样频率来提高准确性，但这会增加开销。可能漏掉短时间的函数调用。</li>
+</ul>
+</li>
+<li><strong>基于插桩 (Instrumentation-based):</strong>
+<ul>
+<li>在代码中添加<strong>标记 (Profiler markers)</strong>，记录每个标记内代码执行的详细计时信息。</li>
+<li>捕获每个标记的开始和结束事件，不会丢失信息，但依赖于标记的放置。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><strong>Unity Profiler 是基于插桩的。</strong> 它通过标记大部分 Unity API 接口和重要的脚本消息调用（如 <code>Start()</code>, <code>Update()</code>），在细节和开销之间取得了良好平衡。</li>
+</ul>
+<h2 id="基于插桩的-profiling-细节-unity">
+<a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e%e6%8f%92%e6%a1%a9%e7%9a%84-profiling-%e7%bb%86%e8%8a%82-unity"></a>
+基于插桩的 Profiling 细节 (Unity)
+</h2><ul>
+<li>默认情况下，像 <code>Start()</code>, <code>Update()</code> 等 MonoBehaviour 方法会被插桩标记。</li>
+<li>当你的脚本调用已插桩的 Unity API 时（如 <code>Camera.main</code> 会产生 <code>FindMainCamera</code> 标记），也能在 Profiler 中看到。</li>
+<li><strong>深度分析 (Deep Profiling):</strong>
+<ul>
+<li>自动为<em>所有</em>脚本方法调用（包括 C# 属性的 Getter/Setter）插入标记。</li>
+<li>提供最全面的脚本分析细节，但会带来显著开销，可能影响报告的计时数据。</li>
+</ul>
+</li>
+<li><strong>手动添加 Profiler Markers:</strong>
+<ul>
+<li>在关键函数中手动插入 <code>Profiler Marker</code> 是一种有效的方式，可以在不承受深度分析全部开销的情况下，提高分析的详细程度。</li>
+</ul>
+</li>
+</ul>
+<h2 id="profiler-模块-profiler-modules">
+<a class="header-anchor" href="#profiler-%e6%a8%a1%e5%9d%97-profiler-modules"></a>
+Profiler 模块 (Profiler Modules)
+</h2><ul>
+<li>Profiler 按帧捕获性能指标。</li>
+<li>包含多个<strong>模块</strong>（如 CPU 使用率、GPU、渲染、内存、物理等），用于深入分析特定性能领域。</li>
+<li>Profiler 窗口下方会显示当前选中模块捕获的详细信息（如 CPU 使用率模块的时间线或层级视图）。</li>
+</ul>
+<h2 id="重要实践建议-important-best-practice">
+<a class="header-anchor" href="#%e9%87%8d%e8%a6%81%e5%ae%9e%e8%b7%b5%e5%bb%ba%e8%ae%ae-important-best-practice"></a>
+重要实践建议 (Important Best Practice)
+</h2><ul>
+<li><strong>注意：</strong> 在编辑器中进行性能分析与在独立构建版本中分析，结果会有很大差异。</li>
+<li><strong>强烈推荐：</strong> 将 Profiler 连接到<strong>在目标硬件上运行的独立构建版本 (Standalone Build)</strong> 进行分析。这样可以避免编辑器自身的开销，获得最准确的性能数据。</li>
+</ul>
+<h1 id="性能分析工作流程">
+<a class="header-anchor" href="#%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b"></a>
+性能分析工作流程
+</h1><h2 id="设定帧预算-set-a-frame-budget">
+<a class="header-anchor" href="#%e8%ae%be%e5%ae%9a%e5%b8%a7%e9%a2%84%e7%ae%97-set-a-frame-budget"></a>
+设定帧预算 (Set a Frame Budget)
+</h2><ul>
+<li><strong>核心理念:</strong> 不能仅看重平均帧率 (FPS)，应为每一帧设定一个明确的<strong>时间预算 (Frame Time Budget)</strong>，单位为毫秒 (ms)。</li>
+<li><strong>计算方法:</strong> 帧时间预算 = 1000ms / 目标 FPS。
+<ul>
+<li>目标 30 FPS → 每帧预算 33.33 ms</li>
+<li>目标 60 FPS → 每帧预算 16.66 ms</li>
+</ul>
+</li>
+<li><strong>重要性:</strong>
+<ul>
+<li>提供清晰的优化目标，有助于创造更流畅、更一致的玩家体验。</li>
+<li>避免因单帧耗时过长（即使平均 FPS 达标）导致的<strong>卡顿 (stutter/hitch)</strong>。</li>
+<li>游戏进行中<strong>绝不能</strong>超出预算，非交互部分（如菜单、加载）允许例外。</li>
+<li>对 VR 游戏尤其关键，稳定的高帧率可避免玩家不适，是平台认证的要求。</li>
+</ul>
+</li>
+</ul>
+<h2 id="fps-vs-帧时间-frame-time-一个易误导的指标">
+<a class="header-anchor" href="#fps-vs-%e5%b8%a7%e6%97%b6%e9%97%b4-frame-time-%e4%b8%80%e4%b8%aa%e6%98%93%e8%af%af%e5%af%bc%e7%9a%84%e6%8c%87%e6%a0%87"></a>
+FPS vs. 帧时间 (Frame Time): 一个易误导的指标
+</h2><ul>
+<li><strong>常见误区:</strong> 玩家常用 FPS 衡量性能，但对开发者而言，它有欺骗性。</li>
+<li><strong>推荐指标:</strong> 使用<strong>帧时间 (Frame Time, ms)</strong> 进行性能基准测试和优化。</li>
+<li><strong>原因:</strong> FPS 的变化与实际耗时的变化不成线性关系。同样是增加 1.11ms 的耗时，可能导致 FPS 从 900 降到 450（看似腰斩），或者从 60 降到 56.25（看似小降）。</li>
+<li><strong>实践建议:</strong> 关注点应是<strong>让帧时间稳定在预算内</strong>，而不是盲目追求高 FPS（除非已低于目标帧率）。</li>
+</ul>
+<h2 id="移动端挑战散热控制与电池寿命">
+<a class="header-anchor" href="#%e7%a7%bb%e5%8a%a8%e7%ab%af%e6%8c%91%e6%88%98%e6%95%a3%e7%83%ad%e6%8e%a7%e5%88%b6%e4%b8%8e%e7%94%b5%e6%b1%a0%e5%af%bf%e5%91%bd"></a>
+移动端挑战：散热控制与电池寿命
+</h2><ul>
+<li><strong>散热控制 (Thermal Control):</strong>
+<ul>
+<li>是移动平台优化的<strong>最重要领域之一</strong>。</li>
+<li>低效代码导致 CPU/GPU 持续高负载 → 芯片过热 → 操作系统<strong>降频 (Thermal Throttling)</strong> 以免损坏硬件 → 性能下降、卡顿、用户体验差。</li>
+</ul>
+</li>
+<li><strong>电池寿命 (Battery Lifetime):</strong>
+<ul>
+<li>高帧率和高计算量（包括内存访问）会<strong>加速电池消耗</strong>并产生更多<strong>热量</strong>。</li>
+<li>性能不佳可能导致无法覆盖低端设备，错失市场机会。</li>
+</ul>
+</li>
+<li><strong>应对策略:</strong>
+<ul>
+<li>将散热视为系统级预算问题。</li>
+<li>尽早进行性能分析，从项目开始就进行优化。</li>
+<li>调整项目设置以适应目标硬件。</li>
+</ul>
+</li>
+</ul>
+<h2 id="调整移动端帧预算">
+<a class="header-anchor" href="#%e8%b0%83%e6%95%b4%e7%a7%bb%e5%8a%a8%e7%ab%af%e5%b8%a7%e9%a2%84%e7%ae%97"></a>
+调整移动端帧预算
+</h2><ul>
+<li><strong>推荐做法:</strong> 为应对长时间游戏产生的热量和电池消耗，建议在帧预算内预留约 <strong>35% 的空闲时间</strong>。
+<ul>
+<li>这让芯片有时间冷却，减少过度耗电。</li>
+</ul>
+</li>
+<li><strong>计算示例:</strong>
+<ul>
+<li>目标 30 FPS (预算 33.33ms): 实际执行时间目标 ≈ 33.33ms * (1 - 0.35) ≈ <strong>21.66ms</strong> (通常取 <strong>22ms</strong>)。</li>
+<li>目标 60 FPS (预算 16.66ms): 实际执行时间目标 ≈ 16.66ms * 0.65 ≈ <strong>10.83ms</strong> (这在多数移动设备上难以稳定实现，且耗电量约是 30 FPS 的两倍)。</li>
+</ul>
+</li>
+<li><strong>普遍选择:</strong> 基于以上原因，<strong>大多数移动游戏选择 30 FPS 作为目标</strong>。可通过 <code>Application.targetFrameRate</code> 设置。</li>
+<li><strong>动态调频 (Frequency Scaling):</strong>
+<ul>
+<li>移动芯片会根据负载动态调整工作频率，这使得在 Profiler 中直接看帧时间判断优化效果变得复杂。优化可能导致频率降低（设备运行更凉爽），而不是帧时间显著缩短。</li>
+<li>建议使用 FTrace、Perfetto 等<strong>原生工具</strong>监控移动芯片的频率、空闲时间和温度变化。</li>
+</ul>
+</li>
+<li><strong>优化成功的标准:</strong>
+<ul>
+<li>在<strong>稳定达到目标帧率</strong>（如 30 FPS）的前提下，观察到设备<strong>工作负载降低</strong>（如芯片频率降低或温度下降）。</li>
+</ul>
+</li>
+<li><strong>环境因素:</strong> 预留一部分帧预算也有助于应对现实世界中<strong>环境温度升高</strong>（如炎热天气）对设备散热能力的影响。</li>
+</ul>
+<h2 id="减少内存访问操作-reduce-memory-access-operations">
+<a class="header-anchor" href="#%e5%87%8f%e5%b0%91%e5%86%85%e5%ad%98%e8%ae%bf%e9%97%ae%e6%93%8d%e4%bd%9c-reduce-memory-access-operations"></a>
+减少内存访问操作 (Reduce Memory Access Operations)
+</h2><ul>
+<li><strong>核心原因:</strong> DRAM（内存）访问在移动设备上是<strong>高耗电</strong>操作（Arm 举例 LPDDR4 约 100 皮焦耳/字节）。</li>
+<li><strong>降低内存访问的方法:</strong>
+<ul>
+<li>降低目标帧率。</li>
+<li>在可能的情况下降低显示分辨率。</li>
+<li>使用更简单的网格模型（减少顶点数量、降低顶点属性精度）。</li>
+<li>使用纹理压缩和 Mipmapping 技术。</li>
+</ul>
+</li>
+<li><strong>相关工具:</strong>
+<ul>
+<li>对于 Arm 或 Arm Mali 硬件，可使用 <strong>Arm Mobile Studio</strong>（特别是 <strong>Streamline Performance Analyzer</strong>）工具，通过其提供的性能计数器来识别内存带宽问题（例如由 Overdraw 引起的带宽饱和）。<em>(注意：GPU 分析需 Arm Mali 硬件)</em></li>
+</ul>
+</li>
+</ul>
+<h2 id="性能分析方法从高层到低层-from-high--to-low-level-profiling">
+<a class="header-anchor" href="#%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e6%96%b9%e6%b3%95%e4%bb%8e%e9%ab%98%e5%b1%82%e5%88%b0%e4%bd%8e%e5%b1%82-from-high--to-low-level-profiling"></a>
+性能分析方法：从高层到低层 (From High- to Low-Level Profiling)
+</h2><ul>
+<li><strong>推荐流程:</strong> 采用<strong>自顶向下 (Top-to-bottom)</strong> 的方法。</li>
+<li><strong>第一步 (高层分析):</strong>
+<ul>
+<li>在<strong>禁用深度分析 (Deep Profiling disabled)</strong> 的情况下开始。</li>
+<li>收集数据，记录在核心游戏循环中导致<strong>不必要托管内存分配 (GC.Alloc markers)</strong> 或 <strong>CPU 耗时过高</strong>的场景。</li>
+<li>收集 <code>GC.Alloc</code> 标记的调用堆栈信息。</li>
+</ul>
+</li>
+<li><strong>第二步 (低层分析 - 如有必要):</strong>
+<ul>
+<li>如果高层分析的调用堆栈不够详细，无法追踪分配或性能下降的源头，则进行第二次性能分析，此时<strong>启用深度分析 (Deep Profiling enabled)</strong>。</li>
+</ul>
+</li>
+<li><strong>记录要点:</strong>
+<ul>
+<li>记录耗时高的“罪魁祸首”时，要关注其<strong>相对于帧内其他部分的耗时比例</strong>。因为启用深度分析会增加整体开销，影响绝对耗时数据。</li>
+</ul>
+</li>
+</ul>
+<h2 id="尽早并经常分析-profile-early-and-often">
+<a class="header-anchor" href="#%e5%b0%bd%e6%97%a9%e5%b9%b6%e7%bb%8f%e5%b8%b8%e5%88%86%e6%9e%90-profile-early-and-often"></a>
+尽早并经常分析 (Profile Early and Often)
+</h2><ul>
+<li><strong>核心建议:</strong> 在项目开发的<strong>早期</strong>就开始性能分析，并<strong>经常进行</strong>，这样能获得最大的优化收益。</li>
+<li><strong>益处:</strong>
+<ul>
+<li>帮助团队理解并记住项目的“性能特征 (performance signature)”。</li>
+<li>当性能突然下降时，能更容易发现问题发生的时间点并进行修复。</li>
+</ul>
+</li>
+<li><strong>获取最准确结果:</strong>
+<ul>
+<li>始终在<strong>目标设备</strong>上运行构建版本 (Build) 进行分析。</li>
+<li>结合使用<strong>平台特定的分析工具</strong>来深入了解各平台的硬件特性。</li>
+<li>这种结合能提供跨所有目标设备的<strong>整体性能视图 (holistic view)</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="建立硬件分层基准-establish-hardware-tiers-for-benchmarking">
+<a class="header-anchor" href="#%e5%bb%ba%e7%ab%8b%e7%a1%ac%e4%bb%b6%e5%88%86%e5%b1%82%e5%9f%ba%e5%87%86-establish-hardware-tiers-for-benchmarking"></a>
+建立硬件分层基准 (Establish Hardware Tiers for Benchmarking)
+</h2><ul>
+<li><strong>目的:</strong> 确保游戏在所有目标硬件上都能良好运行。</li>
+<li><strong>做法:</strong>
+<ul>
+<li>为你希望支持的每个平台和质量等级，确定<strong>硬件分层 (tiers)</strong> 或指定一个<strong>最低规格设备 (lowest-spec device)</strong>。</li>
+<li>针对<strong>每个层级的最低规格设备</strong>进行性能分析和优化。</li>
+</ul>
+</li>
+<li><strong>示例:</strong>
+<ul>
+<li>移动平台：可能设定高、中、低三个层级，通过质量设置开关功能。优化时需确保每个层级的最低规格设备达标。</li>
+<li>主机平台：若同时为 PlayStation 4 和 PlayStation 5 开发，则必须在<strong>两个平台</strong>上都进行性能分析。</li>
+</ul>
+</li>
+</ul>
+<h2 id="查找瓶颈-find-the-bottlenecks-cpu-限制-vs-gpu-限制">
+<a class="header-anchor" href="#%e6%9f%a5%e6%89%be%e7%93%b6%e9%a2%88-find-the-bottlenecks-cpu-%e9%99%90%e5%88%b6-vs-gpu-%e9%99%90%e5%88%b6"></a>
+查找瓶颈 (Find the Bottlenecks): CPU 限制 vs. GPU 限制
+</h2><ul>
+<li><strong>目标:</strong> 判断应用程序的性能瓶颈在于 <strong>CPU (CPU-bound)</strong> 还是 <strong>GPU (GPU-bound)</strong>。</li>
+<li><strong>识别方法:</strong>
+<ul>
+<li><strong>平台工具:</strong> 某些平台（如 Xcode for iOS）可以直接显示 CPU 和 GPU 的耗时对比图。<em>(注意：移动设备上显示的 CPU 时间通常包含等待 VSync 的时间)</em></li>
+<li><strong>Unity Profiler:</strong> 即使某些平台难以获取 GPU 计时数据，Unity Profiler 也提供了足够的信息来定位瓶颈。
+<ul>
+<li>使用 <strong>CPU Usage 模块</strong> 的 <strong>Timeline 视图</strong>可以查看 CPU 的完整活动，包括<strong>等待 GPU (WaitForGPU 或类似标记)</strong> 的时间。</li>
+<li>熟悉常见的 <strong>Profiler markers</strong> (标记名称可能因平台而异)，通过在各目标平台上抓取性能数据来了解项目的“正常”表现。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>VSync (垂直同步) 解释:</strong>
+<ul>
+<li>将应用的帧率与显示器的刷新率同步。</li>
+<li>作用：防止画面撕裂 (screen tearing)，减轻 GPU 负担。</li>
+<li>影响：如果游戏运行速度快于刷新率对应的时间（如 60Hz -&gt; 16.66ms），会被强制等待，表现为恒定帧率。</li>
+<li>可在 Unity 的<strong>质量设置 (Quality Settings)</strong> 中配置 VSync Count。</li>
+</ul>
+</li>
+<li><strong>瓶颈判断与优化策略:</strong>
+<ul>
+<li><strong>瓶颈定义:</strong> 性能受限于<strong>耗时最长</strong>的那个部分（CPU 线程或 GPU）。优化应<strong>聚焦于瓶颈</strong>。</li>
+<li><strong>示例场景分析 (假设目标 30fps ≈ 33.3ms, VSync 开启):</strong>
+<ul>
+<li>CPU 25ms, GPU 20ms: <strong>CPU 限制</strong>，但均在预算内。优化任何一方不会提高帧率至 30fps 以上（除非两者都降到 16.66ms 以下才能跳到 60fps）。</li>
+<li>CPU 40ms, GPU 20ms: <strong>CPU 限制</strong>，超出预算。<strong>需优化 CPU</strong>。优化 GPU 无益；甚至可以考虑将部分 CPU 工作转移到 GPU (如使用 Compute Shaders) 来平衡负载。</li>
+<li>CPU 20ms, GPU 40ms: <strong>GPU 限制</strong>，超出预算。<strong>需优化 GPU</strong>。</li>
+<li>CPU 40ms, GPU 40ms: <strong>两者都是瓶颈</strong>，超出预算。<strong>需同时优化 CPU 和 GPU</strong>，使两者都低于 33.3ms。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041035164.png" alt=""></p>
+<p><a href="https://www.youtube.com/watch?v=uXRURWwabF4">Structure of a frame, the CPU and GPU | Introduction to profiling in Unity</a></p>
+<p><a href="https://thegamedev.guru/unity-cpu-performance/draw-call-bound/">Unity CPU Optimization: Is Your Game&hellip; Draw Call Bound?</a></p>
+<h2 id="是否在帧预算内are-you-within-frame-budget">
+<a class="header-anchor" href="#%e6%98%af%e5%90%a6%e5%9c%a8%e5%b8%a7%e9%a2%84%e7%ae%97%e5%86%85are-you-within-frame-budget"></a>
+是否在帧预算内？(Are you within frame budget?)
+</h2><ul>
+<li><strong>重要性:</strong> 在开发过程中尽早并经常进行性能分析，有助于确保所有 CPU 线程和整体 GPU 帧时间都<strong>保持在帧预算之内</strong>。</li>
+<li><strong>示例解读 (移动端游戏):</strong>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041050929.png" alt="">
+<ul>
+<li>一个持续进行性能分析优化的 Unity 手游项目。高配手机目标 60fps，中低配目标 30fps。</li>
+<li><strong>关键标记 (<code>WaitForTargetfps</code> - 黄色):</strong> 在 30fps 目标下（<code>Application.targetFrameRate = 30</code> 且 VSync 开启），主线程实际工作在约 19ms 完成，剩余时间显示为 <code>WaitForTargetfps</code>，直到 33.33ms 的帧预算时间结束才开始下一帧。</li>
+<li><strong>标记含义:</strong> 虽然显示为 Profiler 标记，但此时主 CPU 线程<strong>基本处于空闲 (idle)</strong> 状态。</li>
+<li><strong>好处:</strong> 允许 CPU 降温，并最大限度地减少电池消耗。</li>
+<li><strong>标记变体:</strong> 等待标记的名称可能因平台或 VSync 是否禁用而异（如 <code>Gfx.WaitForPresent</code> 等）。</li>
+<li><strong>核心检查点:</strong>
+<ol>
+<li>主线程是否在帧预算内完成工作？（或刚好达到预算，并显示某种等待 VSync 的标记）</li>
+<li>其他线程（渲染线程、工作线程）是否有空闲时间？</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><strong>空闲时间的表现:</strong>
+<ul>
+<li>通常显示为<strong>灰色或黄色</strong>的 Profiler 标记。</li>
+<li><strong>渲染线程空闲:</strong> <code>Gfx.WaitForGfxCommandsFromMainThread</code> 表示它已完成向 GPU 发送上一帧的绘制调用 (Draw Call)，正在等待 CPU 发来下一帧的请求。</li>
+<li><strong>工作线程空闲:</strong> <code>Idle</code> 标记（例如，在完成 <code>Canvas.GeometryJob</code> 后）。</li>
+</ul>
+</li>
+<li><strong>VSync 间隔观察:</strong>
+<ul>
+<li>可以通过观察 Timeline 视图中 <strong><code>Gfx.Present</code> 标记</strong> 逐帧的结束时间来判断 VBlank（垂直消隐）间隔。</li>
+<li>可以使用 Timeline 区域的时间刻度尺测量两个 <code>Gfx.Present</code> 之间的时间。</li>
+</ul>
+</li>
+<li><strong>结论:</strong> 大量的等待/空闲标记表明应用程序<strong>舒适地运行在帧预算之内</strong>。</li>
+</ul>
+<h2 id="如果游戏在帧预算内-if-your-game-is-in-frame-budget">
+<a class="header-anchor" href="#%e5%a6%82%e6%9e%9c%e6%b8%b8%e6%88%8f%e5%9c%a8%e5%b8%a7%e9%a2%84%e7%ae%97%e5%86%85-if-your-game-is-in-frame-budget"></a>
+如果游戏在帧预算内 (If your game is in frame budget)
+</h2><ul>
+<li><strong>恭喜!</strong> 性能分析工作暂时完成。</li>
+<li><strong>下一步建议:</strong> 运行 <strong>Memory Profiler</strong>，确保应用程序也符合其<strong>内存预算</strong>。</li>
+</ul>
+<h2 id="cpu-限制-cpu-bound">
+<a class="header-anchor" href="#cpu-%e9%99%90%e5%88%b6-cpu-bound"></a>
+CPU 限制 (CPU-bound)
+</h2><ul>
+<li><strong>条件:</strong> 游戏的 <strong>CPU 耗时超出了帧预算</strong>。</li>
+<li><strong>下一步:</strong> 调查 CPU 的<strong>哪个部分</strong>是瓶颈，即<strong>哪个线程最繁忙</strong>。</li>
+<li><strong>关键原则:</strong> 性能分析的目的是<strong>识别瓶颈</strong>作为优化目标。<strong>切勿猜测</strong>，否则可能优化了非瓶颈部分，导致性能提升甚微甚至恶化。</li>
+<li><strong>现代 CPU 特点:</strong> 拥有多个核心，不同线程可在不同核心上独立并行工作。瓶颈通常是<strong>某个特定线程</strong>，而不是整个 CPU。</li>
+<li><strong>Unity 中常见的瓶颈线程:</strong>
+<ol>
+<li><strong>主线程 (Main Thread):</strong>
+<ul>
+<li>默认执行所有游戏逻辑/脚本 (<code>Update</code>, <code>Start</code> 等)。</li>
+<li>大部分特性和系统（物理、动画、UI、渲染的准备工作如剔除/排序/合批列表生成）都在此线程。</li>
+<li><strong>最常见的瓶颈所在。</strong></li>
+</ul>
+</li>
+<li><strong>渲染线程 (Render Thread):</strong>
+<ul>
+<li>接收主线程生成的渲染列表。</li>
+<li>将 Unity 内部的、平台无关的渲染指令<strong>翻译</strong>成特定平台所需的图形 API 调用，提交给 GPU。</li>
+</ul>
+</li>
+<li><strong>工作线程 (Job Worker Threads):</strong>
+<ul>
+<li>执行由开发者（使用 C# Job System）或 Unity 内部系统（物理、动画、渲染的部分功能）调度的任务。</li>
+<li>目的是<strong>分担主线程的负载</strong>。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="主线程瓶颈分析-main-thread-bound">
+<a class="header-anchor" href="#%e4%b8%bb%e7%ba%bf%e7%a8%8b%e7%93%b6%e9%a2%88%e5%88%86%e6%9e%90-main-thread-bound"></a>
+主线程瓶颈分析 (Main Thread Bound)
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041054123.png" alt=""></p>
+<ul>
+<li><strong>示例场景 (Meta Quest 2 - VR):</strong>
+<ul>
+<li>VR 设备为避免晕动症，通常需要高帧率（如 72fps → 13.88ms, 120fps → 8.33ms）。</li>
+<li>示例中主线程耗时 &gt; 45ms (帧率 &lt; 22fps)，即使目标是 30fps 也远超预算。</li>
+</ul>
+</li>
+<li><strong>Profiler 表现:</strong>
+<ul>
+<li>主线程在<strong>整个帧期间都处于繁忙状态</strong>，几乎没有或完全没有等待/空闲标记。</li>
+<li>渲染线程和工作线程可能看起来正常（有空闲时间）。</li>
+</ul>
+</li>
+<li><strong>调查步骤:</strong> 找出主线程上耗时最长的部分。
+<ul>
+<li><strong>示例分析:</strong>
+<ul>
+<li><code>PostLateUpdate.FinishFrameRendering</code> (16.23ms):
+<ul>
+<li>内部有 5 个 <code>Inl_RenderCameraStack</code> 标记 → <strong>5 个活动相机</strong>在渲染场景。</li>
+<li><strong>问题:</strong> 每个相机都会触发完整的渲染管线（剔除、排序、合批等）。</li>
+<li><strong>优先级最高的优化:</strong> 减少活动相机数量，理想情况是只有一个。</li>
+<li><a href="https://unity.com/blog/games/optimize-game-performance-with-camera-usage?utm_source=demand-gen&amp;utm_medium=pdf&amp;utm_campaign=profiling-for-performance&amp;utm_content=the-ultimate-guide-to-profiling-ebook">How to optimize game performance with Camera usage: Part 1</a></li>
+</ul>
+</li>
+<li><code>BehaviourUpdate</code> (所有 <code>MonoBehaviour.Update()</code>): 耗时 7.27ms。</li>
+<li><strong>托管堆内存分配 (Managed Heap Allocations):</strong>
+<ul>
+<li>Timeline 中显示为<strong>洋红色 (magenta)</strong> 部分，或在 Hierarchy 视图用 <code>GC.Alloc</code> 过滤。</li>
+<li><strong><code>GC.Alloc</code> 标记显示的耗时 (如 0.33ms) 具有误导性!</strong>
+<ul>
+<li>它只记录了开始时间戳和分配大小，为保证可见性仅赋予极短时间。</li>
+<li><strong>实际分配耗时可能更长</strong>（尤其当需要向操作系统申请新内存时）。</li>
+<li><strong>如何观察实际影响?</strong>
+<ul>
+<li>在分配代码周围手动添加 <code>Profiler Marker</code>。</li>
+<li>在深度分析模式下，<code>GC.Alloc</code> 标记之间的<strong>间隙 (gaps)</strong> 可以间接反映耗时。</li>
+</ul>
+</li>
+<li><strong>内存分配的隐藏成本:</strong>
+<ul>
+<li>向 OS 请求内存可能影响移动设备的<strong>功耗预算</strong>，导致 CPU/GPU 降频。</li>
+<li>新内存需加载到 CPU L1 缓存，会<strong>挤出</strong>现有缓存行 (Cache lines)。</li>
+<li>可能直接或间接触发<strong>增量或同步垃圾回收 (Garbage Collection)</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>Physics.FixedUpdate</code> (帧初 4 个实例): 共 4.57ms。</li>
+<li><code>LateBehaviourUpdate</code> (所有 <code>MonoBehaviour.LateUpdate()</code>): 耗时 4ms。</li>
+<li>Animators (动画): 约 1ms。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>优化方向:</strong> <strong>优先优化耗时最长的部分</strong>，以获得最大性能提升。</li>
+<li><strong>主线程常见优化点:</strong>
+<ul>
+<li>物理 (Physics)</li>
+<li>MonoBehaviour 脚本更新 (<code>Update</code>, <code>LateUpdate</code> 等)</li>
+<li>垃圾分配与回收 (Garbage Allocation / Collection)</li>
+<li>相机剔除与渲染 (Camera culling and rendering)</li>
+<li>不佳的绘制调用批处理 (Poor draw call batching - CPU 侧)</li>
+<li>UI 更新、布局与重建 (UI updates, layouts and rebuilds)</li>
+<li>动画 (Animation)</li>
+</ul>
+</li>
+<li><strong>辅助诊断工具:</strong>
+<ul>
+<li><strong>耗时脚本但原因不明:</strong> 手动添加 <code>Profiler Markers</code> 或启用 <code>Deep Profiling</code> 查看完整调用栈。</li>
+<li><strong>脚本中的内存分配:</strong> 在 Profiler 中启用 <code>Allocation Call Stacks</code> 查看来源；或用 <code>Deep Profiling</code>；或使用 <code>Project Auditor</code> (可按内存问题过滤代码)。</li>
+<li><strong>批处理问题:</strong> 使用 <code>Frame Debugger</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="渲染线程瓶颈分析-render-thread-bound">
+<a class="header-anchor" href="#%e6%b8%b2%e6%9f%93%e7%ba%bf%e7%a8%8b%e7%93%b6%e9%a2%88%e5%88%86%e6%9e%90-render-thread-bound"></a>
+渲染线程瓶颈分析 (Render Thread Bound)
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041105976.png" alt=""></p>
+<ul>
+<li><strong>示例场景 (主机游戏):</strong> 等距视角，目标 33.33ms。</li>
+<li><strong>Profiler 表现:</strong>
+<ul>
+<li>主线程在帧开始时等待渲染线程 (<code>Gfx.WaitForPresentOnGfxThread</code>)。</li>
+<li>同时，渲染线程<strong>仍在处理上一帧</strong>的渲染命令 (<code>Camera.Render</code> 等标记颜色较深)。</li>
+<li>当前帧的渲染命令在渲染线程上耗时 &gt; 100ms，导致下一帧主线程继续等待。</li>
+</ul>
+</li>
+<li><strong>示例根源分析:</strong>
+<ul>
+<li>渲染设置复杂：9 个不同相机、替换着色器 (Replacement Shaders) 导致额外 Pass、使用了前向渲染路径 (Forward Rendering) 渲染了 130+ 个点光源（每个光源可能增加多个透明绘制调用）。</li>
+<li><strong>结果:</strong> 每帧超过 3000 个绘制调用 (Draw Call)。</li>
+</ul>
+</li>
+<li><strong>渲染线程常见优化点:</strong>
+<ul>
+<li><strong>不佳的绘制调用批处理 (Poor draw call batching):</strong> 尤其在使用旧图形 API (如 OpenGL ES, DirectX 11) 时。</li>
+<li><strong>过多的相机 (Too many cameras):</strong> 除非是分屏多人游戏，否则通常只需要一个活动相机。</li>
+<li><strong>不佳的剔除 (Poor culling):</strong> 导致绘制了过多物体。
+<ul>
+<li>检查相机的视锥体 (Frustum) 尺寸和剔除层蒙版 (Cull Layer Masks)。</li>
+<li>考虑启用遮挡剔除 (Occlusion Culling)。</li>
+<li>可根据场景布局创建自定义的简单遮挡剔除系统。</li>
+<li>检查投射阴影的物体数量（阴影剔除与常规剔除是分开的 Pass）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>辅助诊断工具:</strong>
+<ul>
+<li><strong>Rendering Profiler 模块:</strong> 显示每帧的 Draw Call Batches 和 SetPass 调用数量概览。</li>
+<li><strong>Frame Debugger:</strong> <strong>最佳工具</strong>，用于调查渲染线程具体向 GPU 发送了哪些绘制调用批次。</li>
+</ul>
+</li>
+</ul>
+<h3 id="工作线程瓶颈分析-worker-threads-bound">
+<a class="header-anchor" href="#%e5%b7%a5%e4%bd%9c%e7%ba%bf%e7%a8%8b%e7%93%b6%e9%a2%88%e5%88%86%e6%9e%90-worker-threads-bound"></a>
+工作线程瓶颈分析 (Worker Threads Bound)
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041108134.png" alt=""></p>
+<ul>
+<li><strong>普遍性:</strong> 不如主线程或渲染线程瓶颈常见。</li>
+<li><strong>发生场景:</strong> 更多出现在使用 DOTS (Data-Oriented Technology Stack) 的项目中，特别是当大量工作通过 C# Job System 移到工作线程时。</li>
+<li><strong>示例场景 (DOTS 粒子流体模拟):</strong> 编辑器 Play 模式。</li>
+<li><strong>Profiler 初看:</strong> 工作线程被 Burst 编译的 Jobs 紧密填充，似乎成功将工作移出主线程。</li>
+<li><strong>问题迹象:</strong>
+<ul>
+<li>帧时间 48.14ms (远超预算)。</li>
+<li>主线程出现<strong>灰色</strong>的 <code>WaitForJobGroupID</code> 标记，耗时 35.57ms。</li>
+</ul>
+</li>
+<li><strong><code>WaitForJobGroupID</code> 含义:</strong> 主线程调度了异步 Jobs，但在这些 Jobs 完成之前<strong>需要它们的计算结果</strong>，导致主线程<strong>阻塞等待</strong>。等待期间主线程会尝试执行其他已就绪的 Job（标记下方蓝色部分）以加速完成。</li>
+<li><strong>示例根源分析:</strong>
+<ul>
+<li>Jobs 虽然经过 Burst 编译，但计算量仍然很大。</li>
+<li>可能原因：空间查询结构（用于查找临近粒子）需要优化或替换；Jobs 的调度时机（应尽早调度，晚点取结果）；模拟的粒子数量过多。</li>
+</ul>
+</li>
+<li><strong>解决方案思路:</strong> 需要分析 Jobs 代码，添加<strong>更细粒度的 <code>Profiler Markers</code></strong> 来定位耗时部分。</li>
+<li><strong>其他情况:</strong> 即使只有一个长时间运行的 Job 在单个工作线程上，如果主线程需要结果的时间早于 Job 完成时间，也会导致主线程等待（如上图所示）。</li>
+<li><strong>工作线程瓶颈/同步点 (Sync Points) 的常见原因:</strong>
+<ul>
+<li>Jobs 没有被 Burst 编译器编译。</li>
+<li>长时间运行的 Jobs 在单个线程上执行，而没有并行化到多个工作线程。</li>
+<li>从 Job 被调度到需要其结果之间的时间不足。</li>
+<li>帧内存在多个“同步点”，要求所有（或相关）Jobs 必须立即完成。</li>
+</ul>
+</li>
+<li><strong>辅助诊断工具:</strong>
+<ul>
+<li>CPU Usage Profiler 模块 Timeline 视图中的 <strong>Flow Events</strong> 功能：可视化 Jobs 的调度时间点和主线程期望获取结果的时间点。</li>
+<li>参考 DOTS 最佳实践指南。</li>
+</ul>
+</li>
+</ul>
+<h2 id="gpu-限制-gpu-bound">
+<a class="header-anchor" href="#gpu-%e9%99%90%e5%88%b6-gpu-bound"></a>
+GPU 限制 (GPU-bound)
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202505041110050.png" alt=""></p>
+<ul>
+<li><strong>条件:</strong> 应用程序的性能受限于 <strong>GPU 的处理速度</strong>。</li>
+<li><strong>Profiler 表现:</strong>
+<ul>
+<li>主线程花费大量时间在如 <code>Gfx.WaitForPresentOnGfxThread</code> 的标记中。</li>
+<li>同时，渲染线程显示如 <code>Gfx.PresentFrame</code> 或 <code>&lt;GraphicsAPIName&gt;.WaitForLastPresent</code> 等标记。（这些通常表示<strong>等待 GPU 完成上一帧的渲染</strong>）。</li>
+</ul>
+</li>
+<li><strong>示例场景 (移动端游戏):</strong> 三星 Galaxy S7 (Vulkan API)。</li>
+<li><strong>示例分析:</strong> <code>Gfx.PresentFrame</code> 标记时间极长，表明大部分时间是<strong>等待 GPU</strong>，而非仅等待 VSync。</li>
+<li><strong>示例根源:</strong> 某个游戏事件触发了一个着色器 (Shader)，导致 GPU 渲染的绘制调用数量增加了两倍。</li>
+<li><strong>GPU 性能常见优化点:</strong>
+<ul>
+<li><strong>昂贵的全屏后处理效果 (Post-processing effects):</strong> 如环境光遮蔽 (Ambient Occlusion)、辉光 (Bloom)。</li>
+<li><strong>昂贵的片段着色器 (Fragment Shaders):</strong>
+<ul>
+<li>存在分支逻辑 (Branching)。</li>
+<li>使用了完整浮点精度 (full float precision) 而非半精度 (half precision)。</li>
+<li>过度使用寄存器，影响 GPU 的波前占用率 (wavefront occupancy)。</li>
+</ul>
+</li>
+<li><strong>透明渲染队列中的过度绘制 (Overdraw):</strong> 由低效的 UI、粒子系统或后处理效果引起。</li>
+<li><strong>过高的屏幕分辨率:</strong> 如 4K 显示器或移动设备上的 Retina 屏。</li>
+<li><strong>微小三角形 (Micro triangles):</strong> 由过于密集的网格几何体或缺少 LOD (Level of Detail) 引起，在移动 GPU 上尤其成问题，但也可能影响 PC 和主机 GPU。</li>
+<li><strong>缓存未命中 (Cache misses) 和浪费的 GPU 内存带宽:</strong> 由未压缩纹理、或高分辨率纹理未使用 Mipmaps 引起。</li>
+<li><strong>几何着色器 (Geometry Shaders) 或曲面细分着色器 (Tesselation Shaders):</strong> 如果启用了动态阴影，这些可能每帧运行多次。</li>
+</ul>
+</li>
+<li><strong>辅助诊断工具:</strong>
+<ul>
+<li><strong>Frame Debugger:</strong> 可以快速了解发送到 GPU 的绘制调用批次是<strong>如何构造</strong>的，但<strong>无法提供具体的 GPU 耗时信息</strong>。</li>
+<li><strong>GPU Profiler (外部工具):</strong> <strong>调查 GPU 瓶颈的最佳方式</strong>。需要使用适合目标硬件和图形 API 的 <strong>GPU 性能分析器</strong>（如 Xcode Metal Debugger, RenderDoc, Snapdragon Profiler, Arm Mobile Studio, PIX for Windows, NSight 等）。</li>
+</ul>
+</li>
+</ul>
+<h1 id="内存分析-memory-profiling">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90-memory-profiling"></a>
+内存分析 (Memory Profiling)
+</h1><h2 id="内存分析的目的与相关性">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90%e7%9a%84%e7%9b%ae%e7%9a%84%e4%b8%8e%e7%9b%b8%e5%85%b3%e6%80%a7"></a>
+内存分析的目的与相关性
+</h2><ul>
+<li><strong>主要目的:</strong> 内存分析主要与<strong>运行时性能 (Runtime Performance)</strong> (即 CPU/GPU 速度) <strong>关系不大</strong>。其主要用途在于：
+<ul>
+<li>测试应用程序是否超出目标硬件平台的<strong>内存限制</strong>。</li>
+<li>调查游戏<strong>崩溃</strong>问题（通常由内存不足引起）。</li>
+</ul>
+</li>
+<li><strong>次要相关性:</strong> 在某些情况下也可能与性能相关，例如：
+<ul>
+<li>当为了提升 CPU/GPU 性能而做出的改动<strong>增加了内存使用量</strong>时，需要评估这种权衡。</li>
+</ul>
+</li>
+<li><strong>核心作用:</strong> 帮助确保应用程序稳定运行，不因内存问题而失败。</li>
+</ul>
+<h2 id="unity-中的内存分析工具">
+<a class="header-anchor" href="#unity-%e4%b8%ad%e7%9a%84%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90%e5%b7%a5%e5%85%b7"></a>
+Unity 中的内存分析工具
+</h2><p>Unity 提供两种主要方式来分析应用程序的内存使用情况：</p>
+<ol>
+<li><strong>Memory Profiler 模块 (Memory Profiler module):</strong>
+<ul>
+<li>Unity 编辑器<strong>内置</strong>的 Profiler 模块之一。</li>
+<li>提供关于应用程序内存使用位置的<strong>基本信息</strong>。</li>
+</ul>
+</li>
+<li><strong>Memory Profiler 包 (Memory Profiler package):</strong>
+<ul>
+<li>需要通过 Package Manager <strong>额外添加</strong>到项目中的 Unity 包。</li>
+<li>在编辑器中添加一个独立的 <strong>Memory Profiler 窗口</strong>。</li>
+<li>提供<strong>更深入、更详细</strong>的内存分析能力。</li>
+<li><strong>核心功能:</strong>
+<ul>
+<li>存储和<strong>比较内存快照 (Snapshots)</strong>，用于<strong>查找内存泄漏 (Memory Leaks)</strong>。</li>
+<li>查看<strong>内存布局 (Memory Layout)</strong>，以发现<strong>内存碎片 (Memory Fragmentation)</strong> 问题。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<ul>
+<li><strong>共同能力:</strong> 使用这些工具可以监控内存使用、定位内存占用超预期的区域、发现并改善内存碎片问题。</li>
+<li><strong>本节说明:</strong> 此处仅为简要介绍，详细解释请参阅指南后续的“Unity profiling and debug tools”部分。</li>
+</ul>
+<h2 id="理解和定义内存预算-understand-and-define-a-memory-budget">
+<a class="header-anchor" href="#%e7%90%86%e8%a7%a3%e5%92%8c%e5%ae%9a%e4%b9%89%e5%86%85%e5%ad%98%e9%a2%84%e7%ae%97-understand-and-define-a-memory-budget"></a>
+理解和定义内存预算 (Understand and define a memory budget)
+</h2><ul>
+<li><strong>重要性:</strong> 对于多平台开发，理解并为目标设备的内存限制<strong>制定预算至关重要</strong>。</li>
+<li><strong>实践:</strong>
+<ul>
+<li>设计场景和关卡时，必须<strong>遵守</strong>为每个目标设备设定的内存预算。</li>
+<li>设定限制和指导方针，确保应用能在各平台硬件规格内良好工作。</li>
+</ul>
+</li>
+<li><strong>查找限制:</strong> 参考目标平台的<strong>开发者文档</strong>获取设备内存规格（例如，文档说明 Xbox One 主机可供前台游戏使用的最大内存约为 5GB）。</li>
+<li><strong>内容预算:</strong> 设定针对特定内容类型的预算也很有用，例如：
+<ul>
+<li>网格 (Mesh) 和着色器 (Shader) 的复杂度。</li>
+<li>纹理压缩 (Texture Compression)。</li>
+<li>这些都直接影响内存分配量，可在开发周期中作为参考。</li>
+</ul>
+</li>
+</ul>
+<h2 id="确定物理-ram-限制-determine-physical-ram-limits">
+<a class="header-anchor" href="#%e7%a1%ae%e5%ae%9a%e7%89%a9%e7%90%86-ram-%e9%99%90%e5%88%b6-determine-physical-ram-limits"></a>
+确定物理 RAM 限制 (Determine physical RAM limits)
+</h2><ul>
+<li><strong>前提:</strong> 每个目标平台都有内存上限，了解它是设定预算的第一步。</li>
+<li><strong>工具应用:</strong> 使用 <strong>Memory Profiler Package</strong> 查看捕获的快照。
+<ul>
+<li><strong>Hardware Resources</strong> 视图会显示设备的<strong>物理 RAM</strong> 和 <strong>显存 (VRAM)</strong> 大小。</li>
+</ul>
+</li>
+<li><strong>注意事项:</strong>
+<ul>
+<li>该数值显示的是<strong>总物理内存</strong>，<strong>不代表所有空间都可供应用程序使用</strong>。</li>
+<li>它提供了一个有用的<strong>粗略估算值 (ballpark figure)</strong> 作为起点。</li>
+<li><strong>务必交叉参考</strong>官方硬件规格，Profiler 显示的数字可能不完全准确（例如，开发套件有时内存更大；或者设备采用统一内存架构 (Unified Memory Architecture)）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="确定各目标平台支持的最低规格-determine-the-lowest-specification-to-support-for-each-target-platform">
+<a class="header-anchor" href="#%e7%a1%ae%e5%ae%9a%e5%90%84%e7%9b%ae%e6%a0%87%e5%b9%b3%e5%8f%b0%e6%94%af%e6%8c%81%e7%9a%84%e6%9c%80%e4%bd%8e%e8%a7%84%e6%a0%bc-determine-the-lowest-specification-to-support-for-each-target-platform"></a>
+确定各目标平台支持的最低规格 (Determine the lowest specification to support for each target platform)
+</h2><ul>
+<li><strong>方法:</strong> 找出你支持的每个平台上 <strong>RAM 最低的硬件规格</strong>，以此为基础来指导内存预算决策。</li>
+<li><strong>可用性考量:</strong> 再次强调，并非所有物理内存都可用（例如，操作系统、主机上的虚拟机监视器 (Hypervisor) 都会占用一部分）。</li>
+<li><strong>预算策略:</strong>
+<ul>
+<li>可以考虑使用总物理内存的一个<strong>百分比</strong>作为预算（例如，总量的 80%）。</li>
+<li><strong>移动平台分层 (Tiering):</strong> 可以考虑将移动设备分为多个规格层级（低/中/高），为高端设备提供更好的质量和特性，每个层级基于该层最低规格设备设定预算。</li>
+</ul>
+</li>
+</ul>
+<h2 id="为大型团队考虑按团队分配预算-consider-per-team-budgets-for-larger-teams">
+<a class="header-anchor" href="#%e4%b8%ba%e5%a4%a7%e5%9e%8b%e5%9b%a2%e9%98%9f%e8%80%83%e8%99%91%e6%8c%89%e5%9b%a2%e9%98%9f%e5%88%86%e9%85%8d%e9%a2%84%e7%ae%97-consider-per-team-budgets-for-larger-teams"></a>
+为大型团队考虑按团队分配预算 (Consider per-team budgets for larger teams)
+</h2><ul>
+<li><strong>实施:</strong> 确定总体内存预算后，可以考虑<strong>为不同团队分配</strong>额度。
+<ul>
+<li>例如：环境美术团队为每个加载的关卡/场景分配一定内存；音频团队为音乐和音效分配内存等。</li>
+</ul>
+</li>
+<li><strong>灵活性:</strong> 预算应随项目进展<strong>保持灵活</strong>。如果一个团队远低于预算，可以将剩余额度分配给其他团队，前提是这能改进他们负责的游戏部分。</li>
+<li><strong>后续步骤:</strong> 确定并设定预算后，使用分析工具来监控和跟踪游戏中的内存使用情况。</li>
+</ul>
+<h2 id="memory-profiler-模块的视图-simple-and-detailed-views-with-memory-profiler-module">
+<a class="header-anchor" href="#memory-profiler-%e6%a8%a1%e5%9d%97%e7%9a%84%e8%a7%86%e5%9b%be-simple-and-detailed-views-with-memory-profiler-module"></a>
+Memory Profiler 模块的视图 (Simple and detailed views with Memory Profiler module)
+</h2><ul>
+<li><strong>提供两种视图:</strong> Simple (简单视图) 和 Detailed (详细视图)。
+<ul>
+<li><strong>Simple View:</strong> 提供应用程序内存使用的<strong>高层级概览</strong>。</li>
+<li><strong>Detailed View:</strong> 需要时切换到此视图进行<strong>深入探究</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="simple-view-简单视图">
+<a class="header-anchor" href="#simple-view-%e7%ae%80%e5%8d%95%e8%a7%86%e5%9b%be"></a>
+Simple View (简单视图)
+</h3><ul>
+<li><strong>关键指标:</strong>
+<ul>
+<li><code>Total Used Memory</code>: Unity <strong>跟踪的对象</strong>实际使用的内存。等同于 &ldquo;Total Tracked by Unity Memory&rdquo;。<strong>不包括</strong> Unity 已保留但未使用的内存。</li>
+<li><code>Total Reserved Memory</code>: Unity 向操作系统<strong>申请并保留的总内存</strong>（包括已使用的和未使用的）。</li>
+<li><code>System Used Memory</code>: <strong>操作系统认为</strong>你的应用程序正在使用的内存。</li>
+</ul>
+</li>
+<li><strong>特殊情况:</strong> 如果 <code>System Used Memory</code> 显示为 <strong>0</strong>，表示该计数器在你正在分析的平台上未实现。此时，应<strong>依赖 <code>Total Reserved Memory</code></strong> 作为主要参考。在这种情况下，也建议切换到<strong>原生平台分析工具</strong>获取详细内存信息。</li>
+</ul>
+<h3 id="detailed-view-详细视图">
+<a class="header-anchor" href="#detailed-view-%e8%af%a6%e7%bb%86%e8%a7%86%e5%9b%be"></a>
+Detailed View (详细视图)
+</h3><ul>
+<li><strong>用途:</strong> 用于分析可执行文件、DLL、Mono 虚拟机等占用的内存（这些信息无法通过逐帧数据获得）。需要<strong>捕获快照 (Take Sample)</strong> 才能查看。</li>
+<li><strong>功能:</strong> 允许深入查看 Assets 和 Scene 对象的内存占用情况。</li>
+<li><strong>粗略估算是否接近预算:</strong>
+<ul>
+<li>使用以下“餐巾纸估算法”：
+<code>[System Used Memory (如果为0则用 Total Reserved Memory)] + [未跟踪内存的粗略缓冲值]</code></li>
+<li>将此结果与平台总内存预算比较。</li>
+<li>当这个数字开始接近平台内存预算的 100% 时，应使用 <strong>Memory Profiler Package</strong> 来找出具体原因。</li>
+</ul>
+</li>
+</ul>
+<h2 id="使用-memory-profiler-package-进行深入分析-in-depth-analysis-with-memory-profiler-package">
+<a class="header-anchor" href="#%e4%bd%bf%e7%94%a8-memory-profiler-package-%e8%bf%9b%e8%a1%8c%e6%b7%b1%e5%85%a5%e5%88%86%e6%9e%90-in-depth-analysis-with-memory-profiler-package"></a>
+使用 Memory Profiler Package 进行深入分析 (In-depth analysis with Memory Profiler package)
+</h2><ul>
+<li><strong>优势:</strong> 提供<strong>更详细</strong>的内存分析能力。</li>
+<li><strong>核心功能与好处:</strong>
+<ul>
+<li>除了捕获<strong>原生对象 (Native Objects)</strong>（像模块一样），它还能让你查看<strong>托管内存 (Managed Memory)</strong>。</li>
+<li><strong>保存和比较快照 (Save and Compare Snapshots):</strong> 这是查找<strong>内存泄漏</strong>的关键功能。</li>
+<li>更详细地探索内存内容，提供<strong>可视化的内存使用分解图</strong>。</li>
+<li><strong>更强的引用关系查看:</strong> 能显示对象间的引用关系，包括<strong>托管引用</strong>（例如，哪个类的哪个字段引用了某个 Texture2D），而 Memory Profiler Module 的 Detailed 视图主要只显示原生引用，即使显示了托管对象的“外壳”，也通常是因为其下有原生对象，无法看到具体的托管类型或字段引用信息。<strong>需要这种详细信息时必须使用 Package</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="memory-profiler-模块与-package-的关系">
+<a class="header-anchor" href="#memory-profiler-%e6%a8%a1%e5%9d%97%e4%b8%8e-package-%e7%9a%84%e5%85%b3%e7%b3%bb"></a>
+Memory Profiler 模块与 Package 的关系
+</h2><ul>
+<li><strong>演进:</strong> Memory Profiler Package 的许多功能已经<strong>取代 (superseded)</strong> 了 Memory Profiler Module 的对应功能。</li>
+<li><strong>模块的补充作用:</strong> 尽管如此，模块仍可在某些方面辅助内存分析工作：
+<ul>
+<li><strong>发现 GC 分配 (Spot GC Allocations):</strong> 虽然模块中会显示，但使用 <strong>Project Auditor</strong> 工具更容易追踪来源。</li>
+<li><strong>快速查看堆的 Used/Reserved 大小:</strong> 较新版本的 Memory Profiler 模块会显示此信息。</li>
+<li><strong>着色器内存分析 (Shader memory analysis):</strong> 较新版本的 Memory Profiler 模块已报告此信息。</li>
+</ul>
+</li>
+</ul>
+<h2 id="内存分析时的注意事项与实践建议">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90%e6%97%b6%e7%9a%84%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a1%b9%e4%b8%8e%e5%ae%9e%e8%b7%b5%e5%bb%ba%e8%ae%ae"></a>
+内存分析时的注意事项与实践建议
+</h2><ul>
+<li><strong>分析目标:</strong> 设定和检查内存预算时，务必在目标平台支持的<strong>最低规格设备</strong>上进行分析。</li>
+<li><strong>分析环境:</strong>
+<ul>
+<li>通常建议使用<strong>内存充裕的强大开发机</strong>进行分析，因为需要足够空间存储大的内存快照，并能快速加载/保存。</li>
+</ul>
+</li>
+<li><strong>分析自身的开销:</strong>
+<ul>
+<li><strong>内存分析本身会产生额外的内存开销</strong>。这一点与 CPU/GPU 分析不同。</li>
+<li><strong>可能需要在内存更大的高端设备上进行分析</strong>（以容纳游戏本身内存 + 分析工具开销），但分析结果<strong>必须对照低端目标规格的内存预算</strong>来解读。</li>
+</ul>
+</li>
+<li><strong>跨设备内存差异因素:</strong> 不同设备上的设置可能导致内存使用量显著不同，需注意：
+<ul>
+<li><strong>质量设置 (Quality Level) / 图形层级 (Graphics Tier):</strong> 可能影响用于阴影贴图等的 RenderTexture 大小。</li>
+<li><strong>分辨率缩放 (Resolution Scaling):</strong> 可能影响屏幕缓冲区、RenderTexture 和后处理效果的大小。</li>
+<li><strong>纹理质量 (Texture Quality):</strong> 可能影响所有纹理的大小。</li>
+<li><strong>最大 LOD (Maximum LOD):</strong> 可能影响加载的模型等。</li>
+<li><strong>AssetBundle 变体 (Variants):</strong> 根据设备规格加载不同版本（如高清 HD / 标清 SD）会导致资源大小不同。</li>
+<li><strong>屏幕分辨率 (Screen Resolution):</strong> 直接影响用于后处理效果的 RenderTexture 大小。</li>
+<li><strong>支持的图形 API (Graphics API):</strong> 可能影响加载的 Shader 变体及其大小。</li>
+</ul>
+</li>
+<li><strong>分层系统测试的复杂性:</strong>
+<ul>
+<li>使用分层的质量设置、图形层级和 AssetBundle 变体是覆盖更广设备范围的好方法（例如，4GB 内存设备加载 HD 包，2GB 加载 SD 包）。</li>
+<li><strong>但必须考虑到上述内存使用差异，确保在每个层级的代表性设备上进行测试</strong>，同时也要测试不同屏幕分辨率或支持不同图形 API 的设备。</li>
+</ul>
+</li>
+<li><strong>编辑器内存占用:</strong>
+<ul>
+<li><strong>重要提示:</strong> <strong>Unity 编辑器通常会显示比实际构建版本大得多的内存占用</strong>，因为它会加载额外的编辑器和 Profiler 相关对象。<strong>切勿基于编辑器的内存数据来做最终的预算判断或发布决策。</strong></li>
+</ul>
+</li>
+</ul>
+<h1 id="unity-分析和调试工具深入探讨">
+<a class="header-anchor" href="#unity-%e5%88%86%e6%9e%90%e5%92%8c%e8%b0%83%e8%af%95%e5%b7%a5%e5%85%b7%e6%b7%b1%e5%85%a5%e6%8e%a2%e8%ae%a8"></a>
+Unity 分析和调试工具深入探讨
+</h1><p>本节深入介绍 Unity 中可用的每种分析和调试工具的功能。</p>
+<h2 id="关于工具差异的说明">
+<a class="header-anchor" href="#%e5%85%b3%e4%ba%8e%e5%b7%a5%e5%85%b7%e5%b7%ae%e5%bc%82%e7%9a%84%e8%af%b4%e6%98%8e"></a>
+关于工具差异的说明
+</h2><ul>
+<li>本节提到的一些工具（如 <strong>Frame Debugger</strong>）也属于其他类别（如调试工具）。</li>
+<li>虽然严格来说它们不是性能分析器（Profiler），但它们是分析和改进 Unity 项目时工具箱中的重要组成部分。</li>
+</ul>
+<p><strong>性能分析 (Profiling)、调试 (Debugging) 和静态分析 (Static Analysis) 工具的区别：</strong></p>
+<ul>
+<li><strong>性能分析工具 (Profiling Tools):</strong>
+<ul>
+<li>检测并收集与代码执行相关的<strong>计时数据</strong>。</li>
+</ul>
+</li>
+<li><strong>调试工具 (Debugging Tools):</strong>
+<ul>
+<li>允许你<strong>单步执行</strong>程序、<strong>暂停</strong>并<strong>检查变量值</strong>等高级功能。</li>
+<li>例如：<strong>Frame Debugger</strong> 允许你单步浏览帧的渲染过程、检查着色器值等。</li>
+</ul>
+</li>
+<li><strong>静态分析器 (Static Analyzers):</strong>
+<ul>
+<li>接收源代码或其他资源作为输入，使用内置规则分析输入的“正确性”，<strong>无需运行项目</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="profiler-性能分析器">
+<a class="header-anchor" href="#profiler-%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%99%a8"></a>
+Profiler (性能分析器)
+</h2><ul>
+<li><strong>核心功能:</strong> Unity Profiler 帮助你检测运行时<strong>瓶颈</strong>或<strong>卡顿</strong>的原因，并更好地理解在特定帧或时间点发生了什么。</li>
+<li><strong>工作原理:</strong> Unity 中的性能分析是基于<strong>插桩 (instrumentation-based)</strong> 的，提供了大量的 Profiler 标记数据供分析。</li>
+<li><strong>重要注意事项:</strong>
+<ul>
+<li>直接在<strong>编辑器 (Editor) 中进行性能分析会增加一些开销</strong>，可能使结果产生偏差。</li>
+<li>你的开发机器性能可能<strong>远超目标设备</strong>。</li>
+</ul>
+</li>
+<li><strong>建议:</strong>
+<ul>
+<li><strong>只启用</strong>你希望使用的 Profiler 模块。</li>
+<li>或者使用 <strong>Standalone Profiler (独立性能分析器)</strong>，其优点包括：
+<ul>
+<li>提供<strong>更干净</strong>的分析数据。</li>
+<li>减少分析<strong>开销</strong>。</li>
+</ul>
+</li>
+<li><strong>通用经验法则:</strong> 始终启用 <strong>CPU</strong>、<strong>Memory (内存)</strong> 和 <strong>Renderer (渲染器)</strong> 模块。根据需要启用其他模块，如 Audio (音频) 和 Physics (物理)。</li>
+</ul>
+</li>
+</ul>
+<h3 id="unity-性能分析入门步骤">
+<a class="header-anchor" href="#unity-%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%85%a5%e9%97%a8%e6%ad%a5%e9%aa%a4"></a>
+Unity 性能分析入门步骤
+</h3><ol>
+<li><strong>必须使用 Development Build (开发版本):</strong>
+<ul>
+<li>通过 <code>File &gt; Build Settings &gt; Select Development Build</code> 勾选。</li>
+</ul>
+</li>
+<li><strong>勾选 Autoconnect Profiler (可选):</strong>
+<ul>
+<li><strong>注意:</strong> 这会增加大约 <strong>10 秒</strong> 的初始启动时间，<strong>仅应在你想要分析第一个场景的初始化时启用</strong>。</li>
+<li>如果不启用，你始终可以在运行开发版本后手动将 Profiler 连接到它。</li>
+</ul>
+</li>
+<li><strong>为目标平台构建 (Build):</strong></li>
+<li><strong>打开 Unity Profiler:</strong>
+<ul>
+<li>通过 <code>Window &gt; Analysis &gt; Profiler</code> 打开。</li>
+</ul>
+</li>
+<li><strong>禁用不需要的 Profiler 模块:</strong>
+<ul>
+<li>每个启用的模块都会给 Player (运行的应用) 带来性能开销（可以使用 <code>Profiler.CollectGlobalStats</code> 标记观察到部分开销）。</li>
+</ul>
+</li>
+<li><strong>设备网络设置:</strong>
+<ul>
+<li>禁用设备的移动网络 (Mobile Network)，保持 WiFi 启用。</li>
+</ul>
+</li>
+<li><strong>在目标设备上运行构建。</strong></li>
+<li><strong>连接 Profiler:</strong>
+<ul>
+<li><strong>如果勾选了 Autoconnect Profiler:</strong> 构建中会嵌入编辑器机器的 IP 地址。应用启动时会尝试直接连接到该 IP 的 Unity Profiler。Profiler 会自动连接并开始显示帧和分析信息。</li>
+<li><strong>如果未勾选 Autoconnect Profiler:</strong> 需要使用 <strong>Target Selection (目标选择)</strong> 下拉菜单手动连接到你的 Player。</li>
+</ul>
+</li>
+<li><strong>在编辑器中分析 (替代方案):</strong>
+<ul>
+<li>为了<strong>节省构建时间</strong>（但会<strong>降低准确性</strong>），可以直接在 Unity 编辑器中运行并分析你的应用。</li>
+<li>在 Profiler 窗口的 <code>Attach to Player</code> (或类似名称) 下拉菜单中选择 <strong>Playmode</strong>。</li>
+</ul>
+</li>
+</ol>
+<h3 id="profiler-使用技巧">
+<a class="header-anchor" href="#profiler-%e4%bd%bf%e7%94%a8%e6%8a%80%e5%b7%a7"></a>
+Profiler 使用技巧
+</h3><ol>
+<li><strong>在 CPU Usage Profiler 模块中禁用 VSync 和 Others 类别:</strong>
+<ul>
+<li><strong>VSync 标记</strong>代表 CPU 主线程等待垂直同步时的“空闲时间”。</li>
+<li>有时隐藏标记会使理解其他类别的时间或总帧时间如何构成变得困难。<strong>另一种选择</strong>是将 VSync 重新排序到列表顶部，这样可以提供更清晰的图表视图，减少 VSync 标记带来的“噪音”，使整体情况更清晰。</li>
+<li><strong>Others 标记</strong>代表<strong>分析开销 (profiling overhead)</strong>，可以安全忽略，因为它不会出现在项目的最终构建中。</li>
+</ul>
+</li>
+<li><strong>在构建中禁用 VSync:</strong>
+<ul>
+<li>为了更清晰地了解主线程、渲染线程和 GPU 之间的交互，可以分析一个完全禁用了 VSync 的构建。</li>
+<li>前往 <code>Edit &gt; Project Settings &gt; Quality</code>，选择目标设备使用的质量级别 (Quality Level)，并将 <strong>VSync Count</strong> 设置为 <strong>Don’t Sync</strong>。</li>
+<li>构建一个 Development build，并将 Profiler 连接到它。此时，游戏将在上一帧完成后立即开始下一帧，而不是等待 VBlank 信号。</li>
+<li><strong>注意:</strong> 禁用 VSync 可能在某些平台上导致<strong>视觉伪影 (visual artifacts)</strong>，例如画面撕裂（因此，<strong>发布版本记得重新启用它</strong>）。</li>
+<li><strong>好处:</strong> 移除人为的等待可以使 Profiler 捕获的数据更易于阅读，尤其是在调查项目瓶颈时。</li>
+</ul>
+</li>
+<li><strong>了解何时在 Playmode 或 Editor mode 下进行分析:</strong>
+<ul>
+<li><strong>Playmode:</strong> 用于分析你的<strong>游戏/应用程序</strong>本身。</li>
+<li><strong>Editor mode:</strong> 用于查看<strong>围绕游戏的 Unity 编辑器</strong>本身在做什么。</li>
+<li><strong>以 Editor 为目标进行分析会对分析精度产生很大影响</strong>，因为 Profiler 窗口实际上在递归地分析自身。</li>
+<li><strong>价值:</strong> 当编辑器性能下降时，分析 Editor 模式很有价值。可以识别出拖慢编辑器、影响生产力的脚本和扩展。</li>
+<li><strong>何时分析 Editor 的示例:</strong>
+<ul>
+<li>按下 Play 按钮后进入 Play 模式需要很长时间。</li>
+<li>编辑器变得迟钝和无响应。</li>
+<li>项目打开需要很长时间。（文中提到可以使用 <code>-profiler-enable</code> 命令行选项从编辑器启动时就开始分析）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>使用 Standalone Profiler (独立性能分析器):</strong>
+<ul>
+<li>当你想进行 Play mode 或 Editor mode 分析时，Profiler 会作为一个<strong>独立于 Unity 编辑器的新进程</strong>启动。</li>
+<li><strong>优点:</strong> 避免 Profiler UI 或编辑器本身影响测量到的计时结果。</li>
+<li><strong>优点:</strong> 你会得到一套<strong>更干净的分析数据</strong>来进行过滤和处理。</li>
+</ul>
+</li>
+<li><strong>在编辑器中进行分析以实现快速迭代:</strong>
+<ul>
+<li>当你想要<strong>快速迭代</strong>修复性能问题时，在编辑器中进行分析。</li>
+<li><strong>工作流程示例:</strong>
+<ol>
+<li>在构建 (build) 中发现性能问题。</li>
+<li>在编辑器中分析，确认该问题在编辑器中也能复现。</li>
+<li>如果能复现，使用 <strong>Play mode 分析</strong>来快速迭代修改，寻找潜在解决方案。</li>
+<li>一旦问题解决，<strong>制作一个构建</strong>并在<strong>目标设备</strong>上验证解决方案同样有效。</li>
+</ol>
+</li>
+<li><strong>好处:</strong> 这种工作流程<strong>减少了构建更改和部署到设备的时间</strong>。你可以在编辑器中快速迭代，并使用分析工具验证更改结果。</li>
+</ul>
+</li>
+</ol>
+<h3 id="更多资源">
+<a class="header-anchor" href="#%e6%9b%b4%e5%a4%9a%e8%b5%84%e6%ba%90"></a>
+更多资源
+</h3><p><a href="https://www.youtube.com/watch?v=epTPFamqkZo">How to profile and optimize a game | Unite Now 2020</a></p>
+<h2 id="frame-debugger-帧调试器">
+<a class="header-anchor" href="#frame-debugger-%e5%b8%a7%e8%b0%83%e8%af%95%e5%99%a8"></a>
+Frame Debugger (帧调试器)
+</h2><ul>
+<li><strong>核心功能:</strong> 通过让你<strong>冻结</strong>正在运行的游戏的特定<strong>帧</strong>，并查看用于渲染该帧的<strong>单个绘制调用 (draw calls)</strong>，来帮助你<strong>优化渲染</strong>。</li>
+<li><strong>工作方式:</strong> 该工具允许你逐一<strong>单步执行</strong>绘制调用列表，这样你可以看到帧是如何由其图形元素逐步构建成一个场景的。</li>
+<li><strong>独特优势:</strong> 相较于其他帧调试工具，如果一个绘制调用对应于某个 GameObject 的几何体，该 <strong>GameObject 会在主 Hierarchy (层级) 面板中高亮显示</strong>，有助于识别。</li>
+<li><strong>其他用途:</strong> 可以通过逐帧分析渲染顺序来<strong>测试过度绘制 (overdraw)</strong>。</li>
+</ul>
+<h3 id="如何使用-frame-debugger">
+<a class="header-anchor" href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8-frame-debugger"></a>
+如何使用 Frame Debugger
+</h3><ol>
+<li><strong>打开:</strong> 通过菜单 <code>Window &gt; Analysis &gt; Frame Debugger</code> 打开。</li>
+<li><strong>启用:</strong> 当你的应用程序在编辑器或设备上运行时，点击 <strong>Enable</strong> 按钮。
+<ul>
+<li>这将<strong>暂停</strong>应用程序，并在 Frame Debug 窗口左侧按顺序列出当前帧的所有绘制调用（也包括帧缓冲清除等额外细节事件）。</li>
+</ul>
+</li>
+<li><strong>浏览:</strong>
+<ul>
+<li>窗口顶部的<strong>滑块 (slider)</strong> 允许你快速在绘制调用之间拖动，以快速定位感兴趣的项目。</li>
+<li>在左侧的<strong>列表层级 (list hierarchy)</strong> 中选择一个绘制调用。</li>
+<li><strong>Game 窗口</strong>将显示场景渲染到<strong>包含并完成</strong>所选绘制调用时的状态。</li>
+</ul>
+</li>
+</ol>
+<h3 id="理解绘制调用与渲染状态">
+<a class="header-anchor" href="#%e7%90%86%e8%a7%a3%e7%bb%98%e5%88%b6%e8%b0%83%e7%94%a8%e4%b8%8e%e6%b8%b2%e6%9f%93%e7%8a%b6%e6%80%81"></a>
+理解绘制调用与渲染状态
+</h3><ul>
+<li><strong>绘制调用 (Draw Call):</strong> Unity 向图形 API 发出指令以在屏幕上绘制几何体。它告诉图形 API 要画什么以及如何画，包含了图形 API 所需的所有信息（如纹理、着色器、缓冲区等）。</li>
+<li><strong>准备开销:</strong> 通常，为绘制调用<strong>做准备</strong>比绘制调用本身更耗费资源。</li>
+<li><strong>渲染状态 (Render State):</strong> 这个准备过程被归类为“渲染状态”。</li>
+<li><strong>优化方向:</strong> 优化此领域性能的一种方法是<strong>减少渲染状态的更改次数</strong>。</li>
+<li><strong>Frame Debugger 的作用:</strong>
+<ul>
+<li>帮助识别绘制调用的来源。</li>
+<li>可视化并理解渲染过程，以指导如何<strong>分组绘制调用</strong>来减少渲染状态的更改。</li>
+</ul>
+</li>
+</ul>
+<h3 id="frame-debugger-窗口详解">
+<a class="header-anchor" href="#frame-debugger-%e7%aa%97%e5%8f%a3%e8%af%a6%e8%a7%a3"></a>
+Frame Debugger 窗口详解
+</h3><ul>
+<li><strong>左侧列表:</strong> 按层级结构列出绘制调用和事件。</li>
+<li><strong>右侧面板 (Details):</strong> 提供关于每个绘制调用的详细信息：
+<ul>
+<li>几何体细节 (Geometry details)。</li>
+<li>使用的着色器 (Shader)。</li>
+<li><strong>未能与之前的调用进行批处理 (batching) 的原因</strong>。</li>
+<li>输入到着色器的<strong>确切属性值 (shader property values)</strong>。</li>
+</ul>
+</li>
+<li><strong>ShaderProperties 部分:</strong> 除了属性值，还会揭示该属性在<strong>哪些着色器阶段 (shader stages)</strong> 被使用（例如：顶点 vertex, 片段 fragment, 几何 geometry, 外壳 hull, 域 domain）。</li>
+</ul>
+<h3 id="远程帧调试-remote-frame-debugging">
+<a class="header-anchor" href="#%e8%bf%9c%e7%a8%8b%e5%b8%a7%e8%b0%83%e8%af%95-remote-frame-debugging"></a>
+远程帧调试 (Remote Frame Debugging)
+</h3><ul>
+<li><strong>可行性:</strong> 可以在<strong>支持的平台</strong>上将 Frame Debugger 远程附加到一个 Player (不支持 WebGL)。</li>
+<li><strong>桌面平台要求:</strong> 对于桌面平台构建，需要启用 <strong>Run In Background (后台运行)</strong> 选项。</li>
+<li><strong>设置步骤:</strong>
+<ol>
+<li>为目标平台创建一个项目的标准构建（选择 <strong>Development Player</strong> 开发版本）。</li>
+<li>运行该 Player。</li>
+<li>在编辑器中打开 Frame Debug 窗口。</li>
+<li>点击 <strong>Player selection (目标选择)</strong> 下拉菜单，选择正在运行的活动 Player。</li>
+<li>点击 <strong>Enable</strong>。</li>
+</ol>
+</li>
+<li><strong>结果:</strong> 现在可以在编辑器中单步执行 Frame Debug 列表中的绘制调用和事件，并在活动的 Player 上观察结果。</li>
+</ul>
+<h3 id="渲染目标显示选项-render-target-display-options">
+<a class="header-anchor" href="#%e6%b8%b2%e6%9f%93%e7%9b%ae%e6%a0%87%e6%98%be%e7%a4%ba%e9%80%89%e9%a1%b9-render-target-display-options"></a>
+渲染目标显示选项 (Render Target Display Options)
+</h3><ul>
+<li><strong>窗口工具栏:</strong>
+<ul>
+<li>允许你隔离当前 Game 视图状态的<strong>红 (R)、绿 (G)、蓝 (B)、透明 (A)</strong> 通道。</li>
+<li><strong>Levels 滑块</strong> (通道按钮右侧): 根据亮度级别隔离视图区域（仅在渲染到 RenderTexture 时启用）。</li>
+</ul>
+</li>
+<li><strong>RenderTarget 下拉列表:</strong>
+<ul>
+<li>当一次渲染到多个渲染目标 (Multiple Render Targets, MRT) 时，可以选择在 Game 视图中显示哪一个。</li>
+<li>包含一个 <strong>Depth (深度)</strong> 选项，用于显示深度缓冲区的内容。</li>
+</ul>
+</li>
+</ul>
+<h2 id="五个针对常见陷阱的渲染优化技巧">
+<a class="header-anchor" href="#%e4%ba%94%e4%b8%aa%e9%92%88%e5%af%b9%e5%b8%b8%e8%a7%81%e9%99%b7%e9%98%b1%e7%9a%84%e6%b8%b2%e6%9f%93%e4%bc%98%e5%8c%96%e6%8a%80%e5%b7%a7"></a>
+五个针对常见陷阱的渲染优化技巧
+</h2><p>使用这些技巧来优化常见的渲染性能问题，这些问题可以通过 Frame Debugger 和其他渲染调试工具识别。</p>
+<ol>
+<li><strong>首先识别性能瓶颈:</strong>
+<ul>
+<li>找到 GPU 负载高的帧。大多数平台提供强大的工具来分析 CPU 和 GPU 性能（例如：Arm Mobile Studio、PIX for Xbox、Razor for PlayStation、Xcode Instruments for iOS）。</li>
+<li>使用相应的<strong>原生分析器 (native profiler)</strong> 将帧成本分解为具体部分，这是改进图形性能的起点。</li>
+</ul>
+</li>
+<li><strong>绘制调用优化:</strong>
+<ul>
+<li>PC 和当代主机硬件能处理大量绘制调用，但每个调用的开销仍然值得去减少。<strong>在移动设备上，绘制调用优化至关重要</strong>。</li>
+<li>可以通过<strong>绘制调用批处理 (draw call batching)</strong> 来实现。</li>
+<li><strong>Frame Debugger 作用:</strong> 帮助识别哪些绘制调用可以被重组以实现最佳分组和批处理，并帮助识别某些绘制调用<strong>无法被批处理的原因</strong>。</li>
+<li><strong>减少绘制调用批次的技巧:</strong>
+<ul>
+<li><strong>遮挡剔除 (Occlusion Culling):</strong> 移除被前景物体遮挡的物体，减少过度绘制。<strong>注意:</strong> 这需要额外的 CPU 处理，因此使用 Profiler 确认将工作从 GPU 移到 CPU 是有益的。</li>
+<li><strong>GPU 实例化 (GPU Instancing):</strong> 如果有许多共享相同网格 (Mesh) 和材质 (Material) 的对象，这可以减少批次。场景中模型种类少可以提高性能。</li>
+<li><strong>SRP Batcher:</strong> 通过批处理 Bind 和 Draw GPU 命令来减少绘制调用之间的 GPU 设置开销。要从此受益，可以使用所需数量的材质，但将它们限制在<strong>少量兼容的着色器变体 (shader variants)</strong> 内（例如 URP/HDRP 中的 Lit 和 Unlit Shaders），并且不同关键字组合之间的差异尽可能小。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>通过减少过度绘制来优化填充率 (Fill Rate):</strong>
+<ul>
+<li><strong>过度绘制 (Overdraw)</strong> 可能表明应用程序试图每帧绘制比 GPU 处理能力更多的像素。这不仅影响性能，还会影响移动设备的<strong>散热和电池寿命</strong>。</li>
+<li>通过理解 Unity 在渲染前如何<strong>排序对象</strong>来对抗过度绘制。
+<ul>
+<li><strong>内置渲染管线 (Built-In Render Pipeline):</strong> 根据对象的 Rendering Mode 和 renderQueue 排序。对象的着色器将其放入一个渲染队列，这通常决定了其绘制顺序。</li>
+<li><strong>可视化过度绘制 (Built-in):</strong> 使用 Scene 视图控制栏，将绘制模式切换到 <strong>Overdraw</strong>。亮像素表示高过度绘制。</li>
+<li><strong>HDRP:</strong> 渲染队列控制略有不同（详见 Renderer 和 Material Priority 文档）。</li>
+<li><strong>可视化过度绘制 (HDRP):</strong> 使用 <strong>Render Pipeline Debug</strong> 工具 (<code>Window &gt; Render Pipeline &gt; Render Pipeline Debug</code>) -&gt; Rendering 部分 -&gt; Fullscreen Debug Mode 设置为 <strong>TransparencyOverdraw</strong>。此模式将像素显示为热力图（黑色=无透明像素，蓝色到红色=透明像素增多，红色表示达到 Max Pixel Cost）。</li>
+<li><strong>操作:</strong> 在此模式下运行应用，记录过度绘制严重的区域。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>检查最昂贵的着色器:</strong>
+<ul>
+<li>这是一个深入的话题，但总的来说，目标是尽可能<strong>减少着色器复杂度</strong>。</li>
+<li><strong>简单的优化:</strong> 尽可能降低精度（例如，如果可以，使用半精度 <code>half</code> 浮点变量）。</li>
+<li>了解目标平台的<strong>波前占用率 (wavefront occupancy)</strong>，并学习如何使用 GPU 分析工具来辅助获得健康的占用率。</li>
+</ul>
+</li>
+<li><strong>渲染的多核优化:</strong>
+<ul>
+<li>在 <code>Player Settings &gt; Other Settings</code> 中启用 <strong>Graphics Jobs</strong>，以利用 PlayStation 和 Xbox 中的多核处理器。</li>
+<li>Graphics Jobs 允许 Unity 将渲染工作<strong>分散到多个 CPU 核心</strong>，减轻渲染线程的压力。</li>
+</ul>
+</li>
+<li><strong>分析后处理效果:</strong>
+<ul>
+<li>确保你的后处理资源针对目标平台进行了优化。</li>
+<li>从 Asset Store 获取的、最初为 PC 游戏编写的工具可能在主机或移动设备上消耗过多资源。</li>
+<li>使用目标平台的<strong>原生分析器工具</strong>进行分析。</li>
+<li>为移动或主机目标编写自己的后处理效果时，保持<strong>尽可能简单</strong>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="profile-analyzer-性能分析器分析工具">
+<a class="header-anchor" href="#profile-analyzer-%e6%80%a7%e8%83%bd%e5%88%86%e6%9e%90%e5%99%a8%e5%88%86%e6%9e%90%e5%b7%a5%e5%85%b7"></a>
+Profile Analyzer (性能分析器分析工具)
+</h2><ul>
+<li><strong>核心区别:</strong> 标准的 Unity Profiler 允许你进行<strong>单帧分析</strong>，而 Profile Analyzer 可以<strong>聚合和可视化</strong>来自<strong>一组 Unity Profiler 帧</strong>的分析标记数据。</li>
+</ul>
+<h3 id="profile-analyzer-入门">
+<a class="header-anchor" href="#profile-analyzer-%e5%85%a5%e9%97%a8"></a>
+Profile Analyzer 入门
+</h3><ol>
+<li><strong>安装:</strong> 通过 <code>Window &gt; Package Manager</code> 安装 <strong>Profile Analyzer Package</strong>。</li>
+<li><strong>推荐做法:</strong> 在使用 Profile Analyzer 时，一个好的方法是<strong>保存分析会话 (profiling sessions)</strong>，以便比较性能优化工作<strong>前后</strong>的效果。</li>
+</ol>
+<h3 id="功能与用途">
+<a class="header-anchor" href="#%e5%8a%9f%e8%83%bd%e4%b8%8e%e7%94%a8%e9%80%94"></a>
+功能与用途
+</h3><ul>
+<li>Profile Analyzer 拉取 (pull) 在 Unity Profiler 中捕获的一组帧，并对它们执行<strong>统计分析</strong>。</li>
+<li>显示的数据为每个函数生成有用的性能计时信息，例如 <strong>Min (最小)</strong>、<strong>Max (最大)</strong>、<strong>Mean (平均)</strong> 和 <strong>Median (中位)</strong> 计时。</li>
+<li><strong>解决问题与优化:</strong> 帮助你在开发过程中回答问题和进行优化决策。
+<ul>
+<li><strong>A/B 测试:</strong> 对比游戏场景不同实现的性能差异。</li>
+<li><strong>前后对比:</strong> 比较代码重构、优化、新功能添加甚至 Unity 版本升级前后的分析数据。</li>
+</ul>
+</li>
+<li><strong>聚合数据视图 (Single View):</strong> 可以预先回答关于<strong>一段时间内性能</strong>的高层次问题，这通常比一次只看一帧数据更好。例如，在一个 300 帧（10 秒）的游戏捕获或 20 秒加载序列中：
+<ul>
+<li>主线程和渲染线程上最大的 CPU 开销是什么？</li>
+<li>这些标记的平均/中位数/总开销是多少？</li>
+<li>回答这些问题对于<strong>精确定位最大问题</strong>所在以及<strong>确定优化优先级</strong>至关重要。</li>
+</ul>
+</li>
+<li><strong>深入分析:</strong> Profile Analyzer 提供的统计数据和细节使你能够更深入地研究代码在<strong>跨多帧</strong>运行时的性能特征，甚至可以与<strong>之前的分析捕获会话</strong>进行比较。</li>
+</ul>
+<h2 id="memory-profiler-内存分析器">
+<a class="header-anchor" href="#memory-profiler-%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90%e5%99%a8"></a>
+Memory Profiler (内存分析器)
+</h2><ul>
+<li><strong>性质:</strong> Unity Package Manager 中可用的<strong>附加包 (add-on package)</strong>。</li>
+<li><strong>核心功能:</strong> 用于为内存创建<strong>快照 (snapshot)</strong>，可以在编辑器中或在运行的 Player 中进行。</li>
+<li><strong>快照用途:</strong> 显示引擎中的内存分配情况，允许你：
+<ul>
+<li>快速识别<strong>过度或不必要的内存使用</strong>的原因。</li>
+<li>追踪<strong>内存泄漏 (memory leaks)</strong>。</li>
+<li>查看<strong>堆碎片化 (heap fragmentation)</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="入门与基本操作">
+<a class="header-anchor" href="#%e5%85%a5%e9%97%a8%e4%b8%8e%e5%9f%ba%e6%9c%ac%e6%93%8d%e4%bd%9c"></a>
+入门与基本操作
+</h3><ol>
+<li><strong>安装:</strong> 在 Package Manager 中安装 Memory Profiler 包。</li>
+<li><strong>打开:</strong> 点击 <code>Window &gt; Analysis &gt; Memory Profiler</code>。</li>
+<li><strong>顶部菜单栏:</strong>
+<ul>
+<li>更改 Player <strong>目标选择 (Target selection)</strong>。</li>
+<li><strong>捕获 (Capture)</strong> 或 <strong>导入 (Import)</strong> 内存快照。</li>
+</ul>
+</li>
+<li><strong>Workbench (工作台) 区域 (左侧):</strong>
+<ul>
+<li>管理、打开或关闭已保存的内存快照。</li>
+<li>在 <strong>Single (单一)</strong> 和 <strong>Compare Snapshots (比较快照)</strong> 视图之间切换。</li>
+</ul>
+</li>
+<li><strong>重要提示:</strong>
+<ul>
+<li><strong>务必在目标硬件上进行内存分析:</strong> 使用 Target selection 下拉菜单将 Memory Profiler 连接到远程设备。在 Unity 编辑器中分析会因编辑器和其他工具添加的开销而<strong>给出不准确的数字</strong>。</li>
+</ul>
+</li>
+</ol>
+<h3 id="比较快照功能">
+<a class="header-anchor" href="#%e6%af%94%e8%be%83%e5%bf%ab%e7%85%a7%e5%8a%9f%e8%83%bd"></a>
+比较快照功能
+</h3><ul>
+<li>类似于 Profile Analyzer，Memory Profiler 允许你加载**两个数据集（内存快照）**进行比较。</li>
+<li><strong>特别有用:</strong>
+<ul>
+<li>查看内存使用量随时间或在场景之间如何增长。</li>
+<li>搜索内存泄漏。</li>
+</ul>
+</li>
+</ul>
+<h3 id="内存分析技术和工作流程">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%88%86%e6%9e%90%e6%8a%80%e6%9c%af%e5%92%8c%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b"></a>
+内存分析技术和工作流程
+</h3><ul>
+<li><strong>一般检查:</strong>
+<ul>
+<li>加载 Memory Profiler 快照，浏览 Tree Map 视图，按内存占用从大到小检查各个类别。</li>
+<li><strong>项目资源 (Assets)</strong> 通常是内存消耗大户。使用表格视图定位<strong>纹理 (Texture)</strong>、<strong>网格 (Meshes)</strong>、<strong>音频剪辑 (AudioClips)</strong>、<strong>渲染纹理 (RenderTextures)</strong>、<strong>着色器变体 (shader variants)</strong> 和<strong>预分配的缓冲区 (preallocated buffers)</strong>。这些都是内存优化的良好候选对象。</li>
+</ul>
+</li>
+<li><strong>定位内存泄漏:</strong>
+<ul>
+<li><strong>发生原因:</strong>
+<ol>
+<li>对象未通过代码手动从内存中释放。</li>
+<li>对象因意外引用 (unintentional reference) 而留在内存中。</li>
+</ol>
+</li>
+<li><strong>工具:</strong> Memory Profiler 的 <strong>Diff (差异) 视图</strong>可以通过比较特定时间范围内的两个快照来帮助查找内存泄漏。</li>
+<li><strong>常见场景:</strong> Unity 游戏中常见的内存泄漏可能发生在卸载场景之后。Memory Profiler 包提供了一个工作流程，指导你使用 Diff 视图发现这类泄漏。</li>
+</ul>
+</li>
+<li><strong>定位应用程序生命周期内的重复内存分配:</strong>
+<ul>
+<li>通过对多个内存快照进行<strong>差异比较</strong>，可以识别应用程序生命周期内持续内存分配的来源。</li>
+</ul>
+</li>
+</ul>
+<h3 id="用于定位托管分配的相关工具">
+<a class="header-anchor" href="#%e7%94%a8%e4%ba%8e%e5%ae%9a%e4%bd%8d%e6%89%98%e7%ae%a1%e5%88%86%e9%85%8d%e7%9a%84%e7%9b%b8%e5%85%b3%e5%b7%a5%e5%85%b7"></a>
+用于定位托管分配的相关工具
+</h3><p>除了 Memory Profiler 包本身，还有其他工具可以帮助定位托管内存分配：</p>
+<ol>
+<li><strong>Memory Profiler 模块 (在标准 Profiler 内):</strong>
+<ul>
+<li>标准 Unity Profiler 中的 Memory Profiler 模块用<strong>红线</strong>表示<strong>每帧的托管分配</strong>。</li>
+<li>这条线大部分时间<strong>应为 0</strong>，因此该线上的任何<strong>峰值 (spikes)</strong> 都表明你应该调查这些帧的托管分配。</li>
+</ul>
+</li>
+<li><strong>Timeline (时间线) 视图 (在 CPU Usage Profiler 模块内):</strong>
+<ul>
+<li>CPU Usage Profiler 模块的时间线视图将<strong>分配（包括托管分配）显示为粉红色</strong>，使其易于查看和定位。</li>
+</ul>
+</li>
+<li><strong>Allocation Call Stacks (分配调用堆栈):</strong>
+<ul>
+<li>一种快速发现代码中托管内存分配的方法，其开销低于深度分析 (deep profiling)。</li>
+<li>可以在标准 Profiler 中<strong>动态启用</strong>。</li>
+<li><strong>启用方法:</strong> 在 Profiler 窗口的主工具栏中点击 <strong>Call Stacks</strong> 按钮。将 Details 视图更改为 <strong>Related Data (相关数据)</strong>。</li>
+<li><strong>查看:</strong> <code>GC.Alloc</code> 样本（在 Hierarchy 或 Raw Hierarchy 视图中选择）现在将包含其调用堆栈。也可以在 Timeline 视图的选择工具提示中看到 <code>GC.Alloc</code> 样本的调用堆栈。Related Data 面板也会显示调用堆栈细节。</li>
+<li><strong>注意:</strong> 如果使用较旧版本的 Unity（在支持分配调用堆栈之前），则<strong>深度分析 (deep profiling)</strong> 是获取完整调用堆栈以帮助查找托管分配的好方法。</li>
+</ul>
+</li>
+<li><strong>Hierarchy (层级) 视图 (在 CPU Usage Profiler 模块内):</strong>
+<ul>
+<li>CPU Usage Profiler 模块的层级视图允许你点击列标题以将其用作排序标准。按 <strong>GC Alloc</strong> 列排序是专注于托管分配的好方法。</li>
+</ul>
+</li>
+<li><strong>Project Auditor (项目审计器):</strong>
+<ul>
+<li>一个<strong>实验性</strong>的<strong>静态分析工具</strong>。</li>
+<li>功能很多，其中一项是能够生成项目中<strong>导致托管分配的每一行代码的列表</strong>，而<strong>无需运行项目</strong>。是查找和调查此类问题的非常有效的方法。</li>
+</ul>
+</li>
+</ol>
+<h2 id="内存与-gc-垃圾回收-优化">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e4%b8%8e-gc-%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6-%e4%bc%98%e5%8c%96"></a>
+内存与 GC (垃圾回收) 优化
+</h2><h3 id="减少垃圾回收-gc-的影响">
+<a class="header-anchor" href="#%e5%87%8f%e5%b0%91%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6-gc-%e7%9a%84%e5%bd%b1%e5%93%8d"></a>
+减少垃圾回收 (GC) 的影响
+</h3><ul>
+<li>Unity 使用 <strong>Boehm-Demers-Weiser</strong> 垃圾回收器，它会<strong>停止运行你的程序代码</strong>，并在其工作完成后才恢复正常执行。</li>
+<li><strong>注意:</strong> 避免不必要的<strong>堆分配 (heap allocations)</strong>，它们会导致 GC 峰值。</li>
+<li><strong>避免产生垃圾的方法:</strong>
+<ul>
+<li><strong>字符串 (Strings):</strong> C# 中的字符串是<strong>引用类型</strong>。每个新字符串都会在托管堆上分配，即使只是临时使用。
+<ul>
+<li>减少不必要的字符串创建或操作。</li>
+<li>避免解析基于字符串的数据文件（如 JSON、XML），应将数据存储在 ScriptableObjects 或 MessagePack、Protobuf 等格式中。</li>
+<li>如果需要在运行时构建字符串，请使用 <strong>StringBuilder</strong> 类。</li>
+</ul>
+</li>
+<li><strong>Unity 函数调用:</strong> 一些 Unity API 函数会创建堆分配，特别是那些<strong>返回托管对象数组</strong>的函数。
+<ul>
+<li><strong>缓存</strong>对数组的引用，而不是在循环中间分配它们。</li>
+<li>利用某些避免产生垃圾的函数。例如，使用 <code>GameObject.CompareTag</code> 而不是手动比较字符串与 <code>GameObject.tag</code>（因为返回新字符串会产生垃圾）。</li>
+</ul>
+</li>
+<li><strong>装箱 (Boxing):</strong> 避免在需要引用类型变量的地方传递值类型变量。
+<ul>
+<li>这会创建一个临时对象和潜在的垃圾（隐式地将值类型转换为 <code>object</code> 类型，例如 <code>object o = 123;</code>）。</li>
+<li>尝试提供接受你想要传递的值类型的具体重载。泛型也可用于这些重载。</li>
+</ul>
+</li>
+<li><strong>协程 (Coroutines):</strong> <code>yield</code> 本身不产生垃圾，但 <code>new WaitForSeconds()</code> 对象会。
+<ul>
+<li><strong>缓存并重用</strong> <code>WaitForSeconds</code> 对象，而不是在 <code>yield</code> 行中创建它。</li>
+</ul>
+</li>
+<li><strong>LINQ 和正则表达式:</strong> 两者都会通过幕后的装箱产生垃圾。
+<ul>
+<li>如果性能是问题，请<strong>避免使用</strong> LINQ 和正则表达式。</li>
+<li>使用 <code>for</code> 循环和 <code>List</code> 作为创建新数组的替代方案。</li>
+</ul>
+</li>
+<li><strong>泛型集合和其他托管类型:</strong> 不要在 <code>Update</code> 中每帧声明并填充 <code>List</code> 或集合（例如，玩家一定半径内的敌人列表）。
+<ul>
+<li>将 <code>List</code> 声明为 MonoBehaviour 的成员，并在 <code>Start</code> 中初始化它。</li>
+<li>每帧使用前用 <code>Clear()</code> 清空集合即可。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="尽可能地控制垃圾回收时机">
+<a class="header-anchor" href="#%e5%b0%bd%e5%8f%af%e8%83%bd%e5%9c%b0%e6%8e%a7%e5%88%b6%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6%e6%97%b6%e6%9c%ba"></a>
+尽可能地控制垃圾回收时机
+</h3><ul>
+<li>如果你确定某个垃圾回收冻结不会影响游戏的特定时间点（例如加载屏幕、菜单打开时），你可以使用 <code>System.GC.Collect()</code> 手动触发垃圾回收。</li>
+<li>参考 &ldquo;<a href="https://docs.unity3d.com/Manual/performance-memory-overview.html">Understanding Automatic Memory Management</a>&rdquo; 文档了解如何利用这一点。</li>
+</ul>
+<h3 id="使用增量式垃圾回收器-incremental-garbage-collector-分摊-gc-工作负载">
+<a class="header-anchor" href="#%e4%bd%bf%e7%94%a8%e5%a2%9e%e9%87%8f%e5%bc%8f%e5%9e%83%e5%9c%be%e5%9b%9e%e6%94%b6%e5%99%a8-incremental-garbage-collector-%e5%88%86%e6%91%8a-gc-%e5%b7%a5%e4%bd%9c%e8%b4%9f%e8%bd%bd"></a>
+使用增量式垃圾回收器 (Incremental Garbage Collector) 分摊 GC 工作负载
+</h3><ul>
+<li>增量式 GC 使用<strong>多次、更短的中断</strong>将工作负载分散到多个帧上，而不是在程序执行期间造成一次长时间的中断。</li>
+<li><strong>适用场景:</strong> 如果垃圾回收导致帧率不规则，尝试此选项看是否能减少 GC 峰值问题。使用 <strong>Profile Analyzer</strong> 来验证它对你的应用程序是否有益。</li>
+<li><strong>注意 - 开销:</strong> 在增量模式下使用 GC 会给某些 C# 调用增加读写屏障，这带来一些开销，可能增加 <strong>约 1 毫秒/帧</strong> 的脚本调用开销。</li>
+<li><strong>理想情况:</strong> 为了获得最佳性能，理想的是在<strong>主要游戏循环中没有 GC 分配</strong>，这样你就不需要增量 GC 来获得平滑的帧率，并且可以将 <code>GC.Collect</code> 隐藏在用户不会注意到的地方（例如打开菜单或加载新关卡时）。</li>
+</ul>
+<p>好的，这是关于 Deep Profiling（深度分析）以及何时使用各种分析工具部分的中文要点与细节总结，已按 Markdown 格式组织：</p>
+<h2 id="deep-profiling-深度分析">
+<a class="header-anchor" href="#deep-profiling-%e6%b7%b1%e5%ba%a6%e5%88%86%e6%9e%90"></a>
+Deep Profiling (深度分析)
+</h2><ul>
+<li>
+<p><strong>基本原理:</strong> 默认情况下，Unity 只分析那些被显式 Profiler 标记包裹的代码（以及引擎原生代码调用的托管代码的第一层调用堆栈深度）。启用 <strong>Deep Profiling</strong> 会在<strong>每个函数调用的开始和结束处插入 Profiler 标记</strong>。</p>
+</li>
+<li>
+<p><strong>优点:</strong></p>
+<ul>
+<li>能够捕获<strong>非常详细</strong>的信息。</li>
+<li>用于分析那些没有显示足够调用堆栈信息的、耗时较长的 Profiler 标记内部到底发生了什么。</li>
+<li>这种测量游戏性能的<strong>粒度化方法</strong>可能优于基于快照的分析（采样分析），后者有可能在捕获中丢失细节。</li>
+</ul>
+</li>
+<li>
+<p><strong>替代方案:</strong></p>
+<ul>
+<li><strong><code>ProfileMarker</code> API:</strong> 作为一种<strong>手动插桩 (instrument)</strong> 可疑代码区域的方法。
+<ul>
+<li>性能影响可能比深度分析<strong>低得多</strong>。</li>
+<li>有时，添加一个 <code>ProfileMarker</code> 并重新构建游戏，比启用深度分析并导航到你想要测试的游戏部分<strong>更快</strong>。</li>
+</ul>
+</li>
+<li><strong>原生 CPU 分析器 (Native CPU Profiler):</strong> 在设备构建上运行以获取完整的调用堆栈。在某些情况下，这比深度分析<strong>更容易</strong>，对性能的<strong>侵入性也更小</strong>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="何时使用深度分析">
+<a class="header-anchor" href="#%e4%bd%95%e6%97%b6%e4%bd%bf%e7%94%a8%e6%b7%b1%e5%ba%a6%e5%88%86%e6%9e%90"></a>
+何时使用深度分析
+</h3><ul>
+<li><strong>时机:</strong> <strong>仅</strong>在你已经确定了应用程序或托管代码中需要进行更详细检查的<strong>特定部分</strong>之后，才应启用深度分析设置。</li>
+<li><strong>注意:</strong> 深度分析是<strong>资源密集型</strong>的，会消耗大量内存。启用后，你的<strong>应用程序运行会变慢</strong>。</li>
+<li><strong>目的:</strong> 允许你详细地<strong>向下遍历调用树</strong>，发现代码中的低效或问题。</li>
+</ul>
+<h3 id="如何使用深度分析">
+<a class="header-anchor" href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8%e6%b7%b1%e5%ba%a6%e5%88%86%e6%9e%90"></a>
+如何使用深度分析
+</h3><ol>
+<li><strong>启用支持 (Player 构建):</strong> 需要通过 <code>File &gt; Build Settings &gt; Deep Profiling Support</code> (文件 &gt; 构建设置 &gt; 深度分析支持) 来启用它。
+<ul>
+<li><strong>版本注意:</strong> 从 <strong>Unity 2019.3</strong> 开始，Mono 和 IL2CPP 后端都添加了对深度分析的支持（这对 IL2CPP 是强制要求的平台如 iOS 是个好消息）。</li>
+</ul>
+</li>
+<li><strong>切换开关:</strong> 一旦在构建中启用了支持，你可以在 Profiler 窗口中随时轻松地为你的构建<strong>打开或关闭</strong>深度分析。
+<ul>
+<li>如果连接到 Player 时 <strong>Deep Profile 按钮是灰色的</strong>，则表示你的构建<strong>没有启用</strong>深度分析支持。</li>
+</ul>
+</li>
+</ol>
+<h3 id="深度分析技巧">
+<a class="header-anchor" href="#%e6%b7%b1%e5%ba%a6%e5%88%86%e6%9e%90%e6%8a%80%e5%b7%a7"></a>
+深度分析技巧
+</h3><ol>
+<li><strong>自顶向下方法 (Top-to-bottom approach):</strong>
+<ul>
+<li>分析应用程序时，从<strong>高层级</strong>开始，尝试在不使用深度分析的情况下找到可以改进性能的区域。</li>
+<li>当你需要更多信息时，可以在 Profiler 中启用深度分析，以更细粒度的级别深入挖掘。</li>
+<li>这种方法有助于将 Profiler Hierarchy 中显示的信息量保持在最低限度，让你专注于当前目标。</li>
+</ul>
+</li>
+<li><strong>仅在绝对必要时进行深度分析:</strong>
+<ul>
+<li>通常，最好只在需要获取关于代码性能的<strong>更低级别细节</strong>时才使用深度分析。</li>
+<li>虽然在构建中启用深度分析标志本身不会影响性能（除非实际切换开启该功能），但一旦启用，它会导致应用程序运行缓慢。</li>
+<li><strong>替代查找托管分配:</strong> 如果你只对查找代码中托管分配的来源感兴趣，请记住 <strong>Unity 2019.3 及更高版本</strong>允许你在<strong>无需启用深度分析</strong>的情况下执行此操作。使用 Profiler 中的 <strong>Call Stacks (调用堆栈)</strong> 切换按钮和 <strong>Calls (调用)</strong> 下拉菜单来帮助定位托管分配。</li>
+</ul>
+</li>
+<li><strong>自动化流程中的深度分析:</strong>
+<ul>
+<li>要在从<strong>命令行</strong>进行分析时打开深度分析，请将 <code>-deepprofiling</code> 参数添加到你的构建可执行文件。</li>
+<li>对于 Android / Mono 脚本后端的构建，使用 <code>adb</code> 命令行参数，如下所示：<code>adb shell am start -n com.company.game/com.unity3d.player.UnityPlayerActivity -e 'unity' '-deepprofiling'</code></li>
+</ul>
+</li>
+<li><strong>在低规格硬件上进行深度分析:</strong>
+<ul>
+<li>低规格硬件的<strong>内存和性能有限</strong>，可能会影响你使用深度分析的能力。</li>
+<li>Unity 的 Profiler 样本存储在一个<strong>环形缓冲区 (ring buffer)</strong> 中，在较慢设备上使用深度分析设置时，该缓冲区可能会被填满。如果发生这种情况，Unity 会显示错误消息。</li>
+<li>你可以通过设置 <code>Profiler.maxUsedMemory</code> 属性（单位：字节）为 Profiler 分配更多内存用于此缓冲数据（Player 默认为 128 MB，Editor 默认为 512 MB）。如果在低速设备的 Player 构建上进行深度分析时遇到问题，请根据需要增加此值。</li>
+<li><strong>如果硬件因深度分析开销而运行过慢（或根本无法运行）</strong>，但你仍需更详细地分析代码，可以使用<strong>你自己的标记</strong>进行更深入的分析。即，<strong>不启用</strong> Deep Profile 设置，而是在代码中你感兴趣的特定区域添加 <code>Profiler</code> 标记。这些标记将在查看 CPU Usage 模块时出现在 Profiler Timeline 或 Hierarchy 中。</li>
+</ul>
+</li>
+</ol>
+<h2 id="何时使用哪种分析工具">
+<a class="header-anchor" href="#%e4%bd%95%e6%97%b6%e4%bd%bf%e7%94%a8%e5%93%aa%e7%a7%8d%e5%88%86%e6%9e%90%e5%b7%a5%e5%85%b7"></a>
+何时使用哪种分析工具？
+</h2><ul>
+<li><strong>最佳实践:</strong> 分析最好在<strong>项目生命周期的开始阶段</strong>就进行。通过早期开始，你可以建立<strong>基线 (baselines)</strong>，这对于在游戏和应用程序开发的后期检查点进行比较非常有用。</li>
+<li><strong>关键:</strong> 了解何时从“分析工具箱”中选择哪种工具。</li>
+</ul>
+<p>一旦你理解了每种工具的用途和好处，就更容易知道何时使用它们。请务必学习 Unity 提供的每种分析工具。</p>
+<p>以下是一些项目生命周期中的<strong>检查点建议</strong>，可能有助于规划分析策略：</p>
+<ol>
+<li><strong>原型设计阶段 (Prototyping):</strong>
+<ul>
+<li>分析对于<strong>降低项目原型阶段的风险</strong>很重要。</li>
+<li>如果游戏设计文档要求屏幕上有 10,000 个敌人，你需要能够构建并分析一个原型，以<strong>证明</strong>在目标平台上这是<strong>可能</strong>的。如果不可行，你需要更改设计。</li>
+</ul>
+</li>
+<li><strong>项目早期阶段 (Early stages):</strong>
+<ul>
+<li>在一系列目标设备硬件上建立项目性能的<strong>基线</strong>。</li>
+<li>使用 <strong>Memory Profiler</strong> 对内存使用情况有一个大致了解。</li>
+<li>确保项目范围的规划不会趋向于导致后续在目标硬件上出现内存限制问题。</li>
+</ul>
+</li>
+<li><strong>冲刺结束时 (End of sprint - 敏捷开发):</strong>
+<ul>
+<li>如果你在敏捷团队中按冲刺工作，那么冲刺结束时的发布候选版本 (RC) 是运行一套<strong>标准化的分析工具</strong>的好时机。</li>
+<li>确保有<strong>标准格式</strong>来记录结果和指标（例如，在数据库或电子表格中）。</li>
+<li><strong>使用 Unity Profiler 执行以下分析活动并捕获数据：</strong>
+<ul>
+<li>CPU 使用率 (CPU Usage)</li>
+<li>GPU 使用率 (GPU Usage)</li>
+<li>内存使用率 (Memory Usage)</li>
+<li>渲染 (Rendering)</li>
+<li>物理 (Physics)</li>
+</ul>
+</li>
+<li><strong>使用以下工具进行更深入的分析，记录结果和关键差异指标（与之前的冲刺版本相比）：</strong>
+<ul>
+<li><strong>Profile Analyzer:</strong> 加载先前发布的分析数据捕获，进行比较并记录差异。</li>
+<li><strong>Memory Profiler:</strong> 比较先前发布候选构建的内存快照，记录内存增加或减少的差异。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="自动化关键性能和分析指标">
+<a class="header-anchor" href="#%e8%87%aa%e5%8a%a8%e5%8c%96%e5%85%b3%e9%94%ae%e6%80%a7%e8%83%bd%e5%92%8c%e5%88%86%e6%9e%90%e6%8c%87%e6%a0%87"></a>
+自动化关键性能和分析指标
+</h3><ul>
+<li>通过<strong>自动化</strong>常见和重复的任务来提升你的项目分析和数据捕获水平。</li>
+<li><strong>好处:</strong>
+<ul>
+<li>节省时间。</li>
+<li>获得始终保持最新的指标。</li>
+</ul>
+</li>
+<li><strong>应用:</strong>
+<ul>
+<li>可以将指标绘制成图表并添加到项目<strong>仪表板 (dashboard)</strong>，让团队能够看到性能在何处急剧下降（例如，新添加的功能或错误），或者在优化和错误修复冲刺后情况有所改善。</li>
+<li>绘制项目在<strong>所有游戏关卡</strong>随时间变化的<strong>总体内存使用情况</strong>。通过使用 Memory Profiler 捕获内存快照并在所有关卡中取平均值，你可以记录每个目标设备/平台、冲刺或发布周期的<strong>内存占用 (memory footprint)</strong>。</li>
+</ul>
+</li>
+<li><strong>工具与技术:</strong>
+<ul>
+<li>使用 <code>ProfilerRecorder</code> 记录高级分析统计数据（如总预留内存 Total Reserved Memory 或系统已用内存 System Used Memory），并将这些数据输出到 CI（持续集成）系统，再将它们导向图表或绘图工具（如 <strong>Grafana</strong>）。</li>
+<li>使用 <strong>Unity DevOps</strong> 工具（如 <strong>Cloud Build</strong>）来自动化发布构建的创建，并将此过程与<strong>自动化的设备分析工作流程</strong>集成。</li>
+</ul>
+</li>
+</ul>
+<h1 id="原生分析工具-native-profiling-tools">
+<a class="header-anchor" href="#%e5%8e%9f%e7%94%9f%e5%88%86%e6%9e%90%e5%b7%a5%e5%85%b7-native-profiling-tools"></a>
+原生分析工具 (Native Profiling Tools)
+</h1><p><strong>总体建议:</strong></p>
+<ul>
+<li>从 Unity 自带的工具开始进行分析。</li>
+<li>如果需要更深入的细节，再使用适用于你目标平台的<strong>原生分析器 (native profilers)</strong> 和调试工具。</li>
+</ul>
+<p>以下是一些可用的原生分析工具：</p>
+<ul>
+<li>
+<p><strong>Android / Arm:</strong></p>
+<ul>
+<li><strong>Android Studio:</strong> 最新版包含新的 <strong>Android Profiler</strong>（取代了之前的 Android Monitor 工具）。用它来收集 Android 设备上的实时硬件资源数据。</li>
+<li><strong>Arm Mobile Studio:</strong> 一套工具，用于在运行 Arm 硬件的设备上非常详细地分析和调试你的游戏。</li>
+<li><strong>Snapdragon Profiler:</strong> <strong>仅限</strong>用于搭载骁龙 (Snapdragon) 芯片组的设备。分析 CPU、GPU、DSP、内存、功耗、散热和网络数据，以帮助查找和修复性能瓶颈。</li>
+</ul>
+</li>
+<li>
+<p><strong>Intel:</strong></p>
+<ul>
+<li><strong>Intel VTune:</strong> 一套工具，用于在 Intel 平台上快速查找和修复性能瓶颈（<strong>仅限</strong> Intel 处理器）。</li>
+<li><strong>Intel GPA suite:</strong> 一套专注于图形的工具，通过快速识别问题区域来帮助你提高游戏性能。</li>
+</ul>
+</li>
+<li>
+<p><strong>Xbox / PC:</strong></p>
+<ul>
+<li><strong>PIX:</strong> 面向使用 DirectX 12 的 Windows 和 Xbox 游戏开发者的性能调优和调试工具。包含用于理解和分析 CPU 及 GPU 性能的工具，以及监控各种实时性能计数器。</li>
+</ul>
+</li>
+<li>
+<p><strong>PC / 通用:</strong></p>
+<ul>
+<li><strong>AMD μProf (uProf):</strong> 性能分析工具，用于理解和分析在 AMD 硬件上运行的应用程序的性能。</li>
+<li><strong>NVIDIA NSight:</strong> 使开发者能够使用最新的 NVIDIA 视觉计算硬件来构建、调试、分析和开发顶尖软件的工具。</li>
+<li><strong>Superluminal:</strong> 高性能、高频率的分析器，支持分析 Windows、Xbox One 和 PlayStation 上用 C++、Rust 和 .NET 编写的应用程序。注意：这是一个<strong>付费产品</strong>，必须获得许可才能使用。</li>
+</ul>
+</li>
+<li>
+<p><strong>PlayStation:</strong></p>
+<ul>
+<li>提供用于 PlayStation 硬件的 CPU 分析工具。需要注册为 PlayStation® 开发者才能获取更多详细信息（需从指定入口开始）。</li>
+</ul>
+</li>
+<li>
+<p><strong>iOS:</strong></p>
+<ul>
+<li><strong>Xcode Instruments</strong> 和 <strong>XCode Frame Debugger</strong>: Instruments 是 Xcode 工具集的一部分，是一个强大且灵活的性能分析和测试工具。</li>
+</ul>
+</li>
+<li>
+<p><strong>WebGL:</strong></p>
+<ul>
+<li><strong>Firefox Profiler:</strong> 使用 Firefox Profiler 可以深入研究 Unity WebGL 构建的调用堆栈并查看火焰图等。它还具有比较工具，可以并排查看分析捕获。</li>
+<li><strong>Chrome DevTools Performance:</strong> 另一个可用于分析 Unity WebGL 构建的网络浏览器工具。</li>
+</ul>
+</li>
+</ul>
+<h1 id="gpu-调试和分析工具-gpu-debugging-and-profiling-tools">
+<a class="header-anchor" href="#gpu-%e8%b0%83%e8%af%95%e5%92%8c%e5%88%86%e6%9e%90%e5%b7%a5%e5%85%b7-gpu-debugging-and-profiling-tools"></a>
+GPU 调试和分析工具 (GPU Debugging and Profiling Tools)
+</h1><ul>
+<li><strong>目的:</strong> Unity Frame Debugger 捕获并说明从 CPU 发送的绘制调用 (draw calls)，而以下工具可以帮助显示 <strong>GPU 在接收到这些命令时做了什么</strong>。</li>
+<li><strong>特点:</strong> 有些是平台特定的，并提供更紧密的平台集成。</li>
+</ul>
+<p>请查看与你感兴趣的平台相关的工具：</p>
+<ul>
+<li><strong>Arm Graphics Analyzer:</strong> Arm Mobile Studio 软件套件的一部分。</li>
+<li><strong>RenderDoc:</strong> 用于桌面和移动平台的 GPU 调试器。</li>
+<li><strong>Intel GPA:</strong> 用于 Intel 平台的图形分析。</li>
+<li><strong>Apple Frame Capture Debugging Tools:</strong> 用于 Apple 平台的 GPU 调试。</li>
+<li><strong>Visual Studio Graphics Diagnostics:</strong> 用于基于 DirectX 的平台（如 Windows 或 Xbox）（可选择此项和/或 PIX）。</li>
+<li><strong>NVIDIA Nsight Frame Debugger:</strong> 用于 NVIDIA GPU 的基于 OpenGL 的帧调试器。</li>
+<li><strong>AMD Radeon Developer Tool Suite:</strong> 用于 AMD GPU 的 GPU 分析器。</li>
+<li><strong>Xcode frame debugger:</strong> 用于 iOS 和 macOS。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-sizes="auto"
+              alt="Is unique_ptr Really Zero-Cost?"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/unique/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Is unique_ptr Really Zero-Cost?
+          
+        </h3>
+      </div>
+    
+
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#unity-游戏性能优化要点总结">Unity 游戏性能优化要点总结</a>
+      <ul>
+        <li><a href="#核心目标">核心目标</a></li>
+        <li><a href="#指南内容">指南内容</a></li>
+        <li><a href="#性能分析工作流程-profiling-workflow">性能分析工作流程 (Profiling Workflow)</a></li>
+        <li><a href="#优化的益处">优化的益处</a></li>
+      </ul>
+    </li>
+    <li><a href="#profiling-101unity-性能分析基础要点">Profiling 101：Unity 性能分析基础要点</a>
+      <ul>
+        <li><a href="#什么是-profiler-性能分析器">什么是 Profiler (性能分析器)?</a></li>
+        <li><a href="#unity-的-profiling-工具">Unity 的 Profiling 工具</a></li>
+        <li><a href="#性能分析方法-sample-based-vs-instrumentation">性能分析方法 (Sample-based vs. Instrumentation)</a></li>
+        <li><a href="#基于插桩的-profiling-细节-unity">基于插桩的 Profiling 细节 (Unity)</a></li>
+        <li><a href="#profiler-模块-profiler-modules">Profiler 模块 (Profiler Modules)</a></li>
+        <li><a href="#重要实践建议-important-best-practice">重要实践建议 (Important Best Practice)</a></li>
+      </ul>
+    </li>
+    <li><a href="#性能分析工作流程">性能分析工作流程</a>
+      <ul>
+        <li><a href="#设定帧预算-set-a-frame-budget">设定帧预算 (Set a Frame Budget)</a></li>
+        <li><a href="#fps-vs-帧时间-frame-time-一个易误导的指标">FPS vs. 帧时间 (Frame Time): 一个易误导的指标</a></li>
+        <li><a href="#移动端挑战散热控制与电池寿命">移动端挑战：散热控制与电池寿命</a></li>
+        <li><a href="#调整移动端帧预算">调整移动端帧预算</a></li>
+        <li><a href="#减少内存访问操作-reduce-memory-access-operations">减少内存访问操作 (Reduce Memory Access Operations)</a></li>
+        <li><a href="#性能分析方法从高层到低层-from-high--to-low-level-profiling">性能分析方法：从高层到低层 (From High- to Low-Level Profiling)</a></li>
+        <li><a href="#尽早并经常分析-profile-early-and-often">尽早并经常分析 (Profile Early and Often)</a></li>
+        <li><a href="#建立硬件分层基准-establish-hardware-tiers-for-benchmarking">建立硬件分层基准 (Establish Hardware Tiers for Benchmarking)</a></li>
+        <li><a href="#查找瓶颈-find-the-bottlenecks-cpu-限制-vs-gpu-限制">查找瓶颈 (Find the Bottlenecks): CPU 限制 vs. GPU 限制</a></li>
+        <li><a href="#是否在帧预算内are-you-within-frame-budget">是否在帧预算内？(Are you within frame budget?)</a></li>
+        <li><a href="#如果游戏在帧预算内-if-your-game-is-in-frame-budget">如果游戏在帧预算内 (If your game is in frame budget)</a></li>
+        <li><a href="#cpu-限制-cpu-bound">CPU 限制 (CPU-bound)</a>
+          <ul>
+            <li><a href="#主线程瓶颈分析-main-thread-bound">主线程瓶颈分析 (Main Thread Bound)</a></li>
+            <li><a href="#渲染线程瓶颈分析-render-thread-bound">渲染线程瓶颈分析 (Render Thread Bound)</a></li>
+            <li><a href="#工作线程瓶颈分析-worker-threads-bound">工作线程瓶颈分析 (Worker Threads Bound)</a></li>
+          </ul>
+        </li>
+        <li><a href="#gpu-限制-gpu-bound">GPU 限制 (GPU-bound)</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存分析-memory-profiling">内存分析 (Memory Profiling)</a>
+      <ul>
+        <li><a href="#内存分析的目的与相关性">内存分析的目的与相关性</a></li>
+        <li><a href="#unity-中的内存分析工具">Unity 中的内存分析工具</a></li>
+        <li><a href="#理解和定义内存预算-understand-and-define-a-memory-budget">理解和定义内存预算 (Understand and define a memory budget)</a></li>
+        <li><a href="#确定物理-ram-限制-determine-physical-ram-limits">确定物理 RAM 限制 (Determine physical RAM limits)</a></li>
+        <li><a href="#确定各目标平台支持的最低规格-determine-the-lowest-specification-to-support-for-each-target-platform">确定各目标平台支持的最低规格 (Determine the lowest specification to support for each target platform)</a></li>
+        <li><a href="#为大型团队考虑按团队分配预算-consider-per-team-budgets-for-larger-teams">为大型团队考虑按团队分配预算 (Consider per-team budgets for larger teams)</a></li>
+        <li><a href="#memory-profiler-模块的视图-simple-and-detailed-views-with-memory-profiler-module">Memory Profiler 模块的视图 (Simple and detailed views with Memory Profiler module)</a>
+          <ul>
+            <li><a href="#simple-view-简单视图">Simple View (简单视图)</a></li>
+            <li><a href="#detailed-view-详细视图">Detailed View (详细视图)</a></li>
+          </ul>
+        </li>
+        <li><a href="#使用-memory-profiler-package-进行深入分析-in-depth-analysis-with-memory-profiler-package">使用 Memory Profiler Package 进行深入分析 (In-depth analysis with Memory Profiler package)</a></li>
+        <li><a href="#memory-profiler-模块与-package-的关系">Memory Profiler 模块与 Package 的关系</a></li>
+        <li><a href="#内存分析时的注意事项与实践建议">内存分析时的注意事项与实践建议</a></li>
+      </ul>
+    </li>
+    <li><a href="#unity-分析和调试工具深入探讨">Unity 分析和调试工具深入探讨</a>
+      <ul>
+        <li><a href="#关于工具差异的说明">关于工具差异的说明</a></li>
+        <li><a href="#profiler-性能分析器">Profiler (性能分析器)</a>
+          <ul>
+            <li><a href="#unity-性能分析入门步骤">Unity 性能分析入门步骤</a></li>
+            <li><a href="#profiler-使用技巧">Profiler 使用技巧</a></li>
+            <li><a href="#更多资源">更多资源</a></li>
+          </ul>
+        </li>
+        <li><a href="#frame-debugger-帧调试器">Frame Debugger (帧调试器)</a>
+          <ul>
+            <li><a href="#如何使用-frame-debugger">如何使用 Frame Debugger</a></li>
+            <li><a href="#理解绘制调用与渲染状态">理解绘制调用与渲染状态</a></li>
+            <li><a href="#frame-debugger-窗口详解">Frame Debugger 窗口详解</a></li>
+            <li><a href="#远程帧调试-remote-frame-debugging">远程帧调试 (Remote Frame Debugging)</a></li>
+            <li><a href="#渲染目标显示选项-render-target-display-options">渲染目标显示选项 (Render Target Display Options)</a></li>
+          </ul>
+        </li>
+        <li><a href="#五个针对常见陷阱的渲染优化技巧">五个针对常见陷阱的渲染优化技巧</a></li>
+        <li><a href="#profile-analyzer-性能分析器分析工具">Profile Analyzer (性能分析器分析工具)</a>
+          <ul>
+            <li><a href="#profile-analyzer-入门">Profile Analyzer 入门</a></li>
+            <li><a href="#功能与用途">功能与用途</a></li>
+          </ul>
+        </li>
+        <li><a href="#memory-profiler-内存分析器">Memory Profiler (内存分析器)</a>
+          <ul>
+            <li><a href="#入门与基本操作">入门与基本操作</a></li>
+            <li><a href="#比较快照功能">比较快照功能</a></li>
+            <li><a href="#内存分析技术和工作流程">内存分析技术和工作流程</a></li>
+            <li><a href="#用于定位托管分配的相关工具">用于定位托管分配的相关工具</a></li>
+          </ul>
+        </li>
+        <li><a href="#内存与-gc-垃圾回收-优化">内存与 GC (垃圾回收) 优化</a>
+          <ul>
+            <li><a href="#减少垃圾回收-gc-的影响">减少垃圾回收 (GC) 的影响</a></li>
+            <li><a href="#尽可能地控制垃圾回收时机">尽可能地控制垃圾回收时机</a></li>
+            <li><a href="#使用增量式垃圾回收器-incremental-garbage-collector-分摊-gc-工作负载">使用增量式垃圾回收器 (Incremental Garbage Collector) 分摊 GC 工作负载</a></li>
+          </ul>
+        </li>
+        <li><a href="#deep-profiling-深度分析">Deep Profiling (深度分析)</a>
+          <ul>
+            <li><a href="#何时使用深度分析">何时使用深度分析</a></li>
+            <li><a href="#如何使用深度分析">如何使用深度分析</a></li>
+            <li><a href="#深度分析技巧">深度分析技巧</a></li>
+          </ul>
+        </li>
+        <li><a href="#何时使用哪种分析工具">何时使用哪种分析工具？</a>
+          <ul>
+            <li><a href="#自动化关键性能和分析指标">自动化关键性能和分析指标</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#原生分析工具-native-profiling-tools">原生分析工具 (Native Profiling Tools)</a></li>
+    <li><a href="#gpu-调试和分析工具-gpu-debugging-and-profiling-tools">GPU 调试和分析工具 (GPU Debugging and Profiling Tools)</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">18</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2025
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            44.6k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          03:40
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#unity-游戏性能优化要点总结">Unity 游戏性能优化要点总结</a>
+      <ul>
+        <li><a href="#核心目标">核心目标</a></li>
+        <li><a href="#指南内容">指南内容</a></li>
+        <li><a href="#性能分析工作流程-profiling-workflow">性能分析工作流程 (Profiling Workflow)</a></li>
+        <li><a href="#优化的益处">优化的益处</a></li>
+      </ul>
+    </li>
+    <li><a href="#profiling-101unity-性能分析基础要点">Profiling 101：Unity 性能分析基础要点</a>
+      <ul>
+        <li><a href="#什么是-profiler-性能分析器">什么是 Profiler (性能分析器)?</a></li>
+        <li><a href="#unity-的-profiling-工具">Unity 的 Profiling 工具</a></li>
+        <li><a href="#性能分析方法-sample-based-vs-instrumentation">性能分析方法 (Sample-based vs. Instrumentation)</a></li>
+        <li><a href="#基于插桩的-profiling-细节-unity">基于插桩的 Profiling 细节 (Unity)</a></li>
+        <li><a href="#profiler-模块-profiler-modules">Profiler 模块 (Profiler Modules)</a></li>
+        <li><a href="#重要实践建议-important-best-practice">重要实践建议 (Important Best Practice)</a></li>
+      </ul>
+    </li>
+    <li><a href="#性能分析工作流程">性能分析工作流程</a>
+      <ul>
+        <li><a href="#设定帧预算-set-a-frame-budget">设定帧预算 (Set a Frame Budget)</a></li>
+        <li><a href="#fps-vs-帧时间-frame-time-一个易误导的指标">FPS vs. 帧时间 (Frame Time): 一个易误导的指标</a></li>
+        <li><a href="#移动端挑战散热控制与电池寿命">移动端挑战：散热控制与电池寿命</a></li>
+        <li><a href="#调整移动端帧预算">调整移动端帧预算</a></li>
+        <li><a href="#减少内存访问操作-reduce-memory-access-operations">减少内存访问操作 (Reduce Memory Access Operations)</a></li>
+        <li><a href="#性能分析方法从高层到低层-from-high--to-low-level-profiling">性能分析方法：从高层到低层 (From High- to Low-Level Profiling)</a></li>
+        <li><a href="#尽早并经常分析-profile-early-and-often">尽早并经常分析 (Profile Early and Often)</a></li>
+        <li><a href="#建立硬件分层基准-establish-hardware-tiers-for-benchmarking">建立硬件分层基准 (Establish Hardware Tiers for Benchmarking)</a></li>
+        <li><a href="#查找瓶颈-find-the-bottlenecks-cpu-限制-vs-gpu-限制">查找瓶颈 (Find the Bottlenecks): CPU 限制 vs. GPU 限制</a></li>
+        <li><a href="#是否在帧预算内are-you-within-frame-budget">是否在帧预算内？(Are you within frame budget?)</a></li>
+        <li><a href="#如果游戏在帧预算内-if-your-game-is-in-frame-budget">如果游戏在帧预算内 (If your game is in frame budget)</a></li>
+        <li><a href="#cpu-限制-cpu-bound">CPU 限制 (CPU-bound)</a>
+          <ul>
+            <li><a href="#主线程瓶颈分析-main-thread-bound">主线程瓶颈分析 (Main Thread Bound)</a></li>
+            <li><a href="#渲染线程瓶颈分析-render-thread-bound">渲染线程瓶颈分析 (Render Thread Bound)</a></li>
+            <li><a href="#工作线程瓶颈分析-worker-threads-bound">工作线程瓶颈分析 (Worker Threads Bound)</a></li>
+          </ul>
+        </li>
+        <li><a href="#gpu-限制-gpu-bound">GPU 限制 (GPU-bound)</a></li>
+      </ul>
+    </li>
+    <li><a href="#内存分析-memory-profiling">内存分析 (Memory Profiling)</a>
+      <ul>
+        <li><a href="#内存分析的目的与相关性">内存分析的目的与相关性</a></li>
+        <li><a href="#unity-中的内存分析工具">Unity 中的内存分析工具</a></li>
+        <li><a href="#理解和定义内存预算-understand-and-define-a-memory-budget">理解和定义内存预算 (Understand and define a memory budget)</a></li>
+        <li><a href="#确定物理-ram-限制-determine-physical-ram-limits">确定物理 RAM 限制 (Determine physical RAM limits)</a></li>
+        <li><a href="#确定各目标平台支持的最低规格-determine-the-lowest-specification-to-support-for-each-target-platform">确定各目标平台支持的最低规格 (Determine the lowest specification to support for each target platform)</a></li>
+        <li><a href="#为大型团队考虑按团队分配预算-consider-per-team-budgets-for-larger-teams">为大型团队考虑按团队分配预算 (Consider per-team budgets for larger teams)</a></li>
+        <li><a href="#memory-profiler-模块的视图-simple-and-detailed-views-with-memory-profiler-module">Memory Profiler 模块的视图 (Simple and detailed views with Memory Profiler module)</a>
+          <ul>
+            <li><a href="#simple-view-简单视图">Simple View (简单视图)</a></li>
+            <li><a href="#detailed-view-详细视图">Detailed View (详细视图)</a></li>
+          </ul>
+        </li>
+        <li><a href="#使用-memory-profiler-package-进行深入分析-in-depth-analysis-with-memory-profiler-package">使用 Memory Profiler Package 进行深入分析 (In-depth analysis with Memory Profiler package)</a></li>
+        <li><a href="#memory-profiler-模块与-package-的关系">Memory Profiler 模块与 Package 的关系</a></li>
+        <li><a href="#内存分析时的注意事项与实践建议">内存分析时的注意事项与实践建议</a></li>
+      </ul>
+    </li>
+    <li><a href="#unity-分析和调试工具深入探讨">Unity 分析和调试工具深入探讨</a>
+      <ul>
+        <li><a href="#关于工具差异的说明">关于工具差异的说明</a></li>
+        <li><a href="#profiler-性能分析器">Profiler (性能分析器)</a>
+          <ul>
+            <li><a href="#unity-性能分析入门步骤">Unity 性能分析入门步骤</a></li>
+            <li><a href="#profiler-使用技巧">Profiler 使用技巧</a></li>
+            <li><a href="#更多资源">更多资源</a></li>
+          </ul>
+        </li>
+        <li><a href="#frame-debugger-帧调试器">Frame Debugger (帧调试器)</a>
+          <ul>
+            <li><a href="#如何使用-frame-debugger">如何使用 Frame Debugger</a></li>
+            <li><a href="#理解绘制调用与渲染状态">理解绘制调用与渲染状态</a></li>
+            <li><a href="#frame-debugger-窗口详解">Frame Debugger 窗口详解</a></li>
+            <li><a href="#远程帧调试-remote-frame-debugging">远程帧调试 (Remote Frame Debugging)</a></li>
+            <li><a href="#渲染目标显示选项-render-target-display-options">渲染目标显示选项 (Render Target Display Options)</a></li>
+          </ul>
+        </li>
+        <li><a href="#五个针对常见陷阱的渲染优化技巧">五个针对常见陷阱的渲染优化技巧</a></li>
+        <li><a href="#profile-analyzer-性能分析器分析工具">Profile Analyzer (性能分析器分析工具)</a>
+          <ul>
+            <li><a href="#profile-analyzer-入门">Profile Analyzer 入门</a></li>
+            <li><a href="#功能与用途">功能与用途</a></li>
+          </ul>
+        </li>
+        <li><a href="#memory-profiler-内存分析器">Memory Profiler (内存分析器)</a>
+          <ul>
+            <li><a href="#入门与基本操作">入门与基本操作</a></li>
+            <li><a href="#比较快照功能">比较快照功能</a></li>
+            <li><a href="#内存分析技术和工作流程">内存分析技术和工作流程</a></li>
+            <li><a href="#用于定位托管分配的相关工具">用于定位托管分配的相关工具</a></li>
+          </ul>
+        </li>
+        <li><a href="#内存与-gc-垃圾回收-优化">内存与 GC (垃圾回收) 优化</a>
+          <ul>
+            <li><a href="#减少垃圾回收-gc-的影响">减少垃圾回收 (GC) 的影响</a></li>
+            <li><a href="#尽可能地控制垃圾回收时机">尽可能地控制垃圾回收时机</a></li>
+            <li><a href="#使用增量式垃圾回收器-incremental-garbage-collector-分摊-gc-工作负载">使用增量式垃圾回收器 (Incremental Garbage Collector) 分摊 GC 工作负载</a></li>
+          </ul>
+        </li>
+        <li><a href="#deep-profiling-深度分析">Deep Profiling (深度分析)</a>
+          <ul>
+            <li><a href="#何时使用深度分析">何时使用深度分析</a></li>
+            <li><a href="#如何使用深度分析">如何使用深度分析</a></li>
+            <li><a href="#深度分析技巧">深度分析技巧</a></li>
+          </ul>
+        </li>
+        <li><a href="#何时使用哪种分析工具">何时使用哪种分析工具？</a>
+          <ul>
+            <li><a href="#自动化关键性能和分析指标">自动化关键性能和分析指标</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#原生分析工具-native-profiling-tools">原生分析工具 (Native Profiling Tools)</a></li>
+    <li><a href="#gpu-调试和分析工具-gpu-debugging-and-profiling-tools">GPU 调试和分析工具 (GPU Debugging and Profiling Tools)</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">18</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+      
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8" crossorigin="anonymous"
+  ></script>
+
+
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/contrib/auto-render.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05" crossorigin="anonymous"
+  ></script>
+
+
+        <script data-pjax>
+          var renderMath = () => {
+            if (!window.renderMathInElement) return;
+            window.renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+            });
+          };
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderMath, { once: true });
+          } else {
+            renderMath();
+          }
+        </script>
+      
+      
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>
