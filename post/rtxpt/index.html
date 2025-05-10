@@ -664,7 +664,7 @@
 <li><strong><code>USE_HIT_OBJECT_EXTENSION</code> 分支</strong>:
 <ul>
 <li><code>Bridge::traceScatterRay</code> 内部会使用 <code>RayQuery::TraceRayInline</code>。这是一种更现代、更灵活的光线追踪方式，允许在同一个着色器内完成光线投射和命中处理的逻辑。</li>
-<li><code>SERSortKey</code> (Shader Execution Reordering Sort Key) 是为光线排序准备的，旨在通过将具有相似计算负载或数据访问模式的光线分组执行来提高 GPU 效率。在我的RTX4060 Laptop上，开启SER会大幅提高实时路径追踪的性能（从10FPS提升到20FPS，开启OMM反而提升不会特别大，可能更取决于场景）。</li>
+<li><code>SERSortKey</code> (Shader Execution Reordering Sort Key) 是为光线排序准备的，旨在通过将具有相似计算负载或数据访问模式的光线分组执行来提高 GPU 效率。在我的 RTX 4060 Laptop GPU 上，开启SER会大幅提高实时路径追踪的性能（从<del>10FPS提升到</del>20FPS）。</li>
 </ul>
 </li>
 <li><strong><code>else</code> 分支 (标准 <code>TraceRay</code>)</strong>:
@@ -2145,7 +2145,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Ultimate Guide to Profiling Unity Games"
               class="lazyload"
