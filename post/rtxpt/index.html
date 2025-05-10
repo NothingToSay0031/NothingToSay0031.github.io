@@ -384,7 +384,7 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <p>大家好！今天一起探索 NVIDIA 开源的 <a href="https://github.com/NVIDIA-RTX/RTXPT">RTX Path Tracing (RTXPT)</a> 项目。有关路径追踪我是在TU Wien的Rendering课程上学的，当时写了一个<a href="https://nothingtosay0031.github.io/post/mis_nee/">有关MIS和NEE的blog</a>，但是我始终没有写过正确的PathTracing code，对于NEE和BSDF如何通过MIS正确计算也一知半解，正好看到这个项目，觉得很不错。这个库还实现了很多实时路径追踪的优化，不过暂时还没有深入，主要记录一下理解MIS和NEE的代码的过程。</p>
+        <p>这篇博客主要探讨了 NVIDIA 开源的 <a href="https://github.com/NVIDIA-RTX/RTXPT">RTX Path Tracing (RTXPT)</a> 项目。路径追踪的基础知识我是在 TU Wien 的 Rendering 课程上学习的，当时也写了一篇<a href="https://nothingtosay0031.github.io/post/mis_nee/">关于 MIS 和 NEE 的博客</a>，但一直没有真正编写过完整的 Path Tracing 代码，对 NEE 和 BSDF 在 MIS 中的正确计算也只是略知一二。最近看到这个项目，觉得是个很好的学习机会，正好可以深入理解这些概念。虽然这个库还实现了许多实时路径追踪的优化算法，但本篇主要聚焦于 MIS 和 NEE 的实现过程。</p>
 <h1 id="raygen-shader">
 <a class="header-anchor" href="#raygen-shader"></a>
 <code>RayGen</code> Shader
@@ -1815,7 +1815,7 @@ b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
 <li>计算NEE采样本身的PDF ($p_{NEE}$)。</li>
 <li>计算BSDF采样得到该方向的PDF ($p_{BSDF}$)。</li>
 <li>使用这些PDF和相应的样本数，通过 <code>ComputeInternalMIS</code> 计算此NEE样本的MIS权重 ($w_{NEE}$)。</li>
-<li>最终贡献大致为：$L_D = \text{Li} \cdot \text{BSDF_value} \cdot \text{Visibility} \cdot w_{NEE} / p_{NEE}$ (这里的 $1/p_{NEE}$ 通常已经包含在 <code>Li</code> 或 <code>lightSample</code> 的值中，而 $w_{NEE}$ 在RTXPT中可能如我们之前讨论的包含了 $1/N$ 因子)。</li>
+<li>最终贡献大致为：$ L_D = \text{Li} \cdot \text{BSDF\_value} \cdot \text{Visibility} \cdot w_{NEE} / p_{NEE} $ (这里的 $1/p_{NEE}$ 通常已经包含在 <code>Li</code> 或 <code>lightSample</code> 的值中，而 $w_{NEE}$ 在RTXPT中可能如我们之前讨论的包含了 $1/N$ 因子)。</li>
 <li>将此贡献累加到 <code>path.L</code>。</li>
 </ul>
 </li>
@@ -1917,9 +1917,9 @@ b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
 <li>MIS组合（如平衡启发式）的正确应用，以确保最终组合估计量的无偏性。</li>
 </ol>
 <p>只要这些要素得到保证，即使形式上有所调整，系统也能收敛到正确的结果，并且MIS的目标——降低方差——也能得以实现。对于非常规的部分，通常背后有特定的数学推导来支持其在该系统框架内的正确性。</p>
-<h1 id="miss-shader揭秘--pathtracerhandlemiss-与环境光处理">
-<a class="header-anchor" href="#miss-shader%e6%8f%ad%e7%a7%98--pathtracerhandlemiss-%e4%b8%8e%e7%8e%af%e5%a2%83%e5%85%89%e5%a4%84%e7%90%86"></a>
-Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理
+<h1 id="miss-shader揭秘--handlemiss-与环境光处理">
+<a class="header-anchor" href="#miss-shader%e6%8f%ad%e7%a7%98--handlemiss-%e4%b8%8e%e7%8e%af%e5%a2%83%e5%85%89%e5%a4%84%e7%90%86"></a>
+Miss Shader揭秘 —— HandleMiss 与环境光处理
 </h1><p>到目前为止，我们已经探讨了光线的生成、在场景中的弹射、与不发光/发光表面的交互，以及NEE（下一事件估计）如何计算直接光照。但如果一条光线飞向无穷远，没有碰到任何物体，会发生什么呢？这时就轮到<code>Miss Shader</code>（在RTXPT中通过 <code>PathTracer.hlsli</code> 里的 <code>PathTracer::HandleMiss</code> 函数实现）登场了。它的主要职责是计算来自环境（例如天空盒、环境贴图）的光照贡献，并终止这条光线的路径。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hlsl" data-lang="hlsl"><span class="line"><span class="cl"><span class="c1">// PathTracer/PathTracer.hlsli</span>
 </span></span><span class="line"><span class="cl"><span class="k">namespace</span> <span class="n">PathTracer</span>
@@ -2067,11 +2067,50 @@ Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理
 <li>与稳定平面系统的交互进一步展示了RTXPT中不同渲染子系统间的协同工作。</li>
 </ul>
 <p><code>HandleMiss</code> 虽然代表光线的“终点”，但其内部逻辑（特别是MIS部分）同样体现了现代路径追踪算法的复杂与精巧。</p>
-<h1 id="暂时总结">
-<a class="header-anchor" href="#%e6%9a%82%e6%97%b6%e6%80%bb%e7%bb%93"></a>
-暂时总结
-</h1><p>我们已经把<code>RayGen</code>、<code>ClosestHit</code> (<code>HandleHit</code>)、<code>NEE</code> (<code>HandleNEE</code>)以及现在的<code>Miss Shader</code> (<code>HandleMiss</code>)的主要逻辑都过了一遍。</p>
-<p>我大概也已经了解了NEE的采样流程、MIS的计算，如果之后有时间的话，可以深入某些辅助函数（如 <code>Bridge::</code> 系列，或者光源/BSDF采样的具体实现），并且他在这个基础上实现了ReSTIR GI和ReSTIR DI的逻辑，大体看了下，还是挺有意思的，之后有空可以再写写。</p>
+<h1 id="阶段性总结">
+<a class="header-anchor" href="#%e9%98%b6%e6%ae%b5%e6%80%a7%e6%80%bb%e7%bb%93"></a>
+阶段性总结
+</h1><p>目前我们已经梳理了 <code>RayGen</code>、<code>ClosestHit</code> (<code>HandleHit</code>)、<code>NEE</code> (<code>HandleNEE</code>) 以及 <code>Miss Shader</code> (<code>HandleMiss</code>) 的主要逻辑，对 NEE 的采样流程和 MIS 的计算也有了初步理解。如果之后有时间，可以进一步研究一些辅助函数，例如 <code>Bridge::</code> 系列或者光源/BSDF 采样的具体实现。</p>
+<p>这个仓库的功能还挺丰富，其中很多都是我感兴趣的，后续有空的话可以继续探索，比如：</p>
+<ul>
+<li>
+<p><strong>简单可扩展的 BSDF 模型</strong></p>
+</li>
+<li>
+<p><strong>基本体积和嵌套介质（支持优先级）</strong></p>
+</li>
+<li>
+<p><strong>支持解析光源（平行光、聚光灯、点光源）、发光三角形和环境贴图</strong></p>
+</li>
+<li>
+<p><strong>基于反馈的时间自适应重要性采样 (NEE)</strong></p>
+</li>
+<li>
+<p><strong>基础路径追踪功能</strong></p>
+<ul>
+<li>Practical Hash-based Owen Scrambling 低差异样本生成</li>
+<li>基于 RayCones 的 MIP 选择、早期光线终止等</li>
+</ul>
+</li>
+<li>
+<p><strong>基本光栅化功能</strong></p>
+<ul>
+<li>基本 TAA、色调映射等</li>
+</ul>
+</li>
+<li>
+<p><strong>高级优化</strong></p>
+<ul>
+<li>Shader Execution Reordering (SER) 提升执行效率</li>
+<li>RTXDI 集成 (ReSTIR DI 和 ReSTIR GI)</li>
+<li>OMM 集成 (快速 alpha 测试)</li>
+<li>NRD ReLAX 和 ReBLUR 去噪（支持三层路径空间分解）</li>
+<li>RTXTF 集成 (随机纹理过滤)</li>
+<li>Streamline 集成 (DLSS 4.0，包括 SR, AA, FG 和 MFG)</li>
+</ul>
+</li>
+</ul>
+<p>这些功能基本覆盖了一个现代路径追踪引擎的各个方面，有机会的话可以逐步深入学习。</p>
 
       
     </div>
@@ -2107,7 +2146,7 @@ Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Ultimate Guide to Profiling Unity Games"
               class="lazyload"
@@ -2200,8 +2239,8 @@ Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理
         <li><a href="#4-为什么这样是正确的">4. 为什么这样是正确的？</a></li>
       </ul>
     </li>
-    <li><a href="#miss-shader揭秘--pathtracerhandlemiss-与环境光处理">Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理</a></li>
-    <li><a href="#暂时总结">暂时总结</a></li>
+    <li><a href="#miss-shader揭秘--handlemiss-与环境光处理">Miss Shader揭秘 —— HandleMiss 与环境光处理</a></li>
+    <li><a href="#阶段性总结">阶段性总结</a></li>
   </ul>
 </nav>
   </div>
@@ -2542,8 +2581,8 @@ Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理
         <li><a href="#4-为什么这样是正确的">4. 为什么这样是正确的？</a></li>
       </ul>
     </li>
-    <li><a href="#miss-shader揭秘--pathtracerhandlemiss-与环境光处理">Miss Shader揭秘 —— PathTracer::HandleMiss 与环境光处理</a></li>
-    <li><a href="#暂时总结">暂时总结</a></li>
+    <li><a href="#miss-shader揭秘--handlemiss-与环境光处理">Miss Shader揭秘 —— HandleMiss 与环境光处理</a></li>
+    <li><a href="#阶段性总结">阶段性总结</a></li>
   </ul>
 </nav>
   </div>
