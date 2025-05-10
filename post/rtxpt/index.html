@@ -562,7 +562,6 @@
 <p><strong>总结 <code>RayGen</code> 的核心职责</strong></p>
 <p><code>RayGen</code> 着色器为每个像素精心策划了路径追踪的“第一步”。它不仅生成初始相机光线，还根据不同的运行模式（尤其是与“稳定平面”相关的模式）采取不同的初始化策略。最核心的是它驱动的 <code>while (path.isActive()) nextHit(...)</code> 循环，这个循环不断地投射光线、处理碰撞、更新路径状态，直到光路终止。</p>
 <p>接下来，我们将深入探讨 <code>nextHit</code> 函数的实现，以及 <code>ClosestHit</code> 和 <code>Miss</code> 着色器是如何与 <code>PathState</code> 交互来模拟复杂的光线传播和材质表现的。</p>
-<p>Okay, let&rsquo;s continue our exploration of NVIDIA&rsquo;s RTXPT <code>Sample.hlsl</code> by diving into two crucial functions that manage how rays are traced and hits are processed after the initial <code>RayGen</code> setup: <code>nextHit</code> and <code>firstHitFromBasePlane</code>.</p>
 <h1 id="深入-nexthit-与-firsthitfrombaseplane">
 <a class="header-anchor" href="#%e6%b7%b1%e5%85%a5-nexthit-%e4%b8%8e-firsthitfrombaseplane"></a>
 深入 <code>nextHit</code> 与 <code>firstHitFromBasePlane</code>
@@ -2146,7 +2145,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Ultimate Guide to Profiling Unity Games"
               class="lazyload"
