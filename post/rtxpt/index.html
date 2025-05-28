@@ -664,7 +664,7 @@
 <li><strong><code>USE_HIT_OBJECT_EXTENSION</code> 分支</strong>:
 <ul>
 <li><code>Bridge::traceScatterRay</code> 内部会使用 <code>RayQuery::TraceRayInline</code>。这是一种更现代、更灵活的光线追踪方式，允许在同一个着色器内完成光线投射和命中处理的逻辑。</li>
-<li><code>SERSortKey</code> (Shader Execution Reordering Sort Key) 是为光线排序准备的，旨在通过将具有相似计算负载或数据访问模式的光线分组执行来提高 GPU 效率。在我的 RTX 4060 Laptop GPU 上，开启SER会大幅提高实时路径追踪的性能（从<del>10FPS提升到</del>20FPS）。</li>
+<li><code>SERSortKey</code> (Shader Execution Reordering Sort Key) 是为光线排序准备的，旨在通过将具有相似计算负载或数据访问模式的光线分组执行来提高 GPU 效率。在我的 RTX 4060 Laptop GPU 上，开启SER会大幅提高实时路径追踪的性能（从<code>~10FPS</code>提升到<code>~20FPS</code>）。</li>
 </ul>
 </li>
 <li><strong><code>else</code> 分支 (标准 <code>TraceRay</code>)</strong>:
@@ -1560,7 +1560,7 @@
 </li>
 </ul>
 </li>
-<li><strong>返回值 <code>thisMIS / thisCount</code></strong>：这里的 <code>thisMIS</code> 是由 <code>EvalMIS</code> 计算得到的分子项（即 <code>thisCount * thisPdf_full</code>）。除以 <code>thisCount</code> 意味着返回的是 $\frac{\text{thisPdf_full}}{\sum_j n_j p_j}$（如果 <code>EvalMIS</code> 返回的是分子）或者 $\frac{w_{\text{current_NEE_strat}}}{thisCount}$（如果 <code>EvalMIS</code> 返回标准MIS权重）。这通常意味着调用者（<code>ProcessLightSample</code>）在累加贡献时，这个 $1/\text{thisCount}$ 因子已经被考虑进去了。这是一种将蒙特卡洛估计器的 $1/N$ 项部分融入权重计算的方式。</li>
+<li><strong>返回值 <code>thisMIS / thisCount</code></strong>：这里的 <code>thisMIS</code> 是由 <code>EvalMIS</code> 计算得到的分子项（即 <code>thisCount * thisPdf_full</code>）。这是一种将蒙特卡洛估计器的 $1/N$ 项部分融入权重计算的方式。</li>
 </ul>
 <h2 id="2-computebsdfmis为bsdf命中光源的样本计算mis权重">
 <a class="header-anchor" href="#2-computebsdfmis%e4%b8%babsdf%e5%91%bd%e4%b8%ad%e5%85%89%e6%ba%90%e7%9a%84%e6%a0%b7%e6%9c%ac%e8%ae%a1%e7%ae%97mis%e6%9d%83%e9%87%8d"></a>
@@ -2168,7 +2168,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
