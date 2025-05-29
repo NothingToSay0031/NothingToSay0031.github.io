@@ -1618,9 +1618,9 @@ $$\binom{n}{k} = \frac{n!}{k!(n-k)!} \quad (1.6)$$</li>
 <li>学习着色器编程的正式方面需要一些努力。像《OpenGL Superbible》[1606]和《OpenGL Programming Guide》[885]这样的书籍包含了着色器编程的材料。较早的书籍《OpenGL Shading Language》[1512]没有涵盖较新的着色器阶段，如几何和曲面细分着色器，但确实特别关注与着色器相关的算法。</li>
 <li>realtimerendering.com，获取最新和推荐的书籍。</li>
 </ul>
-<h1 id="第4章-变换">
-<a class="header-anchor" href="#%e7%ac%ac4%e7%ab%a0-%e5%8f%98%e6%8d%a2"></a>
-第4章 变换
+<h1 id="第四章-变换">
+<a class="header-anchor" href="#%e7%ac%ac%e5%9b%9b%e7%ab%a0-%e5%8f%98%e6%8d%a2"></a>
+第四章 变换
 </h1><p>“何必恐惧愤怒的矢量
 在你沉睡的头颅周围转向，形成。
 永远无需畏惧
@@ -1636,10 +1636,8 @@ $kf(\mathbf{x}) = f(k\mathbf{x})$ (4.2)</p>
 <p>所有平移、旋转、缩放、反射和错切矩阵都是仿射的。仿射矩阵的主要特性是它保持线的平行性，但不一定保持长度和角度。仿射变换也可以是各个仿射变换的任意序列的串联。</p>
 <p>本章将从最基本、最核心的仿射变换开始。然后描述更专门的矩阵，接着讨论和描述四元数。然后是顶点混合和变形。最后，描述投影矩阵。这些变换、它们的符号、函数和属性大部分总结在表4.1中。</p>
 <p>理解变换矩阵及其相互作用至关重要。例如，了解正交矩阵（其逆是其转置）可以加快矩阵求逆。</p>
-<h2 id="表41-本章讨论的大多数变换的总结">
-<a class="header-anchor" href="#%e8%a1%a841-%e6%9c%ac%e7%ab%a0%e8%ae%a8%e8%ae%ba%e7%9a%84%e5%a4%a7%e5%a4%9a%e6%95%b0%e5%8f%98%e6%8d%a2%e7%9a%84%e6%80%bb%e7%bb%93"></a>
-表4.1 本章讨论的大多数变换的总结
-</h2><table>
+<p>表4.1 本章讨论的大多数变换的总结</p>
+<table>
   <thead>
       <tr>
           <th>符号</th>
@@ -1696,14 +1694,14 @@ $kf(\mathbf{x}) = f(k\mathbf{x})$ (4.2)</p>
   </tbody>
 </table>
 <p>(注意：原表中的 Po(s) 和 Pp(s) 中的 (s) 参数在文本描述中通常不这样体现，而是通过其他参数定义，如视景体范围。此处简化为 Po 和 Pp)</p>
-<h1 id="41-基本变换">
+<h2 id="41-基本变换">
 <a class="header-anchor" href="#41-%e5%9f%ba%e6%9c%ac%e5%8f%98%e6%8d%a2"></a>
 4.1 基本变换
-</h1><p>本节描述最基本的变换，如平移、旋转、缩放、错切、变换串联、刚体变换、法线变换和逆的计算。</p>
-<h2 id="411-平移">
+</h2><p>本节描述最基本的变换，如平移、旋转、缩放、错切、变换串联、刚体变换、法线变换和逆的计算。</p>
+<h3 id="411-平移">
 <a class="header-anchor" href="#411-%e5%b9%b3%e7%a7%bb"></a>
 4.1.1 平移
-</h2><ul>
+</h3><ul>
 <li>从一个位置到另一个位置的改变由平移矩阵 $\mathbf{T}$ 表示。</li>
 <li>该矩阵通过向量 $\mathbf{t} = (t_x, t_y, t_z)$ 平移实体。</li>
 <li>$\mathbf{T}(\mathbf{t})$ 由公式4.3给出：
@@ -1713,10 +1711,10 @@ $$\mathbf{T}(\mathbf{t}) = \mathbf{T}(t_x, t_y, t_z) = \begin{pmatrix} 1 & 0 & 0
 <li>平移矩阵的逆是 $\mathbf{T}^{-1}(\mathbf{t}) = \mathbf{T}(-\mathbf{t})$。</li>
 <li>计算机图形学中存在另一种有效的符号方案，将平移向量放在矩阵的底行（行主序，例如DirectX）。本书使用列主序。内存存储中，矩阵的最后四个值是三个平移值后跟一个1。</li>
 </ul>
-<h2 id="412-旋转">
+<h3 id="412-旋转">
 <a class="header-anchor" href="#412-%e6%97%8b%e8%bd%ac"></a>
 4.1.2 旋转
-</h2><ul>
+</h3><ul>
 <li>旋转变换将向量（位置或方向）围绕通过原点的给定轴旋转给定角度。</li>
 <li>它是一种刚体变换，即保留点之间的距离并保留手性（handedness）。</li>
 <li>方位矩阵是与相机视图或对象关联的旋转矩阵，定义其在空间中的方位。</li>
@@ -1752,10 +1750,10 @@ $$\mathbf{X} = \mathbf{T}(\mathbf{p})\mathbf{R}_z(\phi)\mathbf{T}(-\mathbf{p})$$
 </ul>
 </li>
 </ul>
-<h2 id="413-缩放">
+<h3 id="413-缩放">
 <a class="header-anchor" href="#413-%e7%bc%a9%e6%94%be"></a>
 4.1.3 缩放
-</h2><ul>
+</h3><ul>
 <li>缩放矩阵 $\mathbf{S}(\mathbf{s}) = \mathbf{S}(s_x, s_y, s_z)$ 分别沿x, y, z方向缩放实体。</li>
 <li>$$\mathbf{S}(\mathbf{s}) = \begin{pmatrix} s_x & 0 & 0 & 0 \\ 0 & s_y & 0 & 0 \\ 0 & 0 & s_z & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
 (4.10)</li>
@@ -1781,10 +1779,10 @@ $$\mathbf{X} = \mathbf{F}\mathbf{S}(\mathbf{s})\mathbf{F}^T$$
 </ul>
 </li>
 </ul>
-<h2 id="414-错切">
+<h3 id="414-错切">
 <a class="header-anchor" href="#414-%e9%94%99%e5%88%87"></a>
 4.1.4 错切
-</h2><ul>
+</h3><ul>
 <li>错切矩阵可用于扭曲整个场景或模型的形状。</li>
 <li>六种基本错切矩阵：$\mathbf{H}_{xy}(s), \mathbf{H}_{xz}(s), \mathbf{H}_{yx}(s), \mathbf{H}_{yz}(s), \mathbf{H}_{zx}(s), \mathbf{H}_{zy}(s)$。第一个下标表示被改变的坐标，第二个下标表示进行错切的坐标。</li>
 <li>$\mathbf{H}_{xz}(s)$ 示例 (将x坐标根据z坐标进行错切)：
@@ -1800,20 +1798,20 @@ $$\mathbf{H}'_{xy}(s,t) = \begin{pmatrix} 1 & 0 & s & 0 \\ 0 & 1 & t & 0 \\ 0 & 
 （修正了原公式4.16，使其符合描述，原公式的s,t位置在z列）</li>
 <li>任何错切矩阵的行列式 $|\mathbf{H}| = 1$，因此这是保体积变换。</li>
 </ul>
-<h2 id="415-变换的串联">
+<h3 id="415-变换的串联">
 <a class="header-anchor" href="#415-%e5%8f%98%e6%8d%a2%e7%9a%84%e4%b8%b2%e8%81%94"></a>
 4.1.5 变换的串联
-</h2><ul>
+</h3><ul>
 <li>由于矩阵乘法不满足交换律，矩阵出现的顺序很重要。变换的串联是顺序相关的。</li>
 <li>例如，$\mathbf{S}\mathbf{R}$ 与 $\mathbf{R}\mathbf{S}$ 的结果通常不同。</li>
 <li>串联一系列矩阵为一个单一矩阵是为了提高效率。</li>
 <li>例如，如果所有对象必须先缩放，然后旋转，最后平移，则复合矩阵 $\mathbf{C} = \mathbf{T}\mathbf{R}\mathbf{S}$。应用于顶点 $\mathbf{p}$ 时为 $\mathbf{T}(\mathbf{R}(\mathbf{S}\mathbf{p}))$。</li>
 <li>矩阵串联满足结合律，例如 $(\mathbf{T}\mathbf{R})(\mathbf{S}\mathbf{p})$。</li>
 </ul>
-<h2 id="416-刚体变换">
+<h3 id="416-刚体变换">
 <a class="header-anchor" href="#416-%e5%88%9a%e4%bd%93%e5%8f%98%e6%8d%a2"></a>
 4.1.6 刚体变换
-</h2><ul>
+</h3><ul>
 <li>
 <p>仅由平移和旋转串联组成的变换称为刚体变换。</p>
 </li>
@@ -1851,10 +1849,10 @@ $$\mathbf{M} = \begin{pmatrix} r_x & r_y & r_z & 0 \\ u_x & u_y & u_z & 0 \\ v_x
 </ul>
 </li>
 </ul>
-<h2 id="417-法线变换">
+<h3 id="417-法线变换">
 <a class="header-anchor" href="#417-%e6%b3%95%e7%ba%bf%e5%8f%98%e6%8d%a2"></a>
 4.1.7 法线变换
-</h2><ul>
+</h3><ul>
 <li>用于变换点、线、三角形的矩阵不能总是用于变换曲面法线（或顶点光照法线）。</li>
 <li>如果模型被非均匀缩放，使用相同矩阵变换法线会导致法线不再垂直于曲面。</li>
 <li>正确的方法是使用原变换矩阵的伴随矩阵的转置。伴随矩阵总能保证存在。</li>
@@ -1876,10 +1874,10 @@ $$\mathbf{M} = \begin{pmatrix} r_x & r_y & r_z & 0 \\ u_x & u_y & u_z & 0 \\ v_x
 <li>如果还串联了均匀缩放，可以用整体缩放因子直接归一化法线。</li>
 <li>切向量（Tangent vectors）总是直接由原始矩阵变换。</li>
 </ul>
-<h2 id="418-逆的计算">
+<h3 id="418-逆的计算">
 <a class="header-anchor" href="#418-%e9%80%86%e7%9a%84%e8%ae%a1%e7%ae%97"></a>
 4.1.8 逆的计算
-</h2><ul>
+</h3><ul>
 <li>计算矩阵逆的三种方法：
 <ol>
 <li><strong>参数反转</strong>：如果矩阵是单个变换或简单变换序列且参数已知，例如 $\mathbf{M} = \mathbf{T}(\mathbf{t})\mathbf{R}(\phi)$，则 $\mathbf{M}^{-1} = \mathbf{R}(-\phi)\mathbf{T}(-\mathbf{t})$。简单且保持精度。</li>
@@ -1889,13 +1887,13 @@ $$\mathbf{M} = \begin{pmatrix} r_x & r_y & r_z & 0 \\ u_x & u_y & u_z & 0 \\ v_x
 </li>
 <li>优化：如果逆用于变换向量，则通常只需对矩阵的左上 $3 \times 3$ 部分求逆。</li>
 </ul>
-<h1 id="42-特殊矩阵变换和操作">
+<h2 id="42-特殊矩阵变换和操作">
 <a class="header-anchor" href="#42-%e7%89%b9%e6%ae%8a%e7%9f%a9%e9%98%b5%e5%8f%98%e6%8d%a2%e5%92%8c%e6%93%8d%e4%bd%9c"></a>
 4.2 特殊矩阵变换和操作
-</h1><h2 id="421-欧拉变换">
+</h2><h3 id="421-欧拉变换">
 <a class="header-anchor" href="#421-%e6%ac%a7%e6%8b%89%e5%8f%98%e6%8d%a2"></a>
 4.2.1 欧拉变换
-</h2><ul>
+</h3><ul>
 <li>一种直观的构造矩阵以确定方位的方法。</li>
 <li>默认视图方向通常沿负z轴，头部沿y轴。</li>
 <li>欧拉变换是三个旋转矩阵的乘积。一个常用顺序是：
@@ -1908,10 +1906,10 @@ $$
 <li>世界坐标系中，y轴向上（media-related modeling）或z轴向上（manufacturing, architecture, GIS）均常见。这只是一个90度旋转（可能还有反射）的差别。</li>
 <li>相机视图空间中的向上方向与其在世界空间中的向上方向没有必然联系。</li>
 </ul>
-<h2 id="422-从欧拉变换中提取参数">
+<h3 id="422-从欧拉变换中提取参数">
 <a class="header-anchor" href="#422-%e4%bb%8e%e6%ac%a7%e6%8b%89%e5%8f%98%e6%8d%a2%e4%b8%ad%e6%8f%90%e5%8f%96%e5%8f%82%e6%95%b0"></a>
 4.2.2 从欧拉变换中提取参数
-</h2><ul>
+</h3><ul>
 <li>从正交矩阵 $\mathbf{E}$ 中提取欧拉参数 $h, p, r$。设 $\mathbf{E}$ 为 $3 \times 3$ 旋转矩阵：
 $$
     \mathbf{E}(h,p,r) = \begin{pmatrix} e_{00} & e_{01} & e_{02} \\ e_{10} & e_{11} & e_{12} \\ e_{20} & e_{21} & e_{22} \end{pmatrix} = \mathbf{R}_z(r)\mathbf{R}_x(p)\mathbf{R}_y(h)
@@ -1958,10 +1956,10 @@ $$\mathbf{E} = \begin{pmatrix} \cos r & \pm \sin r & 0 \\ \sin r & \mp \cos r & 
 </ul>
 </li>
 </ul>
-<h2 id="423-矩阵分解">
+<h3 id="423-矩阵分解">
 <a class="header-anchor" href="#423-%e7%9f%a9%e9%98%b5%e5%88%86%e8%a7%a3"></a>
 4.2.3 矩阵分解
-</h2><ul>
+</h3><ul>
 <li>从串联矩阵中检索各种变换（如缩放、旋转、平移、错切）的任务。</li>
 <li>用途：
 <ul>
@@ -1976,10 +1974,10 @@ $$\mathbf{E} = \begin{pmatrix} \cos r & \pm \sin r & 0 \\ \sin r & \mp \cos r & 
 <li>分离旋转、缩放和错切更复杂。</li>
 <li>Thomas、Goldman、Shoemake 等人提出了相关算法。Shoemake的算法适用于仿射矩阵，与参考系无关，并尝试分解矩阵以获得刚体变换。</li>
 </ul>
-<h2 id="424-绕任意轴旋转">
+<h3 id="424-绕任意轴旋转">
 <a class="header-anchor" href="#424-%e7%bb%95%e4%bb%bb%e6%84%8f%e8%bd%b4%e6%97%8b%e8%bd%ac"></a>
 4.2.4 绕任意轴旋转
-</h2><ul>
+</h3><ul>
 <li>
 <p>目标：创建一个变换，使实体绕归一化轴 $\mathbf{r}$ 旋转 $\alpha$ 弧度。</p>
 </li>
@@ -2018,10 +2016,10 @@ $$\mathbf{R} = \begin{pmatrix} \cos\phi + (1-\cos\phi)r_x^2 & (1-\cos\phi)r_x r_
 (这是一个3x3矩阵，需要扩展到4x4用于齐次坐标) (基于公式4.30)</p>
 </li>
 </ul>
-<h1 id="43-四元数">
+<h2 id="43-四元数">
 <a class="header-anchor" href="#43-%e5%9b%9b%e5%85%83%e6%95%b0"></a>
 4.3 四元数
-</h1><ul>
+</h2><ul>
 <li>1843年由哈密顿发明，1985年由Shoemake引入计算机图形学。</li>
 <li>用于表示旋转和方向。优于欧拉角和矩阵：
 <ul>
@@ -2031,10 +2029,10 @@ $$\mathbf{R} = \begin{pmatrix} \cos\phi + (1-\cos\phi)r_x^2 & (1-\cos\phi)r_x r_
 </li>
 <li>四元数有四个部分，通常表示为 $\hat{\mathbf{q}}$。</li>
 </ul>
-<h2 id="431-数学背景">
+<h3 id="431-数学背景">
 <a class="header-anchor" href="#431-%e6%95%b0%e5%ad%a6%e8%83%8c%e6%99%af"></a>
 4.3.1 数学背景
-</h2><ul>
+</h3><ul>
 <li><strong>定义</strong>：一个四元数 $\hat{\mathbf{q}}$
 $$\hat{\mathbf{q}} = (\mathbf{q}_v, q_w) = iq_x + jq_y + kq_z + q_w = \mathbf{q}_v + q_w$$
 其中 $\mathbf{q}_v = (q_x, q_y, q_z)$ 是虚部，$q_w$ 是实部。
@@ -2057,10 +2055,10 @@ $i, j, k$ 是虚数单位：$i^2 = j^2 = k^2 = -1$，$jk = -kj = i$, $ki = -ik =
 <li><strong>对数</strong>：$\log(\hat{\mathbf{q}}) = \phi \mathbf{u}_q$ (4.42)</li>
 <li><strong>幂</strong>：$\hat{\mathbf{q}}^t = \sin(\phi t)\mathbf{u}_q + \cos(\phi t)$ (4.42)</li>
 </ul>
-<h2 id="432-四元数变换">
+<h3 id="432-四元数变换">
 <a class="header-anchor" href="#432-%e5%9b%9b%e5%85%83%e6%95%b0%e5%8f%98%e6%8d%a2"></a>
 4.3.2 四元数变换
-</h2><ul>
+</h3><ul>
 <li>
 <p>单位四元数可以表示任何三维旋转。</p>
 </li>
@@ -2146,10 +2144,10 @@ $$\mathbf{R}(\mathbf{s}, \mathbf{t}) = \begin{pmatrix} e+hv_x^2 & hv_x v_y - v_z
 </ul>
 </li>
 </ul>
-<h1 id="44-顶点混合-vertex-blending">
+<h2 id="44-顶点混合-vertex-blending">
 <a class="header-anchor" href="#44-%e9%a1%b6%e7%82%b9%e6%b7%b7%e5%90%88-vertex-blending"></a>
 4.4 顶点混合 (Vertex Blending)
-</h1><ul>
+</h2><ul>
 <li>也称线性混合蒙皮 (linear-blend skinning)，包络 (enveloping)，骨骼子空间变形 (skeleton-subspace deformation)。</li>
 <li>解决刚性部件在关节处动画不自然的问题（如肘部）。</li>
 <li>方法：
@@ -2178,10 +2176,10 @@ $$\mathbf{u}(t) = \sum_{i=0}^{n-1} w_i \mathbf{B}_i(t) \mathbf{M}_i^{-1} \mathbf
 <li>改进：双四元数 (Dual Quaternions) 蒙皮。有助于保持原始变换的刚性，避免扭曲。计算成本略高于线性混合。但可能导致膨胀效应。</li>
 <li>其他替代方案：旋转中心蒙皮 (center-of-rotation skinning)。</li>
 </ul>
-<h1 id="45-变形-morphing">
+<h2 id="45-变形-morphing">
 <a class="header-anchor" href="#45-%e5%8f%98%e5%bd%a2-morphing"></a>
 4.5 变形 (Morphing)
-</h1><ul>
+</h2><ul>
 <li>
 <p>从一个三维模型平滑过渡到另一个三维模型。</p>
 </li>
@@ -2216,10 +2214,10 @@ $$\mathbf{M} = \mathbf{N} + \sum_{i=1}^k w_i \mathbf{D}_i$$
 </ul>
 </li>
 </ul>
-<h1 id="46-几何缓存回放-geometry-cache-playback">
+<h2 id="46-几何缓存回放-geometry-cache-playback">
 <a class="header-anchor" href="#46-%e5%87%a0%e4%bd%95%e7%bc%93%e5%ad%98%e5%9b%9e%e6%94%be-geometry-cache-playback"></a>
 4.6 几何缓存回放 (Geometry Cache Playback)
-</h1><ul>
+</h2><ul>
 <li>用于过场动画等需要极高质量动画的场景。</li>
 <li>朴素方法：存储所有帧的所有顶点，数据量巨大。</li>
 <li>Gneiting 提出的减少内存成本的方法（可达10%）：
@@ -2237,18 +2235,18 @@ $$\mathbf{M} = \mathbf{N} + \sum_{i=1}^k w_i \mathbf{D}_i$$
 </ul>
 </li>
 </ul>
-<h1 id="47-投影-projections">
+<h2 id="47-投影-projections">
 <a class="header-anchor" href="#47-%e6%8a%95%e5%bd%b1-projections"></a>
 4.7 投影 (Projections)
-</h1><ul>
+</h2><ul>
 <li>在渲染场景之前，所有相关对象必须投影到某个平面或简单体积中。</li>
 <li>透视投影矩阵会影响w分量，并且其底行通常不是 (0 0 0 1)。通常需要齐次化。</li>
 <li>本节假设观察者沿相机负z轴观看，y轴向上，x轴向右（右手坐标系）。</li>
 </ul>
-<h2 id="471-正交投影-orthographic-projection">
+<h3 id="471-正交投影-orthographic-projection">
 <a class="header-anchor" href="#471-%e6%ad%a3%e4%ba%a4%e6%8a%95%e5%bd%b1-orthographic-projection"></a>
 4.7.1 正交投影 (Orthographic Projection)
-</h2><ul>
+</h3><ul>
 <li>特点：平行线在投影后仍然平行。对象大小不随与相机距离而改变。</li>
 <li>简单正交投影矩阵 $\mathbf{P}_o$ (投影到 $z=0$ 平面)：
 $$\mathbf{P}_o = \begin{pmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$
@@ -2278,10 +2276,10 @@ $$\mathbf{P}_{o[0,1]} = \begin{pmatrix} \frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l}
 (4.66)
 (同样，如果 $n>f$, $f-n$ 为负。) (通常以转置形式显示)</li>
 </ul>
-<h2 id="472-透视投影-perspective-projection">
+<h3 id="472-透视投影-perspective-projection">
 <a class="header-anchor" href="#472-%e9%80%8f%e8%a7%86%e6%8a%95%e5%bd%b1-perspective-projection"></a>
 4.7.2 透视投影 (Perspective Projection)
-</h2><ul>
+</h3><ul>
 <li>
 <p>平行线通常在投影后不再平行，可能汇聚到一点。物体越远显得越小。</p>
 </li>
@@ -2353,10 +2351,10 @@ $z_{NDC} = d - e/p_z$ (4.78) (对于OpenGL投影, $z_{NDC} \in [-1,1]$)</li>
 </ul>
 </li>
 </ul>
-<h1 id="48-延伸阅读和资源">
+<h2 id="48-延伸阅读和资源">
 <a class="header-anchor" href="#48-%e5%bb%b6%e4%bc%b8%e9%98%85%e8%af%bb%e5%92%8c%e8%b5%84%e6%ba%90"></a>
 4.8 延伸阅读和资源
-</h1><ul>
+</h2><ul>
 <li>交互式线性代数网站 [1718]。</li>
 <li>Farin and Hansford《The Geometry Toolbox》[461]。</li>
 <li>Lengyel《Mathematics for 3D Game Programming and Computer Graphics》[1025]。</li>
@@ -2401,7 +2399,7 @@ $z_{NDC} = d - e/p_z$ (4.78) (对于OpenGL投影, $z_{NDC} \in [-1,1]$)</li>
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -2511,47 +2509,46 @@ $z_{NDC} = d - e/p_z$ (4.78) (对于OpenGL投影, $z_{NDC} \in [-1,1]$)</li>
         <li><a href="#进一步阅读和资源">进一步阅读和资源</a></li>
       </ul>
     </li>
-    <li><a href="#第4章-变换">第4章 变换</a>
+    <li><a href="#第四章-变换">第四章 变换</a>
       <ul>
-        <li><a href="#表41-本章讨论的大多数变换的总结">表4.1 本章讨论的大多数变换的总结</a></li>
+        <li><a href="#41-基本变换">4.1 基本变换</a>
+          <ul>
+            <li><a href="#411-平移">4.1.1 平移</a></li>
+            <li><a href="#412-旋转">4.1.2 旋转</a></li>
+            <li><a href="#413-缩放">4.1.3 缩放</a></li>
+            <li><a href="#414-错切">4.1.4 错切</a></li>
+            <li><a href="#415-变换的串联">4.1.5 变换的串联</a></li>
+            <li><a href="#416-刚体变换">4.1.6 刚体变换</a></li>
+            <li><a href="#417-法线变换">4.1.7 法线变换</a></li>
+            <li><a href="#418-逆的计算">4.1.8 逆的计算</a></li>
+          </ul>
+        </li>
+        <li><a href="#42-特殊矩阵变换和操作">4.2 特殊矩阵变换和操作</a>
+          <ul>
+            <li><a href="#421-欧拉变换">4.2.1 欧拉变换</a></li>
+            <li><a href="#422-从欧拉变换中提取参数">4.2.2 从欧拉变换中提取参数</a></li>
+            <li><a href="#423-矩阵分解">4.2.3 矩阵分解</a></li>
+            <li><a href="#424-绕任意轴旋转">4.2.4 绕任意轴旋转</a></li>
+          </ul>
+        </li>
+        <li><a href="#43-四元数">4.3 四元数</a>
+          <ul>
+            <li><a href="#431-数学背景">4.3.1 数学背景</a></li>
+            <li><a href="#432-四元数变换">4.3.2 四元数变换</a></li>
+          </ul>
+        </li>
+        <li><a href="#44-顶点混合-vertex-blending">4.4 顶点混合 (Vertex Blending)</a></li>
+        <li><a href="#45-变形-morphing">4.5 变形 (Morphing)</a></li>
+        <li><a href="#46-几何缓存回放-geometry-cache-playback">4.6 几何缓存回放 (Geometry Cache Playback)</a></li>
+        <li><a href="#47-投影-projections">4.7 投影 (Projections)</a>
+          <ul>
+            <li><a href="#471-正交投影-orthographic-projection">4.7.1 正交投影 (Orthographic Projection)</a></li>
+            <li><a href="#472-透视投影-perspective-projection">4.7.2 透视投影 (Perspective Projection)</a></li>
+          </ul>
+        </li>
+        <li><a href="#48-延伸阅读和资源">4.8 延伸阅读和资源</a></li>
       </ul>
     </li>
-    <li><a href="#41-基本变换">4.1 基本变换</a>
-      <ul>
-        <li><a href="#411-平移">4.1.1 平移</a></li>
-        <li><a href="#412-旋转">4.1.2 旋转</a></li>
-        <li><a href="#413-缩放">4.1.3 缩放</a></li>
-        <li><a href="#414-错切">4.1.4 错切</a></li>
-        <li><a href="#415-变换的串联">4.1.5 变换的串联</a></li>
-        <li><a href="#416-刚体变换">4.1.6 刚体变换</a></li>
-        <li><a href="#417-法线变换">4.1.7 法线变换</a></li>
-        <li><a href="#418-逆的计算">4.1.8 逆的计算</a></li>
-      </ul>
-    </li>
-    <li><a href="#42-特殊矩阵变换和操作">4.2 特殊矩阵变换和操作</a>
-      <ul>
-        <li><a href="#421-欧拉变换">4.2.1 欧拉变换</a></li>
-        <li><a href="#422-从欧拉变换中提取参数">4.2.2 从欧拉变换中提取参数</a></li>
-        <li><a href="#423-矩阵分解">4.2.3 矩阵分解</a></li>
-        <li><a href="#424-绕任意轴旋转">4.2.4 绕任意轴旋转</a></li>
-      </ul>
-    </li>
-    <li><a href="#43-四元数">4.3 四元数</a>
-      <ul>
-        <li><a href="#431-数学背景">4.3.1 数学背景</a></li>
-        <li><a href="#432-四元数变换">4.3.2 四元数变换</a></li>
-      </ul>
-    </li>
-    <li><a href="#44-顶点混合-vertex-blending">4.4 顶点混合 (Vertex Blending)</a></li>
-    <li><a href="#45-变形-morphing">4.5 变形 (Morphing)</a></li>
-    <li><a href="#46-几何缓存回放-geometry-cache-playback">4.6 几何缓存回放 (Geometry Cache Playback)</a></li>
-    <li><a href="#47-投影-projections">4.7 投影 (Projections)</a>
-      <ul>
-        <li><a href="#471-正交投影-orthographic-projection">4.7.1 正交投影 (Orthographic Projection)</a></li>
-        <li><a href="#472-透视投影-perspective-projection">4.7.2 透视投影 (Perspective Projection)</a></li>
-      </ul>
-    </li>
-    <li><a href="#48-延伸阅读和资源">4.8 延伸阅读和资源</a></li>
   </ul>
 </nav>
   </div>
@@ -2918,47 +2915,46 @@ $z_{NDC} = d - e/p_z$ (4.78) (对于OpenGL投影, $z_{NDC} \in [-1,1]$)</li>
         <li><a href="#进一步阅读和资源">进一步阅读和资源</a></li>
       </ul>
     </li>
-    <li><a href="#第4章-变换">第4章 变换</a>
+    <li><a href="#第四章-变换">第四章 变换</a>
       <ul>
-        <li><a href="#表41-本章讨论的大多数变换的总结">表4.1 本章讨论的大多数变换的总结</a></li>
+        <li><a href="#41-基本变换">4.1 基本变换</a>
+          <ul>
+            <li><a href="#411-平移">4.1.1 平移</a></li>
+            <li><a href="#412-旋转">4.1.2 旋转</a></li>
+            <li><a href="#413-缩放">4.1.3 缩放</a></li>
+            <li><a href="#414-错切">4.1.4 错切</a></li>
+            <li><a href="#415-变换的串联">4.1.5 变换的串联</a></li>
+            <li><a href="#416-刚体变换">4.1.6 刚体变换</a></li>
+            <li><a href="#417-法线变换">4.1.7 法线变换</a></li>
+            <li><a href="#418-逆的计算">4.1.8 逆的计算</a></li>
+          </ul>
+        </li>
+        <li><a href="#42-特殊矩阵变换和操作">4.2 特殊矩阵变换和操作</a>
+          <ul>
+            <li><a href="#421-欧拉变换">4.2.1 欧拉变换</a></li>
+            <li><a href="#422-从欧拉变换中提取参数">4.2.2 从欧拉变换中提取参数</a></li>
+            <li><a href="#423-矩阵分解">4.2.3 矩阵分解</a></li>
+            <li><a href="#424-绕任意轴旋转">4.2.4 绕任意轴旋转</a></li>
+          </ul>
+        </li>
+        <li><a href="#43-四元数">4.3 四元数</a>
+          <ul>
+            <li><a href="#431-数学背景">4.3.1 数学背景</a></li>
+            <li><a href="#432-四元数变换">4.3.2 四元数变换</a></li>
+          </ul>
+        </li>
+        <li><a href="#44-顶点混合-vertex-blending">4.4 顶点混合 (Vertex Blending)</a></li>
+        <li><a href="#45-变形-morphing">4.5 变形 (Morphing)</a></li>
+        <li><a href="#46-几何缓存回放-geometry-cache-playback">4.6 几何缓存回放 (Geometry Cache Playback)</a></li>
+        <li><a href="#47-投影-projections">4.7 投影 (Projections)</a>
+          <ul>
+            <li><a href="#471-正交投影-orthographic-projection">4.7.1 正交投影 (Orthographic Projection)</a></li>
+            <li><a href="#472-透视投影-perspective-projection">4.7.2 透视投影 (Perspective Projection)</a></li>
+          </ul>
+        </li>
+        <li><a href="#48-延伸阅读和资源">4.8 延伸阅读和资源</a></li>
       </ul>
     </li>
-    <li><a href="#41-基本变换">4.1 基本变换</a>
-      <ul>
-        <li><a href="#411-平移">4.1.1 平移</a></li>
-        <li><a href="#412-旋转">4.1.2 旋转</a></li>
-        <li><a href="#413-缩放">4.1.3 缩放</a></li>
-        <li><a href="#414-错切">4.1.4 错切</a></li>
-        <li><a href="#415-变换的串联">4.1.5 变换的串联</a></li>
-        <li><a href="#416-刚体变换">4.1.6 刚体变换</a></li>
-        <li><a href="#417-法线变换">4.1.7 法线变换</a></li>
-        <li><a href="#418-逆的计算">4.1.8 逆的计算</a></li>
-      </ul>
-    </li>
-    <li><a href="#42-特殊矩阵变换和操作">4.2 特殊矩阵变换和操作</a>
-      <ul>
-        <li><a href="#421-欧拉变换">4.2.1 欧拉变换</a></li>
-        <li><a href="#422-从欧拉变换中提取参数">4.2.2 从欧拉变换中提取参数</a></li>
-        <li><a href="#423-矩阵分解">4.2.3 矩阵分解</a></li>
-        <li><a href="#424-绕任意轴旋转">4.2.4 绕任意轴旋转</a></li>
-      </ul>
-    </li>
-    <li><a href="#43-四元数">4.3 四元数</a>
-      <ul>
-        <li><a href="#431-数学背景">4.3.1 数学背景</a></li>
-        <li><a href="#432-四元数变换">4.3.2 四元数变换</a></li>
-      </ul>
-    </li>
-    <li><a href="#44-顶点混合-vertex-blending">4.4 顶点混合 (Vertex Blending)</a></li>
-    <li><a href="#45-变形-morphing">4.5 变形 (Morphing)</a></li>
-    <li><a href="#46-几何缓存回放-geometry-cache-playback">4.6 几何缓存回放 (Geometry Cache Playback)</a></li>
-    <li><a href="#47-投影-projections">4.7 投影 (Projections)</a>
-      <ul>
-        <li><a href="#471-正交投影-orthographic-projection">4.7.1 正交投影 (Orthographic Projection)</a></li>
-        <li><a href="#472-透视投影-perspective-projection">4.7.2 透视投影 (Perspective Projection)</a></li>
-      </ul>
-    </li>
-    <li><a href="#48-延伸阅读和资源">4.8 延伸阅读和资源</a></li>
   </ul>
 </nav>
   </div>
