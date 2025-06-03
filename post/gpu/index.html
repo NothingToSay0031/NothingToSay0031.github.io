@@ -1,0 +1,2540 @@
+<!doctype html>
+<html
+  lang="en-us"
+  
+>
+  <head>
+    <meta charset="utf-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, shrink-to-fit=no"
+/>
+
+
+
+
+
+
+
+  
+
+<title>
+  GPU Architecture Evolution | NothingToSay0031
+</title>
+<meta
+  name="description"
+  content="Dive into the evolution of GPU architecture."
+/>
+
+
+
+
+
+
+
+
+
+
+<script>
+  window.siteConfig = JSON.parse("{\"anchor_icon\":null,\"clipboard\":{\"copyright\":{\"content\":\"本文版权：本博客所有文章除特别声明外，均采用 BY-NC-SA 许可协议。转载请注明出处！\",\"count\":50,\"enable\":false},\"fail\":\"复制失败 (ﾟ⊿ﾟ)ﾂ\",\"success\":\"复制成功(*^▽^*)\"},\"code_block\":{\"expand\":true},\"icon_font\":\"4552607_tq6stt6tcg\",\"outdate\":{\"daysago\":180,\"enable\":false,\"message\":\"本文最后更新于 {time}，请注意文中内容可能已经发生变化。\"}}");
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+  
+
+  
+  
+  
+    
+  
+
+  
+    
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+/>
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css?family=Mulish:400,400italic,700,700italic%7cNoto%20Serif%20SC:400,400italic,700,700italic%7c&amp;display=swap"
+  media="print"
+  onload="this.media='all'"
+/>
+
+
+
+
+
+
+  <link
+    rel="preload"
+    href="//at.alicdn.com/t/c/font_4552607_tq6stt6tcg.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin="anonymous"
+  />
+
+
+
+  
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/loader.min.2ad0e9bbffb534e893c0ecefc44787a277cf851387e8ad9dccfbc3a5f0886dbe.css" />
+
+
+
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="GPU Architecture Evolution | NothingToSay0031" />
+  <meta
+    property="og:description"
+    content="Dive into the evolution of GPU architecture."
+  />
+  <meta property="og:url" content="https://nothingtosay0031.github.io/post/gpu/" />
+  <meta
+    property="og:site_name"
+    content="NothingToSay0031"
+  />
+  <meta
+    property="og:image"
+    content="/"
+  />
+  <meta property="article:author" content="NothingToSay0031" />
+  <meta property="article:published_time" content="2025-06-03T19:25:47&#43;08:00" />
+  <meta property="article:modified_time" content="2025-06-03T19:25:47&#43;08:00" />
+  
+  
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="/" />
+  
+  
+  
+  
+  
+
+
+
+
+<link rel="shortcut icon" href="https://nothingtosay0031.github.io/favicon.ico">
+
+
+
+
+
+
+
+
+  
+ <link rel="stylesheet" href="https://nothingtosay0031.github.io/css/main.min.4e3ed4ec96a449612baa01e942ad2e62fab14c5e1e8f6b3eeb13d1cbc2e0dc67.css" />
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/photoswipe@5.4.4/dist/photoswipe.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+  <link
+    rel="preload"
+    as="style"
+    href="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.css"
+    onload="this.onload=null;this.rel='stylesheet'"
+  />
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/pace-js@1.2.4/pace.min.js"
+    
+    
+    
+    
+    integrity="sha384-k6YtvFUEIuEFBdrLKJ3YAUbBki333tj1CSUisai5Cswsg9wcLNaPzsTHDswp4Az8" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  
+
+
+  <link rel="stylesheet" href="https://npm.webcache.cn/@reimujs/aos@0.1.0/dist/aos.css" />
+
+
+
+
+  </head>
+  <body>
+    
+  <div id='loader'>
+    <div class="loading-left-bg loading-bg"></div>
+    <div class="loading-right-bg loading-bg"></div>
+    <div class="spinner-box">
+      <div class="loading-taichi">
+        
+          <svg width="150" height="150" viewBox="0 0 1024 1024" class="icon" version="1.1" xmlns="https://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+            <path d="M303.5 432A80 80 0 0 1 291.5 592A80 80 0 0 1 303.5 432z" fill="#ff5252" />
+            <path d="M512 65A447 447 0 0 1 512 959L512 929A417 417 0 0 0 512 95A417 417 0 0 0 512 929L512 959A447 447 0 0 1 512 65z 
+          M512 95A417 417 0 0 1 929 512A208.5 208.5 0 0 1 720.5 720.5L720.5 592A80 80 0 0 0 720.5 432A80 80 0 0 0 720.5 592L720.5 720.5A208.5 208.5 0 0 1 512 512A208.5 208.5 0 0 0 303.5 303.5A208.5 208.5 0 0 0 95 512A417 417 0 0 1 512 95z" fill="#ff5252" />
+          </svg>
+        
+      </div>
+      <div class="loading-word">少女祈祷中...</div>
+    </div>
+  </div>
+  </div>
+  <script>
+    var time = null;
+    var startLoading = () => {
+      time = Date.now();
+      document.getElementById('loader').classList.remove("loading");
+    }
+    var endLoading = () => {
+      if (!time) {
+        document.body.style.overflow = 'auto';
+        document.getElementById('loader').classList.add("loading");
+      } else {
+        if (Date.now() - time > 500) {
+          time = null;
+          document.body.style.overflow = 'auto';
+          document.getElementById('loader').classList.add("loading");
+        } else {
+          setTimeout(endLoading, 500 - (Date.now() - time));
+          time = null;
+        }
+      }
+    }
+    window.addEventListener('DOMContentLoaded', endLoading);
+    document.getElementById('loader').addEventListener('click', endLoading);
+  </script>
+
+
+<div id="copy-tooltip" style="pointer-events: none; opacity: 0; transition: all 0.2s ease; position: fixed;top: 50%;left: 50%;z-index: 999;transform: translate(-50%, -50%);color: white;background: rgba(0, 0, 0, 0.5);padding: 10px 15px;border-radius: 10px;">
+</div>
+
+
+    <div id="container">
+      <div id="wrap">
+        
+<div id="header-nav">
+  <nav id="main-nav">
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/">Home</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/archives">Archives</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/about">About</a>
+      </span>
+    
+      <span class="main-nav-link-wrap">
+        <div class='main-nav-icon icon rotate'>
+          
+            
+              &#xe62b;
+            
+          
+        </div>
+        <a class="main-nav-link" href="https://nothingtosay0031.github.io/friend">Friend</a>
+      </span>
+    
+    <a id="main-nav-toggle" class="nav-icon"></a>
+  </nav>
+  <nav id="sub-nav">
+    
+    
+  </nav>
+</div>
+<header id="header">
+  
+    <img fetchpriority="high" src="https://nothingtosay0031.github.io/images/banner.webp" alt="GPU Architecture Evolution">
+  
+
+  <div id="header-outer">
+    <div id="header-title">
+      
+        
+        
+          
+        
+  
+        
+          <a href="https://nothingtosay0031.github.io/" id="logo">
+            <h1 data-aos="slide-up">GPU Architecture Evolution</h1>
+          </a>
+        
+      
+  
+      
+        
+        
+        <h2 id="subtitle-wrap" data-aos="slide-down">
+          
+        </h2>
+      
+    </div>
+  </div>
+</header>
+        <main id="content">
+          
+          <section id="main">
+  <article
+  class="h-entry article"
+  itemprop="blogPost"
+  itemscope
+  itemtype="https://schema.org/BlogPosting"
+>
+  <div
+    class="article-inner"
+    data-aos="fade-up"
+  >
+    <div class="article-meta">
+      <div class="article-date">
+  <a
+    href="https://nothingtosay0031.github.io/post/gpu/"
+    class="article-date-link"
+    data-aos="zoom-in"
+  >
+    <time datetime="2025-06-03 19:25:47 &#43;0800 CST" itemprop="datePublished"
+      >2025-06-03</time
+    >
+    <time style="display: none;" id="post-update-time"
+      >2025-06-03</time
+    >
+  </a>
+</div>
+
+      <div class="article-category">
+  
+</div>
+
+    </div>
+    <div class="hr-line"></div>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+      
+        <p><a href="https://zhuanlan.zhihu.com/p/403345668">Reference</a></p>
+<h2 id="gpu-架构演进从固定管线到-tesla-统一着色器">
+<a class="header-anchor" href="#gpu-%e6%9e%b6%e6%9e%84%e6%bc%94%e8%bf%9b%e4%bb%8e%e5%9b%ba%e5%ae%9a%e7%ae%a1%e7%ba%bf%e5%88%b0-tesla-%e7%bb%9f%e4%b8%80%e7%9d%80%e8%89%b2%e5%99%a8"></a>
+GPU 架构演进：从固定管线到 Tesla 统一着色器
+</h2><h3 id="一gpu-概念的诞生与早期发展">
+<a class="header-anchor" href="#%e4%b8%80gpu-%e6%a6%82%e5%bf%b5%e7%9a%84%e8%af%9e%e7%94%9f%e4%b8%8e%e6%97%a9%e6%9c%9f%e5%8f%91%e5%b1%95"></a>
+一、GPU 概念的诞生与早期发展
+</h3><ol>
+<li>
+<p><strong>GPU 名称的由来</strong>:</p>
+<ul>
+<li>1999年，NVIDIA 发布 GeForce 256 (代号 NV10)，首次将其搭载的芯片称为 GPU (Graphics Processing Unit)，意图与 CPU 平起平坐。</li>
+<li>在此之前，显卡通常被称为“图形加速器”或“显卡”。</li>
+</ul>
+</li>
+<li>
+<p><strong>GeForce 256 的关键特性</strong>:</p>
+<ul>
+<li>将坐标变换、灯光照明、三角形设置/裁剪以及一个每秒能处理一千万个多边形的渲染引擎集成到单一芯片上。</li>
+<li>核心能力：对大量数据执行相同操作 (SIMD)，这是并行计算的基础。</li>
+<li>局限性：仍属于<strong>固定管线 (fixed-pipeline)</strong> 架构，处理的数据操作是内置的，更像是特定算法的加速器。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二走向可编程性的-gpu-时代">
+<a class="header-anchor" href="#%e4%ba%8c%e8%b5%b0%e5%90%91%e5%8f%af%e7%bc%96%e7%a8%8b%e6%80%a7%e7%9a%84-gpu-%e6%97%b6%e4%bb%a3"></a>
+二、走向可编程性的 GPU 时代
+</h3><p>为了克服固定管线的局限性，GPU 开始朝着可编程性发展：</p>
+<ol>
+<li>
+<p><strong>GeForce 3 (2001年, NVIDIA)</strong>:</p>
+<ul>
+<li>引入了<strong>顶点着色器 (Vertex Shader)</strong>。</li>
+<li>拥有可配置的片元管线。</li>
+<li>进入 DirectX 8 时代。</li>
+</ul>
+</li>
+<li>
+<p><strong>Radeon 9700 (2002年, ATI)</strong>:</p>
+<ul>
+<li>支持24位可编程的<strong>片元着色器 (Fragment Shader/Pixel Shader)</strong>。</li>
+<li>全面拥抱 DirectX 9。</li>
+</ul>
+</li>
+<li>
+<p><strong>GeForce FX (2003年, NVIDIA)</strong>:</p>
+<ul>
+<li>支持32位可编程片元着色器。</li>
+</ul>
+</li>
+</ol>
+<p>这一时期的核心主题是：<strong>GPU 可编程性的不断提高</strong>。</p>
+<h3 id="三tesla-架构的登场统一着色器的革命">
+<a class="header-anchor" href="#%e4%b8%89tesla-%e6%9e%b6%e6%9e%84%e7%9a%84%e7%99%bb%e5%9c%ba%e7%bb%9f%e4%b8%80%e7%9d%80%e8%89%b2%e5%99%a8%e7%9a%84%e9%9d%a9%e5%91%bd"></a>
+三、Tesla 架构的登场：统一着色器的革命
+</h3><ol>
+<li>
+<p><strong>发布时间</strong>: 2006年，NVIDIA 随 GeForce 8000 系列推出了基于 Tesla 架构的 GPU。</p>
+</li>
+<li>
+<p><strong>核心创新</strong>: 首次采用<strong>统一着色器设计 (Unified Shader Design)</strong>。</p>
+</li>
+<li>
+<p><strong>统一着色器设计的背景与原因</strong>:</p>
+<ul>
+<li><strong>传统分离设计</strong>:
+<ul>
+<li><strong>顶点计算单元</strong>: 为坐标变换设计，特点是低延迟、高精度数学运算。因任务复杂，最早实现可编程性。</li>
+<li><strong>片元计算单元</strong>: 为纹理过滤设计，特点是高延迟、低精度。</li>
+</ul>
+</li>
+<li><strong>问题与挑战</strong>:
+<ul>
+<li><strong>功能重叠</strong>: 随着可编程性的发展，顶点和片元计算单元功能上出现越来越多的重合。</li>
+<li><strong>负载不均</strong>:
+<ul>
+<li>通常顶点与片元计算单元数量比约为 1:3。</li>
+<li>不同程序对顶点和片元处理量的需求差异巨大，难以提前确定最佳比例。</li>
+<li>处理大三角形时，顶点单元空闲；处理小三角形时，片元单元空闲。</li>
+<li>DirectX 10 推出的几何着色器 (Geometry Shader) 进一步增加了负载的不可预测性。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>统一设计的优势</strong>:
+<ul>
+<li><strong>灵活性</strong>: &ldquo;全栈工程师&quot;式的设计，可以根据需求处理顶点、片元等多种任务。</li>
+<li><strong>效率</strong>: 更好地平衡工作负载，避免资源闲置。</li>
+<li><strong>可扩展性</strong>: 为未来 GPU 执行更多通用计算任务奠定基础。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Tesla 架构的意义</strong>:</p>
+<ul>
+<li>奠定了现代 GPU 的基础设施框架和设计思想，历久弥新。</li>
+</ul>
+</li>
+</ol>
+<h3 id="四tesla-架构详解">
+<a class="header-anchor" href="#%e5%9b%9btesla-%e6%9e%b6%e6%9e%84%e8%af%a6%e8%a7%a3"></a>
+四、Tesla 架构详解
+</h3><p>Tesla 架构虽然与现代 GPU 相比核心数量较少，但五脏俱全，是理解 GPU 架构的良好起点。</p>
+<p><img src="https://pica.zhimg.com/v2-3b955d24d33d0159669e2ae5e8d25d32_1440w.jpg" alt="alt text"></p>
+<p><strong>主要组件及功能</strong>:</p>
+<ol>
+<li>
+<p><strong>Host Interface (主机接口)</strong>:</p>
+<ul>
+<li>与 CPU 通信，负责接收来自 CPU 的指令和数据。</li>
+<li>处理 GPU 在不同任务间的上下文切换。</li>
+<li>从系统内存获取待处理数据 (顶点数据、纹理数据、各种 buffer 等)，存入显存。</li>
+</ul>
+</li>
+<li>
+<p><strong>Input Assembler (IA, 输入装配器)</strong>:</p>
+<ul>
+<li>根据顶点索引和图元类型组装从 CPU 传入的顶点数据。</li>
+<li>为顶点数据搭配相应的顶点属性。</li>
+<li>将组装好的数据传递给顶点工作分发单元。</li>
+</ul>
+</li>
+<li>
+<p><strong>Vertex, Pixel, Compute Work Distribution (顶点、像素、计算工作分发单元)</strong>:</p>
+<ul>
+<li>负责将各自领域 (顶点着色、片元/像素着色、计算着色) 的具体工作任务分发给底层的 TPC/SM。</li>
+</ul>
+</li>
+<li>
+<p><strong>TPC (Texture Processing Clusters, 纹理处理簇)</strong>:</p>
+<ul>
+<li>核心的计算单元，是统一着色器架构的具体体现。</li>
+<li>每个 TPC 内部包含：
+<ul>
+<li>1个 <strong>纹理单元 (Texture Unit)</strong>。</li>
+<li>2个 <strong>SM (Streaming Multiprocessor, 流式多处理器)</strong>，负责实际的计算任务。</li>
+</ul>
+</li>
+<li>TPC/SM 负责完成顶点、片元、计算等所有着色器任务。</li>
+</ul>
+</li>
+<li>
+<p><strong>Viewport/Clip/Setup/Raster/Zcull Block (视口/裁剪/设置/光栅化/Z剔除模块)</strong>:</p>
+<ul>
+<li>处理顶点着色器输出的裁剪坐标 (此时尚未进行透视除法)。</li>
+<li>负责视口变换、裁剪、三角形设置 (计算边方程等)、光栅化 (将矢量图形转换为像素片元)、Z剔除 (早期深度测试剔除被遮挡片元) 等固定功能。</li>
+</ul>
+</li>
+<li>
+<p><strong>ROP (Raster Operations Processor, 光栅操作处理器)</strong>:</p>
+<ul>
+<li>在片元着色器处理完毕后，对像素进行最终测试和混合操作。</li>
+<li>功能包括：
+<ul>
+<li>深度测试 (Depth Test) 和模板测试 (Stencil Test) 及写入。</li>
+<li>颜色混合 (Color Blending)。</li>
+<li>抗锯齿 (Anti-aliasing)。</li>
+</ul>
+</li>
+<li>负责将最终像素颜色数据写入帧缓冲 (Framebuffer)。</li>
+</ul>
+</li>
+<li>
+<p><strong>L2 Cache (二级缓存)、Memory Controller (显存控制器) 和 DRAM (显存)</strong>:</p>
+<ul>
+<li>通常有多组 (图中为6组)，每组由 ROP、L2 Cache、Memory Controller 和对应的 DRAM 物理显存部分构成。</li>
+<li>L2 Cache 作为 SM 和 ROP 访问显存的共享缓存。</li>
+<li>Memory Controller 负责管理对 DRAM 的数据读写请求，合并请求、根据优先级调度，以最大化数据传输效率。</li>
+<li>DRAM (显存) 用于存储顶点数据、纹理、帧缓冲等 GPU 处理所需和产生的全部数据。</li>
+</ul>
+</li>
+</ol>
+<p><strong>总结</strong>: Tesla 架构通过统一的 TPC/SM 结构实现了计算资源的灵活调度和高效利用，其分层、并行的设计思想对后续 GPU 发展产生了深远影响。</p>
+<h2 id="tesla-架构tpcsm-与并行计算核心机制">
+<a class="header-anchor" href="#tesla-%e6%9e%b6%e6%9e%84tpcsm-%e4%b8%8e%e5%b9%b6%e8%a1%8c%e8%ae%a1%e7%ae%97%e6%a0%b8%e5%bf%83%e6%9c%ba%e5%88%b6"></a>
+Tesla 架构：TPC、SM 与并行计算核心机制
+</h2><h3 id="一tpc-纹理处理簇-内部结构与功能">
+<a class="header-anchor" href="#%e4%b8%80tpc-%e7%ba%b9%e7%90%86%e5%a4%84%e7%90%86%e7%b0%87-%e5%86%85%e9%83%a8%e7%bb%93%e6%9e%84%e4%b8%8e%e5%8a%9f%e8%83%bd"></a>
+一、TPC (纹理处理簇) 内部结构与功能
+</h3><p><img src="https://pic4.zhimg.com/v2-92ec0098ff0107284729aa27e9069d8f_1440w.jpg" alt="alt text">
+TPC (Texture Processing Clusters) 是 Tesla 架构中执行具体工作的主要单元。一个 GPU 内通常有多个 TPC。</p>
+<ol>
+<li>
+<p><strong>Geometry Controller (几何控制器)</strong>:</p>
+<ul>
+<li><strong>职责</strong>: 管理光栅化之前的几何阶段，包括顶点属性在芯片内的输入输出。处理几何着色器 (Geometry Shader) 中增减顶点、改变拓扑结构的操作。</li>
+<li><strong>运算执行</strong>: 顶点着色器和几何着色器的运算指令仍由 SM 执行。</li>
+<li><strong>数据流向</strong>: 将最终结果送往 <code>Viewport/clip/setup/raster/zcull block</code> 模块进行光栅化，或通过 Stream Out 输出回内存。</li>
+<li><strong>后续演进</strong>: 在 Fermi 架构中被升级为 PolyMorph Engine。</li>
+</ul>
+</li>
+<li>
+<p><strong>SMC (SM Controller, SM 控制器)</strong>:</p>
+<ul>
+<li><strong>职责</strong>: 作为 TPC 内的高层管理者，负责将来自上层分发的各种任务 (顶点、几何、片元着色器，以及 CUDA 等并行运算任务) 拆分打包成 <strong>Warp</strong>，并交给其内部的 SM 处理。</li>
+<li><strong>资源协调</strong>:
+<ul>
+<li>协调 SM 与共享的 Texture Unit 之间工作，以获取外部纹理资源。</li>
+<li>通过 ROP (光栅操作处理器) 与外界进行显存中其他非纹理资源的读写及原子操作。</li>
+</ul>
+</li>
+<li><strong>核心功能</strong>: 对接外部资源，进行内部任务分配，实现负载平衡。</li>
+</ul>
+</li>
+<li>
+<p><strong>Texture Unit (纹理单元)</strong>:</p>
+<ul>
+<li><strong>构成</strong>: 例如，包含4个纹理地址生成器和8个滤波单元 (支持全速的2:1各向异性过滤)。</li>
+<li><strong>指令特性</strong>: 与 SM 内的标量运算不同，纹理单元指令源是纹理坐标 (向量)，输出是经过插值的纹理值 (如RGBA，向量)。</li>
+<li><strong>缓存</strong>: 获取到的纹理数据会存放在 <strong>Tex L1 cache</strong> 中。</li>
+</ul>
+</li>
+<li>
+<p><strong>SM (Streaming Multiprocessor, 流式多处理器)</strong>: 最底层的运算执行单元。</p>
+<ul>
+<li><strong>I-Cache (Instruction Cache, 指令缓存)</strong>: 缓存来自 SMC 的大量指令，分批执行。</li>
+<li><strong>C-Cache (Constant Cache, 常量缓存)</strong> 与 <strong>Shared Memory (共享内存)</strong>: 用于通用计算 (CUDA)，后续章节详解。</li>
+<li><strong>MT Issue (Multi-threaded Issue, 多线程指令发射单元)</strong>: SM 内部的调度核心。
+<ul>
+<li>负责将 Warp 任务进一步拆分成一条条指令，分发给 SP 和 SFU 执行。</li>
+<li>其对 Warp 的调度是 GPU 并行能力的关键。</li>
+</ul>
+</li>
+<li><strong>SP (Streaming Processor, 流处理器)</strong>:
+<ul>
+<li>主要的计算单元，执行基本的浮点型标量运算 (如 add, multiply, multiply-add) 和各种整数运算。</li>
+</ul>
+</li>
+<li><strong>SFU (Special Function Unit, 特殊功能单元)</strong>:
+<ul>
+<li>执行更复杂的运算，例如：
+<ul>
+<li>超越函数 (指数、对数、三角函数等)。</li>
+<li>属性插值 (将顶点属性插值到光栅化后的每个片元)。</li>
+<li>透视校正插值 (先插值除以w的属性，插值完再乘回w)。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="二warpgpu-并行执行的基础">
+<a class="header-anchor" href="#%e4%ba%8cwarpgpu-%e5%b9%b6%e8%a1%8c%e6%89%a7%e8%a1%8c%e7%9a%84%e5%9f%ba%e7%a1%80"></a>
+二、Warp：GPU 并行执行的基础
+</h3><ol>
+<li>
+<p><strong>指令流</strong>:</p>
+<ul>
+<li>高级着色器代码或 CUDA Kernel 程序 -&gt; 编译成中间指令 -&gt; 优化器转化为二进制 GPU 指令。</li>
+<li>Tesla 架构中，运算 SIMD 指令的计算单元已被移除，向量指令 (如4维向量相加) 会被拆分成多条 SM 标量指令 (如4个标量相加)。</li>
+</ul>
+</li>
+<li>
+<p><strong>ISA (Instruction Set Architecture, 指令集架构)</strong> 主要类型:</p>
+<ul>
+<li><strong>运算指令</strong>: 浮点/整数加法、乘法、最小/最大值、比较、类型转换、超越函数等。</li>
+<li><strong>流控制指令</strong>: 分支、调用、返回、中断、同步。</li>
+<li><strong>内存访问指令</strong>: 对各类内存的读写、原子操作。</li>
+</ul>
+</li>
+<li>
+<p><strong>Warp 定义与执行</strong>:</p>
+<ul>
+<li>SMC 将需要执行相同着色器/Kernel 指令的 <strong>32个线程</strong> 组成一个 <strong>Warp</strong>。</li>
+<li>一个 Warp 的所有指令存储在 SM 的 I-Cache 中。</li>
+<li>MT Issue 单元每次从 Warp 中取一条指令，分发给 SP 或 SFU。</li>
+<li>一个 SM 内的 SP 数量 (如8个) 通常少于 Warp 中的线程数 (32个)。因此，SP 需要多个周期 (如 32线程 / 8SP = 4个周期) 才能完成 Warp 中所有线程对单条指令的执行。</li>
+<li>这种执行模式称为 <strong>SIMT (Single Instruction, Multiple Thread, 单指令多线程)</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>分支发散 (Branch Divergence)</strong>:</p>
+<ul>
+<li><strong>问题</strong>: 由于每个线程的输入数据不同，一个 Warp 内的不同线程可能会在条件分支处进入不同的执行路径。</li>
+<li><strong>处理机制</strong>:
+<ul>
+<li><strong>编译器预测</strong>: 在某些情况下，编译器可以判断 Warp 中所有线程是否必然进入同一分支。</li>
+<li><strong>Warp Voting (Warp表决)</strong>: 若无法预测，则在执行时进行硬件表决。如果所有线程仍走同一分支，则跳过其他分支。</li>
+<li><strong>串行化 (Serialization)</strong>: 如果线程进入不同分支，则这些不同分支路径必须串行执行。不进入当前执行分支的线程将被 <strong>屏蔽 (Masked)</strong> 并等待。即使只有一个线程进入某个分支，其他31个线程也必须等待。</li>
+</ul>
+</li>
+<li><strong>代价</strong>: 为了实现一条指令指挥32个线程的效率，牺牲了部分灵活性，这是锁步运行 (Lock-step execution) 的特性。</li>
+</ul>
+</li>
+</ol>
+<h3 id="三延迟隐藏-latency-hiding榨干硬件性能的关键">
+<a class="header-anchor" href="#%e4%b8%89%e5%bb%b6%e8%bf%9f%e9%9a%90%e8%97%8f-latency-hiding%e6%a6%a8%e5%b9%b2%e7%a1%ac%e4%bb%b6%e6%80%a7%e8%83%bd%e7%9a%84%e5%85%b3%e9%94%ae"></a>
+三、延迟隐藏 (Latency Hiding)：榨干硬件性能的关键
+</h3><ol>
+<li>
+<p><strong>核心挑战</strong>: 硬件计算速度远快于内存访问速度，内存访问延迟是主要瓶颈。</p>
+</li>
+<li>
+<p><strong>延迟隐藏机制</strong>:</p>
+<ul>
+<li>当一个 Warp 中的线程遇到内存访问指令 (由 SMC 向外界请求数据)，会导致执行停顿。</li>
+<li>为了避免 SP 空闲，MT Issue 单元会<strong>快速切换</strong>到另一个已就绪、可以执行的 Warp 上继续执行。</li>
+<li>SM 内的 <strong>I-Cache</strong> 能够存储足够多 Warp 的指令 (Tesla 架构最多支持24个活动 Warp，可以是不同类型)，支持这种快速切换。</li>
+<li>当之前等待数据的 Warp 获取到数据后，它可以被重新调度执行。</li>
+<li><strong>目标</strong>: 通过在多个 Warp 之间快速切换，保持计算单元 (SP、SFU) 持续繁忙，隐藏内存延迟。</li>
+</ul>
+</li>
+<li>
+<p><strong>Warp 调度策略</strong>:</p>
+<ul>
+<li>MT Issue 单元从多个待执行的 Warp 中挑选一个来执行其下一条指令。</li>
+<li><strong>计分板 (Scoreboarding)</strong> 机制：根据 Warp 类型、指令类型和公平性原则等因素为每个待选 Warp打分。</li>
+<li>MT Issue 每两个处理器周期从中挑选一个得分最高的 Warp，分配给对应的计算单元 (SP 或 SFU) 执行。</li>
+<li><strong>指令分发频率</strong>: 例如，每两个处理器周期分发一次指令。这种频率设计是为了保证 MT Issue 有充足的时间为 SP 和 SFU 分配任务，使所有计算单元都能满负荷运转。
+<ul>
+<li>例如，若 SP 执行 Warp 的一条指令需要4个周期，而 MT Issue 2个周期分发一次，可以确保在 SP 忙碌时，SFU 也能被调度任务。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Warp 粒度的影响</strong>:</p>
+<ul>
+<li><strong>粒度过粗 (Warp 数量少)</strong>: 可供调度的 Warp 不足，不利于有效隐藏延迟。</li>
+<li><strong>粒度过细 (单个 Warp 执行的线程少)</strong>: 每次切换 Warp 的相对开销变高。 (32线程/Warp 是一个长期实践中相对优化的选择)</li>
+</ul>
+</li>
+</ol>
+<p><strong>总结</strong>: Warp 调度和延迟隐藏是 GPU 高性能并行运算的核心。通过精心设计的硬件单元 (TPC, SMC, SM, SP, SFU) 和调度机制 (MT Issue, Warp, SIMT)，Tesla 架构旨在最大限度地利用每一个计算资源，榨干硬件性能，即使这意味着复杂的内部管理和调度。这一核心思想贯穿了后续 GPU 架构的发展。</p>
+<h2 id="tesla-架构通用计算及其内存体系">
+<a class="header-anchor" href="#tesla-%e6%9e%b6%e6%9e%84%e9%80%9a%e7%94%a8%e8%ae%a1%e7%ae%97%e5%8f%8a%e5%85%b6%e5%86%85%e5%ad%98%e4%bd%93%e7%b3%bb"></a>
+Tesla 架构：通用计算及其内存体系
+</h2><h3 id="一从图形处理到通用计算-gpgpu">
+<a class="header-anchor" href="#%e4%b8%80%e4%bb%8e%e5%9b%be%e5%bd%a2%e5%a4%84%e7%90%86%e5%88%b0%e9%80%9a%e7%94%a8%e8%ae%a1%e7%ae%97-gpgpu"></a>
+一、从图形处理到通用计算 (GPGPU)
+</h3><ol>
+<li>
+<p><strong>SM 的通用性</strong>:</p>
+<ul>
+<li>GPU 的核心计算单元 SM (Streaming Multiprocessor) 本质上已与图形处理解耦，成为通用的并行计算单元。</li>
+<li>NVIDIA 有意将图形相关的固定操作 (如光栅化) 剥离到独立硬件单元 (如 Geometry Controller, Rasterizer)，使 SM 能专注于更广泛的并行计算任务。</li>
+</ul>
+</li>
+<li>
+<p><strong>图形管线 vs. 通用计算管线</strong>:</p>
+<ul>
+<li><strong>图形管线</strong>:
+<ul>
+<li>流程相对固定，有专门硬件处理不可编程模块以提高效率。</li>
+<li>程序员对线程分配 (如何运行顶点/片元计算) 和数据流 (顶点到片元) 的控制有限，大部分由 GPU 自动管理。</li>
+<li>线程协作模式固定 (如片元着色器中2x2线程组用于计算ddx/ddy差分)。</li>
+</ul>
+</li>
+<li><strong>通用计算管线</strong>:
+<ul>
+<li><strong>程序员完全控制</strong>: 线程的分配、调用、每个线程处理的任务 (计算内容、数据获取与输出) 均由程序员定义。</li>
+<li><strong>协作式线程</strong>: 程序员可以根据线程ID分配不同任务，并设计线程间的数据传递与协作模型。</li>
+<li><strong>性能</strong>: 提供了更高的性能上限 (通过定制化优化)，但也存在性能下限的风险 (若缺乏硬件理解和优化技巧)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>CUDA 与 计算着色器 (Compute Shader)</strong>:</p>
+<ul>
+<li><strong>CUDA (Compute Unified Device Architecture)</strong>: NVIDIA率先推出的通用并行计算平台和编程模型，最初与图形API分离。</li>
+<li><strong>计算着色器</strong>: 后续由各图形API (如DirectX, Vulkan) 引入，允许在图形管线内利用GPU的通用计算能力。底层硬件与CUDA使用的通用计算模型一致。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二线程组织结构-以-cuda-为例">
+<a class="header-anchor" href="#%e4%ba%8c%e7%ba%bf%e7%a8%8b%e7%bb%84%e7%bb%87%e7%bb%93%e6%9e%84-%e4%bb%a5-cuda-%e4%b8%ba%e4%be%8b"></a>
+二、线程组织结构 (以 CUDA 为例)
+</h3><ol>
+<li>
+<p><strong>三级层次结构</strong>: <code>Grid</code> -&gt; <code>Block</code> -&gt; <code>Thread</code></p>
+<ul>
+<li><strong>Thread (线程)</strong>: 最基本的执行单位。</li>
+<li><strong>Block (线程块)</strong>:
+<ul>
+<li>包含一组线程 (数量在核函数中定义)。</li>
+<li>是<strong>协作发生的基本单位</strong> (也称 CTA, Cooperative Thread Array)。</li>
+<li>Block 内的线程可以通过 <strong>共享内存 (Shared Memory)</strong> 高效传递数据并进行同步。</li>
+</ul>
+</li>
+<li><strong>Grid (线程格)</strong>:
+<ul>
+<li>包含一组 Block (数量在应用程序调用时指定)。</li>
+<li>同一个 Grid 内的不同 Block 之间通常是<strong>完全独立</strong>的，默认无直接数据依赖或通信机制 (更高级的同步可通过 &ldquo;Cooperative Groups&rdquo; 等新特性实现)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>线程ID</strong>:</p>
+<ul>
+<li>由于线程与任务的映射由程序员决定，需要唯一的线程ID来区分并分配工作。</li>
+<li>Grid 和 Block 均可组织为一维、二维或三维结构。</li>
+<li>API 提供内置变量 (如 <code>threadIdx</code>, <code>blockIdx</code>, <code>blockDim</code>, <code>gridDim</code> 在CUDA中；DirectX中有类似的 <code>SV_DispatchThreadID</code>, <code>SV_GroupID</code>, <code>SV_GroupThreadID</code>, <code>SV_GroupIndex</code>) 来方便地获取各种维度的线程ID，避免手动计算开销。
+<img src="https://pica.zhimg.com/v2-36f03e7fa80a9530c71ad87faca8034a_1440w.jpg" alt="alt text"></li>
+</ul>
+</li>
+</ol>
+<h3 id="三warp真正的并行与优化核心">
+<a class="header-anchor" href="#%e4%b8%89warp%e7%9c%9f%e6%ad%a3%e7%9a%84%e5%b9%b6%e8%a1%8c%e4%b8%8e%e4%bc%98%e5%8c%96%e6%a0%b8%e5%bf%83"></a>
+三、Warp：真正的并行与优化核心
+</h3><p>尽管上层线程组织复杂，但GPU硬件层面真正的并行执行单位始终是 <strong>Warp</strong> (通常为32个线程)。GPGPU 优化多围绕 Warp 进行：</p>
+<ol>
+<li>
+<p><strong>Block 线程数</strong>:</p>
+<ul>
+<li>建议将每个 Block 分配的线程数设为 Warp 大小 (32) 的整数倍。</li>
+<li>例如，33个线程与64个线程同样需要执行两个 Warp，前者会造成资源浪费。</li>
+</ul>
+</li>
+<li>
+<p><strong>分支一致性 (Branch Coherence)</strong>:</p>
+<ul>
+<li>尽量让同一个 Warp 内的线程执行相同的代码分支。</li>
+<li>如果算法中不同线程需执行不同分支，若能通过任务重排使 Warp1 只执行分支A，Warp2 只执行分支B，可提升性能 (避免Warp内分支发散导致的串行化)。</li>
+</ul>
+</li>
+<li>
+<p><strong>同步 (Synchronization)</strong>:</p>
+<ul>
+<li><strong>Warp 内</strong>: 由于 Warp 内线程锁步执行 (lock-step)，它们之间读取由同一Warp内其他线程写入的数据通常<strong>无需显式同步</strong> (数据已写入)。</li>
+<li><strong>Warp 间</strong>: 若不同 Warp 间存在数据依赖 (如 Warp1 读取 Warp2 写入共享内存的数据)，则<strong>必须同步</strong>。因为 Warp 的调度由硬件决定，对程序员不透明，无法预知Warp2的执行进度。</li>
+</ul>
+</li>
+</ol>
+<h3 id="四gpu-内存层级详解-以-cuda-视角">
+<a class="header-anchor" href="#%e5%9b%9bgpu-%e5%86%85%e5%ad%98%e5%b1%82%e7%ba%a7%e8%af%a6%e8%a7%a3-%e4%bb%a5-cuda-%e8%a7%86%e8%a7%92"></a>
+四、GPU 内存层级详解 (以 CUDA 视角)
+</h3><p>高效的内存访问是支撑 GPU 高速计算的关键。GPU 拥有分级的内存“物流”系统：</p>
+<ol>
+<li>
+<p><strong>全局内存 (Global Memory) 与 L2 缓存 (L2 Cache)</strong>:</p>
+<ul>
+<li><strong>全局内存</strong>: 即显卡上的显存 (DRAM)，容量最大，延迟最高，带宽相对较低。GPU外的存储。</li>
+<li><strong>L2 缓存</strong>: 片上缓存，位于SM之外，可供所有SM共同使用，用于缓存对全局内存的访问。</li>
+<li><strong>Grid 间同步</strong>: 不同 Grid 的执行是串行的。若它们对同一块全局内存数据存在依赖，由硬件负责同步。</li>
+<li><strong>内存合并 (Memory Coalescing)</strong>: 当一个 Warp 中的连续线程访问全局内存中的连续地址时，这些访问可以被硬件合并为更少次数的内存事务，显著提高有效带宽。</li>
+</ul>
+</li>
+<li>
+<p><strong>共享内存 (Shared Memory) 与 L1 缓存 (L1 Cache)</strong>:</p>
+<ul>
+<li><strong>位置</strong>: 位于每个 <strong>SM 内部</strong>，访问速度远快于全局内存和L2缓存。</li>
+<li><strong>共享内存</strong>:
+<ul>
+<li><strong>可见性</strong>: 对同一个 Block 内的所有线程可见并共享。这意味着一个 Block 内的所有线程都在同一个 SM 上执行。</li>
+<li><strong>协作基础</strong>: 是实现 Block 内线程高效协作和数据交换的关键 (例如，并行归约算法如生成Mipmap)。</li>
+<li><strong>Block 间隔离</strong>: 不同 Block 之间通常不能通过共享内存通信 (因为它们可能在不同SM上)。这也是一个Block的最大线程数受限的原因之一 (一个SM能容纳的Warp和资源有限)。</li>
+<li><strong>Bank 冲突 (Bank Conflicts)</strong>:
+<ul>
+<li>共享内存被划分为多个独立的存储体 (Bank，如32个)。每个Bank在一个周期内通常只能服务一个读或写请求 (32位数据)。</li>
+<li>如果一个Warp内的多个线程同时访问映射到<strong>同一个Bank的不同地址</strong>，这些访问会串行化，降低并行度。</li>
+<li><strong>读操作</strong>: 现代硬件通常支持对同一Bank同一地址的广播读取，不会冲突。</li>
+<li><strong>写操作</strong>: 需小心安排内存访问模式，使各线程写入的地址尽可能分布到不同Bank。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>L1 缓存</strong>:
+<ul>
+<li>Tesla架构: L1缓存主要用于缓存纹理数据。</li>
+<li>后续架构: L1缓存通常与共享内存共享同一块片上物理存储单元，其各自的大小可以由用户配置。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>局部内存 (Local Memory) 与 寄存器文件 (Register Files)</strong>:</p>
+<ul>
+<li><strong>寄存器文件 (Register Files)</strong>:
+<ul>
+<li>每个线程私有的最快存储。用于存放局部变量。</li>
+<li>数量有限。</li>
+</ul>
+</li>
+<li><strong>局部内存 (Local Memory)</strong>:
+<ul>
+<li>当线程的局部变量过多，无法全部存放在寄存器中时 (寄存器溢出)，这些变量会被存储到“局部内存”中。</li>
+<li>局部内存在物理上通常是 L1 缓存，如果L1也不足，则可能进一步溢出到L2缓存，甚至全局内存。每次溢出都会带来显著的性能下降。</li>
+</ul>
+</li>
+<li><strong>Shuffle 指令</strong>:
+<ul>
+<li>较新的硬件支持。允许在一个 <strong>Warp 内的线程间直接交换数据</strong> (寄存器级别)，无需通过共享内存读写，速度更快。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="fermi-架构概述">
+<a class="header-anchor" href="#fermi-%e6%9e%b6%e6%9e%84%e6%a6%82%e8%bf%b0"></a>
+Fermi 架构概述
+</h2><h3 id="一背景与目标">
+<a class="header-anchor" href="#%e4%b8%80%e8%83%8c%e6%99%af%e4%b8%8e%e7%9b%ae%e6%a0%87"></a>
+一、背景与目标
+</h3><ol>
+<li><strong>定位</strong>: 作为Tesla架构的成熟后续者，旨在解决Tesla的瓶颈，通常科技产品的第二代是集大成之作。</li>
+<li><strong>核心特性</strong>:
+<ul>
+<li>完整支持 <strong>DirectX 11</strong> 的所有硬件功能。</li>
+<li>关键技术包括 <strong>细分曲面 (Tessellation)</strong> 和 <strong>计算着色器 (Compute Shader)</strong>。</li>
+</ul>
+</li>
+<li><strong>主要解决的问题</strong>:
+<ul>
+<li>提升几何处理能力，以追求电影级的几何真实感。</li>
+<li>2010年时，游戏每帧百万级三角形远少于电影的数亿级，导致模型精细度差异巨大。Fermi旨在缩小这一差距。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二回顾tesla-架构的几何瓶颈">
+<a class="header-anchor" href="#%e4%ba%8c%e5%9b%9e%e9%a1%betesla-%e6%9e%b6%e6%9e%84%e7%9a%84%e5%87%a0%e4%bd%95%e7%93%b6%e9%a2%88"></a>
+二、回顾：Tesla 架构的几何瓶颈
+</h3><p>Tesla架构虽然统一了着色器，但在几何处理上存在瓶颈：</p>
+<ol>
+<li><strong>计算与几何处理单元失衡</strong>:
+<ul>
+<li>SM (流式多处理器) 内的计算单元众多。</li>
+<li>负责视口变换、裁剪、属性设置、光栅化、剔除等固定管线的几何操作单元相对集中且数量有限。</li>
+</ul>
+</li>
+<li><strong>具体瓶颈点</strong>:
+<ul>
+<li><strong>CPU-GPU 带宽限制</strong>: GPU能从CPU获取的初始顶点数量有限。随着计算单元增强，带宽瓶颈更突出。</li>
+<li><strong>固定几何管线拥塞</strong>: 顶点着色器处理后产生的大量顶点，都必须通过集中的固定几何操作管线才能转化为片元，容易造成堵塞。</li>
+</ul>
+</li>
+</ol>
+<h3 id="三fermi-架构的关键改进">
+<a class="header-anchor" href="#%e4%b8%89fermi-%e6%9e%b6%e6%9e%84%e7%9a%84%e5%85%b3%e9%94%ae%e6%94%b9%e8%bf%9b"></a>
+三、Fermi 架构的关键改进
+</h3><p><img src="https://pica.zhimg.com/v2-82dc52b2af5388225e04fcba70d6ac9c_1440w.jpg" alt="alt text">
+为解决上述瓶颈，Fermi架构进行了显著调整：</p>
+<ol>
+<li>
+<p><strong>制程工艺与资源提升</strong>:</p>
+<ul>
+<li><strong>制程</strong>: 从Tesla的90nm提升至 <strong>40nm</strong>，允许集成更多晶体管。</li>
+<li><strong>SM内部</strong>: 每个SM集成了更多的计算单元。</li>
+<li><strong>ROP (光栅操作处理器)</strong>: 每组显存控制器/L2分区从Tesla的1个ROP增加至 <strong>8个ROP</strong>。ROP单元位于L2 Cache附近的“ROP分区”，便于与SM快速数据传输。</li>
+</ul>
+</li>
+<li>
+<p><strong>GPC (Graphics Processing Clusters, 图形处理簇)</strong>:</p>
+<ul>
+<li>由Tesla架构中的TPC (Texture Processing Clusters) 演变而来。</li>
+<li>GPC功能更完整、更独立，几乎可以完成GPU的绝大多数功能 (只要能通过L2 Cache与外界接触)，便于针对不同市场灵活调整GPU规模。</li>
+</ul>
+</li>
+<li>
+<p><strong>关键单元的重构与并行化</strong>:</p>
+<ul>
+<li><strong>PolyMorph Engine (多形体引擎)</strong>:
+<ul>
+<li><strong>每个SM标配一个</strong>。</li>
+<li>集成了所有几何相关的固定功能和可配置阶段，包括顶点拾取、<strong>细分曲面单元 (Tessellator)</strong>、视口变换、属性设置、流输出 (Stream Output) 等。</li>
+<li><strong>核心作用</strong>: 将原本集中的几何处理能力分散到每个SM中，实现几何处理的并行化，是解决几何瓶颈的关键。
+<img src="https://pic2.zhimg.com/v2-941edc12d44b710c7904bddbc9140219_1440w.jpg" alt="alt text"></li>
+</ul>
+</li>
+<li><strong>Raster Engine (光栅化引擎)</strong>:
+<ul>
+<li><strong>每个GPC拥有一个</strong> (例如，服务于其内部的4个SM)。</li>
+<li>配合PolyMorph Engine，进一步并行化处理光栅化任务，以应对增加的三角形数量。
+<img src="https://picx.zhimg.com/v2-66da128e7f05518663d1946e4a8eac89_1440w.jpg" alt="alt text"></li>
+</ul>
+</li>
+<li><strong>纹理单元 (Texture Units)</strong>:
+<ul>
+<li>数量大幅增加，并且<strong>移入每个SM内部</strong> (后续章节会说明一个SM有4个纹理单元)。这解决了Tesla中1个纹理单元服务2个SM可能存在的瓶颈。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="四核心技术与应用突破几何瓶颈">
+<a class="header-anchor" href="#%e5%9b%9b%e6%a0%b8%e5%bf%83%e6%8a%80%e6%9c%af%e4%b8%8e%e5%ba%94%e7%94%a8%e7%aa%81%e7%a0%b4%e5%87%a0%e4%bd%95%e7%93%b6%e9%a2%88"></a>
+四、核心技术与应用：突破几何瓶颈
+</h3><p>Fermi通过引入新技术并辅以硬件架构调整来突破几何瓶颈：</p>
+<ol>
+<li>
+<p><strong>细分曲面 (Tessellation)</strong>:</p>
+<ul>
+<li><strong>目的</strong>: 解决CPU-GPU带宽瓶颈，允许GPU根据较少的输入顶点动态生成大量新顶点，从而提升模型表面的平滑度和细节层次。</li>
+<li><strong>处理流程 (三阶段)</strong>:
+<ol>
+<li><strong>外壳着色器 (Hull Shader / Tessellation Control Shader - TCS)</strong>: 可编程阶段 (由SM内的CUDA core执行)。负责决定每个输入面片 (Patch) 的细分程度（输出Tessellation Factors）和传递控制点。</li>
+<li><strong>细分器 (Tessellator)</strong>: 固定功能单元 (位于每个SM的PolyMorph Engine内部)。根据HS/TCS输出的参数，按照内置规则生成新的顶点和图元拓扑。</li>
+<li><strong>域着色器 (Domain Shader / Tessellation Evaluation Shader - TES)</strong>: 可编程阶段 (由SM内的CUDA core执行)。功能类似顶点着色器，但处理的是由细分器生成的所有顶点 (包括原始顶点和新生成的顶点)，计算它们的最终位置和其它属性。</li>
+</ol>
+</li>
+<li><strong>架构支持</strong>: 每个SM配备PolyMorph Engine (内含Tessellator) 使得海量细分请求得以并行处理，避免了数据传输和处理瓶颈。增加的Raster Engine数量也适应了细分后三角形数量的激增。</li>
+</ul>
+</li>
+<li>
+<p><strong>置换贴图 (Displacement Mapping)</strong>:</p>
+<ul>
+<li><strong>目的</strong>: 在细分曲面提供的平滑基础上，进一步增加模型表面的精细几何细节，实现更真实的视觉效果。</li>
+<li><strong>原理</strong>: 一种高级的纹理技巧。在TES阶段 (或后续的顶点处理阶段)，使用置换贴图中的数据来实际<strong>改变顶点在三维空间中的位置</strong>，这一过程发生在光栅化之前。</li>
+<li><strong>优势</strong>:
+<ul>
+<li><strong>内存效率</strong>: 模型细节以纹理形式存储，相比直接存储大量顶点数据，内存占用更紧凑，减少了带宽需求。</li>
+<li><strong>LOD (Level of Detail)</strong>: 纹理的Mipmap机制可为置换效果提供天然的LOD支持。</li>
+<li><strong>动态修改</strong>: 作为纹理，内容更易于在游戏中实时修改，可用于贴花 (Decals) 等效果。</li>
+</ul>
+</li>
+<li><strong>架构支持</strong>: Fermi架构中大幅增加的ROP数量和每个SM内部集成的多个纹理单元 (如4个)，为置换贴图以及其他纹理密集型渲染技术 (如PBR管线、延迟渲染) 的普及提供了强大的硬件基础。</li>
+</ul>
+</li>
+</ol>
+<h3 id="五总结">
+<a class="header-anchor" href="#%e4%ba%94%e6%80%bb%e7%bb%93"></a>
+五、总结
+</h3><p>Fermi架构通过将几何处理单元 (PolyMorph Engine) 分散到每个SM，并增加光栅化引擎 (Raster Engine) 和纹理单元 (Texture Units) 的数量，成功地并行化了原先集中的几何处理流程。结合细分曲面和置换贴图等DirectX 11关键技术，显著提升了GPU的几何处理能力和渲染真实感，标志着GPU发展的一个重要成熟阶段。</p>
+<h2 id="gpu-图形渲染管线详解-fermi-架构">
+<a class="header-anchor" href="#gpu-%e5%9b%be%e5%bd%a2%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf%e8%af%a6%e8%a7%a3-fermi-%e6%9e%b6%e6%9e%84"></a>
+GPU 图形渲染管线详解 (Fermi 架构)
+</h2><p>本文详细梳理了图形渲染管线，以NVIDIA Fermi架构为背景，介绍了从数据准备到最终像素输出的完整流程。</p>
+<h3 id="一数据从-cpu-到-gpu">
+<a class="header-anchor" href="#%e4%b8%80%e6%95%b0%e6%8d%ae%e4%bb%8e-cpu-%e5%88%b0-gpu"></a>
+一、数据从 CPU 到 GPU
+</h3><h4 id="1-数据准备与传输">
+<a class="header-anchor" href="#1-%e6%95%b0%e6%8d%ae%e5%87%86%e5%a4%87%e4%b8%8e%e4%bc%a0%e8%be%93"></a>
+1. 数据准备与传输
+</h4><ul>
+<li><strong>数据源</strong>: 三角形等图元最初存储在硬盘中，顶点数据（Vertex Buffer）和顶点索引（Index Buffer）是其基本构成。一个顶点可能被多个三角形共享。</li>
+<li><strong>CPU 处理</strong>: CPU 发出指令，数据从硬盘加载到系统内存。</li>
+<li><strong>显存传输</strong>: 数据从系统内存传输到 GPU 的显存 (DRAM)。</li>
+</ul>
+<h4 id="2-图形-api-与-gpu-指令">
+<a class="header-anchor" href="#2-%e5%9b%be%e5%bd%a2-api-%e4%b8%8e-gpu-%e6%8c%87%e4%bb%a4"></a>
+2. 图形 API 与 GPU 指令
+</h4><p><img src="https://pic1.zhimg.com/v2-6cbf847e12f18647edf329a866ac2700_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>图形 API</strong>: 应用程序通过图形 API (如 DirectX, OpenGL) 发出渲染指令。</li>
+<li><strong>驱动转换</strong>: 驱动程序将 API 调用翻译成 GPU 可读的指令编码。</li>
+<li><strong>Pushbuffer</strong>: 这些 GPU 指令存放在 Pushbuffer 中，待机发射。</li>
+<li><strong>Host Interface</strong>: GPU 的 Host Interface 接收指令，并交由 Front End 处理。</li>
+<li><strong>Front End</strong>:
+<ul>
+<li>解码和分类指令。</li>
+<li>处理状态 (State) 类操作：有些立即执行，有些等待光栅化后执行，重复多余的状态设置会被丢弃。</li>
+<li><code>Drawcall</code> 指令是驱动 GPU 开始处理几何数据的关键。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-图元分发-primitive-distributor">
+<a class="header-anchor" href="#3-%e5%9b%be%e5%85%83%e5%88%86%e5%8f%91-primitive-distributor"></a>
+3. 图元分发 (Primitive Distributor)
+</h4><ul>
+<li><strong>Batching</strong>: 为适应 GPU 并行处理，图元数据被拆分成小的批次 (Batch)。
+<ul>
+<li>一个 Batch 最多包含32个顶点或32个图元 (如三角形)。</li>
+<li>这种小批次限制了单个 Batch 内顶点的平均复用率（例如，32个顶点的batch，若都是独立三角形，复用率低；若要填满warp，平均复用率最高为3）。</li>
+</ul>
+</li>
+<li><strong>索引压缩</strong>: 原始顶点索引被压缩，剔除重复索引，生成更精简的批次内顶点索引。</li>
+<li><strong>并行处理</strong>: 不同的 Batch 可能被分发到不同的 GPC (Graphics Processing Cluster) 或 SM (Streaming Multiprocessor) 中独立处理。</li>
+<li><strong>顶点冗余</strong>: 处于 Batch 边缘的共享顶点可能会被重复处理，以保证并行性。
+<img src="https://pic1.zhimg.com/v2-ec9602e257abaf1a67d10a20c16b7e2e_1440w.jpg" alt="alt text"></li>
+</ul>
+<h4 id="4-顶点获取-vertex-fetch">
+<a class="header-anchor" href="#4-%e9%a1%b6%e7%82%b9%e8%8e%b7%e5%8f%96-vertex-fetch"></a>
+4. 顶点获取 (Vertex Fetch)
+</h4><ul>
+<li><strong>组件</strong>: 由 Polymorph Engine 内的 Vertex Fetch 单元负责。</li>
+<li><strong>功能</strong>: 当一个 Batch 被分配到特定 SM 时，Vertex Fetch 单元将相应的顶点数据从显存 (DRAM) 加载到该 SM 的 L1 Cache 中，供后续着色器使用。</li>
+</ul>
+<h3 id="二几何阶段">
+<a class="header-anchor" href="#%e4%ba%8c%e5%87%a0%e4%bd%95%e9%98%b6%e6%ae%b5"></a>
+二、几何阶段
+</h3><p><img src="https://pica.zhimg.com/v2-85750a54bd8654c5a4778c6403484c4c_1440w.jpg" alt="alt text"></p>
+<p>GPU 的 SM (Streaming Multiprocessor) 在 Fermi 架构中得到改进，包括更多的计算核心和纹理单元，FMA 指令支持双精度，以及双 Warp 调度机制（每个周期可向两个执行块分发一或两个Warp）。Warp 切换周期仍为两个处理器周期。
+<img src="https://pic1.zhimg.com/v2-9748f581381396a4b061eab364f4d41e_1440w.jpg" alt="alt text">
+<img src="https://pica.zhimg.com/v2-1ff785a541a2692cba1c53938c5d1d34_1440w.jpg" alt="alt text"></p>
+<h4 id="1-顶点着色器-vertex-shader">
+<a class="header-anchor" href="#1-%e9%a1%b6%e7%82%b9%e7%9d%80%e8%89%b2%e5%99%a8-vertex-shader"></a>
+1. 顶点着色器 (Vertex Shader)
+</h4><ul>
+<li><strong>执行单位</strong>: 一个 Batch 的顶点 (如32个) 组成一个 Warp，在 SM 内的 CUDA Core 上并行执行。</li>
+<li><strong>数据隔离</strong>: 每个顶点着色器线程处理一个顶点，线程间通常不直接通信。</li>
+<li><strong>Warp 调度</strong>:
+<ul>
+<li>SM 内有多个 Warp (可能来自顶点、片元、计算着色器等)。</li>
+<li>Warp Scheduler 按调度策略切换执行的 Warp。</li>
+<li>Dispatch 单元指挥 Warp 从寄存器文件读取数据，在 Core 中执行指令，执行后写回数据，让出 Core 给其他 Warp。</li>
+</ul>
+</li>
+<li><strong>主要任务</strong>:
+<ul>
+<li>对顶点进行坐标变换 (例如，从模型空间到世界空间，再到观察空间，最终输出到裁剪空间)。</li>
+<li>如果后续有细分或几何着色器，裁剪空间变换也可由它们完成。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-细分控制着色器-tcs--hull-shader">
+<a class="header-anchor" href="#2-%e7%bb%86%e5%88%86%e6%8e%a7%e5%88%b6%e7%9d%80%e8%89%b2%e5%99%a8-tcs--hull-shader"></a>
+2. 细分控制着色器 (TCS / Hull Shader)
+</h4><p><img src="https://pica.zhimg.com/v2-d10d5ac52530495a36fb46e3e7c972d0_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>执行位置</strong>: 通常在顶点着色器所在的 SM 中执行。</li>
+<li><strong>处理单位</strong>: <code>Patch</code> (由 <code>drawcall</code> 指定，如一个三角形 patch 有3个控制点)。一个 Patch 最多32个顶点。</li>
+<li><strong>线程分配</strong>: TCS 输出顶点数决定 Patch 的线程数，每个线程有 <code>gl_InvocationID</code>。</li>
+<li><strong>数据共享</strong>: Patch 内的 TCS 线程可以访问该 Patch 的所有输入和输出数据，可能需要 <code>barrier()</code> 同步。</li>
+<li><strong>主要职责</strong>:
+<ul>
+<li>传递顶点属性给 TES (Tessellation Evaluation Shader)。</li>
+<li>计算<strong>细分因子</strong> (<code>gl_TessLevelInner</code>, <code>gl_TessLevelOuter</code>)，指导 Tessellator 如何细分 Patch。</li>
+</ul>
+</li>
+<li><strong>数据流</strong>: TCS 输出的顶点是数据，供 TES 插值使用，不直接决定最终顶点数量。如果细分因子由 API 预设，TCS 可选。</li>
+<li><strong>Work Distribution Crossbar</strong>: 根据细分因子，Patch 可能会被转移到其他 SM 处理，以应对顶点数量的急剧膨胀。</li>
+</ul>
+<h4 id="3-镶嵌器-tessellator---固定管线单元">
+<a class="header-anchor" href="#3-%e9%95%b6%e5%b5%8c%e5%99%a8-tessellator---%e5%9b%ba%e5%ae%9a%e7%ae%a1%e7%ba%bf%e5%8d%95%e5%85%83"></a>
+3. 镶嵌器 (Tessellator) - 固定管线单元
+</h4><ul>
+<li><strong>位置</strong>: Polymorph Engine 内部署。</li>
+<li><strong>输入</strong>:
+<ul>
+<li>TCS 输出的细分因子。</li>
+<li>TES 中指定的参数：图元生成域 (triangles, quads, isolines)、细分顶点空间划分规则、图元面朝向、点模式。</li>
+</ul>
+</li>
+<li><strong>功能</strong>:
+<ul>
+<li>在抽象的 Patch (由图元生成域决定，如标准三角形或正方形) 上根据细分因子和参数插入新的点。</li>
+<li>输出这些新顶点在抽象 Patch 中的归一化坐标 (如重心坐标)。</li>
+<li>不处理实际顶点属性数据。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-细分评估着色器-tes--domain-shader">
+<a class="header-anchor" href="#4-%e7%bb%86%e5%88%86%e8%af%84%e4%bc%b0%e7%9d%80%e8%89%b2%e5%99%a8-tes--domain-shader"></a>
+4. 细分评估着色器 (TES / Domain Shader)
+</h4><ul>
+<li><strong>输入</strong>:
+<ul>
+<li>Tessellator 生成的新顶点细分坐标 (<code>gl_TessCoord</code>)。</li>
+<li>TCS 输出的整个 Patch 的控制点顶点数据。</li>
+</ul>
+</li>
+<li><strong>功能</strong>:
+<ul>
+<li>每个 TES 线程负责一个新顶点。</li>
+<li>使用 <code>gl_TessCoord</code> 和 Patch 控制点数据进行插值，计算新顶点的最终属性。</li>
+</ul>
+</li>
+<li><strong>图元重构</strong>: 新顶点诞生后，旧 Patch 结构消失，根据图元类型和朝向形成新的图元 (如三角形)。</li>
+</ul>
+<h4 id="5-几何着色器-geometry-shader---可选阶段">
+<a class="header-anchor" href="#5-%e5%87%a0%e4%bd%95%e7%9d%80%e8%89%b2%e5%99%a8-geometry-shader---%e5%8f%af%e9%80%89%e9%98%b6%e6%ae%b5"></a>
+5. 几何着色器 (Geometry Shader) - 可选阶段
+</h4><ul>
+<li><strong>分配</strong>: Task Distributor 将图元分配给几何着色器。</li>
+<li><strong>执行单位</strong>: 一个 Warp 由多个图元 (如32个三角形) 组成，每个线程处理一个输入图元。</li>
+<li><strong>数据访问</strong>: 几何着色器线程可以访问其输入图元的所有顶点数据。</li>
+<li><strong>强大功能 (及代价)</strong>:
+<ul>
+<li>可输出任意数量、任意类型的图元 (点、线、三角形)。</li>
+<li>可修改顶点属性，甚至实例化图元 (分层渲染、多流输出)。</li>
+</ul>
+</li>
+<li><strong>性能问题 (“诅咒”)</strong>:
+<ul>
+<li><strong>高自由度带来串行化</strong>: 输出可变数量图元类似CPU端的API调用，破坏并行性。</li>
+<li><strong>缓存压力</strong>: 为保证图元输出顺序，需缓存所有输出顶点。每个GS线程所需缓存远大于VS或TCS/TES。
+<ul>
+<li><strong>NVIDIA 方案</strong>: 缓存于片内 (on-chip)，容量小，易满，导致SM能容纳的Warp数受限，引发拥塞。</li>
+<li><strong>AMD 方案</strong>: 缓存于显存 (DRAM)，容量大，但带宽高延迟，导致SM空闲等待数据。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="6-流输出-stream-output---可选阶段">
+<a class="header-anchor" href="#6-%e6%b5%81%e8%be%93%e5%87%ba-stream-output---%e5%8f%af%e9%80%89%e9%98%b6%e6%ae%b5"></a>
+6. 流输出 (Stream Output) - 可选阶段
+</h4><ul>
+<li><strong>功能</strong>: 几何阶段 (顶点、细分或几何着色器) 处理后的顶点数据可以不进入光栅化，而是直接写回显存中的缓冲区。</li>
+<li><strong>后续</strong>: 这些数据可被CPU回读，或作为下一轮渲染管线的输入。</li>
+</ul>
+<h4 id="7-顶点后处理-vertex-post-processing">
+<a class="header-anchor" href="#7-%e9%a1%b6%e7%82%b9%e5%90%8e%e5%a4%84%e7%90%86-vertex-post-processing"></a>
+7. 顶点后处理 (Vertex Post-Processing)
+</h4><ul>
+<li><strong>位置</strong>: Polymorph Engine 内部署。</li>
+<li><strong>图元装配 (Primitive Assembly)</strong>: 将独立的顶点组装成图元 (如三角形)。</li>
+<li><strong>视锥裁剪 (View Frustum Culling &amp; Clipping)</strong>:
+<ul>
+<li><strong>完全在内</strong>: 保留。</li>
+<li><strong>完全在外</strong>: 剔除。</li>
+<li><strong>相交</strong>:
+<ul>
+<li>与<strong>近平面</strong>相交: 必须裁剪。原因：1) 计算相对简单；2) 不裁剪会导致后续透视除法错误 (三角形翻转)。</li>
+<li>与<strong>其他平面</strong>相交: (&ldquo;Guard-band clipping&rdquo;) 若裁剪计算复杂，且不裁剪不影响光栅化结果 (超出视口部分不被光栅化)，则尽量不裁剪。除非顶点坐标过大，超出硬件处理范围 (通常硬件坐标用定点数存储，范围有限)，则必须裁剪。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>透视除法 (Perspective Divide)</strong>:
+<ul>
+<li>顶点的 $x, y, z$ 坐标除以其 $w$ 坐标，得到归一化设备坐标 (NDC)。</li>
+</ul>
+</li>
+<li><strong>视口变换 (Viewport Transform)</strong>:
+<ul>
+<li>将 NDC 坐标转换到屏幕坐标 (像素坐标)。</li>
+<li>公式示例: $p_x = (NDC_x + 1) \times \frac{ScreenWidth}{2}$, $p_y = (NDC_y + 1) \times \frac{ScreenHeight}{2}$。</li>
+</ul>
+</li>
+</ul>
+<h3 id="三光栅阶段">
+<a class="header-anchor" href="#%e4%b8%89%e5%85%89%e6%a0%85%e9%98%b6%e6%ae%b5"></a>
+三、光栅阶段
+</h3><p><img src="https://picx.zhimg.com/v2-8684905909ad2dd3f28df3fe9df02ad1_1440w.jpg" alt="alt text"></p>
+<h4 id="1-工作分配与排序-work-distribution-crossbar">
+<a class="header-anchor" href="#1-%e5%b7%a5%e4%bd%9c%e5%88%86%e9%85%8d%e4%b8%8e%e6%8e%92%e5%ba%8f-work-distribution-crossbar"></a>
+1. 工作分配与排序 (Work Distribution Crossbar)
+</h4><ul>
+<li><strong>目标</strong>: 将几何阶段输出的图元分配到 GPC 内的 Raster Engine。</li>
+<li><strong>OWDX (Output Work Distributor Crossbar)</strong>:
+<ul>
+<li><strong>分块 (Tiling)</strong>: 将三角形的包围盒切割成小块 (tiles)，并将这些小块分发到对应的 Raster Engine 进行并行处理。
+<ul>
+<li>与移动端 TBDR 不同：仅 Raster Engine 并行处理块，SM 不与特定块绑定，无专属帧缓冲，非延迟渲染。</li>
+<li>块大小权衡：太大则并行性差；太小则三角形跨越多块的概率增加，导致三角形设置开销增大。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>面剔除 (Face Culling)</strong>: 根据顶点顺序和定义的正面朝向，剔除背面或正面三角形。原文推测此阶段执行最合理。</li>
+<li><strong>SWDX (Sorting Work Distributor Crossbar)</strong>:
+<img src="https://pic3.zhimg.com/v2-5382bb711de5d04142963797cb4e55bc_1440w.jpg" alt="alt text">
+<ul>
+<li><strong>排序</strong>: 保证三角形按提交顺序进入 Raster Engine。</li>
+<li><strong>目的</strong>: 避免透明物体或重叠物体因处理顺序不定导致的闪烁问题。对于无重叠情况，新硬件可关闭排序以提高效率。ROP 阶段会保证输出顺序是提交顺序。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-边设置-edge-setup--triangle-setup-part-1">
+<a class="header-anchor" href="#2-%e8%be%b9%e8%ae%be%e7%bd%ae-edge-setup--triangle-setup-part-1"></a>
+2. 边设置 (Edge Setup / Triangle Setup Part 1)
+</h4><p><img src="https://pic3.zhimg.com/v2-1ddda400bedd04459378f2b162f352d0_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>位置</strong>: Raster Engine 内部。</li>
+<li><strong>功能</strong>: 为三角形的每条边生成边方程 $e(x,y) = Ax + By + C = 0$。
+<ul>
+<li>屏幕空间点 $(x,y)$ 代入方程：
+<ul>
+<li>$e(x,y) = 0$: 点在边上。</li>
+<li>$e(x,y) > 0$: 点在边的一侧 (通常是法线指向的一侧，即三角形内部)。</li>
+<li>$e(x,y) < 0$: 点在边的另一侧。</li>
+</ul>
+</li>
+<li><strong>系数计算</strong>: $A, B, C$ 由三角形顶点的屏幕空间坐标计算得出。
+<ul>
+<li>对于边 $p_0p_1$，向量为 $(p_{1x}-p_{0x}, p_{1y}-p_{0y})$。</li>
+<li>旋转90度得到法线方向相关的系数：$A = -(p_{1y}-p_{0y})$, $B = (p_{1x}-p_{0x})$。</li>
+<li>$C = (p_{1y}-p_{0y})p_{0x} - (p_{1x}-p_{0x})p_{0y}$ (整理后)。</li>
+</ul>
+</li>
+<li>这些系数是三角形的“烙印”，用于后续像素覆盖判断。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-光栅化-rasterization--triangle-traversal">
+<a class="header-anchor" href="#3-%e5%85%89%e6%a0%85%e5%8c%96-rasterization--triangle-traversal"></a>
+3. 光栅化 (Rasterization / Triangle Traversal)
+</h4><ul>
+<li><strong>Inside Test</strong>:
+<ul>
+<li>将屏幕像素中心的坐标代入三角形的三条边方程。若三个结果均 $>0$ (或符合预定规则)，则像素被该三角形覆盖。</li>
+<li>保守光栅化 (下一代架构) 有其他覆盖判断方式。</li>
+</ul>
+</li>
+<li><strong>像素四边形 (Quads)</strong>:
+<ul>
+<li>像素通常以 $2 \times 2$ 的 Quad 形式组织和处理。</li>
+<li>若 Quad 中任一像素被覆盖，则整个 Quad 都可能被激活并进入片元着色阶段，以便计算像素间的差分 (导数)。</li>
+</ul>
+</li>
+<li><strong>增量计算</strong>:
+<ul>
+<li>利用 $e(x+1,y) = e(x,y) + A$ 和 $e(x,y+1) = e(x,y) + B$ 加速计算相邻像素的边函数值。</li>
+</ul>
+</li>
+<li><strong>边界规则 (Tie-Breaking Rule)</strong>:
+<ul>
+<li>处理像素中心恰好落在边上的情况，确保共享边的像素归属于唯一三角形，避免缝隙或重复绘制。</li>
+<li>例如 DirectX 的 &ldquo;top-left rule&rdquo;：像素归属于左边或水平上边。</li>
+</ul>
+</li>
+<li><strong>点和线的处理</strong>: 通常被当作矩形 (两个三角形) 处理，以复用三角形光栅化流水线，简化硬件。</li>
+<li><strong>多重采样抗锯齿 (MSAA - Multi-Sample Anti-Aliasing)</strong>:
+<ul>
+<li>每个像素内有多个采样点 (samples)。</li>
+<li>光栅器判断哪些采样点被三角形覆盖。</li>
+<li><strong>MSAA</strong>: 片元着色器通常对整个像素执行一次 (若至少一个样本被覆盖)，其结果 (颜色、深度) 写入所有被覆盖的样本。代价是需要更大的帧缓冲。</li>
+<li><strong>EQAA (AMD)</strong>: 通过间接索引层减少帧缓冲内存。</li>
+<li><strong>CSAA (NVIDIA, 后被移除)</strong>: 需要光栅化的点更多 (如额外*4)，用于估算覆盖权重，帧缓冲相比MSAA未扩大，每个像素增加少量覆盖信息 (如16bit)。</li>
+</ul>
+</li>
+<li><strong>分层遍历 (Hierarchical / Tiled Traversal)</strong>:
+<ul>
+<li>屏幕空间被划分为更小的 tile。</li>
+<li>通过测试 tile 角点与边方程的关系，快速剔除完全不被三角形覆盖的 tile (类似加速结构)。</li>
+<li>Tile 按 Z 序 (或类似Morton序) 遍历，提高缓存命中率 (相邻像素可能访问相邻纹素，纹理也常按块存储)。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-z-cull-早期-z-剔除的优化">
+<a class="header-anchor" href="#4-z-cull-%e6%97%a9%e6%9c%9f-z-%e5%89%94%e9%99%a4%e7%9a%84%e4%bc%98%e5%8c%96"></a>
+4. Z-Cull (早期 Z 剔除的优化)
+</h4><p><img src="https://pic4.zhimg.com/v2-6366c72ad7da0102d4d0eedf04ad5fdb_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>时机</strong>: 在精细的逐像素光栅化之前，对图块 (block/tile) 进行粗略光栅化。</li>
+<li><strong>机制</strong>:
+<ul>
+<li>Z-Cull 单元维护每个屏幕块的深度缓存的最大Z值 (far Z)。</li>
+<li>如果一个三角形在该块内光栅化出的像素的最小Z值 (near Z) 大于该块已存的最大Z值，则该三角形在此块中完全被遮挡，无需进行后续的逐像素光栅化和深度测试。</li>
+</ul>
+</li>
+<li><strong>深度估算</strong>: 三角形在块内的最小Z值可以通过其三个顶点的最小Z值，或在该块四个角点处插值得到的深度值的最小值等方式保守估算。</li>
+<li><strong>作用</strong>: 节省逐像素深度测试。但本身不节省片元着色器执行 (Early-Z 才负责此)。</li>
+<li><strong>Early-Z 依赖</strong>: Z-Cull 和 Early-Z 的有效性依赖于物体近似从前到后的顺序提交。移动端的 TBDR 或 PC 端的 Z-Prepass 可以不依赖排序。</li>
+<li><strong>双向 Z-Cull</strong>:
+<ul>
+<li>也可以维护块的最小Z值，若三角形最大Z值小于块最小Z，则该三角形完全遮挡已有内容，后续深度测试可简化。</li>
+</ul>
+</li>
+<li><strong>与分层遍历区别</strong>: 分层遍历是屏幕空间2D加速，Z-Cull是深度方向(Z轴)加速，均基于块思想。</li>
+</ul>
+<h3 id="四片元阶段">
+<a class="header-anchor" href="#%e5%9b%9b%e7%89%87%e5%85%83%e9%98%b6%e6%ae%b5"></a>
+四、片元阶段
+</h3><h4 id="1-属性设置-attribute-setup--triangle-setup-part-2">
+<a class="header-anchor" href="#1-%e5%b1%9e%e6%80%a7%e8%ae%be%e7%bd%ae-attribute-setup--triangle-setup-part-2"></a>
+1. 属性设置 (Attribute Setup / Triangle Setup Part 2)
+</h4><ul>
+<li><strong>位置</strong>: Polymorph Engine 内的属性设置单元。
+<ul>
+<li>Fermi 架构将 Tesla 架构中统一的三角形设置拆分为 Raster Engine 中的边设置和 Polymorph Engine 中的属性设置。</li>
+</ul>
+</li>
+<li><strong>功能</strong>: 计算将顶点属性正确插值到每个被覆盖片元 (像素/样本) 所需的参数。</li>
+<li><strong>重心坐标 (Barycentric Coordinates)</strong>:
+<ul>
+<li>用于在三角形内部插值顶点属性。通常表示为 $(u,v,w)$ 且 $u+v+w=1$。</li>
+<li>可由片元位置与三角形顶点形成的子三角形面积之比计算：$u = \frac{Area_1}{Area_{total}}$, $v = \frac{Area_2}{Area_{total}}$。</li>
+<li>边函数值 $e_i(P)$ 正比于点 P 与对应边所形成的子三角形面积的两倍 ($e_i(P) = 2 \times Area_i$)。</li>
+<li>$Area_{total}$ (原三角形面积的两倍) 可通过任一顶点代入对边边函数得到。</li>
+<li>理论上，属性设置单元存 $\frac{1}{Area_{total}}$，然后用 $u(x,y) = \frac{e_1(x,y)}{Area_{total}}$, $v(x,y) = \frac{e_2(x,y)}{Area_{total}}$ 计算。</li>
+</ul>
+</li>
+<li><strong>透视校正插值 (Perspective-Correct Interpolation)</strong>:
+<ul>
+<li>由于透视投影，屏幕空间直接线性插值顶点属性会导致错误。</li>
+<li><strong>方法</strong>: 对每个属性 $Attr$ 和 $1/w$ 分别进行屏幕空间线性插值，然后相除: $Attr_{pixel} = \frac{Interpolated(Attr/w)}{Interpolated(1/w)}$。</li>
+<li><strong>硬件实现</strong>: 调整重心坐标计算公式，引入每个顶点的 $w$ 值。
+$f_i(x,y) = \frac{e_i(x,y)}{w_i}$ (其中 $w_i$ 是顶点 $i$ 的 $w$ 分量)。
+$\tilde{u}(x,y) = \frac{f_1(x,y)}{\sum f_k(x,y)}$, $\tilde{v}(x,y) = \frac{f_2(x,y)}{\sum f_k(x,y)}$ (调整后的重心坐标)。</li>
+<li><strong>深度值例外</strong>: 经过透视除法的深度值 ($z/w$) 在屏幕空间是线性的，可以直接进行线性插值，无需特殊校正。这是因为它已是NDC空间的值。其他属性通常仍在世界或观察空间，投影到屏幕是非线性的。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-片元着色器-fragment-shader--pixel-shader">
+<a class="header-anchor" href="#2-%e7%89%87%e5%85%83%e7%9d%80%e8%89%b2%e5%99%a8-fragment-shader--pixel-shader"></a>
+2. 片元着色器 (Fragment Shader / Pixel Shader)
+</h4><ul>
+<li><strong>输入</strong>: 插值后的顶点属性 (颜色、纹理坐标、法线等)。</li>
+<li><strong>执行单位</strong>: 片元 (通常与 Quad 内其他片元打包成 Warp) 在 SM 内执行。</li>
+<li><strong>功能</strong>:
+<ul>
+<li>执行程序员定义的着色代码，进行纹理采样、光照计算、雾化等操作，最终计算出片元的颜色。</li>
+<li>可利用 Quad 内相邻片元信息计算导数 (e.g., <code>ddx</code>, <code>ddy</code>) 用于 mipmapping 等。</li>
+</ul>
+</li>
+<li><strong>硬件调度</strong>: 遵循 Warp 调度机制。</li>
+</ul>
+<h4 id="3-rop-render-output-unit--raster-operations-pipeline">
+<a class="header-anchor" href="#3-rop-render-output-unit--raster-operations-pipeline"></a>
+3. ROP (Render Output Unit / Raster Operations Pipeline)
+</h4><p><img src="https://pica.zhimg.com/v2-d9789027b8ac208100e0b2ae8cfb6254_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>位置</strong>: 通常分布在 GPC 外部，靠近 L2 Cache。</li>
+<li><strong>分块管理</strong>: 每个 ROP 单元负责屏幕像素的特定区域 (块/tile)，仅需在此块内维持三角形顺序。</li>
+<li><strong>主要功能 (后处理操作)</strong>:
+<ul>
+<li><strong>深度测试 (Late Depth Test)</strong>: 在片元着色后，比较片元深度与深度缓冲区的值。</li>
+<li><strong>模板测试 (Stencil Test)</strong>: 根据模板缓冲区的值和测试条件决定片元是否通过。</li>
+<li><strong>混合 (Blending)</strong>: 将新片元颜色与帧缓冲中已有的颜色根据混合因子进行混合。</li>
+<li><strong>MSAA Resolve (多重采样解析)</strong>: 如果开启了 MSAA，将一个像素内多个样本的颜色值合并成最终的单一像素颜色。</li>
+</ul>
+</li>
+<li>这是渲染管线上，数据在写入帧缓冲前的最后阶段。</li>
+</ul>
+<h2 id="fermi-架构总结与-gpu-架构特性展望">
+<a class="header-anchor" href="#fermi-%e6%9e%b6%e6%9e%84%e6%80%bb%e7%bb%93%e4%b8%8e-gpu-%e6%9e%b6%e6%9e%84%e7%89%b9%e6%80%a7%e5%b1%95%e6%9c%9b"></a>
+Fermi 架构总结与 GPU 架构特性展望
+</h2><p>本文档总结了NVIDIA Fermi架构的关键改进及其在GPU发展中的地位，并探讨了GPU架构的一些通用特性。</p>
+<h3 id="fermi-架构的关键改进">
+<a class="header-anchor" href="#fermi-%e6%9e%b6%e6%9e%84%e7%9a%84%e5%85%b3%e9%94%ae%e6%94%b9%e8%bf%9b"></a>
+Fermi 架构的关键改进
+</h3><p>Fermi 架构在Tesla架构的基础上引入了多项重要改进，旨在提升并行计算能力和灵活性，使其不仅是图形处理器，也为更广泛的并行计算应用奠定基础。</p>
+<h4 id="1-增强对多样化并行算法的支持">
+<a class="header-anchor" href="#1-%e5%a2%9e%e5%bc%ba%e5%af%b9%e5%a4%9a%e6%a0%b7%e5%8c%96%e5%b9%b6%e8%a1%8c%e7%ae%97%e6%b3%95%e7%9a%84%e6%94%af%e6%8c%81"></a>
+1. 增强对多样化并行算法的支持
+</h4><p><img src="https://pic2.zhimg.com/v2-f7195bcda5311e8d55d75bd7a869d5d3_1440w.jpg" alt="alt text"></p>
+<ul>
+<li><strong>L1 Cache 与共享内存 (Shared Memory)</strong>:
+<ul>
+<li><strong>背景</strong>: Tesla架构的共享内存利于程序员预先设计内存访问模式的算法（如矩阵乘法）。但对于内存局部性在运行时才体现的算法（如光线追踪、物理模拟、AI），共享内存效果有限。</li>
+<li><strong>Fermi改进</strong>: 引入了L1 Cache，与共享内存共用一块硬件单元，大小可由程序员手动配置。这使得需要随机内存访问的算法也能自动利用内存局部性优势。</li>
+</ul>
+</li>
+<li><strong>L2 Cache 的通用化与扩展</strong>:
+<ul>
+<li><strong>Fermi改进</strong>: 大幅增加了L2 Cache的容量，并使其对所有类型的数据开放（不再仅为纹理专用）。</li>
+<li><strong>意义</strong>: 表明GPU开始从纯粹的图形处理向通用并行计算领域转型，为后续AI等领域的发展埋下伏笔。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-更灵活的-warp-调度机制">
+<a class="header-anchor" href="#2-%e6%9b%b4%e7%81%b5%e6%b4%bb%e7%9a%84-warp-%e8%b0%83%e5%ba%a6%e6%9c%ba%e5%88%b6"></a>
+2. 更灵活的 Warp 调度机制
+</h4><ul>
+<li><strong>背景</strong>: Tesla架构主要针对一次执行一个大型内核、上下文切换较慢的场景。游戏等应用常涉及多种小型内核的执行（如布料、流体、刚体模拟）。</li>
+<li><strong>Fermi改进</strong>: 引入<strong>双调度机制 (Dual Warp Scheduler)</strong>。
+<ul>
+<li><strong>效果</strong>: 允许更多不同类型的内核在同一个SM中并行执行，并能进行快速切换，从而最大限度利用 CUDA核心，有效隐藏指令延迟。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-更快速的上下文切换">
+<a class="header-anchor" href="#3-%e6%9b%b4%e5%bf%ab%e9%80%9f%e7%9a%84%e4%b8%8a%e4%b8%8b%e6%96%87%e5%88%87%e6%8d%a2"></a>
+3. 更快速的上下文切换
+</h4><ul>
+<li><strong>重要性</strong>: 在游戏应用中，上下文切换（如在不同API或计算任务间切换）每帧都可能发生，其速度至关重要。</li>
+<li><strong>Fermi改进</strong>: 将上下文切换时间缩短至约 <strong>20 微秒</strong>。
+<ul>
+<li><strong>设想应用</strong>: 允许在一帧内进行细粒度的内核切换，例如在 DirectX 11 渲染、CUDA 光线追踪、DirectCompute 后处理和 PhysX 物理模拟之间切换。</li>
+</ul>
+</li>
+</ul>
+<h3 id="硬件与算法的演进关系">
+<a class="header-anchor" href="#%e7%a1%ac%e4%bb%b6%e4%b8%8e%e7%ae%97%e6%b3%95%e7%9a%84%e6%bc%94%e8%bf%9b%e5%85%b3%e7%b3%bb"></a>
+硬件与算法的演进关系
+</h3><p>GPU硬件与图形/计算算法之间存在相互促进、协同发展的关系：</p>
+<ol>
+<li><strong>算法驱动</strong>: 算法在现有硬件上实现，逐渐暴露出硬件的瓶颈。</li>
+<li><strong>硬件革新</strong>: 硬件架构针对这些瓶颈进行修改和优化，拓宽边界。</li>
+<li><strong>专用硬件</strong>: 当某一类算法显示出巨大潜力或成为刚需时，硬件可能集成专用单元来加速该算法。</li>
+<li><strong>新机遇</strong>: 新的硬件架构和单元为新算法的出现和发展提供了舞台。</li>
+</ol>
+<p><strong>示例：光线追踪 (Ray Tracing)</strong></p>
+<ul>
+<li><strong>早期挑战</strong>: 光线追踪技术历史悠久，但在GPU上高效实时运行困难，因其光线弹射方向不可预测且具有递归性，需要大量随机内存访问。</li>
+<li><strong>Fermi的贡献</strong>:
+<ul>
+<li><strong>硬件递归支持</strong>: Fermi架构首次在硬件层面支持了递归调用，为高效实现光线追踪及其他依赖递归的图形算法提供了可能。</li>
+<li><strong>Cache优化</strong>: L1 Cache 增强了相邻光线间的内存局部性；L2 Cache 的改进（扩大帧缓存带宽，更准确地说是提升了对各类数据，包括渲染目标和追踪结构数据的访问效率）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="gpu-架构的通用特性">
+<a class="header-anchor" href="#gpu-%e6%9e%b6%e6%9e%84%e7%9a%84%e9%80%9a%e7%94%a8%e7%89%b9%e6%80%a7"></a>
+GPU 架构的通用特性
+</h3><h4 id="1-并行性-parallelism">
+<a class="header-anchor" href="#1-%e5%b9%b6%e8%a1%8c%e6%80%a7-parallelism"></a>
+1. 并行性 (Parallelism)
+</h4><ul>
+<li><strong>核心驱动</strong>: 通过不断增加和特化计算单元来解决特定瓶颈，提升GPU整体及特定任务的并行处理能力。</li>
+<li><strong>演进示例</strong>:
+<ul>
+<li><strong>Tesla架构</strong>: 大量CUDA核心，统一顶点与片元着色器，奠定基础并行处理能力。</li>
+<li><strong>Fermi架构</strong>: 引入多个Polymorph引擎和Raster引擎，大幅提升几何阶段的并行处理能力。</li>
+<li><strong>Turing架构</strong>: 独立的INT32和FP32处理单元，加入RT Core (光线追踪核心) 和Tensor Core (张量核心)，实现更多特定领域的并行加速。</li>
+</ul>
+</li>
+<li><strong>趋势</strong>: 未来将有更多针对特定需求的计算单元被集成到GPU中。</li>
+</ul>
+<h4 id="2-继承性-inheritance">
+<a class="header-anchor" href="#2-%e7%bb%a7%e6%89%bf%e6%80%a7-inheritance"></a>
+2. 继承性 (Inheritance)
+</h4><ul>
+<li><strong>演化而非革命</strong>: GPU架构的设计是基于前代架构的迭代演进。</li>
+<li><strong>示例</strong>: Fermi架构虽然有重大改动，但其整体框架（如SM和Warp调度机制）仍能看到Tesla架构的影子。</li>
+<li><strong>核心灵魂</strong>: 即使是Turing这类重大革新的架构，其核心调度机制等设计思想也一脉相承自早期架构（如Tesla）。</li>
+</ul>
+<h4 id="3-扩展性-scalability">
+<a class="header-anchor" href="#3-%e6%89%a9%e5%b1%95%e6%80%a7-scalability"></a>
+3. 扩展性 (Scalability)
+</h4><ul>
+<li><strong>横向扩展 (产品线)</strong>:
+<ul>
+<li>通过调整GPC (Graphics Processing Cluster) 和SM (Streaming Multiprocessor) 的数量，可以快速设计出同一架构下不同性能和定位的产品，满足不同市场需求。</li>
+</ul>
+</li>
+<li><strong>纵向扩展 (代际发展)</strong>:
+<ul>
+<li>随着芯片制程的进步，可在GPU内集成更多晶体管。现有硬件单元可以“超级加倍”，并根据负载调整比例。</li>
+<li>当出现新的技术需求时，可在上一代架构基础上，向SM中添加新的计算单元，而无需完全重新设计。</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-时代性-timeliness">
+<a class="header-anchor" href="#4-%e6%97%b6%e4%bb%a3%e6%80%a7-timeliness"></a>
+4. 时代性 (Timeliness)
+</h4><ul>
+<li><strong>与时代同步</strong>: GPU架构的推出紧密跟随并推动着时代技术的发展。</li>
+<li><strong>双重角色</strong>:
+<ul>
+<li><strong>技术助推者</strong>: 针对有前景的技术调整架构或推出专用硬件单元进行加速。</li>
+<li><strong>创新孵化器</strong>: 新架构引入的特性往往具有探索空间，能激发围绕新特性的技术探索和创新浪潮。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+      <ul class="article-tag-list" itemprop="keywords">
+  
+</ul>
+
+    </footer>
+  </div>
+  
+    
+  <nav
+    id="article-nav"
+    data-aos="fade-up"
+  >
+    
+      <div class="article-nav-link-wrap article-nav-link-left">
+        
+          
+          
+            <img
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-sizes="auto"
+              alt="Real-Time Rendering"
+              class="lazyload"
+            />
+          
+        
+        <a href="https://nothingtosay0031.github.io/post/rtr/"></a>
+        <div class="article-nav-caption">Newer</div>
+        <h3 class="article-nav-title">
+          
+            Real-Time Rendering
+          
+        </h3>
+      </div>
+    
+
+    
+  </nav>
+
+
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+</section>
+          
+            <aside id="sidebar">
+  <div class="sidebar-wrapper wrap-sticky">
+    <div
+      class="sidebar-wrap"
+      data-aos="fade-up"
+    >
+      
+        <div class="sidebar-toc-sidebar">
+          <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#gpu-架构演进从固定管线到-tesla-统一着色器">GPU 架构演进：从固定管线到 Tesla 统一着色器</a>
+          <ul>
+            <li><a href="#一gpu-概念的诞生与早期发展">一、GPU 概念的诞生与早期发展</a></li>
+            <li><a href="#二走向可编程性的-gpu-时代">二、走向可编程性的 GPU 时代</a></li>
+            <li><a href="#三tesla-架构的登场统一着色器的革命">三、Tesla 架构的登场：统一着色器的革命</a></li>
+            <li><a href="#四tesla-架构详解">四、Tesla 架构详解</a></li>
+          </ul>
+        </li>
+        <li><a href="#tesla-架构tpcsm-与并行计算核心机制">Tesla 架构：TPC、SM 与并行计算核心机制</a>
+          <ul>
+            <li><a href="#一tpc-纹理处理簇-内部结构与功能">一、TPC (纹理处理簇) 内部结构与功能</a></li>
+            <li><a href="#二warpgpu-并行执行的基础">二、Warp：GPU 并行执行的基础</a></li>
+            <li><a href="#三延迟隐藏-latency-hiding榨干硬件性能的关键">三、延迟隐藏 (Latency Hiding)：榨干硬件性能的关键</a></li>
+          </ul>
+        </li>
+        <li><a href="#tesla-架构通用计算及其内存体系">Tesla 架构：通用计算及其内存体系</a>
+          <ul>
+            <li><a href="#一从图形处理到通用计算-gpgpu">一、从图形处理到通用计算 (GPGPU)</a></li>
+            <li><a href="#二线程组织结构-以-cuda-为例">二、线程组织结构 (以 CUDA 为例)</a></li>
+            <li><a href="#三warp真正的并行与优化核心">三、Warp：真正的并行与优化核心</a></li>
+            <li><a href="#四gpu-内存层级详解-以-cuda-视角">四、GPU 内存层级详解 (以 CUDA 视角)</a></li>
+          </ul>
+        </li>
+        <li><a href="#fermi-架构概述">Fermi 架构概述</a>
+          <ul>
+            <li><a href="#一背景与目标">一、背景与目标</a></li>
+            <li><a href="#二回顾tesla-架构的几何瓶颈">二、回顾：Tesla 架构的几何瓶颈</a></li>
+            <li><a href="#三fermi-架构的关键改进">三、Fermi 架构的关键改进</a></li>
+            <li><a href="#四核心技术与应用突破几何瓶颈">四、核心技术与应用：突破几何瓶颈</a></li>
+            <li><a href="#五总结">五、总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#gpu-图形渲染管线详解-fermi-架构">GPU 图形渲染管线详解 (Fermi 架构)</a>
+          <ul>
+            <li><a href="#一数据从-cpu-到-gpu">一、数据从 CPU 到 GPU</a>
+              <ul>
+                <li><a href="#1-数据准备与传输">1. 数据准备与传输</a></li>
+                <li><a href="#2-图形-api-与-gpu-指令">2. 图形 API 与 GPU 指令</a></li>
+                <li><a href="#3-图元分发-primitive-distributor">3. 图元分发 (Primitive Distributor)</a></li>
+                <li><a href="#4-顶点获取-vertex-fetch">4. 顶点获取 (Vertex Fetch)</a></li>
+              </ul>
+            </li>
+            <li><a href="#二几何阶段">二、几何阶段</a>
+              <ul>
+                <li><a href="#1-顶点着色器-vertex-shader">1. 顶点着色器 (Vertex Shader)</a></li>
+                <li><a href="#2-细分控制着色器-tcs--hull-shader">2. 细分控制着色器 (TCS / Hull Shader)</a></li>
+                <li><a href="#3-镶嵌器-tessellator---固定管线单元">3. 镶嵌器 (Tessellator) - 固定管线单元</a></li>
+                <li><a href="#4-细分评估着色器-tes--domain-shader">4. 细分评估着色器 (TES / Domain Shader)</a></li>
+                <li><a href="#5-几何着色器-geometry-shader---可选阶段">5. 几何着色器 (Geometry Shader) - 可选阶段</a></li>
+                <li><a href="#6-流输出-stream-output---可选阶段">6. 流输出 (Stream Output) - 可选阶段</a></li>
+                <li><a href="#7-顶点后处理-vertex-post-processing">7. 顶点后处理 (Vertex Post-Processing)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三光栅阶段">三、光栅阶段</a>
+              <ul>
+                <li><a href="#1-工作分配与排序-work-distribution-crossbar">1. 工作分配与排序 (Work Distribution Crossbar)</a></li>
+                <li><a href="#2-边设置-edge-setup--triangle-setup-part-1">2. 边设置 (Edge Setup / Triangle Setup Part 1)</a></li>
+                <li><a href="#3-光栅化-rasterization--triangle-traversal">3. 光栅化 (Rasterization / Triangle Traversal)</a></li>
+                <li><a href="#4-z-cull-早期-z-剔除的优化">4. Z-Cull (早期 Z 剔除的优化)</a></li>
+              </ul>
+            </li>
+            <li><a href="#四片元阶段">四、片元阶段</a>
+              <ul>
+                <li><a href="#1-属性设置-attribute-setup--triangle-setup-part-2">1. 属性设置 (Attribute Setup / Triangle Setup Part 2)</a></li>
+                <li><a href="#2-片元着色器-fragment-shader--pixel-shader">2. 片元着色器 (Fragment Shader / Pixel Shader)</a></li>
+                <li><a href="#3-rop-render-output-unit--raster-operations-pipeline">3. ROP (Render Output Unit / Raster Operations Pipeline)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#fermi-架构总结与-gpu-架构特性展望">Fermi 架构总结与 GPU 架构特性展望</a>
+          <ul>
+            <li><a href="#fermi-架构的关键改进">Fermi 架构的关键改进</a>
+              <ul>
+                <li><a href="#1-增强对多样化并行算法的支持">1. 增强对多样化并行算法的支持</a></li>
+                <li><a href="#2-更灵活的-warp-调度机制">2. 更灵活的 Warp 调度机制</a></li>
+                <li><a href="#3-更快速的上下文切换">3. 更快速的上下文切换</a></li>
+              </ul>
+            </li>
+            <li><a href="#硬件与算法的演进关系">硬件与算法的演进关系</a></li>
+            <li><a href="#gpu-架构的通用特性">GPU 架构的通用特性</a>
+              <ul>
+                <li><a href="#1-并行性-parallelism">1. 并行性 (Parallelism)</a></li>
+                <li><a href="#2-继承性-inheritance">2. 继承性 (Inheritance)</a></li>
+                <li><a href="#3-扩展性-scalability">3. 扩展性 (Scalability)</a></li>
+                <li><a href="#4-时代性-timeliness">4. 时代性 (Timeliness)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+        </div>
+        <div class="sidebar-common-sidebar hidden">
+          
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">23</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+        </div>
+      
+
+      
+        <div class="sidebar-btn-wrapper" style="position:static">
+          <div class="sidebar-toc-btn current"></div>
+          <div class="sidebar-common-btn"></div>
+        </div>
+      
+    </div>
+  </div>
+
+  
+</aside>
+
+          
+        </main>
+        
+
+
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+
+
+<footer id="footer">
+  <div style="width: 100%; overflow: hidden">
+    <div class="footer-line"></div>
+  </div>
+  <div id="footer-info">
+    <div>
+      <span class="icon-copyright"></span>
+      2021 -
+      2025
+      <span class="footer-info-sep rotate"></span>
+      NothingToSay0031
+    </div>
+    
+      <div>
+        Powered by&nbsp;<a
+          href="https://gohugo.io/"
+          target="_blank"
+          >Hugo</a
+        >&nbsp; Theme.<a
+          href="https://github.com/D-Sketon/hugo-theme-reimu"
+          target="_blank"
+          >Reimu</a
+        >
+      </div>
+    
+    
+      <div>
+        <span class="icon-brush"
+          >&nbsp;
+            58.2k
+          </span
+        >
+        &nbsp;|&nbsp;
+        <span class="icon-coffee">&nbsp;
+          
+          
+
+          04:46
+        </span>
+      </div>
+    
+    
+    
+    
+      <div>
+        <span class="icon-eye"></span>
+        <span id="busuanzi_container_site_pv"
+          >Number of visits&nbsp;<span
+            id="busuanzi_value_site_pv"
+          ></span
+        ></span>
+        &nbsp;|&nbsp;
+        <span class="icon-user"></span>
+        <span id="busuanzi_container_site_uv"
+          >Number of visitors&nbsp;<span
+            id="busuanzi_value_site_uv"
+          ></span
+        ></span>
+      </div>
+    
+  </div>
+</footer>
+
+        
+          <div class="sidebar-top">
+            <div class="sidebar-top-taichi rotate"></div>
+            <div class="arrow-up"></div>
+          </div>
+        
+        <div id="mask" class="hide"></div>
+      </div>
+      <nav id="mobile-nav">
+  <div class="sidebar-wrap">
+    
+      <div class="sidebar-toc-sidebar">
+        <div class="sidebar-toc">
+  <h3 class="toc-title">Contents</h3>
+  <div class="sidebar-toc-wrapper toc-div-class">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#gpu-架构演进从固定管线到-tesla-统一着色器">GPU 架构演进：从固定管线到 Tesla 统一着色器</a>
+          <ul>
+            <li><a href="#一gpu-概念的诞生与早期发展">一、GPU 概念的诞生与早期发展</a></li>
+            <li><a href="#二走向可编程性的-gpu-时代">二、走向可编程性的 GPU 时代</a></li>
+            <li><a href="#三tesla-架构的登场统一着色器的革命">三、Tesla 架构的登场：统一着色器的革命</a></li>
+            <li><a href="#四tesla-架构详解">四、Tesla 架构详解</a></li>
+          </ul>
+        </li>
+        <li><a href="#tesla-架构tpcsm-与并行计算核心机制">Tesla 架构：TPC、SM 与并行计算核心机制</a>
+          <ul>
+            <li><a href="#一tpc-纹理处理簇-内部结构与功能">一、TPC (纹理处理簇) 内部结构与功能</a></li>
+            <li><a href="#二warpgpu-并行执行的基础">二、Warp：GPU 并行执行的基础</a></li>
+            <li><a href="#三延迟隐藏-latency-hiding榨干硬件性能的关键">三、延迟隐藏 (Latency Hiding)：榨干硬件性能的关键</a></li>
+          </ul>
+        </li>
+        <li><a href="#tesla-架构通用计算及其内存体系">Tesla 架构：通用计算及其内存体系</a>
+          <ul>
+            <li><a href="#一从图形处理到通用计算-gpgpu">一、从图形处理到通用计算 (GPGPU)</a></li>
+            <li><a href="#二线程组织结构-以-cuda-为例">二、线程组织结构 (以 CUDA 为例)</a></li>
+            <li><a href="#三warp真正的并行与优化核心">三、Warp：真正的并行与优化核心</a></li>
+            <li><a href="#四gpu-内存层级详解-以-cuda-视角">四、GPU 内存层级详解 (以 CUDA 视角)</a></li>
+          </ul>
+        </li>
+        <li><a href="#fermi-架构概述">Fermi 架构概述</a>
+          <ul>
+            <li><a href="#一背景与目标">一、背景与目标</a></li>
+            <li><a href="#二回顾tesla-架构的几何瓶颈">二、回顾：Tesla 架构的几何瓶颈</a></li>
+            <li><a href="#三fermi-架构的关键改进">三、Fermi 架构的关键改进</a></li>
+            <li><a href="#四核心技术与应用突破几何瓶颈">四、核心技术与应用：突破几何瓶颈</a></li>
+            <li><a href="#五总结">五、总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#gpu-图形渲染管线详解-fermi-架构">GPU 图形渲染管线详解 (Fermi 架构)</a>
+          <ul>
+            <li><a href="#一数据从-cpu-到-gpu">一、数据从 CPU 到 GPU</a>
+              <ul>
+                <li><a href="#1-数据准备与传输">1. 数据准备与传输</a></li>
+                <li><a href="#2-图形-api-与-gpu-指令">2. 图形 API 与 GPU 指令</a></li>
+                <li><a href="#3-图元分发-primitive-distributor">3. 图元分发 (Primitive Distributor)</a></li>
+                <li><a href="#4-顶点获取-vertex-fetch">4. 顶点获取 (Vertex Fetch)</a></li>
+              </ul>
+            </li>
+            <li><a href="#二几何阶段">二、几何阶段</a>
+              <ul>
+                <li><a href="#1-顶点着色器-vertex-shader">1. 顶点着色器 (Vertex Shader)</a></li>
+                <li><a href="#2-细分控制着色器-tcs--hull-shader">2. 细分控制着色器 (TCS / Hull Shader)</a></li>
+                <li><a href="#3-镶嵌器-tessellator---固定管线单元">3. 镶嵌器 (Tessellator) - 固定管线单元</a></li>
+                <li><a href="#4-细分评估着色器-tes--domain-shader">4. 细分评估着色器 (TES / Domain Shader)</a></li>
+                <li><a href="#5-几何着色器-geometry-shader---可选阶段">5. 几何着色器 (Geometry Shader) - 可选阶段</a></li>
+                <li><a href="#6-流输出-stream-output---可选阶段">6. 流输出 (Stream Output) - 可选阶段</a></li>
+                <li><a href="#7-顶点后处理-vertex-post-processing">7. 顶点后处理 (Vertex Post-Processing)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三光栅阶段">三、光栅阶段</a>
+              <ul>
+                <li><a href="#1-工作分配与排序-work-distribution-crossbar">1. 工作分配与排序 (Work Distribution Crossbar)</a></li>
+                <li><a href="#2-边设置-edge-setup--triangle-setup-part-1">2. 边设置 (Edge Setup / Triangle Setup Part 1)</a></li>
+                <li><a href="#3-光栅化-rasterization--triangle-traversal">3. 光栅化 (Rasterization / Triangle Traversal)</a></li>
+                <li><a href="#4-z-cull-早期-z-剔除的优化">4. Z-Cull (早期 Z 剔除的优化)</a></li>
+              </ul>
+            </li>
+            <li><a href="#四片元阶段">四、片元阶段</a>
+              <ul>
+                <li><a href="#1-属性设置-attribute-setup--triangle-setup-part-2">1. 属性设置 (Attribute Setup / Triangle Setup Part 2)</a></li>
+                <li><a href="#2-片元着色器-fragment-shader--pixel-shader">2. 片元着色器 (Fragment Shader / Pixel Shader)</a></li>
+                <li><a href="#3-rop-render-output-unit--raster-operations-pipeline">3. ROP (Render Output Unit / Raster Operations Pipeline)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#fermi-架构总结与-gpu-架构特性展望">Fermi 架构总结与 GPU 架构特性展望</a>
+          <ul>
+            <li><a href="#fermi-架构的关键改进">Fermi 架构的关键改进</a>
+              <ul>
+                <li><a href="#1-增强对多样化并行算法的支持">1. 增强对多样化并行算法的支持</a></li>
+                <li><a href="#2-更灵活的-warp-调度机制">2. 更灵活的 Warp 调度机制</a></li>
+                <li><a href="#3-更快速的上下文切换">3. 更快速的上下文切换</a></li>
+              </ul>
+            </li>
+            <li><a href="#硬件与算法的演进关系">硬件与算法的演进关系</a></li>
+            <li><a href="#gpu-架构的通用特性">GPU 架构的通用特性</a>
+              <ul>
+                <li><a href="#1-并行性-parallelism">1. 并行性 (Parallelism)</a></li>
+                <li><a href="#2-继承性-inheritance">2. 继承性 (Inheritance)</a></li>
+                <li><a href="#3-扩展性-scalability">3. 扩展性 (Scalability)</a></li>
+                <li><a href="#4-时代性-timeliness">4. 时代性 (Timeliness)</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div>
+      </div>
+      <div class="sidebar-common-sidebar hidden">
+        
+<div class="sidebar-author">
+  <img
+    data-src="https://nothingtosay0031.github.io/avatar/../avatar.webp"
+    data-sizes="auto"
+    alt="NothingToSay0031"
+    class="lazyload"
+  />
+  <div class="sidebar-author-name">NothingToSay0031</div>
+  <div class="sidebar-description">又是一个做水果蛋糕的好天气啊！</div>
+</div>
+<div class="sidebar-state">
+  <div class="sidebar-state-article">
+    <div>Posts</div>
+    
+    <div class="sidebar-state-number">23</div>
+  </div>
+  <div class="sidebar-state-category">
+    <div>Categories</div>
+    <div class="sidebar-state-number">
+      0
+    </div>
+  </div>
+  <div class="sidebar-state-tag">
+    <div>Tags</div>
+    <div class="sidebar-state-number">0</div>
+  </div>
+</div>
+<div class="sidebar-social">
+  
+    <div class="icon-email sidebar-social-icon">
+      <a
+        href="mailto:jhwzju@gmail.com"
+        itemprop="url"
+        target="_blank"
+        aria-label="email"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-github sidebar-social-icon">
+      <a
+        href="https://github.com/NothingToSay0031"
+        itemprop="url"
+        target="_blank"
+        aria-label="github"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+    <div class="icon-linkedin sidebar-social-icon">
+      <a
+        href="https://www.linkedin.com/in/hongweiji"
+        itemprop="url"
+        target="_blank"
+        aria-label="linkedin"
+        rel="noopener external nofollow noreferrer"
+      ></a>
+    </div>
+  
+</div>
+<div class="sidebar-menu">
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/"
+        aria-label="Home"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Home</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/archives"
+        aria-label="Archives"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Archives</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/about"
+        aria-label="About"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">About</div>
+    </div>
+  
+    <div class="sidebar-menu-link-wrap">
+      <a
+        class="sidebar-menu-link-dummy"
+        href="https://nothingtosay0031.github.io/friend"
+        aria-label="Friend"
+      ></a>
+      <div class='sidebar-menu-icon icon rotate'>
+        
+          
+            &#xe62b;
+          
+        
+      </div>
+      <div class="sidebar-menu-link">Friend</div>
+    </div>
+  
+</div>
+
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-btn-wrapper">
+      <div class="sidebar-toc-btn current"></div>
+      <div class="sidebar-common-btn"></div>
+    </div>
+  
+</nav>
+
+    </div>
+    
+    
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/lazysizes@5.3.2/lazysizes.min.js"
+    
+    
+    
+    
+    integrity="sha384-3gT/vsepWkfz/ff7PpWNUeMzeWoH3cDhm/A8jM7ouoAK0/fP/9bcHHR5kHq2nf&#43;e" crossorigin="anonymous"
+  ></script>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/clipboard@2.0.11/dist/clipboard.min.js"
+    
+    
+    
+    
+    integrity="sha384-J08i8An/QeARD9ExYpvphB8BsyOj3Gh2TSh1aLINKO3L0cMSH2dN3E22zFoXEi0Q" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/main.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+
+
+  
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/aos.js" integrity="" crossorigin="anonymous" ></script>
+      
+
+  <script>
+    var aosInit = () => {
+      AOS.init({
+        duration: 1000,
+        easing: "ease",
+        once: true,
+        offset: 50,
+      });
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", aosInit);
+    } else {
+      aosInit();
+    }
+  </script>
+
+
+
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/pjax_main.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/mouse-firework@0.0.6/dist/index.umd.js"
+    
+    
+    
+    
+    integrity="sha384-vkGvf25gm1C1PbcoD5dNfc137HzNL/hr1RKA5HniJOaawtvUmH5lTVFgFAruE9Ge" crossorigin="anonymous"
+  ></script>
+
+
+<script>
+  if (window.firework) {
+    const options = JSON.parse("{\"excludeelements\":[\"a\",\"button\"],\"particles\":[{\"colors\":[\"#ff5252\",\"#ff7c7c\",\"#ffafaf\",\"#ffd0d0\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"emit\"],\"number\":20,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.3,0.5],\"radius\":[16,32]}},{\"colors\":[\"#ff0000\"],\"duration\":[1200,1800],\"easing\":\"easeOutExpo\",\"move\":[\"diffuse\"],\"number\":1,\"shape\":\"circle\",\"shapeOptions\":{\"alpha\":[0.2,0.5],\"lineWidth\":6,\"radius\":20}}]}");
+    options.excludeElements = options.excludeelements;
+    delete options.excludeelements;
+    window.firework(options);
+  }
+</script>
+
+
+
+
+
+
+
+
+<div id="lazy-script">
+  <div>
+    
+    
+      
+
+
+
+
+
+  
+      
+      <script src="https://nothingtosay0031.github.io/js/insert_highlight.js" integrity="" crossorigin="anonymous" data-pjax></script>
+      
+
+      
+      
+      
+      
+      <script type="module" data-pjax>
+        const PhotoSwipeLightbox = (await safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js", "sha384-DiL6M\/gG\u002bwmTxmCRZyD1zee6lIhawn5TGvED0FOh7fXcN9B0aZ9dexSF\/N6lrZi\/")).default;
+
+        const pswp = () => {
+          if (_$$('.article-entry a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-entry',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          if(_$$('.article-gallery a.article-gallery-item').length > 0) {
+            new PhotoSwipeLightbox({
+              gallery: '.article-gallery',
+              children: 'a.article-gallery-item',
+              pswpModule: () => safeImport("https:\/\/npm.webcache.cn\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js", "sha384-WkkO3GCmgkC3VQWpaV8DqhKJqpzpF9JoByxDmnV8\u002boTJ7m3DfYEWX1fu1scuS4\u002bs")
+            }).init();
+          }
+          window.lightboxStatus = 'done';
+          window.removeEventListener('lightbox:ready', pswp);
+        }
+        if(window.lightboxStatus === 'ready') {
+          pswp()
+        } else {
+          window.addEventListener('lightbox:ready', pswp);
+        }
+      </script>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+      
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/katex.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8" crossorigin="anonymous"
+  ></script>
+
+
+        
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/katex@0.16.9/dist/contrib/auto-render.min.js"
+    
+    
+    data-pjax
+    
+    integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05" crossorigin="anonymous"
+  ></script>
+
+
+        <script data-pjax>
+          var renderMath = () => {
+            if (!window.renderMathInElement) return;
+            window.renderMathInElement(document.body, {
+              delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+              ],
+            });
+          };
+          if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", renderMath, { once: true });
+          } else {
+            renderMath();
+          }
+        </script>
+      
+      
+    
+  </div>
+</div>
+
+
+
+
+  
+
+  
+  
+  
+  
+  
+  
+  <script
+    src="https://npm.webcache.cn/busuanzi@2.3.0/bsz.pure.mini.js"
+    
+    async
+    
+    
+    integrity="sha384-0M75wtSkhjIInv4coYlaJU83&#43;OypaRCIq2SukQVQX04eGTCBXJDuWAbJet56id&#43;S" crossorigin="anonymous"
+  ></script>
+
+
+
+
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+
+<script>
+  const reimuCopyright = String.raw`
+   ______     ______     __     __    __     __  __    
+  /\  == \   /\  ___\   /\ \   /\ "-./  \   /\ \/\ \   
+  \ \  __<   \ \  __\   \ \ \  \ \ \-./\ \  \ \ \_\ \  
+   \ \_\ \_\  \ \_____\  \ \_\  \ \_\ \ \_\  \ \_____\ 
+    \/_/ /_/   \/_____/   \/_/   \/_/  \/_/   \/_____/ 
+                                                    
+  `;
+  console.log(String.raw`%c ${reimuCopyright}`, "color: #ff5252;");
+  console.log(
+    "%c Theme.Reimu" + " %c https://github.com/D-Sketon/hugo-theme-reimu ",
+    "color: white; background: #ff5252; padding:5px 0;",
+    "padding:4px;border:1px solid #ff5252;",
+  );
+</script>
+
+  </body>
+</html>
