@@ -1507,6 +1507,680 @@ GPU 架构的通用特性
 </ul>
 </li>
 </ul>
+<h2 id="kepler-架构摘要以低功耗为核心设计目标">
+<a class="header-anchor" href="#kepler-%e6%9e%b6%e6%9e%84%e6%91%98%e8%a6%81%e4%bb%a5%e4%bd%8e%e5%8a%9f%e8%80%97%e4%b8%ba%e6%a0%b8%e5%bf%83%e8%ae%be%e8%ae%a1%e7%9b%ae%e6%a0%87"></a>
+Kepler 架构摘要：以低功耗为核心设计目标
+</h2><blockquote>
+<p><strong>主题转变</strong>：从追求高性能转向追求高能效（Perf/Watt），代表 GPU 发展进入“高质量发展阶段”。</p>
+</blockquote>
+<h3 id="核心变化概览">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e5%8f%98%e5%8c%96%e6%a6%82%e8%a7%88"></a>
+核心变化概览
+</h3><ul>
+<li>
+<p><strong>工艺制程</strong>：从 Fermi 的 40nm → Kepler 的 28nm（提升集成度）</p>
+</li>
+<li>
+<p><strong>SM（Streaming Multiprocessor）重构</strong>：</p>
+<ul>
+<li>Fermi：每个 GPC 包含多个 SM</li>
+<li>Kepler：每个 GPC 只有两个 <strong>SMX</strong>，但每个 SMX 的 CUDA 核心数是 Fermi 的 6 倍</li>
+</ul>
+</li>
+<li>
+<p><strong>设计哲学</strong>：增加并行单元数量而非提高频率，从而降低能耗</p>
+</li>
+</ul>
+<h3 id="smx-内部优化详解">
+<a class="header-anchor" href="#smx-%e5%86%85%e9%83%a8%e4%bc%98%e5%8c%96%e8%af%a6%e8%a7%a3"></a>
+SMX 内部优化详解
+</h3><h4 id="1-cuda-core--sfu">
+<a class="header-anchor" href="#1-cuda-core--sfu"></a>
+1. <strong>CUDA Core / SFU</strong>
+</h4><ul>
+<li>不再使用 2 倍图形时钟频率，统一采用 1 倍图形时钟以节能</li>
+<li>用“人海战术”替代高频精英核：更多核心、低频运行 → 延迟隐藏更容易、功耗更低</li>
+</ul>
+<h4 id="2-ldst--texture-units">
+<a class="header-anchor" href="#2-ldst--texture-units"></a>
+2. <strong>LD/ST &amp; Texture Units</strong>
+</h4><ul>
+<li><strong>LD/ST</strong>（读写单元）数量未显著增加，但受益于内存读写速度提升 1.5 倍</li>
+<li><strong>纹理单元</strong>数量同步增长，为无绑定纹理支持打基础</li>
+</ul>
+<h4 id="3-warp-scheduler">
+<a class="header-anchor" href="#3-warp-scheduler"></a>
+3. <strong>Warp Scheduler</strong>
+</h4><ul>
+<li>每个 SMX 有 4 个调度器，每个时钟周期可发射两条指令</li>
+<li><strong>调度逻辑简化</strong>：Kepler 记录指令延迟，不再动态解析依赖，硬件复杂度和功耗大幅降低</li>
+</ul>
+<h4 id="4-polymorph-engine-20">
+<a class="header-anchor" href="#4-polymorph-engine-20"></a>
+4. <strong>Polymorph Engine 2.0</strong>
+</h4><ul>
+<li>每个 SMX 仍只配一个，但性能提升至前代的 2 倍，以支撑更大 SMX</li>
+</ul>
+<h3 id="内存与缓存优化">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e4%b8%8e%e7%bc%93%e5%ad%98%e4%bc%98%e5%8c%96"></a>
+内存与缓存优化
+</h3><h4 id="1-内存子系统">
+<a class="header-anchor" href="#1-%e5%86%85%e5%ad%98%e5%ad%90%e7%b3%bb%e7%bb%9f"></a>
+1. <strong>内存子系统</strong>
+</h4><ul>
+<li>内存控制器数量：6（Fermi）→ 4（Kepler）</li>
+<li>每控制器连接：128KB L2 Cache + 8 ROP</li>
+<li>带宽持平（速度提升补偿结构缩水）</li>
+<li>原子操作性能显著增强</li>
+</ul>
+<h4 id="2-带宽提升">
+<a class="header-anchor" href="#2-%e5%b8%a6%e5%ae%bd%e6%8f%90%e5%8d%87"></a>
+2. <strong>带宽提升</strong>
+</h4><ul>
+<li>内部总线改进 + GDDR5 推到 6 Gbps 极限</li>
+<li>支持更多纹理访问能力，配合新特性</li>
+</ul>
+<h3 id="无绑定纹理bindless-textures">
+<a class="header-anchor" href="#%e6%97%a0%e7%bb%91%e5%ae%9a%e7%ba%b9%e7%90%86bindless-textures"></a>
+无绑定纹理（Bindless Textures）
+</h3><ul>
+<li>传统绑定表最大支持 128 个纹理插槽</li>
+<li>Kepler 首次硬件支持<strong>无绑定纹理</strong>（提前于现代API）</li>
+<li>GPU 可直接访问纹理资源，CPU 开销下降</li>
+<li>纹理资源管理更加灵活、高效</li>
+</ul>
+<h3 id="gpu-boost-技术热功耗墙下的智能超频">
+<a class="header-anchor" href="#gpu-boost-%e6%8a%80%e6%9c%af%e7%83%ad%e5%8a%9f%e8%80%97%e5%a2%99%e4%b8%8b%e7%9a%84%e6%99%ba%e8%83%bd%e8%b6%85%e9%a2%91"></a>
+GPU Boost 技术：热功耗墙下的智能超频
+</h3><ul>
+<li>每代 GPU 都有 TDP（功耗上限）约束</li>
+<li>传统频率设置按最恶劣情况测试设定</li>
+<li><strong>Boost</strong>：如果未达到 TDP，则可动态提升图形时钟频率</li>
+<li>用户可设置功率目标，<strong>散热能力越好 → 实际性能越高</strong></li>
+<li>散热 = 潜在性能</li>
+</ul>
+<h3 id="总结kepler-架构设计理念">
+<a class="header-anchor" href="#%e6%80%bb%e7%bb%93kepler-%e6%9e%b6%e6%9e%84%e8%ae%be%e8%ae%a1%e7%90%86%e5%bf%b5"></a>
+总结：Kepler 架构设计理念
+</h3><ul>
+<li>没有引入全新硬件，但所有模块都围绕降低功耗优化</li>
+<li>典型的“守成一代”：在前代创新基础上精细打磨</li>
+<li>显示了 GPU 架构的设计趋势：
+<ul>
+<li>极致并行 + 功耗控制</li>
+<li>平衡性能与能耗</li>
+</ul>
+</li>
+<li>预示移动端/嵌入式/能效优先场景将成为下阶段重心</li>
+</ul>
+<h2 id="maxwell-架构摘要为新算法与图形特性保驾护航">
+<a class="header-anchor" href="#maxwell-%e6%9e%b6%e6%9e%84%e6%91%98%e8%a6%81%e4%b8%ba%e6%96%b0%e7%ae%97%e6%b3%95%e4%b8%8e%e5%9b%be%e5%bd%a2%e7%89%b9%e6%80%a7%e4%bf%9d%e9%a9%be%e6%8a%a4%e8%88%aa"></a>
+Maxwell 架构摘要：为新算法与图形特性保驾护航
+</h2><h3 id="架构核心目标">
+<a class="header-anchor" href="#%e6%9e%b6%e6%9e%84%e6%a0%b8%e5%bf%83%e7%9b%ae%e6%a0%87"></a>
+架构核心目标
+</h3><ul>
+<li>相比 Kepler，更强调硬件资源分配的效率与适配实际应用场景。</li>
+<li>主要围绕图形算法（如体素化）进行架构级优化。</li>
+<li>注重节能、提升单位面积性能，以及针对实时全局光照和复杂场景的硬件支持。</li>
+</ul>
+<h3 id="架构调整与资源分配">
+<a class="header-anchor" href="#%e6%9e%b6%e6%9e%84%e8%b0%83%e6%95%b4%e4%b8%8e%e8%b5%84%e6%ba%90%e5%88%86%e9%85%8d"></a>
+架构调整与资源分配
+</h3><h4 id="纹理单元和-rops">
+<a class="header-anchor" href="#%e7%ba%b9%e7%90%86%e5%8d%95%e5%85%83%e5%92%8c-rops"></a>
+纹理单元和 ROPs
+</h4><ul>
+<li>每个 SM 配置 <strong>8 个纹理单元</strong>，数量与 Kepler 相同，但<strong>频率提升带来 12% 填充率增长</strong>。</li>
+<li><strong>ROP（像素输出单元）数量翻倍</strong>：32 → 64，配合频率提升使像素填充率提升 2 倍以上。</li>
+</ul>
+<h4 id="smmstreaming-multiprocessor-maxwell">
+<a class="header-anchor" href="#smmstreaming-multiprocessor-maxwell"></a>
+SMM（Streaming Multiprocessor Maxwell）
+</h4><ul>
+<li>从 SMX（192 CUDA 核）转变为 SMM（128 CUDA 核），资源被划分为 4 个独立组，对应 4 个 Warp 调度器。</li>
+<li>每组资源独立调度、缓冲，调度效率更高，面积更小。</li>
+<li>每个 GPC 的 SM 数量翻倍（2 → 4），整体 CUDA 数量仍提升。</li>
+</ul>
+<h4 id="资源结构变化">
+<a class="header-anchor" href="#%e8%b5%84%e6%ba%90%e7%bb%93%e6%9e%84%e5%8f%98%e5%8c%96"></a>
+资源结构变化
+</h4><ul>
+<li><strong>L1 Cache 与纹理缓存合并</strong></li>
+<li><strong>Polymorph Engine 升级到 3.0</strong>，在细分高密度场景下性能提升最高达 3 倍。</li>
+</ul>
+<h3 id="面向体素化渲染的硬件支持">
+<a class="header-anchor" href="#%e9%9d%a2%e5%90%91%e4%bd%93%e7%b4%a0%e5%8c%96%e6%b8%b2%e6%9f%93%e7%9a%84%e7%a1%ac%e4%bb%b6%e6%94%af%e6%8c%81"></a>
+面向体素化渲染的硬件支持
+</h3><h4 id="背景体素全局光vxgi">
+<a class="header-anchor" href="#%e8%83%8c%e6%99%af%e4%bd%93%e7%b4%a0%e5%85%a8%e5%b1%80%e5%85%89vxgi"></a>
+背景：体素全局光（VXGI）
+</h4><ul>
+<li>将光照信息存入体素中，作为间接光源用于 Cone Tracing。</li>
+<li>对体素的写入（体素化）和查询均需实时高效支持。</li>
+</ul>
+<h4 id="针对体素化的三项关键硬件支持">
+<a class="header-anchor" href="#%e9%92%88%e5%af%b9%e4%bd%93%e7%b4%a0%e5%8c%96%e7%9a%84%e4%b8%89%e9%a1%b9%e5%85%b3%e9%94%ae%e7%a1%ac%e4%bb%b6%e6%94%af%e6%8c%81"></a>
+针对体素化的三项关键硬件支持
+</h4><ol>
+<li>
+<p><strong>Viewport Multicast（视口多播）</strong></p>
+<ul>
+<li>自动将几何体广播到多个渲染目标，避免重复提交和几何阶段重复计算。</li>
+<li>典型应用：三方向投影（体素化）、Cube Map、CSM 等。</li>
+</ul>
+</li>
+<li>
+<p><strong>保守光栅化（Conservative Rasterization）</strong></p>
+<ul>
+<li>确保三角形触碰像素即算覆盖，避免孔隙。</li>
+<li>由硬件实现，无需软件模拟扩展。</li>
+</ul>
+</li>
+<li>
+<p><strong>稀疏纹理（Sparse Texture / Tiled Resources）</strong></p>
+<ul>
+<li>支持纹理按需分配，极大节省体素化中的内存占用。</li>
+</ul>
+</li>
+</ol>
+<h3 id="其他图形相关特性">
+<a class="header-anchor" href="#%e5%85%b6%e4%bb%96%e5%9b%be%e5%bd%a2%e7%9b%b8%e5%85%b3%e7%89%b9%e6%80%a7"></a>
+其他图形相关特性
+</h3><ul>
+<li>
+<p><strong>Raster Ordered Views（ROVs）</strong>
+支持多 Draw Call 下的顺序一致性写入，关键于透明排序（如 OIT）。</p>
+</li>
+<li>
+<p><strong>Multi-Pixel Programmable Sampling</strong>
+采样点位置可编程，配合 MFAA（多帧采样反走样）提升抗锯齿效果，低成本模拟更高 MSAA。</p>
+</li>
+<li>
+<p><strong>Dynamic Super Resolution（DSR）</strong>
+驱动级高分渲染 + 高斯滤波降采样，在低分屏上提升画质。</p>
+</li>
+</ul>
+<h3 id="内存压缩机制优化">
+<a class="header-anchor" href="#%e5%86%85%e5%ad%98%e5%8e%8b%e7%bc%a9%e6%9c%ba%e5%88%b6%e4%bc%98%e5%8c%96"></a>
+内存压缩机制优化
+</h3><h4 id="多层压缩策略">
+<a class="header-anchor" href="#%e5%a4%9a%e5%b1%82%e5%8e%8b%e7%bc%a9%e7%ad%96%e7%95%a5"></a>
+多层压缩策略
+</h4><ul>
+<li>
+<p><strong>块压缩</strong></p>
+<ul>
+<li>4×2 区域恒定：8:1 压缩</li>
+<li>2×2 区域恒定：4:1 压缩</li>
+</ul>
+</li>
+<li>
+<p><strong>增量颜色压缩（Delta Color Compression）</strong></p>
+<ul>
+<li>使用像素间差值进行编码。</li>
+<li>Maxwell 提供<strong>第三代 delta 压缩</strong>，通过多个基准点选择提高压缩效率。</li>
+</ul>
+</li>
+</ul>
+<h3 id="nvenc-视频编码器升级">
+<a class="header-anchor" href="#nvenc-%e8%a7%86%e9%a2%91%e7%bc%96%e7%a0%81%e5%99%a8%e5%8d%87%e7%ba%a7"></a>
+NVENC 视频编码器升级
+</h3><ul>
+<li>
+<p>H.264 吞吐量提升 4 倍</p>
+</li>
+<li>
+<p>新增支持 <strong>H.265 / HEVC</strong></p>
+<ul>
+<li>相同画质下带宽节省显著</li>
+</ul>
+</li>
+<li>
+<p>为云游戏、视频推流等提供编码能力基础</p>
+<ul>
+<li>在客户端侧，视频编解码器成为关键性能瓶颈</li>
+</ul>
+</li>
+</ul>
+<h3 id="总结">
+<a class="header-anchor" href="#%e6%80%bb%e7%bb%93"></a>
+总结
+</h3><ul>
+<li>Maxwell 不再单纯堆砌硬件，而是通过架构精细化、特性定向优化支持更复杂场景与算法（如 VXGI）。</li>
+<li>通过多播渲染、保守光栅化、稀疏纹理等新特性，显卡首次以硬件方式为高阶图形算法“保驾护航”。</li>
+<li>兼顾能效、可编程性和渲染带宽，奠定后续架构的演化方向。</li>
+</ul>
+<h2 id="pascal-架构技术摘要">
+<a class="header-anchor" href="#pascal-%e6%9e%b6%e6%9e%84%e6%8a%80%e6%9c%af%e6%91%98%e8%a6%81"></a>
+Pascal 架构技术摘要
+</h2><h3 id="一-核心硬件升级">
+<a class="header-anchor" href="#%e4%b8%80-%e6%a0%b8%e5%bf%83%e7%a1%ac%e4%bb%b6%e5%8d%87%e7%ba%a7"></a>
+一、 核心硬件升级
+</h3><p>与上一代Maxwell架构相比，Pascal架构在硬件层面有显著提升。</p>
+<ul>
+<li><strong>制造工艺</strong>: 16nm FinFET</li>
+<li><strong>核心频率</strong>: 显著提升 (以GTX 1080为例: 1607 MHz / 1733 MHz)</li>
+<li><strong>硬件单元变化</strong>:
+<ul>
+<li><strong>GPC (Graphics Processing Cluster)</strong>: GeForce GTX 1080 仍包含4个GPC，但每个GPC内的SM（Streaming MultiProcessor）数量增加。</li>
+<li><strong>SM (Streaming MultiProcessor)</strong>: 命名从Maxwell的SMM改回SM，但内部元器件配比无重大变化。</li>
+<li><strong>TPC (Texture Processing Cluster)</strong>: <code>Polymorph Engine</code> 从SM中被独立出来，与SM共同组成TPC。</li>
+<li><strong>Polymorph Engine升级</strong>: 内部的 <code>Viewport Transform</code> 模块被升级为功能更强大的 <strong><code>SMP (Simultaneous Multi-Projection)</code></strong> 单元。</li>
+</ul>
+</li>
+</ul>
+<h3 id="二-simultaneous-multi-projection-smp-引擎">
+<a class="header-anchor" href="#%e4%ba%8c-simultaneous-multi-projection-smp-%e5%bc%95%e6%93%8e"></a>
+二、 Simultaneous Multi-Projection (SMP) 引擎
+</h3><p>SMP是Pascal架构的核心升级之一，旨在通过一次几何管线处理，将渲染结果输出到多个不同的投影视口，实现了几何处理与投影计算的解耦。</p>
+<ul>
+<li>
+<p><strong>核心功能</strong>:</p>
+<ul>
+<li>支持最多 <strong>16个</strong> 预设的独立视口（Viewport）。</li>
+<li>支持 <strong>2个</strong> 不同的投影中心（Projection Center）。</li>
+<li>允许对每个视口进行独立地倾斜、旋转，以及沿X轴平移投影中心。</li>
+</ul>
+</li>
+<li>
+<p><strong>主要应用场景 (针对VR)</strong>:</p>
+<ol>
+<li><strong>Single Pass Stereo (SPS) / 单通道立体渲染</strong></li>
+<li><strong>Lens Matched Shading (LMS) / 晶状体匹配着色</strong></li>
+</ol>
+</li>
+</ul>
+<h4 id="1-single-pass-stereo-sps">
+<a class="header-anchor" href="#1-single-pass-stereo-sps"></a>
+1. Single Pass Stereo (SPS)
+</h4><ul>
+<li><strong>目标</strong>: 在一个渲染通道（Pass）内同时为VR的左右眼生成图像，避免对同一场景进行两次完整的几何渲染。</li>
+<li><strong>实现方式</strong>: 利用SMP平移投影中心的特性，在一次绘制中，通过移动裁剪坐标的x分量，为左右眼生成具有视差的独立视图。</li>
+</ul>
+<h4 id="2-lens-matched-shading-lms">
+<a class="header-anchor" href="#2-lens-matched-shading-lms"></a>
+2. Lens Matched Shading (LMS)
+</h4><ul>
+<li><strong>背景</strong>: VR透镜会产生“桶形畸变”，因此渲染时需要预先生成“反向桶形畸变”的图像来抵消。传统方法是渲染一张远大于最终显示像素的完整图像再进行重采样，造成边缘区域大量像素被浪费（过采样）。</li>
+<li><strong>目标</strong>: 提高渲染效率，避免对最终会被压缩或丢弃的边缘像素进行全分辨率着色。</li>
+<li><strong>实现方案</strong>:
+<ul>
+<li><strong>中策 (Multi-Resolution Shading)</strong>: 将屏幕划分为多个区域（如九宫格），对中心区域使用高分辨率渲染，对边缘区域使用低分辨率渲染。实现简单但效率优化较为粗糙。</li>
+<li><strong>上策 (Pascal方案)</strong>: 利用SMP将屏幕划分为4个视口，并通过调整 <strong>W分量</strong> 来实现从中心到边缘的像素密度线性降低。
+<ul>
+<li><strong>原理</strong>: 通过给每个视口设定不同的缩放参数A和B，修改顶点的W值：
+$$w' = w + Ax + By$$</li>
+<li><strong>效果</strong>: 在透视除法后，边缘区域的像素会自然地向中心汇聚，从而在渲染时就匹配了最终畸变图像的采样率分布，大幅提升性能。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-vulkan-api-扩展支持">
+<a class="header-anchor" href="#3-vulkan-api-%e6%89%a9%e5%b1%95%e6%94%af%e6%8c%81"></a>
+3. Vulkan API 扩展支持
+</h4><ul>
+<li><strong>SPS</strong>: 通过 <code>VkRenderPassMultiviewCreateInfoKHR</code> 扩展实现，将左右眼图像渲染到帧缓冲附件（Framebuffer Attachment）的不同层（Layer）。</li>
+<li><strong>LMS</strong>: 通过 <code>VK_NV_clip_space_w_scaling</code> 扩展实现，将帧缓冲附件的同一层划分为多个视口，并对不同视口应用不同的W缩放。</li>
+<li><strong>组合使用</strong>: 这两种技术是正交的，可以同时启用以达到最佳VR渲染性能。</li>
+</ul>
+<h3 id="三-带宽与压缩技术">
+<a class="header-anchor" href="#%e4%b8%89-%e5%b8%a6%e5%ae%bd%e4%b8%8e%e5%8e%8b%e7%bc%a9%e6%8a%80%e6%9c%af"></a>
+三、 带宽与压缩技术
+</h3><p>为满足VR所需的高分辨率和高刷新率，Pascal在显存带宽和数据压缩方面进行了增强。</p>
+<ul>
+<li><strong>显存</strong>: 首次采用 <strong>GDDR5X</strong>，数据传输速率从Maxwell的7Gbps提升至 <strong>10Gbps</strong>。</li>
+<li><strong>Delta颜色压缩</strong>: 在Maxwell的基础上进一步增强。
+<ul>
+<li><strong>2:1 压缩</strong>: 增强算法，提升压缩成功率。</li>
+<li><strong>4:1 压缩</strong>: 新增的Delta颜色压缩模式。</li>
+<li><strong>8:1 压缩</strong>: 组合压缩模式。当一个2x2的像素块成功实现4:1压缩时，会尝试对这四个压缩后的块再次进行2:1压缩，适用于颜色单一的大面积区域。</li>
+</ul>
+</li>
+</ul>
+<h3 id="四-异步计算与抢占">
+<a class="header-anchor" href="#%e5%9b%9b-%e5%bc%82%e6%ad%a5%e8%ae%a1%e7%ae%97%e4%b8%8e%e6%8a%a2%e5%8d%a0"></a>
+四、 异步计算与抢占
+</h3><p>Pascal提升了GPU处理图形与计算混合负载的效率。</p>
+<h4 id="1-动态负载均衡-dynamic-load-balancing">
+<a class="header-anchor" href="#1-%e5%8a%a8%e6%80%81%e8%b4%9f%e8%bd%bd%e5%9d%87%e8%a1%a1-dynamic-load-balancing"></a>
+1. 动态负载均衡 (Dynamic Load Balancing)
+</h4><ul>
+<li><strong>对比Maxwell</strong>: Maxwell使用静态分区来划分图形和计算任务，当负载不均衡时会导致部分GPU资源闲置。</li>
+<li><strong>Pascal改进</strong>: 引入动态负载均衡，允许图形和计算任务根据实际需求动态共享GPU资源，避免资源空闲，提升整体吞吐量。</li>
+</ul>
+<h4 id="2-任务抢占-preemption">
+<a class="header-anchor" href="#2-%e4%bb%bb%e5%8a%a1%e6%8a%a2%e5%8d%a0-preemption"></a>
+2. 任务抢占 (Preemption)
+</h4><p>Pascal实现了更细粒度的任务抢占，以支持对延迟敏感的任务，如VR中的 <strong>ATW (Asynchronous Timewarp)</strong>。</p>
+<ul>
+<li><strong>Pixel Level Preemption (像素级抢占)</strong>:
+<ul>
+<li>图形任务可以在像素级别被中断。</li>
+<li>GPU保存当前渲染进度，切换到高优先级任务，任务切换耗时可在 <strong>100微秒</strong> 以内完成。</li>
+</ul>
+</li>
+<li><strong>Thread Level Preemption (线程级抢占)</strong>:
+<ul>
+<li>计算任务（CUDA）可以在线程块（Thread Block）级别被中断。</li>
+<li>当前SM上运行的线程完成后，Grid中的其余线程被挂起，进行任务切换，耗时同样在 <strong>100微秒</strong> 以内。</li>
+</ul>
+</li>
+<li><strong>Instruction Level Preemption (指令级抢占)</strong>:
+<ul>
+<li>CUDA任务中实现的更精细粒度的抢占，速度更快，但需要保存更多上下文状态（如寄存器数据）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="五-显示同步技术-fast-sync">
+<a class="header-anchor" href="#%e4%ba%94-%e6%98%be%e7%a4%ba%e5%90%8c%e6%ad%a5%e6%8a%80%e6%9c%af-fast-sync"></a>
+五、 显示同步技术 (Fast Sync)
+</h3><p>为解决传统V-Sync（垂直同步）带来的输入延迟问题，Pascal引入了Fast Sync。</p>
+<ul>
+<li><strong>问题回顾</strong>:
+<ul>
+<li><strong>无同步</strong>: 画面撕裂。</li>
+<li><strong>V-Sync (FIFO)</strong>: 消除撕裂，但当渲染速度快于刷新率时，GPU会强制等待，导致延迟。</li>
+</ul>
+</li>
+<li><strong>Fast Sync (Mailbox)</strong>:
+<ul>
+<li><strong>原理</strong>: 采用“三缓冲”机制（前缓冲、后缓冲、最新渲染缓冲）。</li>
+<li><strong>流程</strong>:
+<ol>
+<li><strong>前缓冲</strong>（Front Buffer）负责向显示器输出图像。</li>
+<li><strong>后缓冲</strong>（Back Buffer）存放一帧已完成渲染、等待显示的图像。</li>
+<li><strong>最新渲染缓冲</strong>（Last Rendered Buffer）供GPU无限制地渲染最新帧。</li>
+</ol>
+</li>
+<li><strong>优势</strong>: GPU无需等待显示器，可以全速渲染，从而显著降低输入延迟，同时通过保留一个完整的后缓冲来避免画面撕裂。</li>
+</ul>
+</li>
+<li><strong>Vulkan呈现模式对应</strong>:
+<ul>
+<li><strong>无同步</strong>: <code>VK_PRESENT_MODE_IMMEDIATE_KHR</code></li>
+<li><strong>V-Sync</strong>: <code>VK_PRESENT_MODE_FIFO_KHR</code></li>
+<li><strong>Fast Sync</strong>: <code>VK_PRESENT_MODE_MAILBOX_KHR</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="六-多gpu技术">
+<a class="header-anchor" href="#%e5%85%ad-%e5%a4%9agpu%e6%8a%80%e6%9c%af"></a>
+六、 多GPU技术
+</h3><ul>
+<li><strong>SLI</strong>: 针对游戏玩家，通过连接器桥接多个GPU协同工作。</li>
+<li><strong>DirectX 12模式</strong>:
+<ul>
+<li><strong>LDA (Linked Display Adapter)</strong>: 链接多个GPU的显存，形成统一内存池，适用于同型号GPU。</li>
+<li><strong>MDA (Multi Display Adapter)</strong>: 每个GPU内存独立，适用性更广（如集显+独显），但需要开发者手动管理跨GPU通信。</li>
+</ul>
+</li>
+<li><strong>NVLink</strong>: 面向高性能计算（HPC）和AI领域，提供远高于PCIe总线带宽的GPU间互联技术，可将多达8个GPU紧密连接成一个计算节点。</li>
+</ul>
+<h2 id="turing-架构mesh-shader">
+<a class="header-anchor" href="#turing-%e6%9e%b6%e6%9e%84mesh-shader"></a>
+Turing 架构：Mesh Shader
+</h2><h3 id="一-核心思想革新传统几何渲染管线">
+<a class="header-anchor" href="#%e4%b8%80-%e6%a0%b8%e5%bf%83%e6%80%9d%e6%83%b3%e9%9d%a9%e6%96%b0%e4%bc%a0%e7%bb%9f%e5%87%a0%e4%bd%95%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf"></a>
+一、 核心思想：革新传统几何渲染管线
+</h3><p><strong>Mesh Shader</strong> 是对传统光栅化渲染管线的一次重大革新，其目标是取代传统的<strong>几何管线</strong>（顶点着色器 Vertex Shader、细分着色器 Tessellation Shader、几何着色器 Geometry Shader）。</p>
+<ul>
+<li><strong>并非取代光栅化</strong>：Mesh Shader 优化和革新的是光栅化管线中的几何处理阶段，而非要用光追管线取代光栅化。</li>
+<li><strong>演进方向</strong>：硬件厂商预见，未来将是光追与光栅化两条管线并存并进的局面。而 Mesh Shader 标志着对光栅化管线自身潜力的深度挖掘。</li>
+</ul>
+<h3 id="二-传统管线的瓶颈与挑战">
+<a class="header-anchor" href="#%e4%ba%8c-%e4%bc%a0%e7%bb%9f%e7%ae%a1%e7%ba%bf%e7%9a%84%e7%93%b6%e9%a2%88%e4%b8%8e%e6%8c%91%e6%88%98"></a>
+二、 传统管线的瓶颈与挑战
+</h3><p>渲染大规模、高细节的场景（如元宇宙愿景）时，传统几何管线面临以下核心瓶颈：</p>
+<h4 id="1-永无止境的几何数据">
+<a class="header-anchor" href="#1-%e6%b0%b8%e6%97%a0%e6%ad%a2%e5%a2%83%e7%9a%84%e5%87%a0%e4%bd%95%e6%95%b0%e6%8d%ae"></a>
+1. 永无止境的几何数据
+</h4><ul>
+<li><strong>无限细节 (Infinite Detail)</strong>：现实世界物体细节丰富，在数字世界中表达需要海量的模型数据，给存储、内存、显卡都带来巨大压力。</li>
+<li><strong>无限场景 (Infinite Scene)</strong>：开放世界等应用需要超远视距，海量物体的剔除（Culling）和细节层次（LOD）切换至关重要。</li>
+</ul>
+<h4 id="2-传统几何管线的固有缺陷">
+<a class="header-anchor" href="#2-%e4%bc%a0%e7%bb%9f%e5%87%a0%e4%bd%95%e7%ae%a1%e7%ba%bf%e7%9a%84%e5%9b%ba%e6%9c%89%e7%bc%ba%e9%99%b7"></a>
+2. 传统几何管线的固有缺陷
+</h4><ul>
+<li><strong>几何着色器 (Geometry Shader)</strong>：设计过于灵活（一个线程可输出任意数量图元），导致硬件实现困难，性能长期不佳。</li>
+<li><strong>细分着色器 (Tessellation Shader)</strong>：设计相对保守，由硬件 Tessellator 产生固定模式的顶点，虽然高效但牺牲了灵活性。其线程与顶点的固定映射关系，限制了其应用场景。</li>
+</ul>
+<h4 id="3-真正的性能瓶颈图元分发器-primitive-distributor-pd">
+<a class="header-anchor" href="#3-%e7%9c%9f%e6%ad%a3%e7%9a%84%e6%80%a7%e8%83%bd%e7%93%b6%e9%a2%88%e5%9b%be%e5%85%83%e5%88%86%e5%8f%91%e5%99%a8-primitive-distributor-pd"></a>
+3. 真正的性能瓶颈：图元分发器 (Primitive Distributor, PD)
+</h4><p>PD 是一个固定功能的硬件单元，负责将顶点数据拆分为 GPU Warp 可以处理的块（Batch）。其工作方式虽然巧妙，但存在两大“原罪”：</p>
+<ol>
+<li><strong>不必要的重复工作</strong>：对于静态模型，每一帧都需要通过 PD 进行完全相同的拆分和组织工作。当追求海量数据时，这种重复的固定开销成为瓶颈。</li>
+<li><strong>顶点复用率限制</strong>：
+<ul>
+<li>PD 输出的每个 Batch 的顶点数和图元数有上限（例如，顶点上限32个）。</li>
+<li>当一个三角形的顶点被频繁复用时（顶点复用率 &gt; 3），图元数量会先于顶点数量达到 Batch 上限。</li>
+<li>这导致 Batch 中顶点空间未被填满，后续处理该 Batch 的 Warp 无法满载，造成计算资源浪费。</li>
+</ul>
+</li>
+</ol>
+<h3 id="三-硬件支持前的探索基于-gpu-的渲染-gpu-driven-rendering">
+<a class="header-anchor" href="#%e4%b8%89-%e7%a1%ac%e4%bb%b6%e6%94%af%e6%8c%81%e5%89%8d%e7%9a%84%e6%8e%a2%e7%b4%a2%e5%9f%ba%e4%ba%8e-gpu-%e7%9a%84%e6%b8%b2%e6%9f%93-gpu-driven-rendering"></a>
+三、 硬件支持前的探索：基于 GPU 的渲染 (GPU-Driven Rendering)
+</h3><p>在 Mesh Shader 出现前，顶尖游戏厂商为解决上述瓶颈，采用了一种基于<strong>计算着色器 (Compute Shader)</strong> 的“曲线救国”方案。</p>
+<h4 id="1-核心流程">
+<a class="header-anchor" href="#1-%e6%a0%b8%e5%bf%83%e6%b5%81%e7%a8%8b"></a>
+1. 核心流程
+</h4><ol>
+<li>
+<p><strong>预生成 Meshlet</strong>:</p>
+<ul>
+<li>将模型数据在预处理阶段拆分成自定义的、更小的数据块，称为 <strong>Meshlet</strong>。</li>
+<li>Meshlet 内部使用“顶点索引的索引”，即局部索引，大大减小了索引数据大小。</li>
+<li><strong>好处</strong>: a. 数据量变小；b. 剔除粒度从整个模型缩小到小块 Meshlet。</li>
+</ul>
+</li>
+<li>
+<p><strong>用计算着色器进行剔除与处理</strong>:</p>
+<ul>
+<li>启动一个 Compute Shader。</li>
+<li>在 Shader 内部加载 Meshlet，进行视锥剔除、遮挡剔除等。</li>
+<li><strong>如果 Meshlet 未被剔除</strong>，则在 Shader 内进行顶点变换，并将存活的三角形索引写入一个新的索引 Buffer。</li>
+<li>最后，CPU/GPU 发起一个<strong>间接绘制指令 (Draw Indirect)</strong>，让 GPU 使用这个新生成的 Buffer 走一遍<strong>完整的传统几何管线</strong>。</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-该方案的优劣分析">
+<a class="header-anchor" href="#2-%e8%af%a5%e6%96%b9%e6%a1%88%e7%9a%84%e4%bc%98%e5%8a%a3%e5%88%86%e6%9e%90"></a>
+2. 该方案的优劣分析
+</h4><ul>
+<li><strong>优势</strong>: 在剔除率高的情况下，能节省大量被剔除几何体的固定管线开销（如PD、顶点属性获取），性能提升显著。</li>
+<li><strong>劣势</strong>:
+<ul>
+<li><strong>高昂的固定开销</strong>: 如果剔除率不高，Compute Shader 本身的启动、寄存器占用和数据读写开销会得不偿失。</li>
+<li><strong>资源浪费</strong>: 即使整个 Meshlet 将被剔除，也必须为其分配完整的寄存器资源。</li>
+<li><strong>数据往返开销</strong>: 数据流为 <code>Buffer -&gt; CS 读取 -&gt; CS 写回新 Buffer -&gt; VS 再读取</code>，这种数据来回读写本身就是性能浪费。</li>
+<li><strong>根本问题未解决</strong>: 该方案最终仍需将数据送回传统管线，<strong>PD 的两大原罪（重复工作和顶点复用率瓶颈）依然存在</strong>。Meshlet 预组织的好意被浪费了。</li>
+</ul>
+</li>
+</ul>
+<h3 id="四-硬件解决方案mesh-shader-与-task-shader">
+<a class="header-anchor" href="#%e5%9b%9b-%e7%a1%ac%e4%bb%b6%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88mesh-shader-%e4%b8%8e-task-shader"></a>
+四、 硬件解决方案：Mesh Shader 与 Task Shader
+</h3><p>Mesh Shader 是对上述 GPU-Driven 思想的硬件化、优雅实现。</p>
+<h4 id="1-mesh-shader一步到位">
+<a class="header-anchor" href="#1-mesh-shader%e4%b8%80%e6%ad%a5%e5%88%b0%e4%bd%8d"></a>
+1. Mesh Shader：一步到位
+</h4><p>Mesh Shader 是一个直接联通光栅化器的、统一的着色器阶段。</p>
+<ul>
+<li><strong>替代关系</strong>: 它一个Shader就取代了 <code>Vertex Shader</code> + <code>Tessellation Shader</code> + <code>Geometry Shader</code> + <code>Primitive Distributor</code>。</li>
+<li><strong>编程模型</strong>:
+<ul>
+<li>与计算着色器类似，是<strong>协作式编程模型</strong>。一个线程组（Workgroup）共同协作，输出一整个 Meshlet 的数据。</li>
+<li>程序员可以自由决定线程组内每个线程的工作，而不是像传统顶点着色器那样“一个线程处理一个顶点”。</li>
+</ul>
+</li>
+<li><strong>核心输出</strong>:
+<ul>
+<li><strong>顶点数据数组</strong> (<code>gl_MeshVerticesNV[]</code>)：包含裁剪空间位置等顶点属性。</li>
+<li><strong>图元索引数组</strong> (<code>gl_PrimitiveIndicesNV[]</code>)：局部索引，索引到上面输出的顶点数组，通常只需8位。</li>
+<li><strong>图元数量</strong> (<code>gl_PrimitivesCountNV</code>)。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>本质区别</strong>：传统管线是“一个线程输出一个顶点/图元”，而 Mesh Shader 是“<strong>一个线程组输出一个 Meshlet 的所有数据</strong>”，自由度和效率更高。</p>
+</blockquote>
+<h4 id="2-task-shader更高效的调度器">
+<a class="header-anchor" href="#2-task-shader%e6%9b%b4%e9%ab%98%e6%95%88%e7%9a%84%e8%b0%83%e5%ba%a6%e5%99%a8"></a>
+2. Task Shader：更高效的调度器
+</h4><p>Task Shader 是在 Mesh Shader 之前执行的一个<strong>可选</strong>阶段，其作用是<strong>调度和启动 Mesh Shader 线程组</strong>。</p>
+<ul>
+<li><strong>解决的核心痛点</strong>: 避免了 GPU-Driven 方案中“无论是否剔除都要启动完整计算任务”的资源浪费。</li>
+<li><strong>核心功能</strong>:
+<ol>
+<li><strong>高效剔除</strong>: Task Shader 可以先对一个 Meshlet 的包围体等信息进行剔除判断。如果被剔除，<strong>就根本不会启动对应的 Mesh Shader 线程组</strong>，从源头节省了资源。</li>
+<li><strong>LOD 选择</strong>: Task Shader 可以根据距离等因素，决定使用哪个 LOD 级别的 Meshlet，并启动相应数量和配置的 Mesh Shader 任务。</li>
+<li><strong>几何体放大 (Amplification)</strong>: 可以实现比传统 Tessellation/Geometry Shader 更自由的顶点/图元增删、细分和变形，因为它能动态决定要启动多少 Mesh Shader 工作。</li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<p><strong>类比</strong>: Task Shader 就像是 GPU 内置的、更高级的 <code>Dispatch</code> 指令，让 GPU 渲染摆脱了对 CPU 的依赖，实现了更深层次的自我驱动。</p>
+</blockquote>
+<h3 id="五-未来展望超越-mesh-渲染">
+<a class="header-anchor" href="#%e4%ba%94-%e6%9c%aa%e6%9d%a5%e5%b1%95%e6%9c%9b%e8%b6%85%e8%b6%8a-mesh-%e6%b8%b2%e6%9f%93"></a>
+五、 未来展望：超越 Mesh 渲染
+</h3><p>Mesh Shader 管线的潜力不止于渲染传统的三角形网格（Mesh）。</p>
+<ul>
+<li><strong>作为通用计算</strong>:
+<ul>
+<li>可以关闭光栅化阶段，不输出用于渲染的 Meshlet 数据。</li>
+<li>此时，<strong>Task Shader + Mesh Shader</strong> 的组合本质上就是一个强大的<strong>两级计算着色器</strong>。</li>
+</ul>
+</li>
+<li><strong>优于传统计算着色器</strong>:
+<ul>
+<li>可以轻松实现<strong>计算树</strong>算法（一个 Task Shader 任务分发多个 Mesh Shader 任务）。</li>
+<li>而使用传统计算着色器实现类似逻辑，则需要依赖 <code>DispatchIndirect</code> 和管理参数 Buffer，过程更繁琐。</li>
+</ul>
+</li>
+</ul>
+<p>这套新管线为开发者提供了极高的自由度，有望在未来催生出更多创新的渲染和计算技术。</p>
+<h2 id="移动端与桌面端gpu架构核心差异解析">
+<a class="header-anchor" href="#%e7%a7%bb%e5%8a%a8%e7%ab%af%e4%b8%8e%e6%a1%8c%e9%9d%a2%e7%ab%afgpu%e6%9e%b6%e6%9e%84%e6%a0%b8%e5%bf%83%e5%b7%ae%e5%bc%82%e8%a7%a3%e6%9e%90"></a>
+移动端与桌面端GPU架构核心差异解析
+</h2><h3 id="一-核心架构对比imr-vs-tbr">
+<a class="header-anchor" href="#%e4%b8%80-%e6%a0%b8%e5%bf%83%e6%9e%b6%e6%9e%84%e5%af%b9%e6%af%94imr-vs-tbr"></a>
+一、 核心架构对比：IMR vs. TBR
+</h3><p>两种架构的根本区别在于对渲染流程和带宽资源的不同处理方式。</p>
+<h4 id="桌面端gpu即时模式渲染器-immediate-mode-renderers-imr">
+<a class="header-anchor" href="#%e6%a1%8c%e9%9d%a2%e7%ab%afgpu%e5%8d%b3%e6%97%b6%e6%a8%a1%e5%bc%8f%e6%b8%b2%e6%9f%93%e5%99%a8-immediate-mode-renderers-imr"></a>
+桌面端GPU：即时模式渲染器 (Immediate Mode Renderers, IMR)
+</h4><ul>
+<li><strong>渲染流程</strong>：数据处理流水线非常直接，与图形API的逻辑管线高度一致。
+<ol>
+<li>顶点数据进入着色器核心（SM）进行顶点运算。</li>
+<li>运算结果直接送入光栅化硬件。</li>
+<li>光栅化后的片元再次进入着色器核心进行片元着色。</li>
+<li>最终颜色值写入帧缓冲。</li>
+</ol>
+</li>
+<li><strong>核心特点</strong>：追求极致速度，依赖海量专用带宽来保证数据流畅传输。整个过程中的中间数据（如深度、颜色信息）会频繁读写显存。</li>
+</ul>
+<h4 id="移动端gpu基于块的渲染-tile-based-rendering-tbr">
+<a class="header-anchor" href="#%e7%a7%bb%e5%8a%a8%e7%ab%afgpu%e5%9f%ba%e4%ba%8e%e5%9d%97%e7%9a%84%e6%b8%b2%e6%9f%93-tile-based-rendering-tbr"></a>
+移动端GPU：基于块的渲染 (Tile-Based Rendering, TBR)
+</h4><ul>
+<li><strong>设计哲学</strong>：由于移动设备在<strong>功耗、芯片面积、散热</strong>上存在严格限制，无法承受高带宽带来的高能耗，因此其架构设计的核心目标是<strong>最大限度地节省带宽消耗</strong>。</li>
+<li><strong>主流厂商</strong>：目前主流的移动端GPU（如 <strong>PowerVR</strong>、高通 <strong>Adreno</strong>、ARM <strong>Mali</strong>）均采用TBR架构。</li>
+<li><strong>核心特点</strong>：渲染管线被拆分，通过“延迟”执行的方式，将大量数据读写操作限制在GPU内部的高速缓存（On-Chip Cache）中，极大地减少了对主内存的访问。</li>
+</ul>
+<h3 id="二-tbr架构两大核心技术两次延迟">
+<a class="header-anchor" href="#%e4%ba%8c-tbr%e6%9e%b6%e6%9e%84%e4%b8%a4%e5%a4%a7%e6%a0%b8%e5%bf%83%e6%8a%80%e6%9c%af%e4%b8%a4%e6%ac%a1%e5%bb%b6%e8%bf%9f"></a>
+二、 TBR架构两大核心技术：两次“延迟”
+</h3><p>TBR通过在渲染管线的两个关键节点引入延迟，换取巨大的带宽收益。</p>
+<h4 id="1-第一次延迟分块-binning--tiling">
+<a class="header-anchor" href="#1-%e7%ac%ac%e4%b8%80%e6%ac%a1%e5%bb%b6%e8%bf%9f%e5%88%86%e5%9d%97-binning--tiling"></a>
+1. 第一次延迟：分块 (Binning / Tiling)
+</h4><p>这是在顶点处理之后、光栅化之前进行的一次延迟操作。</p>
+<p><strong>目标</strong>：将屏幕画面划分为若干个小块（Tile），并将所有图元（三角形）根据其覆盖的屏幕位置，分配到对应的块中。</p>
+<p><strong>主要流程</strong>:</p>
+<ol>
+<li><strong>顶点着色</strong>：GPU执行完顶点着色器，并将变换后的顶点数据临时存储在片内缓存。</li>
+<li><strong>分块 (Binning)</strong>：专用的硬件单元（Tiling Engine）分析每个图元，确定它属于哪个或哪些Tile。</li>
+<li><strong>生成图元列表</strong>：为每个Tile创建一个图元列表（<code>per-tile list</code>），记录该Tile需要渲染的所有图元信息。
+<ul>
+<li>PowerVR称之为 <code>Primitive List</code></li>
+<li>Adreno称之为 <code>Visibility Stream</code></li>
+</ul>
+</li>
+<li><strong>写入主存</strong>：将所有Tile的图元列表以及相关的着色器状态、属性等数据，打包写入主内存的一个特定区域（<code>Parameter Buffer</code>）。</li>
+</ol>
+<p><strong>收益</strong>：</p>
+<ul>
+<li>虽然此过程额外增加了一次主内存的读写，但它实现了后续渲染的基础。</li>
+<li>通过分块，GPU可以将每个Tile所需的所有渲染目标（颜色缓冲、深度缓冲）完全加载到<strong>片内高速缓存</strong>中进行处理。</li>
+<li><strong>所有中间的读写操作（如深度测试、颜色混合）都在高速缓存内完成</strong>，只有当一个Tile完全渲染结束后，最终的颜色结果才会被一次性写回主存。这相较于IMR频繁读写主存的方式，极大地节省了带宽。</li>
+</ul>
+<p><em>(a) TBR架构将读写操作限制在片内缓存；(b) IMR架构频繁读写主存</em></p>
+<h4 id="2-第二次延迟延迟片元着色-hidden-surface-removal-hsr">
+<a class="header-anchor" href="#2-%e7%ac%ac%e4%ba%8c%e6%ac%a1%e5%bb%b6%e8%bf%9f%e5%bb%b6%e8%bf%9f%e7%89%87%e5%85%83%e7%9d%80%e8%89%b2-hidden-surface-removal-hsr"></a>
+2. 第二次延迟：延迟片元着色 (Hidden Surface Removal, HSR)
+</h4><p>这是在光栅化之后、片元着色之前进行的第二次延迟操作。</p>
+<p><strong>目标</strong>：在像素级别上消除<strong>过绘制 (Overdraw)</strong>，确保计算资源只用于渲染最终在屏幕上可见的片元。</p>
+<p><strong>主要流程</strong>:</p>
+<ol>
+<li>GPU处理一个Tile内的所有图元，将它们光栅化成片元。</li>
+<li>对所有生成的片元执行<strong>深度测试</strong>。</li>
+<li>等待该Tile内所有图元的深度测试全部完成后，GPU才<strong>只对通过深度测试且离镜头最近的片元执行片元着色器</strong>。</li>
+</ol>
+<p><strong>各厂商技术名称</strong>:</p>
+<ul>
+<li><strong>PowerVR</strong>: Hidden Surface Removal</li>
+<li><strong>高通 Adreno</strong>: Early Z Rejection</li>
+<li><strong>ARM Mali</strong>: Forward Pixel Killing</li>
+</ul>
+<p><strong>与桌面端Early-Z的区别</strong>:</p>
+<ul>
+<li>TBR的此项技术<strong>无需对物体进行从前到后的排序</strong>，并且能比桌面端常见的Early-Z更精确地消除因物体交叉等复杂情况导致的Overdraw。</li>
+</ul>
+<p><strong>影响该技术的特殊情况</strong>:</p>
+<ul>
+<li><strong>半透明物体 (Transparency)</strong>：会中断HSR。GPU会先渲染完当前所有不透明物体，然后渲染半透明物体并进行混合。优化建议是将半透明物体放在渲染队列的最后。</li>
+<li><strong>Alpha Test / Discard</strong>：使用<code>discard</code>的物体会被先当作不透明物体处理。如果它通过了深度测试，则会执行片元着色器。若最终被<code>discard</code>，硬件会回过头去更新HSR信息，让被它遮挡的像素得以渲染。</li>
+</ul>
+<h3 id="三-其他关键优化技术">
+<a class="header-anchor" href="#%e4%b8%89-%e5%85%b6%e4%bb%96%e5%85%b3%e9%94%ae%e4%bc%98%e5%8c%96%e6%8a%80%e6%9c%af"></a>
+三、 其他关键优化技术
+</h3><p>除了TBR架构，移动端GPU还采用多种技术来节省带宽和功耗。</p>
+<ul>
+<li><strong>MSAA优化</strong>：多重采样抗锯齿（MSAA）所需的多样本数据也存储在片内高速缓存中，在片内完成混合（Resolve）后，再将最终结果写回主存。</li>
+<li><strong>流水线并行</strong>：在当前帧进行片元着色的同时，可以并行处理下一帧的顶点着色和分块（Binning）工作，提高效率。</li>
+<li><strong>顶点着色器拆分</strong>：可将顶点着色器拆分为“位置计算”和“其他属性计算”两部分。先计算出位置用于分块，进一步优化流水线。</li>
+<li><strong>脏区检测 (Dirty Tile Detection)</strong>：通过比较前后帧，对于画面没有变化的Tile，直接复用上一帧的结果，不进行重新计算和写回。这对于UI界面或静态场景较多的游戏非常有效。</li>
+<li><strong>硬件细节优化</strong>：
+<ul>
+<li>在缓存中也保持纹理的<strong>压缩格式</strong>，在使用时才解压。</li>
+<li>让暂时没有任务的硬件单元进入<strong>休眠状态</strong>以降低功耗。</li>
+</ul>
+</li>
+</ul>
+<h3 id="四-未来趋势光线追踪与架构融合">
+<a class="header-anchor" href="#%e5%9b%9b-%e6%9c%aa%e6%9d%a5%e8%b6%8b%e5%8a%bf%e5%85%89%e7%ba%bf%e8%bf%bd%e8%b8%aa%e4%b8%8e%e6%9e%b6%e6%9e%84%e8%9e%8d%e5%90%88"></a>
+四、 未来趋势：光线追踪与架构融合
+</h3><ul>
+<li><strong>硬件级光线追踪</strong>：移动端GPU已开始布局光追。
+<ul>
+<li>Imagination Technologies早在2016年就展示了<code>PowerVR GR6500</code>光追测试板。</li>
+<li>三星与AMD合作，在其<code>Exynos 2200</code> GPU中集成了基于<code>RDNA 2</code>架构的硬件光追功能。</li>
+</ul>
+</li>
+<li><strong>架构融合与性能飞跃</strong>：
+<ul>
+<li>苹果自研的<strong>M1系列芯片</strong>，其GPU基于移动端高效的架构设计，但在性能上实现了巨大突破，并成功应用于桌面和笔记本电脑。</li>
+<li>这证明了移动端GPU架构在性能上同样具备巨大潜力。</li>
+<li>未来，移动端和桌面端的GPU架构将继续<strong>互相借鉴与融合</strong>，成为GPU设计的主要趋势。</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -1542,7 +2216,7 @@ GPU 架构的通用特性
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time Rendering"
               class="lazyload"
@@ -1680,6 +2354,118 @@ GPU 架构的通用特性
                 <li><a href="#4-时代性-timeliness">4. 时代性 (Timeliness)</a></li>
               </ul>
             </li>
+          </ul>
+        </li>
+        <li><a href="#kepler-架构摘要以低功耗为核心设计目标">Kepler 架构摘要：以低功耗为核心设计目标</a>
+          <ul>
+            <li><a href="#核心变化概览">核心变化概览</a></li>
+            <li><a href="#smx-内部优化详解">SMX 内部优化详解</a>
+              <ul>
+                <li><a href="#1-cuda-core--sfu">1. <strong>CUDA Core / SFU</strong></a></li>
+                <li><a href="#2-ldst--texture-units">2. <strong>LD/ST &amp; Texture Units</strong></a></li>
+                <li><a href="#3-warp-scheduler">3. <strong>Warp Scheduler</strong></a></li>
+                <li><a href="#4-polymorph-engine-20">4. <strong>Polymorph Engine 2.0</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#内存与缓存优化">内存与缓存优化</a>
+              <ul>
+                <li><a href="#1-内存子系统">1. <strong>内存子系统</strong></a></li>
+                <li><a href="#2-带宽提升">2. <strong>带宽提升</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#无绑定纹理bindless-textures">无绑定纹理（Bindless Textures）</a></li>
+            <li><a href="#gpu-boost-技术热功耗墙下的智能超频">GPU Boost 技术：热功耗墙下的智能超频</a></li>
+            <li><a href="#总结kepler-架构设计理念">总结：Kepler 架构设计理念</a></li>
+          </ul>
+        </li>
+        <li><a href="#maxwell-架构摘要为新算法与图形特性保驾护航">Maxwell 架构摘要：为新算法与图形特性保驾护航</a>
+          <ul>
+            <li><a href="#架构核心目标">架构核心目标</a></li>
+            <li><a href="#架构调整与资源分配">架构调整与资源分配</a>
+              <ul>
+                <li><a href="#纹理单元和-rops">纹理单元和 ROPs</a></li>
+                <li><a href="#smmstreaming-multiprocessor-maxwell">SMM（Streaming Multiprocessor Maxwell）</a></li>
+                <li><a href="#资源结构变化">资源结构变化</a></li>
+              </ul>
+            </li>
+            <li><a href="#面向体素化渲染的硬件支持">面向体素化渲染的硬件支持</a>
+              <ul>
+                <li><a href="#背景体素全局光vxgi">背景：体素全局光（VXGI）</a></li>
+                <li><a href="#针对体素化的三项关键硬件支持">针对体素化的三项关键硬件支持</a></li>
+              </ul>
+            </li>
+            <li><a href="#其他图形相关特性">其他图形相关特性</a></li>
+            <li><a href="#内存压缩机制优化">内存压缩机制优化</a>
+              <ul>
+                <li><a href="#多层压缩策略">多层压缩策略</a></li>
+              </ul>
+            </li>
+            <li><a href="#nvenc-视频编码器升级">NVENC 视频编码器升级</a></li>
+            <li><a href="#总结">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#pascal-架构技术摘要">Pascal 架构技术摘要</a>
+          <ul>
+            <li><a href="#一-核心硬件升级">一、 核心硬件升级</a></li>
+            <li><a href="#二-simultaneous-multi-projection-smp-引擎">二、 Simultaneous Multi-Projection (SMP) 引擎</a>
+              <ul>
+                <li><a href="#1-single-pass-stereo-sps">1. Single Pass Stereo (SPS)</a></li>
+                <li><a href="#2-lens-matched-shading-lms">2. Lens Matched Shading (LMS)</a></li>
+                <li><a href="#3-vulkan-api-扩展支持">3. Vulkan API 扩展支持</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-带宽与压缩技术">三、 带宽与压缩技术</a></li>
+            <li><a href="#四-异步计算与抢占">四、 异步计算与抢占</a>
+              <ul>
+                <li><a href="#1-动态负载均衡-dynamic-load-balancing">1. 动态负载均衡 (Dynamic Load Balancing)</a></li>
+                <li><a href="#2-任务抢占-preemption">2. 任务抢占 (Preemption)</a></li>
+              </ul>
+            </li>
+            <li><a href="#五-显示同步技术-fast-sync">五、 显示同步技术 (Fast Sync)</a></li>
+            <li><a href="#六-多gpu技术">六、 多GPU技术</a></li>
+          </ul>
+        </li>
+        <li><a href="#turing-架构mesh-shader">Turing 架构：Mesh Shader</a>
+          <ul>
+            <li><a href="#一-核心思想革新传统几何渲染管线">一、 核心思想：革新传统几何渲染管线</a></li>
+            <li><a href="#二-传统管线的瓶颈与挑战">二、 传统管线的瓶颈与挑战</a>
+              <ul>
+                <li><a href="#1-永无止境的几何数据">1. 永无止境的几何数据</a></li>
+                <li><a href="#2-传统几何管线的固有缺陷">2. 传统几何管线的固有缺陷</a></li>
+                <li><a href="#3-真正的性能瓶颈图元分发器-primitive-distributor-pd">3. 真正的性能瓶颈：图元分发器 (Primitive Distributor, PD)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-硬件支持前的探索基于-gpu-的渲染-gpu-driven-rendering">三、 硬件支持前的探索：基于 GPU 的渲染 (GPU-Driven Rendering)</a>
+              <ul>
+                <li><a href="#1-核心流程">1. 核心流程</a></li>
+                <li><a href="#2-该方案的优劣分析">2. 该方案的优劣分析</a></li>
+              </ul>
+            </li>
+            <li><a href="#四-硬件解决方案mesh-shader-与-task-shader">四、 硬件解决方案：Mesh Shader 与 Task Shader</a>
+              <ul>
+                <li><a href="#1-mesh-shader一步到位">1. Mesh Shader：一步到位</a></li>
+                <li><a href="#2-task-shader更高效的调度器">2. Task Shader：更高效的调度器</a></li>
+              </ul>
+            </li>
+            <li><a href="#五-未来展望超越-mesh-渲染">五、 未来展望：超越 Mesh 渲染</a></li>
+          </ul>
+        </li>
+        <li><a href="#移动端与桌面端gpu架构核心差异解析">移动端与桌面端GPU架构核心差异解析</a>
+          <ul>
+            <li><a href="#一-核心架构对比imr-vs-tbr">一、 核心架构对比：IMR vs. TBR</a>
+              <ul>
+                <li><a href="#桌面端gpu即时模式渲染器-immediate-mode-renderers-imr">桌面端GPU：即时模式渲染器 (Immediate Mode Renderers, IMR)</a></li>
+                <li><a href="#移动端gpu基于块的渲染-tile-based-rendering-tbr">移动端GPU：基于块的渲染 (Tile-Based Rendering, TBR)</a></li>
+              </ul>
+            </li>
+            <li><a href="#二-tbr架构两大核心技术两次延迟">二、 TBR架构两大核心技术：两次“延迟”</a>
+              <ul>
+                <li><a href="#1-第一次延迟分块-binning--tiling">1. 第一次延迟：分块 (Binning / Tiling)</a></li>
+                <li><a href="#2-第二次延迟延迟片元着色-hidden-surface-removal-hsr">2. 第二次延迟：延迟片元着色 (Hidden Surface Removal, HSR)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-其他关键优化技术">三、 其他关键优化技术</a></li>
+            <li><a href="#四-未来趋势光线追踪与架构融合">四、 未来趋势：光线追踪与架构融合</a></li>
           </ul>
         </li>
       </ul>
@@ -1940,7 +2726,7 @@ GPU 架构的通用特性
       <div>
         <span class="icon-brush"
           >&nbsp;
-            58.2k
+            59.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -1948,7 +2734,7 @@ GPU 架构的通用特性
           
           
 
-          04:46
+          04:51
         </span>
       </div>
     
@@ -2081,6 +2867,118 @@ GPU 架构的通用特性
                 <li><a href="#4-时代性-timeliness">4. 时代性 (Timeliness)</a></li>
               </ul>
             </li>
+          </ul>
+        </li>
+        <li><a href="#kepler-架构摘要以低功耗为核心设计目标">Kepler 架构摘要：以低功耗为核心设计目标</a>
+          <ul>
+            <li><a href="#核心变化概览">核心变化概览</a></li>
+            <li><a href="#smx-内部优化详解">SMX 内部优化详解</a>
+              <ul>
+                <li><a href="#1-cuda-core--sfu">1. <strong>CUDA Core / SFU</strong></a></li>
+                <li><a href="#2-ldst--texture-units">2. <strong>LD/ST &amp; Texture Units</strong></a></li>
+                <li><a href="#3-warp-scheduler">3. <strong>Warp Scheduler</strong></a></li>
+                <li><a href="#4-polymorph-engine-20">4. <strong>Polymorph Engine 2.0</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#内存与缓存优化">内存与缓存优化</a>
+              <ul>
+                <li><a href="#1-内存子系统">1. <strong>内存子系统</strong></a></li>
+                <li><a href="#2-带宽提升">2. <strong>带宽提升</strong></a></li>
+              </ul>
+            </li>
+            <li><a href="#无绑定纹理bindless-textures">无绑定纹理（Bindless Textures）</a></li>
+            <li><a href="#gpu-boost-技术热功耗墙下的智能超频">GPU Boost 技术：热功耗墙下的智能超频</a></li>
+            <li><a href="#总结kepler-架构设计理念">总结：Kepler 架构设计理念</a></li>
+          </ul>
+        </li>
+        <li><a href="#maxwell-架构摘要为新算法与图形特性保驾护航">Maxwell 架构摘要：为新算法与图形特性保驾护航</a>
+          <ul>
+            <li><a href="#架构核心目标">架构核心目标</a></li>
+            <li><a href="#架构调整与资源分配">架构调整与资源分配</a>
+              <ul>
+                <li><a href="#纹理单元和-rops">纹理单元和 ROPs</a></li>
+                <li><a href="#smmstreaming-multiprocessor-maxwell">SMM（Streaming Multiprocessor Maxwell）</a></li>
+                <li><a href="#资源结构变化">资源结构变化</a></li>
+              </ul>
+            </li>
+            <li><a href="#面向体素化渲染的硬件支持">面向体素化渲染的硬件支持</a>
+              <ul>
+                <li><a href="#背景体素全局光vxgi">背景：体素全局光（VXGI）</a></li>
+                <li><a href="#针对体素化的三项关键硬件支持">针对体素化的三项关键硬件支持</a></li>
+              </ul>
+            </li>
+            <li><a href="#其他图形相关特性">其他图形相关特性</a></li>
+            <li><a href="#内存压缩机制优化">内存压缩机制优化</a>
+              <ul>
+                <li><a href="#多层压缩策略">多层压缩策略</a></li>
+              </ul>
+            </li>
+            <li><a href="#nvenc-视频编码器升级">NVENC 视频编码器升级</a></li>
+            <li><a href="#总结">总结</a></li>
+          </ul>
+        </li>
+        <li><a href="#pascal-架构技术摘要">Pascal 架构技术摘要</a>
+          <ul>
+            <li><a href="#一-核心硬件升级">一、 核心硬件升级</a></li>
+            <li><a href="#二-simultaneous-multi-projection-smp-引擎">二、 Simultaneous Multi-Projection (SMP) 引擎</a>
+              <ul>
+                <li><a href="#1-single-pass-stereo-sps">1. Single Pass Stereo (SPS)</a></li>
+                <li><a href="#2-lens-matched-shading-lms">2. Lens Matched Shading (LMS)</a></li>
+                <li><a href="#3-vulkan-api-扩展支持">3. Vulkan API 扩展支持</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-带宽与压缩技术">三、 带宽与压缩技术</a></li>
+            <li><a href="#四-异步计算与抢占">四、 异步计算与抢占</a>
+              <ul>
+                <li><a href="#1-动态负载均衡-dynamic-load-balancing">1. 动态负载均衡 (Dynamic Load Balancing)</a></li>
+                <li><a href="#2-任务抢占-preemption">2. 任务抢占 (Preemption)</a></li>
+              </ul>
+            </li>
+            <li><a href="#五-显示同步技术-fast-sync">五、 显示同步技术 (Fast Sync)</a></li>
+            <li><a href="#六-多gpu技术">六、 多GPU技术</a></li>
+          </ul>
+        </li>
+        <li><a href="#turing-架构mesh-shader">Turing 架构：Mesh Shader</a>
+          <ul>
+            <li><a href="#一-核心思想革新传统几何渲染管线">一、 核心思想：革新传统几何渲染管线</a></li>
+            <li><a href="#二-传统管线的瓶颈与挑战">二、 传统管线的瓶颈与挑战</a>
+              <ul>
+                <li><a href="#1-永无止境的几何数据">1. 永无止境的几何数据</a></li>
+                <li><a href="#2-传统几何管线的固有缺陷">2. 传统几何管线的固有缺陷</a></li>
+                <li><a href="#3-真正的性能瓶颈图元分发器-primitive-distributor-pd">3. 真正的性能瓶颈：图元分发器 (Primitive Distributor, PD)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-硬件支持前的探索基于-gpu-的渲染-gpu-driven-rendering">三、 硬件支持前的探索：基于 GPU 的渲染 (GPU-Driven Rendering)</a>
+              <ul>
+                <li><a href="#1-核心流程">1. 核心流程</a></li>
+                <li><a href="#2-该方案的优劣分析">2. 该方案的优劣分析</a></li>
+              </ul>
+            </li>
+            <li><a href="#四-硬件解决方案mesh-shader-与-task-shader">四、 硬件解决方案：Mesh Shader 与 Task Shader</a>
+              <ul>
+                <li><a href="#1-mesh-shader一步到位">1. Mesh Shader：一步到位</a></li>
+                <li><a href="#2-task-shader更高效的调度器">2. Task Shader：更高效的调度器</a></li>
+              </ul>
+            </li>
+            <li><a href="#五-未来展望超越-mesh-渲染">五、 未来展望：超越 Mesh 渲染</a></li>
+          </ul>
+        </li>
+        <li><a href="#移动端与桌面端gpu架构核心差异解析">移动端与桌面端GPU架构核心差异解析</a>
+          <ul>
+            <li><a href="#一-核心架构对比imr-vs-tbr">一、 核心架构对比：IMR vs. TBR</a>
+              <ul>
+                <li><a href="#桌面端gpu即时模式渲染器-immediate-mode-renderers-imr">桌面端GPU：即时模式渲染器 (Immediate Mode Renderers, IMR)</a></li>
+                <li><a href="#移动端gpu基于块的渲染-tile-based-rendering-tbr">移动端GPU：基于块的渲染 (Tile-Based Rendering, TBR)</a></li>
+              </ul>
+            </li>
+            <li><a href="#二-tbr架构两大核心技术两次延迟">二、 TBR架构两大核心技术：两次“延迟”</a>
+              <ul>
+                <li><a href="#1-第一次延迟分块-binning--tiling">1. 第一次延迟：分块 (Binning / Tiling)</a></li>
+                <li><a href="#2-第二次延迟延迟片元着色-hidden-surface-removal-hsr">2. 第二次延迟：延迟片元着色 (Hidden Surface Removal, HSR)</a></li>
+              </ul>
+            </li>
+            <li><a href="#三-其他关键优化技术">三、 其他关键优化技术</a></li>
+            <li><a href="#四-未来趋势光线追踪与架构融合">四、 未来趋势：光线追踪与架构融合</a></li>
           </ul>
         </li>
       </ul>
