@@ -491,7 +491,7 @@ GPU 架构演进
 <a class="header-anchor" href="#%e5%9b%9btesla-%e6%9e%b6%e6%9e%84%e8%af%a6%e8%a7%a3"></a>
 四、Tesla 架构详解
 </h2><p>Tesla 架构虽然与现代 GPU 相比核心数量较少，但五脏俱全，是理解 GPU 架构的良好起点。</p>
-<p><img src="https://pica.zhimg.com/v2-3b955d24d33d0159669e2ae5e8d25d32_1440w.jpg" alt="alt text"></p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011613491.png" alt="alt text"></p>
 <p><strong>主要组件及功能</strong>:</p>
 <ol>
 <li>
@@ -567,7 +567,7 @@ Tesla 架构：TPC、SM 与并行计算核心机制
 </h1><h2 id="一tpc-纹理处理簇-内部结构与功能">
 <a class="header-anchor" href="#%e4%b8%80tpc-%e7%ba%b9%e7%90%86%e5%a4%84%e7%90%86%e7%b0%87-%e5%86%85%e9%83%a8%e7%bb%93%e6%9e%84%e4%b8%8e%e5%8a%9f%e8%83%bd"></a>
 一、TPC (纹理处理簇) 内部结构与功能
-</h2><p><img src="https://pic4.zhimg.com/v2-92ec0098ff0107284729aa27e9069d8f_1440w.jpg" alt="alt text">
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011614863.png" alt="alt text">
 TPC (Texture Processing Clusters) 是 Tesla 架构中执行具体工作的主要单元。一个 GPU 内通常有多个 TPC。</p>
 <ol>
 <li>
@@ -783,7 +783,7 @@ Tesla 架构：通用计算及其内存体系
 <li>由于线程与任务的映射由程序员决定，需要唯一的线程ID来区分并分配工作。</li>
 <li>Grid 和 Block 均可组织为一维、二维或三维结构。</li>
 <li>API 提供内置变量 (如 <code>threadIdx</code>, <code>blockIdx</code>, <code>blockDim</code>, <code>gridDim</code> 在CUDA中；DirectX中有类似的 <code>SV_DispatchThreadID</code>, <code>SV_GroupID</code>, <code>SV_GroupThreadID</code>, <code>SV_GroupIndex</code>) 来方便地获取各种维度的线程ID，避免手动计算开销。
-<img src="https://pica.zhimg.com/v2-36f03e7fa80a9530c71ad87faca8034a_1440w.jpg" alt="alt text"></li>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011614141.png" alt="alt text"></li>
 </ul>
 </li>
 </ol>
@@ -920,7 +920,7 @@ Fermi 架构概述
 <h2 id="三fermi-架构的关键改进">
 <a class="header-anchor" href="#%e4%b8%89fermi-%e6%9e%b6%e6%9e%84%e7%9a%84%e5%85%b3%e9%94%ae%e6%94%b9%e8%bf%9b"></a>
 三、Fermi 架构的关键改进
-</h2><p><img src="https://pica.zhimg.com/v2-82dc52b2af5388225e04fcba70d6ac9c_1440w.jpg" alt="alt text">
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011614958.png" alt="alt text">
 为解决上述瓶颈，Fermi架构进行了显著调整：</p>
 <ol>
 <li>
@@ -946,14 +946,14 @@ Fermi 架构概述
 <li><strong>每个SM标配一个</strong>。</li>
 <li>集成了所有几何相关的固定功能和可配置阶段，包括顶点拾取、<strong>细分曲面单元 (Tessellator)</strong>、视口变换、属性设置、流输出 (Stream Output) 等。</li>
 <li><strong>核心作用</strong>: 将原本集中的几何处理能力分散到每个SM中，实现几何处理的并行化，是解决几何瓶颈的关键。
-<img src="https://pic2.zhimg.com/v2-941edc12d44b710c7904bddbc9140219_1440w.jpg" alt="alt text"></li>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011615673.png" alt="alt text"></li>
 </ul>
 </li>
 <li><strong>Raster Engine (光栅化引擎)</strong>:
 <ul>
 <li><strong>每个GPC拥有一个</strong> (例如，服务于其内部的4个SM)。</li>
 <li>配合PolyMorph Engine，进一步并行化处理光栅化任务，以应对增加的三角形数量。
-<img src="https://picx.zhimg.com/v2-66da128e7f05518663d1946e4a8eac89_1440w.jpg" alt="alt text"></li>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011615674.png" alt="alt text"></li>
 </ul>
 </li>
 <li><strong>纹理单元 (Texture Units)</strong>:
@@ -1021,7 +1021,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h3 id="2-图形-api-与-gpu-指令">
 <a class="header-anchor" href="#2-%e5%9b%be%e5%bd%a2-api-%e4%b8%8e-gpu-%e6%8c%87%e4%bb%a4"></a>
 2. 图形 API 与 GPU 指令
-</h3><p><img src="https://pic1.zhimg.com/v2-6cbf847e12f18647edf329a866ac2700_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011615233.png" alt="alt text"></p>
 <ul>
 <li><strong>图形 API</strong>: 应用程序通过图形 API (如 DirectX, OpenGL) 发出渲染指令。</li>
 <li><strong>驱动转换</strong>: 驱动程序将 API 调用翻译成 GPU 可读的指令编码。</li>
@@ -1048,7 +1048,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <li><strong>索引压缩</strong>: 原始顶点索引被压缩，剔除重复索引，生成更精简的批次内顶点索引。</li>
 <li><strong>并行处理</strong>: 不同的 Batch 可能被分发到不同的 GPC (Graphics Processing Cluster) 或 SM (Streaming Multiprocessor) 中独立处理。</li>
 <li><strong>顶点冗余</strong>: 处于 Batch 边缘的共享顶点可能会被重复处理，以保证并行性。
-<img src="https://pic1.zhimg.com/v2-ec9602e257abaf1a67d10a20c16b7e2e_1440w.jpg" alt="alt text"></li>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011616749.png" alt="alt text"></li>
 </ul>
 <h3 id="4-顶点获取-vertex-fetch">
 <a class="header-anchor" href="#4-%e9%a1%b6%e7%82%b9%e8%8e%b7%e5%8f%96-vertex-fetch"></a>
@@ -1060,10 +1060,10 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h2 id="二几何阶段">
 <a class="header-anchor" href="#%e4%ba%8c%e5%87%a0%e4%bd%95%e9%98%b6%e6%ae%b5"></a>
 二、几何阶段
-</h2><p><img src="https://pica.zhimg.com/v2-85750a54bd8654c5a4778c6403484c4c_1440w.jpg" alt="alt text"></p>
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011616750.png" alt="alt text"></p>
 <p>GPU 的 SM (Streaming Multiprocessor) 在 Fermi 架构中得到改进，包括更多的计算核心和纹理单元，FMA 指令支持双精度，以及双 Warp 调度机制（每个周期可向两个执行块分发一或两个Warp）。Warp 切换周期仍为两个处理器周期。
-<img src="https://pic1.zhimg.com/v2-9748f581381396a4b061eab364f4d41e_1440w.jpg" alt="alt text">
-<img src="https://pica.zhimg.com/v2-1ff785a541a2692cba1c53938c5d1d34_1440w.jpg" alt="alt text"></p>
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011616752.png" alt="alt text">
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011616753.png" alt="alt text"></p>
 <h3 id="1-顶点着色器-vertex-shader">
 <a class="header-anchor" href="#1-%e9%a1%b6%e7%82%b9%e7%9d%80%e8%89%b2%e5%99%a8-vertex-shader"></a>
 1. 顶点着色器 (Vertex Shader)
@@ -1087,7 +1087,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h3 id="2-细分控制着色器-tcs--hull-shader">
 <a class="header-anchor" href="#2-%e7%bb%86%e5%88%86%e6%8e%a7%e5%88%b6%e7%9d%80%e8%89%b2%e5%99%a8-tcs--hull-shader"></a>
 2. 细分控制着色器 (TCS / Hull Shader)
-</h3><p><img src="https://pica.zhimg.com/v2-d10d5ac52530495a36fb46e3e7c972d0_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011617992.png" alt="alt text"></p>
 <ul>
 <li><strong>执行位置</strong>: 通常在顶点着色器所在的 SM 中执行。</li>
 <li><strong>处理单位</strong>: <code>Patch</code> (由 <code>drawcall</code> 指定，如一个三角形 patch 有3个控制点)。一个 Patch 最多32个顶点。</li>
@@ -1204,7 +1204,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h2 id="三光栅阶段">
 <a class="header-anchor" href="#%e4%b8%89%e5%85%89%e6%a0%85%e9%98%b6%e6%ae%b5"></a>
 三、光栅阶段
-</h2><p><img src="https://picx.zhimg.com/v2-8684905909ad2dd3f28df3fe9df02ad1_1440w.jpg" alt="alt text"></p>
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011617969.png" alt="alt text"></p>
 <h3 id="1-工作分配与排序-work-distribution-crossbar">
 <a class="header-anchor" href="#1-%e5%b7%a5%e4%bd%9c%e5%88%86%e9%85%8d%e4%b8%8e%e6%8e%92%e5%ba%8f-work-distribution-crossbar"></a>
 1. 工作分配与排序 (Work Distribution Crossbar)
@@ -1222,7 +1222,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 </li>
 <li><strong>面剔除 (Face Culling)</strong>: 根据顶点顺序和定义的正面朝向，剔除背面或正面三角形。原文推测此阶段执行最合理。</li>
 <li><strong>SWDX (Sorting Work Distributor Crossbar)</strong>:
-<img src="https://pic3.zhimg.com/v2-5382bb711de5d04142963797cb4e55bc_1440w.jpg" alt="alt text">
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011617794.png" alt="alt text">
 <ul>
 <li><strong>排序</strong>: 保证三角形按提交顺序进入 Raster Engine。</li>
 <li><strong>目的</strong>: 避免透明物体或重叠物体因处理顺序不定导致的闪烁问题。对于无重叠情况，新硬件可关闭排序以提高效率。ROP 阶段会保证输出顺序是提交顺序。</li>
@@ -1232,7 +1232,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h3 id="2-边设置-edge-setup--triangle-setup-part-1">
 <a class="header-anchor" href="#2-%e8%be%b9%e8%ae%be%e7%bd%ae-edge-setup--triangle-setup-part-1"></a>
 2. 边设置 (Edge Setup / Triangle Setup Part 1)
-</h3><p><img src="https://pic3.zhimg.com/v2-1ddda400bedd04459378f2b162f352d0_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011617795.png" alt="alt text"></p>
 <ul>
 <li><strong>位置</strong>: Raster Engine 内部。</li>
 <li><strong>功能</strong>: 为三角形的每条边生成边方程 $e(x,y) = Ax + By + C = 0$。
@@ -1303,7 +1303,7 @@ GPU 图形渲染管线详解 (Fermi 架构)
 <h3 id="4-z-cull-早期-z-剔除的优化">
 <a class="header-anchor" href="#4-z-cull-%e6%97%a9%e6%9c%9f-z-%e5%89%94%e9%99%a4%e7%9a%84%e4%bc%98%e5%8c%96"></a>
 4. Z-Cull (早期 Z 剔除的优化)
-</h3><p><img src="https://pic4.zhimg.com/v2-6366c72ad7da0102d4d0eedf04ad5fdb_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011618330.png" alt="alt text"></p>
 <ul>
 <li><strong>时机</strong>: 在精细的逐像素光栅化之前，对图块 (block/tile) 进行粗略光栅化。</li>
 <li><strong>机制</strong>:
@@ -1372,7 +1372,7 @@ $\tilde{u}(x,y) = \frac{f_1(x,y)}{\sum f_k(x,y)}$, $\tilde{v}(x,y) = \frac{f_2(x
 <h3 id="3-rop-render-output-unit--raster-operations-pipeline">
 <a class="header-anchor" href="#3-rop-render-output-unit--raster-operations-pipeline"></a>
 3. ROP (Render Output Unit / Raster Operations Pipeline)
-</h3><p><img src="https://pica.zhimg.com/v2-d9789027b8ac208100e0b2ae8cfb6254_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011618453.png" alt="alt text"></p>
 <ul>
 <li><strong>位置</strong>: 通常分布在 GPC 外部，靠近 L2 Cache。</li>
 <li><strong>分块管理</strong>: 每个 ROP 单元负责屏幕像素的特定区域 (块/tile)，仅需在此块内维持三角形顺序。</li>
@@ -1397,7 +1397,7 @@ Fermi 架构的关键改进
 <h3 id="1-增强对多样化并行算法的支持">
 <a class="header-anchor" href="#1-%e5%a2%9e%e5%bc%ba%e5%af%b9%e5%a4%9a%e6%a0%b7%e5%8c%96%e5%b9%b6%e8%a1%8c%e7%ae%97%e6%b3%95%e7%9a%84%e6%94%af%e6%8c%81"></a>
 1. 增强对多样化并行算法的支持
-</h3><p><img src="https://pic2.zhimg.com/v2-f7195bcda5311e8d55d75bd7a869d5d3_1440w.jpg" alt="alt text"></p>
+</h3><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507011618454.png" alt="alt text"></p>
 <ul>
 <li><strong>L1 Cache 与共享内存 (Shared Memory)</strong>:
 <ul>
@@ -2216,7 +2216,7 @@ Turing 架构：Mesh Shader
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Real-Time Rendering"
               class="lazyload"
