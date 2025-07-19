@@ -1437,6 +1437,190 @@ GPU端 光照剔除与计算
 </span></span><span class="line"><span class="cl">  <span class="c1">// ... sRGB 编码并返回 ...</span>
 </span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="k">vec4</span><span class="p">(</span><span class="n">encode_srgb</span><span class="p">(</span><span class="n">final_color</span><span class="p">.</span><span class="n">rgb</span><span class="p">),</span> <span class="n">final_color</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
 </span></span></code></pre></div><p>这部分是标准的 PBR (Physically-Based Rendering) 流程，将直接光照、间接光照（漫反射和镜面反射）、自发光等所有成分叠加起来，构成最终的像素颜色。</p>
+<h2 id="附录">
+<a class="header-anchor" href="#%e9%99%84%e5%bd%95"></a>
+附录
+</h2><p>如何为一个三维的光源包围球计算出其在二维屏幕上的紧凑包围盒 (AABB)。</p>
+<p>这是一个比看起来要复杂的问题。由于透视投影的非线性特性，我们不能简单地将球心投影到屏幕上，然后在屏幕空间加上半径——这样做会得到一个不准确、过大的包围盒。我查询到三种不同的实现方法，每种方法都在精度、鲁棒性和性能之间做出了不同的权衡。</p>
+<h3 id="方法一2d-平面解法">
+<a class="header-anchor" href="#%e6%96%b9%e6%b3%95%e4%b8%802d-%e5%b9%b3%e9%9d%a2%e8%a7%a3%e6%b3%95"></a>
+方法一：2D 平面解法
+</h3><p>其核心思想是，将 3D 问题分解为两个独立的 2D 问题来求解：一个在视图空间的 XZ 平面上，另一个在 YZ 平面上。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 1. 在 XZ 平面上求解
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">cx</span><span class="p">{</span><span class="n">view_space_pos</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">view_space_pos</span><span class="p">.</span><span class="n">z</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算相机到圆心的距离的平方 与 半径的平方 的差值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="n">f32</span> <span class="n">tx_squared</span> <span class="o">=</span> <span class="n">glms_vec2_dot</span><span class="p">(</span><span class="n">cx</span><span class="p">,</span> <span class="n">cx</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">radius</span> <span class="o">*</span> <span class="n">radius</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">const</span> <span class="kt">bool</span> <span class="n">tx_camera_inside</span> <span class="o">=</span> <span class="n">tx_squared</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算一个包含切线信息的辅助向量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">vx</span><span class="p">{</span><span class="n">sqrtf</span><span class="p">(</span><span class="n">tx_squared</span><span class="p">),</span> <span class="n">radius</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 构造一个 2D 旋转缩放矩阵
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mat2s</span> <span class="n">xtransf_min</span><span class="p">{</span><span class="n">vx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">vx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="n">vx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vx</span><span class="p">.</span><span class="n">x</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算下边界切点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">minx</span> <span class="o">=</span> <span class="n">glms_mat2_mulv</span><span class="p">(</span><span class="n">xtransf_min</span><span class="p">,</span> <span class="n">cx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 构造另一个旋转缩放矩阵
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">mat2s</span> <span class="n">xtransf_max</span><span class="p">{</span><span class="n">vx</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="n">vx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vx</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">vx</span><span class="p">.</span><span class="n">x</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算上边界切点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">maxx</span> <span class="o">=</span> <span class="n">glms_mat2_mulv</span><span class="p">(</span><span class="n">xtransf_max</span><span class="p">,</span> <span class="n">cx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 2. 在 YZ 平面上做同样的操作 (注意 Y 轴取反)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">cy</span><span class="p">{</span><span class="o">-</span><span class="n">view_space_pos</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">view_space_pos</span><span class="p">.</span><span class="n">z</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ... 类似的计算 ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">miny</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl"><span class="n">vec2s</span> <span class="n">maxy</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 3. 将 2D 切点坐标转换为 NDC 坐标
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec4s</span> <span class="n">aabb</span><span class="p">{</span><span class="n">minx</span><span class="p">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">minx</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">.</span><span class="n">m00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">           <span class="n">miny</span><span class="p">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">miny</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">.</span><span class="n">m11</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">           <span class="n">maxx</span><span class="p">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">maxx</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">.</span><span class="n">m00</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">           <span class="n">maxy</span><span class="p">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">maxy</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">.</span><span class="n">m11</span><span class="p">};</span>
+</span></span></code></pre></div><p>这个方法非常巧妙。让我们以 XZ 平面为例来剖析：</p>
+<ol>
+<li><strong>降维打击:</strong> 它将相机（位于原点）和球体在 XZ 平面上的投影视为一个 2D 的圆。我们的目标是找到从原点到这个圆的两条切线。</li>
+<li><strong>寻找切点:</strong>
+<ul>
+<li><code>tx_squared</code> 计算的是从原点到圆的<strong>切线长度的平方</strong>。如果该值为负，说明原点在圆内。</li>
+<li>向量 <code>vx</code> 包含了切线长度 <code>sqrt(tx_squared)</code> 和半径 <code>r</code>。这两个值与圆心向量 <code>cx</code> 构成了一个直角三角形。</li>
+<li>矩阵 <code>xtransf_min</code> 和 <code>xtransf_max</code> 是两个未归一化的<strong>旋转矩阵</strong>。它们的作用是将圆心向量 <code>cx</code> 旋转一个角度 <code>θ</code> (或 <code>-θ</code>)，其中 <code>θ</code> 是圆心向量与切线向量之间的夹角。旋转后的结果 <code>minx</code> 和 <code>maxx</code> 就是切点在 XZ 平面上的坐标。这避免了使用 <code>atan</code> 等开销较大的三角函数。</li>
+</ul>
+</li>
+<li><strong>透视投影:</strong>
+<ul>
+<li>在视图空间中，一个点 <code>(x, y, z)</code> 投影到 NDC 坐标的计算公式与 <code>x/z</code> 和 <code>y/z</code> 相关。</li>
+<li>因此，<code>minx.x / minx.y</code> 计算的正是切点的 <code>x</code> 坐标除以其 <code>z</code> 坐标。</li>
+<li>最后乘以投影矩阵中的焦距项 (<code>projection.m00</code> 或 <code>projection.m11</code>)，就得到了最终的 NDC 坐标。</li>
+</ul>
+</li>
+</ol>
+<p>这个方法速度很快，因为它只涉及 2D 向量和 2x2 矩阵运算。但它没有显式地处理与近裁剪面相交的情况，在某些极端场景下可能不够鲁棒。</p>
+<h3 id="mcguire-方法-最精确">
+<a class="header-anchor" href="#mcguire-%e6%96%b9%e6%b3%95-%e6%9c%80%e7%b2%be%e7%a1%ae"></a>
+McGuire 方法 (最精确)
+</h3><p>该方法基于 Michael Mara 和 Morgan McGuire 的论文《2D Polyhedral Bounds of a Clipped, Perspective-Projected 3D Sphere》，它能正确处理球体与近裁剪面相交的情况。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">use_mcguire_method</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vec3s</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 沿 X 轴 (1,0,0) 找到左右边界点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">get_bounds_for_axis</span><span class="p">(</span><span class="n">vec3s</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="n">view_space_pos</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">                        <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">near_plane</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 沿 Y 轴 (0,1,0) 找到上下边界点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">get_bounds_for_axis</span><span class="p">(</span><span class="n">vec3s</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">},</span> <span class="n">view_space_pos</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> 
+</span></span><span class="line"><span class="cl">                        <span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">near_plane</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">bottom</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. 将这些视图空间的边界点投影到 NDC
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">left</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">left</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">right</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">right</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">top</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">top</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bottom</span> <span class="o">=</span> <span class="n">project</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">bottom</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4. 组合成最终的 AABB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">aabb</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">right</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">aabb</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">left</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">aabb</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">top</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>     <span class="c1">// Y 轴在屏幕和 NDC 空间可能反向
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">aabb</span><span class="p">.</span><span class="n">w</span> <span class="o">=</span> <span class="o">-</span><span class="n">bottom</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>get_bounds_for_axis</code> 函数是此方法的核心：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">get_bounds_for_axis</span><span class="p">(</span><span class="k">const</span> <span class="n">vec3s</span><span class="o">&amp;</span> <span class="n">a</span><span class="p">,</span> <span class="cm">/* Bounding axis (e.g. {1,0,0})</span> <span class="err">*/</span> <span class="p">...)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将球心 C 投影到由轴 a 和 z 轴定义的 2D 平面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">const</span> <span class="n">vec2s</span> <span class="n">c</span><span class="p">{</span><span class="n">glms_vec3_dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">C</span><span class="p">),</span> <span class="n">C</span><span class="p">.</span><span class="n">z</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 与方法一类似的切点计算 ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查球体是否与近裁剪面相交
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">const</span> <span class="kt">bool</span> <span class="n">clipSphere</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">r</span> <span class="o">&gt;=</span> <span class="n">nearZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ... 计算切点 bounds[i] ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果切点在近平面内侧，并且球体与近平面相交
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">const</span> <span class="kt">bool</span> <span class="n">clipBound</span> <span class="o">=</span> <span class="n">cameraInsideSphere</span> <span class="o">||</span> <span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">y</span> <span class="o">&gt;</span> <span class="n">nearZ</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">clipSphere</span> <span class="o">&amp;&amp;</span> <span class="n">clipBound</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 用球体与近平面相交的交点替换切点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>            <span class="n">bounds</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">vec2s</span><span class="p">{</span><span class="n">c</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span> <span class="n">nearZ</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 将 2D 边界点转换回 3D 摄像机空间 ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li><strong>解耦坐标轴:</strong> 该方法通过 <code>get_bounds_for_axis</code> 函数分别计算水平（X）和垂直（Y）方向的边界，这和方法一的思路相似。</li>
+<li><strong>鲁棒的近平面裁剪:</strong> 这是与方法一最大的不同。<code>get_bounds_for_axis</code> 显式地处理了球体与近裁剪面 (<code>nearZ</code>) 的关系。
+<ul>
+<li>当球体与近平面相交时，其在屏幕上的投影边界可能不再是平滑的切线，而是在近平面上形成的<strong>圆形切面</strong>的边界。</li>
+<li>代码中的 <code>if (clipSphere &amp;&amp; clipBound)</code> 逻辑就是在判断是否需要用这个圆形切面的边界点来代替原始的切点，从而得到一个更紧凑、更正确的包围盒。</li>
+</ul>
+</li>
+<li><strong>完整投影:</strong> 计算出的 <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code> 是视图空间中的 3D 点，它们通过标准的 <code>project</code> 函数（矩阵乘法后进行透视除法）转换到 NDC，保证了结果的正确性。</li>
+</ol>
+<p>此方法是三者中最精确的，因为它严格遵循了经过验证的几何算法，但其计算开销也相对更高。</p>
+<h3 id="3d-包围盒投影法-最简单近似">
+<a class="header-anchor" href="#3d-%e5%8c%85%e5%9b%b4%e7%9b%92%e6%8a%95%e5%bd%b1%e6%b3%95-%e6%9c%80%e7%ae%80%e5%8d%95%e8%bf%91%e4%bc%bc"></a>
+3D 包围盒投影法 (最简单，近似)
+</h3><p>一种最简单直观，但也是最不精确的方法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">use_view_aabb</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">vec3s</span> <span class="n">aabb_min</span><span class="p">{...},</span> <span class="n">aabb_max</span><span class="p">{...};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 遍历光源包围球的3D AABB的8个顶点
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">u32</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">c</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="o">++</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">vec3s</span> <span class="n">corner</span><span class="p">{...};</span> <span class="c1">// 计算第c个角点世界坐标
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 2. 将角点转换到视图空间，并裁剪到近平面
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">vec4s</span> <span class="n">corner_vs</span> <span class="o">=</span> <span class="n">glms_mat4_mulv</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">view</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">corner_vs</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">glm_max</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">near_plane</span><span class="p">,</span> <span class="n">corner_vs</span><span class="p">.</span><span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 3. 将视图空间角点投影到NDC
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">vec4s</span> <span class="n">corner_ndc</span> <span class="o">=</span> <span class="n">glms_mat4_mulv</span><span class="p">(</span><span class="n">game_camera</span><span class="p">.</span><span class="n">camera</span><span class="p">.</span><span class="n">projection</span><span class="p">,</span> <span class="n">corner_vs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">corner_ndc</span> <span class="o">=</span> <span class="n">glms_vec4_divs</span><span class="p">(</span><span class="n">corner_ndc</span><span class="p">,</span> <span class="n">corner_ndc</span><span class="p">.</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 4. 在 NDC 空间中更新 AABB 的 min/max
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">aabb_min</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">glm_min</span><span class="p">(</span><span class="n">aabb_min</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">corner_ndc</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// ... aabb_min.y, aabb_max.x, aabb_max.y ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 5. 用 min/max 组合成最终 AABB
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">aabb</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">aabb_min</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">aabb</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">aabb_max</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li><strong>近似思想:</strong> 该方法不再去求解复杂的切线，而是做了一个<strong>保守的近似</strong>。它首先为 3D 球体构建一个轴对齐包围盒 (AABB)，然后将这个 3D 包围盒的 8 个顶点全部投影到屏幕上，最后在屏幕空间找到这 8 个投影点的最小/最大坐标，以此作为最终的 2D AABB。</li>
+<li><strong>结果的保守性:</strong> 关键在于，<strong>投影一个3D包围盒的顶点所形成的2D包围盒，并不等于对原始3D球体投影后的紧凑2D包围盒</strong>。前者通常会比后者大，尤其当球体靠近屏幕边缘时。</li>
+<li><strong>优点与缺点:</strong>
+<ul>
+<li><strong>优点:</strong> 算法逻辑非常简单，易于理解和实现，且绝对“安全”，因为它产生的包围盒总是能完全包住球体的投影，不会漏掉任何像素。</li>
+<li><strong>缺点:</strong> 包围盒不够紧凑（Overestimation），会导致光源影响不必要的 Tile，从而在 GPU 端产生额外的位掩码检查开销，降低剔除效率。</li>
+</ul>
+</li>
+</ol>
+<h3 id="总结">
+<a class="header-anchor" href="#%e6%80%bb%e7%bb%93"></a>
+总结
+</h3><p>这三种方法为我们展示了在图形学中常见的工程权衡：</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">方法</th>
+          <th style="text-align: left">优点</th>
+          <th style="text-align: left">缺点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>默认方法</strong></td>
+          <td style="text-align: left">计算高效，代码紧凑</td>
+          <td style="text-align: left">对近平面裁剪处理不鲁棒</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>McGuire 方法</strong></td>
+          <td style="text-align: left"><strong>最精确</strong>，鲁棒性强</td>
+          <td style="text-align: left">计算开销相对最高</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>AABB投影法</strong></td>
+          <td style="text-align: left"><strong>最简单</strong>，逻辑清晰</td>
+          <td style="text-align: left">近似方法，包围盒<strong>不紧凑</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p>选择哪种方法取决于具体的应用场景和性能要求。对于大多数情况，默认方法可能是性能和精度之间的一个很好的平衡点。而对于追求极致剔除精度的场景，McGuire 方法是最佳选择。</p>
 
       
     </div>
@@ -1472,7 +1656,7 @@ GPU端 光照剔除与计算
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1622,6 +1806,14 @@ GPU端 光照剔除与计算
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
+          </ul>
+        </li>
+        <li><a href="#附录">附录</a>
+          <ul>
+            <li><a href="#方法一2d-平面解法">方法一：2D 平面解法</a></li>
+            <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
+            <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
+            <li><a href="#总结">总结</a></li>
           </ul>
         </li>
       </ul>
@@ -1882,7 +2074,7 @@ GPU端 光照剔除与计算
       <div>
         <span class="icon-brush"
           >&nbsp;
-            56.9k
+            57.4k
           </span
         >
         &nbsp;|&nbsp;
@@ -1890,7 +2082,7 @@ GPU端 光照剔除与计算
           
           
 
-          04:40
+          04:43
         </span>
       </div>
     
@@ -2014,6 +2206,14 @@ GPU端 光照剔除与计算
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
+          </ul>
+        </li>
+        <li><a href="#附录">附录</a>
+          <ul>
+            <li><a href="#方法一2d-平面解法">方法一：2D 平面解法</a></li>
+            <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
+            <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
+            <li><a href="#总结">总结</a></li>
           </ul>
         </li>
       </ul>
