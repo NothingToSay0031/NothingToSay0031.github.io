@@ -391,17 +391,17 @@ Mesh Shader：Vulkan 中的下一代渲染管线
 <a class="header-anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%80%89%e6%8b%a9-mesh-shader"></a>
 为什么选择 Mesh Shader？
 </h2><p>在深入代码之前，我们先来聊聊“为什么”。传统的顶点着色 (Vertex Shading) 管线虽然服务了我们很多年，但它存在一些固有的效率瓶颈。<a href="https://developer.nvidia.com/blog/introduction-turing-mesh-shaders/">Mesh Shader</a> 的出现正是为了解决这些痛点。</p>
-<h4 id="传统管线的瓶颈">
+<h3 id="传统管线的瓶颈">
 <a class="header-anchor" href="#%e4%bc%a0%e7%bb%9f%e7%ae%a1%e7%ba%bf%e7%9a%84%e7%93%b6%e9%a2%88"></a>
 传统管线的瓶颈
-</h4><ol>
+</h3><ol>
 <li><strong>重复的顶点批处理</strong>：即使场景中模型的拓扑结构（顶点连接关系）固定不变，硬件的“图元分发器” (Primitive Distributor) 每次绘制时仍然需要扫描整个索引缓冲区来创建顶点批次。这是一种不必要的重复劳动。</li>
 <li><strong>无效的数据拉取</strong>：传统管线会拉取并处理大量最终不可见的顶点数据。这些顶点可能因为背面剔除 (Back-face Culling)、视锥剔除 (Frustum Culling) 或被遮挡而被丢弃，但 GPU 带宽和计算资源已经被浪费了。</li>
 </ol>
-<h4 id="mesh-shader-的解决方案">
+<h3 id="mesh-shader-的解决方案">
 <a class="header-anchor" href="#mesh-shader-%e7%9a%84%e8%a7%a3%e5%86%b3%e6%96%b9%e6%a1%88"></a>
 Mesh Shader 的解决方案
-</h4><p>Mesh Shader 引入了两个新的可编程阶段：Task Shader 和 Mesh Shader，它们以工作组 (workgroup) 的形式运作，将更多的控制权交给了开发者。</p>
+</h3><p>Mesh Shader 引入了两个新的可编程阶段：Task Shader 和 Mesh Shader，它们以工作组 (workgroup) 的形式运作，将更多的控制权交给了开发者。</p>
 <ul>
 <li><strong>Task Shader</strong> (可选): 任务着色器，负责剔除和分发工作。它可以看作是 Mesh Shader 工作组的“调度员”，能够高效地剔除掉整个物体或大块的网格，决定是否需要启动后续的 Mesh Shader。</li>
 <li><strong>Mesh Shader</strong>: 网格着色器，负责生成图元。它取代了传统的顶点、几何和曲面细分着色器，直接在一个工作组内生成一小批顶点和图元。</li>
@@ -417,9 +417,9 @@ Mesh Shader 的解决方案
 构建 Meshlet
 </h2><p>让我们看看如何将传统的顶点/索引数据转换为 Meshlet。我们使用 <a href="https://github.com/zeux/meshoptimizer">meshoptimizer</a> 来简化这个过程。</p>
 <p>整个流程可以分解为以下几个步骤：</p>
-<h3 id="1-定义-meshlet-的大小并准备数据">
-<a class="header-anchor" href="#1-%e5%ae%9a%e4%b9%89-meshlet-%e7%9a%84%e5%a4%a7%e5%b0%8f%e5%b9%b6%e5%87%86%e5%a4%87%e6%95%b0%e6%8d%ae"></a>
-1. 定义 Meshlet 的大小并准备数据
+<h3 id="定义-meshlet-的大小并准备数据">
+<a class="header-anchor" href="#%e5%ae%9a%e4%b9%89-meshlet-%e7%9a%84%e5%a4%a7%e5%b0%8f%e5%b9%b6%e5%87%86%e5%a4%87%e6%95%b0%e6%8d%ae"></a>
+定义 Meshlet 的大小并准备数据
 </h3><p>首先，我们需要为每个 Meshlet 定义顶点和图元的上限。这些值需要权衡，以适应硬件特性。<code>64</code> 个顶点和 <code>124</code> 个三角形是常见且高效的选择。</p>
 <p>接着，我们遍历 glTF 场景中的每个图元 (primitive)，提取其顶点数据（位置、法线、UV 等）。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 为每个 meshlet 定义顶点和图元的上限
@@ -436,9 +436,9 @@ Mesh Shader 的解决方案
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// u32 index_count = ...
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// u32 vertex_count = ...
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
-</span></span></code></pre></div><h3 id="2-使用-meshoptimizer-构建-meshlet">
-<a class="header-anchor" href="#2-%e4%bd%bf%e7%94%a8-meshoptimizer-%e6%9e%84%e5%bb%ba-meshlet"></a>
-2. 使用 <code>meshoptimizer</code> 构建 Meshlet
+</span></span></code></pre></div><h3 id="使用-meshoptimizer-构建-meshlet">
+<a class="header-anchor" href="#%e4%bd%bf%e7%94%a8-meshoptimizer-%e6%9e%84%e5%bb%ba-meshlet"></a>
+使用 <code>meshoptimizer</code> 构建 Meshlet
 </h3><p>这是整个流程的魔法所在。我们调用 <code>meshopt_buildMeshlets</code> 函数，它会智能地将输入的网格分割成符合我们设定大小限制的、对 GPU 缓存友好的 Meshlet。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 计算构建 meshlet 所需的最大空间
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="n">sizet</span> <span class="n">max_meshlets</span> <span class="o">=</span> <span class="n">meshopt_buildMeshletsBound</span><span class="p">(</span><span class="n">index_count</span><span class="p">,</span> <span class="n">max_vertices</span><span class="p">,</span> <span class="n">max_triangles</span><span class="p">);</span>
@@ -467,9 +467,9 @@ Mesh Shader 的解决方案
 <li><code>meshlet_vertex_indices</code>: 所有 Meshlet 使用的顶点索引的集合。</li>
 <li><code>meshlet_triangles</code>: 所有 Meshlet 使用的图元索引的集合。</li>
 </ol>
-<h3 id="3-数据打包与优化">
-<a class="header-anchor" href="#3-%e6%95%b0%e6%8d%ae%e6%89%93%e5%8c%85%e4%b8%8e%e4%bc%98%e5%8c%96"></a>
-3. 数据打包与优化
+<h3 id="数据打包与优化">
+<a class="header-anchor" href="#%e6%95%b0%e6%8d%ae%e6%89%93%e5%8c%85%e4%b8%8e%e4%bc%98%e5%8c%96"></a>
+数据打包与优化
 </h3><p><code>meshoptimizer</code> 生成了原始数据，但我们还需要将其转换为 GPU 更喜欢的紧凑格式，以便在 Shader 中高效访问。</p>
 <p>首先，我们处理顶点数据。为了节省带宽，我们会对法线和切线进行量化（例如，从 <code>float</code> 转换为 8 位整数），对 UV 坐标进行半精度浮点数（<code>half</code>）的量化。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 遍历所有顶点，转换并打包数据
@@ -488,9 +488,9 @@ Mesh Shader 的解决方案
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="n">meshlets_vertex_data</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">meshlet_vertex_data</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h3 id="4-生成最终的-gpu-meshlet-结构">
-<a class="header-anchor" href="#4-%e7%94%9f%e6%88%90%e6%9c%80%e7%bb%88%e7%9a%84-gpu-meshlet-%e7%bb%93%e6%9e%84"></a>
-4. 生成最终的 GPU Meshlet 结构
+</span></span></code></pre></div><h3 id="生成最终的-gpu-meshlet-结构">
+<a class="header-anchor" href="#%e7%94%9f%e6%88%90%e6%9c%80%e7%bb%88%e7%9a%84-gpu-meshlet-%e7%bb%93%e6%9e%84"></a>
+生成最终的 GPU Meshlet 结构
 </h3><p>现在，我们将 <code>meshoptimizer</code> 的输出和我们打包好的顶点数据组合成最终的 <code>GpuMeshlet</code> 结构体。这个结构体包含了在 GPU 上进行渲染和剔除所需的一切信息。</p>
 <p>我们通过<code>reinterpret_cast</code>将<code>unsigned char*</code>指针强制转换为<code>unsigned int*</code>（<code>uint32_t*</code>）指针。这使我们能够将原始的索引流按4字节的块进行处理。一个<code>uint32_t</code>可以容纳四个8位的局部索引。在Mesh Shader内部，我们可以用一条指令加载一个<code>uint32_t</code>，然后通过廉价的位移（<code>&gt;&gt;</code>）和位掩码（<code>&amp; 0xFF</code>）操作来解包得到四个独立的索引。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 遍历 meshoptimizer 生成的每个 meshlet
@@ -1729,20 +1729,16 @@ McGuire 方法 (最精确)
       <ul>
         <li><a href="#为什么选择-mesh-shader">为什么选择 Mesh Shader？</a>
           <ul>
-            <li>
-              <ul>
-                <li><a href="#传统管线的瓶颈">传统管线的瓶颈</a></li>
-                <li><a href="#mesh-shader-的解决方案">Mesh Shader 的解决方案</a></li>
-              </ul>
-            </li>
+            <li><a href="#传统管线的瓶颈">传统管线的瓶颈</a></li>
+            <li><a href="#mesh-shader-的解决方案">Mesh Shader 的解决方案</a></li>
           </ul>
         </li>
         <li><a href="#构建-meshlet">构建 Meshlet</a>
           <ul>
-            <li><a href="#1-定义-meshlet-的大小并准备数据">1. 定义 Meshlet 的大小并准备数据</a></li>
-            <li><a href="#2-使用-meshoptimizer-构建-meshlet">2. 使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
-            <li><a href="#3-数据打包与优化">3. 数据打包与优化</a></li>
-            <li><a href="#4-生成最终的-gpu-meshlet-结构">4. 生成最终的 GPU Meshlet 结构</a></li>
+            <li><a href="#定义-meshlet-的大小并准备数据">定义 Meshlet 的大小并准备数据</a></li>
+            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
+            <li><a href="#数据打包与优化">数据打包与优化</a></li>
+            <li><a href="#生成最终的-gpu-meshlet-结构">生成最终的 GPU Meshlet 结构</a></li>
           </ul>
         </li>
       </ul>
@@ -2129,20 +2125,16 @@ McGuire 方法 (最精确)
       <ul>
         <li><a href="#为什么选择-mesh-shader">为什么选择 Mesh Shader？</a>
           <ul>
-            <li>
-              <ul>
-                <li><a href="#传统管线的瓶颈">传统管线的瓶颈</a></li>
-                <li><a href="#mesh-shader-的解决方案">Mesh Shader 的解决方案</a></li>
-              </ul>
-            </li>
+            <li><a href="#传统管线的瓶颈">传统管线的瓶颈</a></li>
+            <li><a href="#mesh-shader-的解决方案">Mesh Shader 的解决方案</a></li>
           </ul>
         </li>
         <li><a href="#构建-meshlet">构建 Meshlet</a>
           <ul>
-            <li><a href="#1-定义-meshlet-的大小并准备数据">1. 定义 Meshlet 的大小并准备数据</a></li>
-            <li><a href="#2-使用-meshoptimizer-构建-meshlet">2. 使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
-            <li><a href="#3-数据打包与优化">3. 数据打包与优化</a></li>
-            <li><a href="#4-生成最终的-gpu-meshlet-结构">4. 生成最终的 GPU Meshlet 结构</a></li>
+            <li><a href="#定义-meshlet-的大小并准备数据">定义 Meshlet 的大小并准备数据</a></li>
+            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
+            <li><a href="#数据打包与优化">数据打包与优化</a></li>
+            <li><a href="#生成最终的-gpu-meshlet-结构">生成最终的 GPU Meshlet 结构</a></li>
           </ul>
         </li>
       </ul>
