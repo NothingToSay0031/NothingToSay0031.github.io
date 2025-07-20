@@ -1656,7 +1656,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1679,7 +1679,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -1790,8 +1790,18 @@ McGuire 方法 (最精确)
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
-                <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a></li>
-                <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a></li>
+                <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a>
+                  <ul>
+                    <li><a href="#为每个光源计算其覆盖的z-bin范围">为每个光源计算其覆盖的Z-Bin范围</a></li>
+                    <li><a href="#为每个z-bin计算其包含的光源索引范围">为每个Z-Bin计算其包含的光源索引范围</a></li>
+                  </ul>
+                </li>
+                <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a>
+                  <ul>
+                    <li><a href="#计算光源在屏幕空间的2d包围盒">计算光源在屏幕空间的2D包围盒</a></li>
+                    <li><a href="#将光源信息填充到tile网格中">将光源信息填充到Tile网格中</a></li>
+                  </ul>
+                </li>
               </ul>
             </li>
             <li><a href="#gpu端-光照剔除与计算">GPU端 光照剔除与计算</a>
@@ -2189,8 +2199,18 @@ McGuire 方法 (最精确)
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
-                <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a></li>
-                <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a></li>
+                <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a>
+                  <ul>
+                    <li><a href="#为每个光源计算其覆盖的z-bin范围">为每个光源计算其覆盖的Z-Bin范围</a></li>
+                    <li><a href="#为每个z-bin计算其包含的光源索引范围">为每个Z-Bin计算其包含的光源索引范围</a></li>
+                  </ul>
+                </li>
+                <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a>
+                  <ul>
+                    <li><a href="#计算光源在屏幕空间的2d包围盒">计算光源在屏幕空间的2D包围盒</a></li>
+                    <li><a href="#将光源信息填充到tile网格中">将光源信息填充到Tile网格中</a></li>
+                  </ul>
+                </li>
               </ul>
             </li>
             <li><a href="#gpu端-光照剔除与计算">GPU端 光照剔除与计算</a>
