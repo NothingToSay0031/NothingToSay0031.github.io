@@ -387,7 +387,17 @@
         <h1 id="dynamic-diffuse-global-illumination-ddgi">
 <a class="header-anchor" href="#dynamic-diffuse-global-illumination-ddgi"></a>
 Dynamic Diffuse Global Illumination (DDGI)
-</h1><p>动态漫反射全局光照（DDGI）是一种用于实时渲染中模拟间接光照的强大技术。其核心思想是在场景中布置一个规则的探针网格（Probe Grid），并预计算每个探针接收到的来自周围环境的光照。</p>
+</h1><p>动态漫反射全局光照（<a href="https://www.jcgt.org/published/0008/02/01/paper-lowres.pdf">DDGI</a>）是一种用于实时渲染中模拟间接光照的强大技术。其核心思想是在场景中布置一个规则的探针网格（Probe Grid），并预计算每个探针接收到的来自周围环境的光照。</p>
+<h2 id="工作流程">
+<a class="header-anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b"></a>
+工作流程
+</h2><ol>
+<li><strong>辐射度采集 (Gather Radiance)</strong>: 从每个探针位置向周围发射光线，采集光照信息。</li>
+<li><strong>辐照度更新 (Update Irradiance)</strong>: 使用采集到的光照信息更新探针的辐照度数据。</li>
+<li><strong>可见性更新 (Update Visibility)</strong>: 更新探针的可见性数据，用于后续的阴影计算。</li>
+<li><strong>（可选）探针偏移更新 (Probe Offset Update)</strong>: 根据光线追踪的距离调整每个探针的位置偏移，以更好地适应场景几何体。</li>
+<li><strong>间接光照计算 (Indirect Lighting Calculation)</strong>: 使用更新后的辐照度和可见性数据计算场景的间接光照。</li>
+</ol>
 <h2 id="辐射度采集-gather-radiance">
 <a class="header-anchor" href="#%e8%be%90%e5%b0%84%e5%ba%a6%e9%87%87%e9%9b%86-gather-radiance"></a>
 辐射度采集 (Gather Radiance)
@@ -938,6 +948,7 @@ CPU端调度
 <a class="header-anchor" href="#%e9%87%87%e6%a0%b7-irradiance-probes"></a>
 采样 Irradiance Probes
 </h2><p>这部分代码负责设置渲染管线状态并启动计算着色器。</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201712787.png" alt=""></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">sampleIrradianceProbes</span><span class="p">()</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 设置资源屏障：告诉GPU，我们将要以“无序访问”（写入）的方式使用 indirect_texture
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">gpu_commands</span><span class="o">-&gt;</span><span class="n">issue_texture_barrier</span><span class="p">(</span><span class="n">indirect_texture</span><span class="p">,</span> <span class="n">RESOURCE_STATE_UNORDERED_ACCESS</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
@@ -1171,11 +1182,9 @@ CPU端调度
 <a class="header-anchor" href="#%e5%88%87%e6%af%94%e9%9b%aa%e5%a4%ab%e4%b8%8d%e7%ad%89%e5%bc%8f-chebyshevs-inequality"></a>
 切比雪夫不等式 (Chebyshev&rsquo;s Inequality)
 </h3><p>这是VSM能够工作的数学基石，它利用均值和方差来估算概率。</p>
-<ul>
-<li>
 $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
 其中 $\mu$ 是均值, $\sigma^2$ 是方差。这个公式给出了变量 $X$ 的值大于或等于某个值 $t$ 的概率上限。</p>
-</li>
+<ul>
 <li>
 <p><strong>在代码中的应用</strong>:</p>
 <ul>
@@ -1361,7 +1370,836 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
 <li><code>&quot;backfaces_count / probe_rays &gt; 0.25f&quot;</code> 就是一个典型的启发式规则，它简单快速地判断出“探针大概率在几何体内”。</li>
 <li>“沿最远视线方向移动”也是一个聪明的做法，它能引导探针自动寻找并移动到局部空间的中心位置。</li>
 </ul>
-
+<h1 id="ray-traced-shadows">
+<a class="header-anchor" href="#ray-traced-shadows"></a>
+Ray Traced Shadows
+</h1><p><a href="https://www.cg.tuwien.ac.at/research/publications/2019/BOKSANSKY-2019-RTS/">Ray Traced Shadows: Maintaining Real-Time Frame Rates</a>.</p>
+<h2 id="工作流程-1">
+<a class="header-anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-1"></a>
+工作流程
+</h2><ol>
+<li><strong>Variance History:</strong> 计算并存储过去四帧的可见性方差。</li>
+<li><strong>Sample Count Estimation:</strong> 使用最大滤波器和帐篷滤波器估计每个片段和每个光源的采样数量。</li>
+<li><strong>Inline Ray Tracing:</strong> 使用采样数量追踪阴影射线到场景中，以获取原始可见性值。</li>
+<li><strong>Denoising:</strong> 对原始可见性进行时间和空间滤波，以减少噪声。</li>
+<li><strong>Lighting Integration:</strong> 在最终的光照计算中使用滤波后的阴影可见性。</li>
+</ol>
+<h2 id="计算可见性方差">
+<a class="header-anchor" href="#%e8%ae%a1%e7%ae%97%e5%8f%af%e8%a7%81%e6%80%a7%e6%96%b9%e5%b7%ae"></a>
+计算可见性方差
+</h2><p>这个步骤是整个实时光线追踪阴影算法的起点，其核心思想是<strong>识别出画面中哪些区域的阴影正在发生变化或处于不稳定状态</strong>，从而在后续步骤中对这些区域投入更多的计算资源（发射更多的光线），对稳定区域则使用较少的资源，实现性能与效果的平衡。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  计算阴影可见性的方差（Variance）。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details 该计算着色器通过分析前四帧的阴影可见性历史数据，来计算每个像素的可见性方差。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 这个方差值实际上是一个简化的衡量标准（取最大值与最小值的差），用于表示阴影的“不稳定性”。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 结果将被存储到一个新的纹理中，供后续的采样数估算步骤使用。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 此过程在半分辨率下运行以提高性能。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义计算着色器的本地工作组大小为 8x8x1。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 意味着每个工作组包含 64 个着色器调用（线程）。</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 计算当前处理的像素坐标 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取目标纹理的分辨率（半分辨率）。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">iresolution</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">resolution</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查当前着色器调用（线程）是否在目标纹理的有效范围内。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果超出范围，则直接返回，不做任何处理。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// gl_GlobalInvocationID 是当前线程在整个网格中的唯一ID。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">x</span> <span class="o">||</span> <span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将全局调用ID转换为纹理坐标，用于读取和写入。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">tex_coord</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 读取历史可见性数据 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从3D纹理（实际上用作2D纹理数组）中读取存储的前四帧的可见性数据。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// texelFetch 用于精确获取指定整数坐标的纹素值，无需归一化。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// `visibility_cache_texture_index` 是一个全局uniform变量，指向包含历史数据的纹理。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回的 vec4 中，每个分量（x, y, z, w）分别代表了过去某一帧的可见性值（0.0为完全阴影，1.0为完全照亮）。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">last_visibility_values</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures_3d</span><span class="p">[</span><span class="n">visibility_cache_texture_index</span><span class="p">],</span> <span class="n">tex_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 计算可见性方差 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 找到这四帧可见性中的最大值。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">max_v</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">last_visibility_values</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="n">max</span><span class="p">(</span><span class="n">last_visibility_values</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">w</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 找到这四帧可见性中的最小值。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">min_v</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">min</span><span class="p">(</span><span class="n">last_visibility_values</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="n">min</span><span class="p">(</span><span class="n">last_visibility_values</span><span class="p">.</span><span class="n">z</span><span class="p">,</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">w</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算最大值与最小值之差。这个差值（delta）被用作方差的近似衡量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果差值大，说明在过去几帧里，该像素的阴影状态变化剧烈（例如，从全亮到全黑）。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果差值小，说明阴影状态很稳定。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">max_v</span> <span class="o">-</span> <span class="n">min_v</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 4. 存储计算结果 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将计算出的方差值（delta）写入到输出图像（Image）中。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// imageStore 用于向指定整数坐标的图像写入数据。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// `variation_texture_index` 指向用于存储方差结果的纹理。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里只使用了vec4的第一个分量（r通道）来存储delta。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_3d</span><span class="p">[</span><span class="n">variation_texture_index</span><span class="p">],</span> <span class="n">tex_coord</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">delta</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="计算阴影可见性">
+<a class="header-anchor" href="#%e8%ae%a1%e7%ae%97%e9%98%b4%e5%bd%b1%e5%8f%af%e8%a7%81%e6%80%a7"></a>
+计算阴影可见性
+</h2><p>这是整个流程的心脏。它接收前一阶段生成的“方差图”，经过一系列复杂的滤波处理，智能地为每个像素决定需要发射多少条阴影光线，然后调用光线追踪硬件进行计算，最后更新历史数据以供下一帧使用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  估算采样数、执行光追并更新历史缓存。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 该着色器是自适应光追阴影的核心。其主要工作包括：
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 1. (空间滤波) 对上一阶段的方差图进行最大值滤波和帐篷滤波，以平滑和扩大不稳定的区域。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 2. (时间滤波) 将滤波后的方差与历史数据结合，进一步稳定信号。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 3. (采样数估算) 根据最终的稳定方差值，动态地增加或减少每个像素的阴影光线采样数。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 4. (光线追踪) 根据估算出的采样数，调用光线追踪函数，计算当前像素的原始阴影可见性。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 5. (更新缓存) 将本帧计算出的新数据（可见性、方差、采样数）写入历史缓存，供下一帧使用。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义工作组大小为 8x8</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define GROUP_SIZE 8</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义共享内存大小，需要比工作组大，以容纳邻域数据 (8 + 6*2 = 20)</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define LOCAL_DATA_SIZE (GROUP_SIZE + 6 * 2)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="n">GROUP_SIZE</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="n">GROUP_SIZE</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 声明共享内存，用于在工作组内高效地共享像素数据，避免重复读取全局内存</span>
+</span></span><span class="line"><span class="cl"><span class="n">shared</span> <span class="k">float</span> <span class="n">local_image_data</span><span class="p">[</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">][</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">shared</span> <span class="k">float</span> <span class="n">local_max_image_data</span><span class="p">[</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">][</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// [! 为了篇幅，此处省略 max_filter, read_variation_value, tent_kernel 的定义 !]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// [! 它们的功能将在下面的原理解析中详细说明 !]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 准备工作：坐标计算与边界检查 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">iresolution</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">resolution</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">x</span> <span class="o">||</span> <span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">local_index</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_LocalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">+</span> <span class="k">ivec3</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">global_index</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 1 步：加载方差数据到共享内存 (优化) ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每个线程负责将自己的方差值读入共享内存。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 边界上的线程会额外加载邻域数据，供整个工作组使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 此处省略了复杂的邻域加载代码，其目的是将一个更大的区域(20x20)读入共享内存 ...</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// local_image_data[...][...] = texelFetch(variation_texture_index, ...);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 同步点：确保所有线程都已将数据写入共享内存，才能继续</span>
+</span></span><span class="line"><span class="cl">    <span class="n">memoryBarrierShared</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">barrier</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 2 步：空间滤波 - 最大值滤波 (Max Filter) + 帐篷滤波 (Tent Filter) ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2.1 对原始方差图进行 5x5 最大值滤波。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这会“扩张”不稳定的区域，确保阴影边缘得到充分处理。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">max_filtered_value</span> <span class="o">=</span> <span class="n">max_filter</span><span class="p">(</span><span class="n">local_index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">local_max_image_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_filtered_value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 同步点：确保最大值滤波完成</span>
+</span></span><span class="line"><span class="cl">    <span class="n">memoryBarrierShared</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">barrier</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2.2 对最大值滤波的结果再进行 13x13 帐篷滤波（加权平均）。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这会进一步平滑和模糊方差信号，使其变化更平缓。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// `tent_kernel` 是一个预计算的权重矩阵。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">spatial_filtered_value</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 此处省略了 tent filter 的循环代码，它将 local_max_image_data 与 tent_kernel 相乘求和 ...</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// spatial_filtered_value = a_sum_of(local_max_image_data * tent_kernel);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 3 步：时间滤波 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取上一帧的滤波后方差历史值</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">last_variation_values</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures_3d</span><span class="p">[</span><span class="n">variation_cache_texture_index</span><span class="p">],</span> <span class="n">global_index</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将当前帧的空间滤波结果与历史结果进行混合，得到一个更稳定的最终方差信号。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">final_filtered_value</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">spatial_filtered_value</span> <span class="o">+</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">last_variation_values</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">last_variation_values</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">last_variation_values</span><span class="p">.</span><span class="n">z</span> <span class="o">+</span> <span class="n">last_variation_values</span><span class="p">.</span><span class="n">w</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从G-Buffer读取运动矢量。-1.0 是一个标记，表示该像素没有有效的历史。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">motion_vectors_value</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">motion_vectors_texture_index</span><span class="p">],</span> <span class="p">...).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 4 步：采样数量估算 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint</span> <span class="n">sample_count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 1: 历史有效 (Temporal Reprojection is Successful)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">motion_vectors_value</span><span class="p">.</span><span class="n">r</span> <span class="o">!=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 继承上一帧的采样数作为基础</span>
+</span></span><span class="line"><span class="cl">        <span class="n">uvec4</span> <span class="n">sample_count_history</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(...,</span> <span class="n">samples_count_cache_texture_index</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample_count</span> <span class="o">=</span> <span class="n">sample_count_history</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 检查历史是否稳定</span>
+</span></span><span class="line"><span class="cl">        <span class="k">bool</span> <span class="n">stable_sample_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">sample_count_history</span><span class="p">.</span><span class="n">x</span> <span class="o">==</span> <span class="n">sample_count_history</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 对天空盒等特殊情况做处理</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">raw_depth</span> <span class="o">==</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sample_count</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">        <span class="c1">// 应用带有“惯性”的调整逻辑 (Hysteresis)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果方差大，增加采样数</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">filtered_value</span> <span class="o">&gt;</span> <span class="n">delta</span> <span class="o">&amp;&amp;</span> <span class="n">sample_count</span> <span class="o">&lt;</span> <span class="n">MAX_SHADOW_VISIBILITY_SAMPLE_COUNT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">sample_count</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果方差小且历史稳定，减少采样数</span>
+</span></span><span class="line"><span class="cl">            <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">stable_sample_count</span> <span class="o">&amp;&amp;</span> <span class="n">sample_count</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">filtered_value</span> <span class="o">&lt;</span> <span class="n">delta</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">sample_count</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 保证最少有1个采样</span>
+</span></span><span class="line"><span class="cl">            <span class="n">sample_count</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">sample_count</span><span class="p">,</span> <span class="mi">1</span><span class="n">u</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效 (Disocclusion Detected) 🛡️</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 对于没有历史的“新”像素，我们无法预测其复杂度。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 采取保守策略：直接使用最大采样数，以保证第一次出现的质量，避免闪烁。</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sample_count</span> <span class="o">=</span> <span class="n">MAX_SHADOW_VISIBILITY_SAMPLE_COUNT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 5 步：执行光线追踪 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">visibility</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">sample_count</span> <span class="o">&gt;</span> <span class="mo">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 准备光追所需数据：世界坐标、法线等</span>
+</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="k">vec3</span> <span class="n">pixel_world_position</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">const</span> <span class="k">vec3</span> <span class="n">normal</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 根据灯光类型，调用不同的光追函数</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">is_raytrace_shadow_point_light</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visibility</span> <span class="o">=</span> <span class="n">get_point_light_visibility</span><span class="p">(...,</span> <span class="n">sample_count</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">visibility</span> <span class="o">=</span> <span class="n">get_directional_light_visibility</span><span class="p">(...,</span> <span class="n">sample_count</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 6 步：更新所有历史缓存 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 更新可见性历史、方差历史和采样数历史，将当前帧的数据推入队列</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">new_visibility_history</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 1: 历史有效 🔄</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">motion_vectors_value</span><span class="p">.</span><span class="n">r</span> <span class="o">!=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取旧的历史值</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(...,</span> <span class="n">visibility_cache_texture_index</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将历史数据像队列一样前移一位</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> 
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效 🗑️</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 历史数据是错误的（属于上一个物体），必须被丢弃。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 直接用当前帧计算出的新可见性值，填满整个历史记录。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这相当于重置(reset)了这个像素的时间滤波器，防止产生鬼影(ghosting)。</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 无论哪个分支，都把当前帧的新可见性值放到历史记录的第一位</span>
+</span></span><span class="line"><span class="cl">    <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">visibility</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 此处省略了繁琐的历史数据更新和 imageStore 写入代码 ...</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// imageStore(visibility_cache_texture_index, ..., new_visibility_history);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// imageStore(filtered_variation_texture_index, ..., vec4(spatial_filtered_value, 0, 0, 0));</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// imageStore(variation_cache_texture_index, ..., new_variation_history);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// imageStore(samples_count_cache_texture_index, ..., new_sample_count_history);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>方差 (Variation)
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201755949.png" alt="variation"></p>
+<p>滤波后方差 (Filtered Variation)
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201753791.png" alt="filtered_variation"></p>
+<p>方差缓存 (Variation History)
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201801410.png" alt="variation_cache"></p>
+<p>可见性缓存 (Visibility History)
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201758141.png" alt="visibility_cache"></p>
+<p>采样数缓存 (Samples Count History)
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201759184.png" alt="samples_count_cache"></p>
+<h3 id="光线追踪辅助函数">
+<a class="header-anchor" href="#%e5%85%89%e7%ba%bf%e8%bf%bd%e8%b8%aa%e8%be%85%e5%8a%a9%e5%87%bd%e6%95%b0"></a>
+光线追踪辅助函数
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  为点光源计算阴影可见性（软阴影）。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param light_index       当前处理的点光源索引（未使用，但可能用于多光源场景）。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param sample_count      根据方差估算出的，需要为此像素发射的光线数量。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param world_position    当前像素在世界坐标系中的位置。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param normal            当前像素表面的法线。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param frame_index       当前帧的索引，用于在泊松盘采样中实现时间上的抖动。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return float            最终的可见性（0.0为完全阴影，1.0为完全照亮）。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">get_point_light_visibility</span><span class="p">(</span><span class="n">uint</span> <span class="n">light_index</span><span class="p">,</span> <span class="n">uint</span> <span class="n">sample_count</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">world_position</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">normal</span><span class="p">,</span> <span class="n">uint</span> <span class="n">frame_index</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 计算基础光照几何信息 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算从像素表面指向光源的向量。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec3</span> <span class="n">position_to_light</span> <span class="o">=</span> <span class="n">raytraced_shadow_light_position</span> <span class="o">-</span> <span class="n">world_position</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 归一化该向量，得到标准的光线方向 &#39;l&#39;。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec3</span> <span class="n">l</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">position_to_light</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算法线与光线方向的点积 (N dot L)。如果小于0，说明表面背向光源。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">NoL</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">l</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算像素到光源的实际距离 &#39;d&#39;。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">distance_to_light</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">position_to_light</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 构建采样所需的坐标系 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了在垂直于光线方向的平面上进行随机采样（模拟光源面积），</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我们需要构建一个局部坐标系。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 首先，通过与一个固定的&#39;up&#39;向量（这里用Y轴）进行叉乘，得到x轴。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">x_axis</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">cross</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 再次叉乘，得到与x轴和光线方向都垂直的y轴。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">y_axis</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">cross</span><span class="p">(</span><span class="n">x_axis</span><span class="p">,</span> <span class="n">l</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 初始化并进行光照剔除/衰减检查 ---</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">visibility</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span> <span class="c1">// 初始化可见性累加器</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取点光源的半径（影响范围）。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">light_radius</span> <span class="o">=</span> <span class="n">raytraced_shadow_light_radius</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算基于距离平方反比的光照衰减。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">attenuation</span> <span class="o">=</span> <span class="n">attenuation_square_falloff</span><span class="p">(</span><span class="n">position_to_light</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span> <span class="o">/</span> <span class="n">light_radius</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了模拟光源的体积，计算一个缩放因子。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 距离光源越近，光源看起来越大，因此软阴影的半影区域也应该越宽。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这个因子用于调整随机采样点的偏移范围。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">scaled_distance</span> <span class="o">=</span> <span class="n">light_radius</span> <span class="o">/</span> <span class="n">distance_to_light</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// *** 核心性能优化与有效性检查 ***</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 只有同时满足以下所有条件，才进行昂贵的光线追踪计算：</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. NoL &gt; 0.001f:         表面必须朝向光源。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. distance_to_light &lt;= light_radius: 像素必须在光源的影响半径之内。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. attenuation &gt; 0.001f:  光照衰减后的强度足够大，值得计算。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">((</span><span class="n">NoL</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">distance_to_light</span> <span class="o">&lt;=</span> <span class="n">light_radius</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">attenuation</span> <span class="o">&gt;</span> <span class="mf">0.001</span><span class="n">f</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// --- 4. 循环执行光线追踪 ---</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="n">uint</span> <span class="n">s</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">sample_count</span><span class="p">;</span> <span class="o">++</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从预计算的泊松盘采样表中获取一个2D随机点。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// `(s * FRAME_HISTORY_COUNT + frame_index) % SAMPLE_NUM` 确保每一帧、每一次采样的随机点都不同。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec2</span> <span class="n">poisson_sample</span> <span class="o">=</span> <span class="n">POISSON_SAMPLES</span><span class="p">[(</span><span class="n">s</span> <span class="o">*</span> <span class="n">FRAME_HISTORY_COUNT</span> <span class="o">+</span> <span class="n">frame_index</span><span class="p">)</span> <span class="o">%</span> <span class="n">SAMPLE_NUM</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 将2D随机点映射到我们之前构建的3D坐标系上，并根据距离进行缩放，模拟光源的表观大小。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这会产生一个指向光源虚拟面积上某个随机点的偏移向量。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">random_x</span> <span class="o">=</span> <span class="n">x_axis</span> <span class="o">*</span> <span class="n">poisson_sample</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="n">scaled_distance</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">;</span> <span class="c1">// 0.01是人为调整的缩放系数</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">random_y</span> <span class="o">=</span> <span class="n">y_axis</span> <span class="o">*</span> <span class="n">poisson_sample</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="p">(</span><span class="n">scaled_distance</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 将原始光线方向与随机偏移结合，得到一条抖动后的新光线方向。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">random_dir</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">random_x</span> <span class="o">+</span> <span class="n">random_y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 初始化光线查询</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rayQueryEXT</span> <span class="n">rayQuery</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rayQueryInitializeEXT</span><span class="p">(</span><span class="n">rayQuery</span><span class="p">,</span> <span class="n">as</span><span class="p">,</span> <span class="n">gl_RayFlagsOpaqueEXT</span> <span class="o">|</span> <span class="n">gl_RayFlagsTerminateOnFirstHitEXT</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                  <span class="mh">0xff</span><span class="p">,</span>                <span class="c1">// mask: 追踪所有不透明物体</span>
+</span></span><span class="line"><span class="cl">                                  <span class="n">world_position</span><span class="p">,</span>      <span class="c1">// origin: 光线起点</span>
+</span></span><span class="line"><span class="cl">                                  <span class="mf">0.05</span><span class="p">,</span>                <span class="c1">// tMin:   最小距离，防止自相交</span>
+</span></span><span class="line"><span class="cl">                                  <span class="n">random_dir</span><span class="p">,</span>          <span class="c1">// dir:    光线方向</span>
+</span></span><span class="line"><span class="cl">                                  <span class="n">distance_to_light</span><span class="p">);</span>  <span class="c1">// tMax:   最大距离，光线只需追踪到光源位置即可</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 执行光线追踪</span>
+</span></span><span class="line"><span class="cl">            <span class="n">rayQueryProceedEXT</span><span class="p">(</span><span class="n">rayQuery</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 检查光线是否在到达光源前被遮挡</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">rayQueryGetIntersectionTypeEXT</span><span class="p">(</span><span class="n">rayQuery</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">!=</span> <span class="n">gl_RayQueryCommittedIntersectionNoneEXT</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果有交点，需要进一步判断交点是否真的在光源前面</span>
+</span></span><span class="line"><span class="cl">                <span class="n">visibility</span> <span class="o">+=</span> <span class="n">rayQueryGetIntersectionTEXT</span><span class="p">(</span><span class="n">rayQuery</span><span class="p">,</span> <span class="k">true</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">distance_to_light</span> <span class="o">?</span> <span class="mf">0.0</span><span class="n">f</span> <span class="o">:</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果没有命中任何物体，说明这条光路是通畅的</span>
+</span></span><span class="line"><span class="cl">                <span class="n">visibility</span> <span class="o">+=</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 5. 返回最终结果 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 返回平均可见度。如果循环未执行，visibility为0，结果正确。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">visibility</span> <span class="o">/</span> <span class="k">float</span><span class="p">(</span><span class="n">sample_count</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="共享内存优化-shared-memory">
+<a class="header-anchor" href="#%e5%85%b1%e4%ba%ab%e5%86%85%e5%ad%98%e4%bc%98%e5%8c%96-shared-memory"></a>
+共享内存优化 (Shared Memory)
+</h3><ul>
+<li><strong>目的</strong>：为了进行最大值和帐篷滤波，每个线程都需要读取其周围邻居像素的方差值。如果每个线程都直接从全局纹理内存中读取所有邻居数据，会导致大量的重复读取和高延迟。</li>
+<li><strong>技术</strong>：<code>shared</code> 内存是 GPU 上一种速度极快的小容量内存，由同一个工作组（Workgroup）内的所有线程共享。该着色器首先让工作组内的线程协作，将计算所需的一大块区域数据从慢速的全局内存一次性读入快速的共享内存。之后，所有的滤波操作都直接在共享内存上进行，速度得到极大提升。<code>barrier()</code>同步原语确保了所有线程在读写步骤上保持一致。</li>
+</ul>
+<h3 id="空间滤波扩张与平滑">
+<a class="header-anchor" href="#%e7%a9%ba%e9%97%b4%e6%bb%a4%e6%b3%a2%e6%89%a9%e5%bc%a0%e4%b8%8e%e5%b9%b3%e6%bb%91"></a>
+空间滤波：扩张与平滑
+</h3><ul>
+<li><strong>最大值滤波 (Max Filter)</strong>：这是一种<strong>形态学扩张 (Dilation)</strong> 操作。它将一个像素的值替换为其 5x5 邻域内的最大值。
+<ul>
+<li><strong>作用</strong>：如果一个像素的方差很高（不稳定），经过最大值滤波后，它周围的像素也会被“感染”成高方差。这会<strong>有效扩大需要高采样率的区域</strong>，形成一个“安全边界”，防止因为物体移动过快而导致阴影边缘出现采样不足的闪烁噪点。</li>
+</ul>
+</li>
+<li><strong>帐篷滤波 (Tent Filter)</strong>：这是一个加权平均的<strong>卷积滤波</strong>，其权重从中心到边缘线性递减，形状像一个帐篷。
+<ul>
+<li><strong>作用</strong>：它对最大值滤波后的结果进行<strong>平滑/模糊</strong>处理。这可以防止采样数量在相邻像素间发生剧烈跳变（比如从1突变到16），让采样数的过渡更加平缓自然，避免产生块状的视觉瑕疵。</li>
+</ul>
+</li>
+</ul>
+<h3 id="采样数估算的时间滞后效应-hysteresis">
+<a class="header-anchor" href="#%e9%87%87%e6%a0%b7%e6%95%b0%e4%bc%b0%e7%ae%97%e7%9a%84%e6%97%b6%e9%97%b4%e6%bb%9e%e5%90%8e%e6%95%88%e5%ba%94-hysteresis"></a>
+采样数估算的“时间滞后效应” (Hysteresis)
+</h3><p>代码中最核心的决策逻辑是动态调整<code>sample_count</code>。它并没有简单地设置一个阈值，而是采用了带有“记忆”和“惯性”的策略，这在控制理论中称为<strong>滞后 (Hysteresis)</strong>。</p>
+<ul>
+<li><strong>增加采样</strong>：条件很简单，只要<code>final_filtered_value &gt; delta_threshold</code>，就增加采样数。系统对“不稳定”信号的反应非常灵敏。</li>
+<li><strong>减少采样</strong>：条件非常苛刻，必须同时满足 <code>filtered_value &lt; delta_threshold</code> <strong>并且</strong> <code>stable_sample_count</code> 为真（即过去四帧的采样数都一样）。</li>
+<li><strong>目的</strong>：这种不对称的逻辑可以防止采样数在阈值附近不停地抖动。一旦一个区域被判定为不稳定，它会保持较高的采样数一段时间，直到系统确认该区域<strong>持续稳定</strong>后，才敢慢慢降低采样数。这极大地增强了最终画面的时间稳定性。</li>
+</ul>
+<h2 id="降噪">
+<a class="header-anchor" href="#%e9%99%8d%e5%99%aa"></a>
+降噪
+</h2><p>这个着色器是一个典型的<strong>时空降噪 (Spatio-temporal Denoising)</strong> 滤波器。它的目标是将在上一个 Pass 中用少量光线计算出的、充满噪点的原始可见性图，处理成一幅干净、稳定且保留了细节的最终阴影图。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  对光线追踪生成的原始阴影可见性进行时空降噪。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 该着色器结合了时间和空间两种维度的滤波来消除阴影噪点。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 1. (时间滤波) 首先，它对一个像素过去四帧的可见性结果取平均值，获得一个初步稳定的基准值。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 2. (空间滤波) 接着，它对时间滤波后的结果进行一个带边缘检测的5x5高斯模糊。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 这个“边缘检测”通过比较像素间的法线来实现，防止模糊效果跨越几何边缘，从而保护场景细节。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 最终输出一张干净平滑的阴影图，用于最终的光照合成。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义工作组大小 8x8</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define GROUP_SIZE 8</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 共享内存大小，需要比工作组大，以容纳 5x5 滤波核所需的邻域数据 (8 + 2*2 = 12)</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#define LOCAL_DATA_SIZE (GROUP_SIZE + 2 * 2)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="n">GROUP_SIZE</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="n">GROUP_SIZE</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 预计算的 5x5 高斯核权重</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">gaussian_kernel</span><span class="p">[</span><span class="mi">5</span><span class="p">][</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">...</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 声明共享内存，用于高效缓存邻域的可见性和法线数据</span>
+</span></span><span class="line"><span class="cl"><span class="n">shared</span> <span class="k">float</span> <span class="n">local_image_data</span><span class="p">[</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">][</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">shared</span> <span class="k">vec3</span>  <span class="n">local_normal_data</span><span class="p">[</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">][</span><span class="n">LOCAL_DATA_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  进行时间滤波。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return float 过去四帧可见性的平均值。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">visibility_temporal_filter</span><span class="p">(</span><span class="k">ivec3</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从历史缓存中读取前一帧(x)、前两帧(y)、前三帧(z)、前四帧(w)的可见性值。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 注意：这里的x分量是上一Pass刚写入的、充满噪点的当前帧原始可见性。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">last_visibility_values</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures_3d</span><span class="p">[</span><span class="n">visibility_cache_texture_index</span><span class="p">],</span> <span class="n">index</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将这四帧的值简单相加后取平均，得到一个在时间上初步平滑的结果。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">filtered_visibility</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">last_visibility_values</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">z</span> <span class="o">+</span> <span class="n">last_visibility_values</span><span class="p">.</span><span class="n">w</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">filtered_visibility</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// [! 此处省略 get_normal 函数，其作用是从G-Buffer中读取法线 !]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 准备工作：坐标计算与边界检查 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">iresolution</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">resolution</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">x</span> <span class="o">||</span> <span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">iresolution</span><span class="p">.</span><span class="n">y</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">local_index</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_LocalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">)</span> <span class="o">+</span> <span class="k">ivec3</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">global_index</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 1 步：加载数据到共享内存 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 每个线程负责将自己经过“时间滤波”后的可见性值，以及对应的法线值读入共享内存。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">local_image_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">visibility_temporal_filter</span><span class="p">(</span><span class="n">global_index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">local_normal_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_normal</span><span class="p">(</span><span class="n">global_index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 边界上的线程额外加载邻域数据，供整个工作组进行5x5滤波使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... 此处省略了复杂的邻域加载代码 ...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 同步点：确保所有数据都已加载到共享内存</span>
+</span></span><span class="line"><span class="cl">    <span class="n">memoryBarrierShared</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">barrier</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 2 步：执行带边缘检测的空间滤波 ---</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">spatial_filtered_value</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取当前中心像素的法线</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">p_normal</span> <span class="o">=</span> <span class="n">local_normal_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历 5x5 邻域</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="o">++</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">;</span> <span class="o">++</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 获取邻域像素的法线</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">q_normal</span> <span class="o">=</span> <span class="n">local_normal_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// *** 核心：边缘检测 (Edge Detection) ***</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 比较中心像素法线 p_normal 和邻域像素法线 q_normal 的点积。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果点积小于一个阈值（如0.9），意味着两个法线差异很大，</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 表明它们可能位于不同的几何平面上（例如，墙角或物体边缘）。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 在这种情况下，我们不应该将邻域像素的颜色混合进来，以避免模糊掉边缘。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">p_normal</span><span class="p">,</span> <span class="n">q_normal</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">0.9</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">continue</span><span class="p">;</span> <span class="c1">// 跳过这个邻居，不参与计算</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 如果法线相似，则这是一个有效的邻居</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">v</span> <span class="o">=</span> <span class="n">local_image_data</span><span class="p">[</span><span class="n">local_index</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">y</span><span class="p">][</span><span class="n">local_index</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">x</span><span class="p">];</span> <span class="c1">// 读取其可见性</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">k</span> <span class="o">=</span> <span class="n">gaussian_kernel</span><span class="p">[</span><span class="n">y</span> <span class="o">+</span> <span class="mi">2</span><span class="p">][</span><span class="n">x</span> <span class="o">+</span> <span class="mi">2</span><span class="p">];</span>                           <span class="c1">// 读取对应的高斯权重</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 累加加权后的可见性值</span>
+</span></span><span class="line"><span class="cl">            <span class="n">spatial_filtered_value</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 3 步：存储最终降噪结果 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将最终计算出的平滑可见性值写入到输出纹理中。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这张纹理将在最后的光照合成阶段被使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_3d</span><span class="p">[</span><span class="n">filtered_visibility_texture</span><span class="p">],</span> <span class="n">global_index</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">spatial_filtered_value</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li>
+<p><strong>数据加载与时间滤波</strong>：</p>
+<ul>
+<li><code>main</code>函数启动后，每个线程首先调用 <code>visibility_temporal_filter</code>。这个函数从历史缓存中读取<strong>最近四帧</strong>的原始可见性数据（包括刚刚由上一个Pass生成、充满噪点的当前帧数据）。</li>
+<li>它将这四帧的数据简单地<strong>取平均值</strong>。这是一个基础的<strong>时间滤波</strong>，能有效利用帧间的连贯性，快速地将闪烁的噪点大部分抚平。</li>
+<li>同时，线程也从G-Buffer中获取当前像素的<strong>法线</strong>向量。</li>
+<li>这两个结果（时间滤波后的可见性 和 法线）被一同加载到<strong>共享内存</strong>中，为接下来的空间滤波做准备。</li>
+</ul>
+</li>
+<li>
+<p><strong>边缘感知的空间滤波</strong>：</p>
+<ul>
+<li>这是整个降噪过程的精华所在。在所有数据加载完毕后，每个线程开始对自己负责的像素进行<strong>空间滤波</strong>。</li>
+<li>它遍历其周围 5x5 的邻域像素（数据已在共享内存中）。</li>
+<li>对于每一个邻居，它并不直接进行模糊，而是先执行一个<strong>检查</strong>：计算中心像素的法线 <code>p_normal</code> 和邻居像素的法线 <code>q_normal</code> 之间的<strong>点积</strong>。</li>
+<li><strong>如果点积 &gt; 0.9</strong> (即两个法线方向非常接近)，说明这两个像素很可能在同一个平面上。此时，就将邻居像素的可见性值，乘以其对应的高斯权重，累加到最终结果中。</li>
+<li><strong>如果点积 &lt;= 0.9</strong> (即两个法线方向差异较大)，说明这两个像素位于几何边缘或不同的物体上。此时，<code>continue</code> 语句会<strong>跳过这个邻居</strong>，防止它的颜色“污染”中心像素，从而完美地<strong>保留了场景的几何轮廓</strong>。</li>
+</ul>
+</li>
+<li>
+<p><strong>输出结果</strong>：</p>
+<ul>
+<li>循环结束后，<code>spatial_filtered_value</code> 就包含了所有“有效”邻居的加权平均值。</li>
+<li>最后，通过 <code>imageStore</code> 将这个干净、平滑且保留了边缘细节的最终可见性值写入到输出纹理 <code>filtered_visibility_texture</code> 中。这张纹理就是最终可以用于光照计算的、高质量的阴影图。
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201753199.png" alt=""></li>
+</ul>
+</li>
+</ol>
+<h3 id="关键技术与原理">
+<a class="header-anchor" href="#%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af%e4%b8%8e%e5%8e%9f%e7%90%86"></a>
+关键技术与原理
+</h3><ul>
+<li>
+<p><strong>时空降噪 (Spatio-temporal Denoising)</strong>:
+这是现代实时渲染中降噪的标准范式。单纯的空间滤波（模糊）会损失细节，而单纯的时间滤波会产生鬼影（ghosting）。将两者结合，先用时间滤波稳定信号，再用空间滤波清理剩余的噪点，可以在效果和性能之间取得极佳的平衡。</p>
+</li>
+<li>
+<p><strong>高斯模糊 (Gaussian Blur)</strong>:
+这是一种经典的低通滤波器，它使用一个高斯函数作为权重核。中心像素的权重最高，越往外的像素权重越低。其效果是平滑图像，有效去除高频噪声。代码中的 <code>gaussian_kernel</code> 就是一个预计算好的权重矩阵。</p>
+</li>
+<li>
+<p><strong>边缘感知滤波 (Edge-Aware Filtering) / 交叉双边滤波 (Cross-Bilateral Filter)</strong>:</p>
+<ul>
+<li><strong>原理</strong>：通过引入一个额外的指导信息（这里是<strong>法线</strong>），来决定是否应该混合邻居像素的颜色。只有当邻居像素的指导信息（法线）与中心像素相似时，才允许进行混合。</li>
+<li><strong>效果</strong>：这使得滤波器可以在平坦的表面上（法线都一样）大力进行模糊降噪，但在遇到几何边缘时（法线突变）则“收手”，不进行模糊。最终实现了<strong>既要降噪，又要保边</strong>的理想效果。这种使用一个图像（法线图）来指导另一个图像（可见性图）滤波的方法，通常被称为<strong>交叉双边滤波 (Cross-Bilateral Filter)</strong>。</li>
+</ul>
+</li>
+</ul>
+<h1 id="ray-traced-reflections">
+<a class="header-anchor" href="#ray-traced-reflections"></a>
+Ray Traced Reflections
+</h1><h2 id="工作流程-2">
+<a class="header-anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-2"></a>
+工作流程
+</h2><ol>
+<li><strong>G-buffer Check:</strong> 检查每个片段的表面粗糙度是否低于指定阈值，以决定是否计算反射。</li>
+<li><strong>Ray Casting:</strong> 每个片段发射一条反射光线。
+<ul>
+<li>使用镜面反射方向</li>
+<li>使用 GGX 分布采样</li>
+</ul>
+</li>
+<li><strong>Secondary Lighting:</strong> 如果反射光线命中几何体，则向一个重要采样的光源发射次级光线。如果光源可见，则使用照明模型计算颜色。</li>
+<li><strong>Denoising:</strong> 由于每个片段只使用一个样本（导致输出噪点），使用 <strong>时空方差引导滤波</strong> (<a href="https://research.nvidia.com/publication/2017-07_spatiotemporal-variance-guided-filtering-real-time-reconstruction-path-traced">SVGF</a>) 处理原始反射数据，以显著减少噪点，利用空间和时间信息。</li>
+<li><strong>Lighting Integration:</strong> 将去噪后的反射数据集成到场景的镜面光照计算中。</li>
+</ol>
+<h2 id="reflections-shaders">
+<a class="header-anchor" href="#reflections-shaders"></a>
+Reflections Shaders
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201918857.png" alt=""></p>
+<h3 id="光线生成着色器-ray-generation-shader">
+<a class="header-anchor" href="#%e5%85%89%e7%ba%bf%e7%94%9f%e6%88%90%e7%9d%80%e8%89%b2%e5%99%a8-ray-generation-shader"></a>
+光线生成着色器 (Ray Generation Shader)
+</h3><p>这是整个流程的起点和核心，负责为屏幕上的每个像素生成并追踪反射光线，并在光线命中物体后计算最终的颜色。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// 定义光线负载（Payload），用于在着色器之间传递光线追踪的结果。</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mo">0</span><span class="p">)</span> <span class="n">rayPayloadEXT</span> <span class="n">RayPayload</span> <span class="n">payload</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// ... [此处省略各种随机数生成函数和 sampleGGXVNDF 函数] ...</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// sampleGGXVNDF: 根据GGX微表面模型和观察方向，生成一个重要的法线方向，用于模拟粗糙表面的反射。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 初始化与G-Buffer读取 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">xy</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">gl_LaunchIDEXT</span><span class="p">.</span><span class="n">xy</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">scaled_xy</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">xy</span> <span class="o">*</span> <span class="n">resolution_scale</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从G-Buffer中读取当前像素的粗糙度。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">roughness</span> <span class="o">=</span> <span class="n">forced_roughness</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">?</span> <span class="n">forced_roughness</span> <span class="o">:</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">gbuffer_texures</span><span class="p">.</span><span class="n">x</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">reflection_colour</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 只为粗糙度较低（镜面反射较强）的表面计算反射。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">roughness</span> <span class="o">&lt;=</span> <span class="mf">0.3</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// --- 2. 生成主反射光线 (Primary Reflection Ray) ---</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从G-Buffer读取深度、法线等信息，重建像素的世界坐标。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">depth_texture_index</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec2</span> <span class="n">screen_uv</span> <span class="o">=</span> <span class="n">uv_nearest</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">resolution</span> <span class="o">/</span> <span class="n">resolution_scale</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">world_pos</span> <span class="o">=</span> <span class="n">world_position_from_depth</span><span class="p">(</span><span class="n">screen_uv</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">inverse_view_projection</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">normal</span> <span class="o">=</span> <span class="n">octahedral_decode</span><span class="p">(</span><span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">gbuffer_texures</span><span class="p">.</span><span class="n">y</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">incoming</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">world_pos</span> <span class="o">-</span> <span class="n">camera_position</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span> <span class="c1">// 观察方向</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 生成两个[0,1]的随机数，用于重要性采样。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec2</span> <span class="n">U</span> <span class="o">=</span> <span class="n">interleaved_gradient_noise2</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">current_frame</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用GGX-VNDF采样，根据粗糙度生成一个微表面法线。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这比简单的reflect(incoming, normal)更物理正确，能表现粗糙表面的模糊反射。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">vndf_normal</span> <span class="o">=</span> <span class="n">sampleGGXVNDF</span><span class="p">(</span><span class="n">incoming</span><span class="p">,</span> <span class="n">roughness</span><span class="p">,</span> <span class="n">roughness</span><span class="p">,</span> <span class="n">U</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">U</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="c1">// 基于采样的微表面法线，计算出最终的反射光线方向。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">reflected_ray</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">reflect</span><span class="p">(</span><span class="n">incoming</span><span class="p">,</span> <span class="n">vndf_normal</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// --- 3. 追踪主反射光线 ---</span>
+</span></span><span class="line"><span class="cl">        <span class="n">traceRayEXT</span><span class="p">(</span><span class="n">as</span><span class="p">,</span> <span class="n">gl_RayFlagsOpaqueEXT</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">,</span> <span class="n">sbt_offset</span><span class="p">,</span> <span class="n">sbt_stride</span><span class="p">,</span> <span class="n">miss_index</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">world_pos</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">reflected_ray</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// --- 4. 处理光线命中结果 ---</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果 payload.geometry_id 不是-1，说明光线命中了场景中的某个物体。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// --- 4a. 手动获取命中点的几何与材质信息 ---</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 根据payload中的信息，反向查找顶点、索引、UV等数据。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">MeshInstanceDraw</span> <span class="n">instance</span> <span class="o">=</span> <span class="n">mesh_instance_draws</span><span class="p">[</span><span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="n">MeshDraw</span> <span class="n">mesh</span> <span class="o">=</span> <span class="n">mesh_draws</span><span class="p">[</span><span class="n">instance</span><span class="p">.</span><span class="n">mesh_draw_index</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// ... [省略了繁琐的从全局Buffer中读取顶点和UV的代码] ...</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 使用重心坐标插值，计算出命中点的精确UV坐标。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">b</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="n">barycentric_weights</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">c</span> <span class="o">=</span> <span class="n">payload</span><span class="p">.</span><span class="n">barycentric_weights</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">b</span> <span class="o">-</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec2</span> <span class="n">uv</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">uv0</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">uv1</span> <span class="o">+</span> <span class="n">c</span> <span class="o">*</span> <span class="n">uv2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 计算命中点的世界坐标。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">p_world</span> <span class="o">=</span> <span class="n">world_pos</span> <span class="o">+</span> <span class="n">reflected_ray</span> <span class="o">*</span> <span class="n">payload</span><span class="p">.</span><span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 手动计算命中三角形的法线。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">triangle_normal</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">cross</span><span class="p">(</span><span class="n">p1_world</span><span class="p">.</span><span class="n">xyz</span> <span class="o">-</span> <span class="n">p0_world</span><span class="p">.</span><span class="n">xyz</span><span class="p">,</span> <span class="n">p2_world</span><span class="p">.</span><span class="n">xyz</span> <span class="o">-</span> <span class="n">p0_world</span><span class="p">.</span><span class="n">xyz</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// --- 4b. 在命中点进行直接光照计算 (Many-Light Sampling) ---</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这是一个高级优化：当场景中有很多光源时，为每个点计算所有光源的光照开销巨大。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这里采用重要性采样，根据每个光源对当前点的“重要性”（亮度、距离、角度），</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 随机选择一个光源进行计算。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 第一轮循环：计算每个光源的“重要性” (importance)。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">lights_importance</span><span class="p">[</span><span class="n">NUM_LIGHTS</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">total_importance</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">for</span> <span class="p">(</span><span class="n">uint</span> <span class="n">l</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">active_lights</span><span class="p">;</span> <span class="o">++</span><span class="n">l</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// importance 综合了光源强度、距离衰减和方向衰减。</span>
+</span></span><span class="line"><span class="cl">                <span class="n">lights_importance</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculate_light_importance</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl">                <span class="n">total_importance</span> <span class="o">+=</span> <span class="n">lights_importance</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 第二轮循环：根据随机数和重要性分布，选中一个光源。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">uint</span> <span class="n">light_index</span> <span class="o">=</span> <span class="n">select_light_based_on_importance</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// --- 4c. 追踪阴影光线 (Shadow Ray) ---</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">light_index</span> <span class="o">&lt;</span> <span class="n">active_lights</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">Light</span> <span class="n">light</span> <span class="o">=</span> <span class="n">lights</span><span class="p">[</span><span class="n">light_index</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">                <span class="k">vec3</span> <span class="n">l</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">light</span><span class="p">.</span><span class="n">world_position</span> <span class="o">-</span> <span class="n">p_world</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="k">float</span> <span class="n">light_distance</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">light</span><span class="p">.</span><span class="n">world_position</span> <span class="o">-</span> <span class="n">p_world</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1">// 从命中点向选中的光源发射一条光线，检查是否有遮挡。</span>
+</span></span><span class="line"><span class="cl">                <span class="n">traceRayEXT</span><span class="p">(</span><span class="n">as</span><span class="p">,</span> <span class="n">gl_RayFlagsOpaqueEXT</span><span class="p">,</span> <span class="mh">0xff</span><span class="p">,</span> <span class="n">sbt_offset</span><span class="p">,</span> <span class="n">sbt_stride</span><span class="p">,</span> <span class="n">miss_index</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">p_world</span><span class="p">.</span><span class="n">xyz</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">light_distance</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                
+</span></span><span class="line"><span class="cl">                <span class="c1">// 如果 payload.geometry_id 为-1，说明阴影光线未被遮挡。</span>
+</span></span><span class="line"><span class="cl">                <span class="k">float</span> <span class="n">shadow_term</span> <span class="o">=</span> <span class="p">(</span><span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">?</span> <span class="mf">1.0</span> <span class="o">:</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="c1">// --- 4d. 计算最终PBR光照颜色 ---</span>
+</span></span><span class="line"><span class="cl">                <span class="c1">// 计算衰减和 Lambertian 项 (NoL)。</span>
+</span></span><span class="line"><span class="cl">                <span class="k">float</span> <span class="n">attenuation</span> <span class="o">=</span> <span class="n">attenuation_square_falloff</span><span class="p">(...)</span> <span class="o">*</span> <span class="n">shadow_term</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">float</span> <span class="n">NoL</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">dot</span><span class="p">(</span><span class="n">triangle_normal</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">attenuation</span> <span class="o">&gt;</span> <span class="mf">0.0001</span><span class="n">f</span> <span class="o">&amp;&amp;</span> <span class="n">NoL</span> <span class="o">&gt;</span> <span class="mf">0.0001</span><span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 获取命中点的PBR材质参数（金属度、粗糙度等）。</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// ...</span>
+</span></span><span class="line"><span class="cl">                    <span class="c1">// 计算最终的光照贡献。</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">vec4</span> <span class="n">albedo</span> <span class="o">=</span> <span class="n">textureLod</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">reflection_colour</span> <span class="o">=</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">intensity</span> <span class="o">*</span> <span class="n">attenuation</span> <span class="o">*</span> <span class="n">NoL</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">color</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// --- 4e. 添加间接光照贡献 ---</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 从光照探针或类似结构中采样间接光照。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">indirect_color</span> <span class="o">=</span> <span class="n">sample_irradiance</span><span class="p">(</span><span class="n">p_world</span><span class="p">,</span> <span class="n">triangle_normal</span><span class="p">,</span> <span class="n">camera_position</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">reflection_colour</span> <span class="o">+=</span> <span class="n">indirect_color</span> <span class="o">*</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 5. 写入最终结果 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将计算出的反射颜色写入到输出图像中。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">out_image_index</span><span class="p">],</span> <span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">reflection_colour</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
+</span></span></code></pre></div><h3 id="最近命中与未命中着色器-closest-hit--miss-shaders">
+<a class="header-anchor" href="#%e6%9c%80%e8%bf%91%e5%91%bd%e4%b8%ad%e4%b8%8e%e6%9c%aa%e5%91%bd%e4%b8%ad%e7%9d%80%e8%89%b2%e5%99%a8-closest-hit--miss-shaders"></a>
+最近命中与未命中着色器 (Closest-Hit &amp; Miss Shaders)
+</h3><p>这两个着色器的作用非常简单：它们在 <code>traceRayEXT</code> 函数执行过程中被调用，其唯一目的就是填充 <code>RayPayload</code> 结构体，将结果返回给调用者（Ray Generation Shader）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#if defined (CLOSEST_HIT_REFLECTIONS_RT)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 当光线命中物体时，此着色器被调用。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mo">0</span><span class="p">)</span> <span class="n">rayPayloadInEXT</span> <span class="n">RayPayload</span> <span class="n">payload</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">hitAttributeEXT</span> <span class="k">vec2</span> <span class="n">barycentric_weights</span><span class="p">;</span> <span class="c1">// 由硬件提供的重心坐标插值</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将命中的几何体ID、图元ID、重心坐标、变换矩阵、距离等信息</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 全部打包到 payload 结构体中，以供光线生成着色器后续使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span>       <span class="o">=</span> <span class="n">gl_GeometryIndexEXT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">primitive_id</span>      <span class="o">=</span> <span class="n">gl_PrimitiveID</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">barycentric_weights</span> <span class="o">=</span> <span class="n">barycentric_weights</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">object_to_world</span>   <span class="o">=</span> <span class="n">gl_ObjectToWorldEXT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">t</span>                 <span class="o">=</span> <span class="n">gl_HitTEXT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">triangle_facing</span>   <span class="o">=</span> <span class="n">gl_HitKindEXT</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cp">#if defined (MISS_REFLECTIONS_RT)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 当光线未命中任何物体时，此着色器被调用。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mo">0</span><span class="p">)</span> <span class="n">rayPayloadInEXT</span> <span class="n">RayPayload</span> <span class="n">payload</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将 geometry_id 设置为一个特殊值（-1），</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 作为一个标记，告诉光线生成着色器“此次追踪未命中”。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
+</span></span></code></pre></div><h3 id="核心原理与关键技术">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e5%8e%9f%e7%90%86%e4%b8%8e%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af"></a>
+核心原理与关键技术
+</h3><h4 id="基于物理的反射与-ggx-vndf-采样">
+<a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e%e7%89%a9%e7%90%86%e7%9a%84%e5%8f%8d%e5%b0%84%e4%b8%8e-ggx-vndf-%e9%87%87%e6%a0%b7"></a>
+基于物理的反射与 GGX-VNDF 采样
+</h4><p>为了渲染出逼真的粗糙表面（如拉丝金属、磨砂塑料），简单的镜面反射 <code>reflect()</code> 函数是不够的。现代 PBR（Physically Based Rendering）理论将表面建模为由大量微小的镜面组成的<strong>微表面 (Microfacet)</strong>。</p>
+<p><strong>GGX-VNDF 采样</strong>: 不是采样一个随机的微观法线，而是智能地采样一个<strong>既符合GGX分布，又对观察者可见</strong>的法线。这能极大地减少噪点，用更少的光线样本收敛到更准确的模糊反射效果。最终的 <code>reflected_ray</code> 因此具有了基于物理的、与粗糙度匹配的模糊方向。</p>
+<p><code>sampleGGXVNDF</code>函数是实现基于物理的粗糙反射 (Physically Based Rough Reflections) 的关键。它的目标不是简单地进行镜面反射，而是根据 GGX 微表面模型的分布，智能地采样一个对最终结果贡献最大的微表面法线 (<code>vndf_normal</code>)。</p>
+<p>一个“粗糙”的表面在微观上是由无数个朝向各异的微小镜面组成的。当光线射到这样的表面上时，会向多个方向散射，形成模糊的反射效果。<code>sampleGGXVNDF</code> 的作用就是重要性采样 (Importance Sampling)：它根据物理模型，优先采样那些最有可能将光线反射到观察者眼中的微表面法线，从而用极少数的光线样本，高效地模拟出逼真的模糊反射，并大幅减少噪点。</p>
+<p>该函数的实现遵循了论文 <em>“<a href="https://jcgt.org/published/0007/04/01/paper.pdf">Sampling the GGX Distribution of Visible Normals (VNDF)</a>”</em> 中的步骤。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// Input Ve:  观察方向（View Direction）</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Input alpha_x, alpha_y: 对应x和y轴的粗糙度</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Input U1, U2: 两个 [0,1] 范围内的均匀随机数</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Output Ne: 采样出的、符合物理模型的微表面法线</span>
+</span></span><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">sampleGGXVNDF</span><span class="p">(</span><span class="k">vec3</span> <span class="n">Ve</span><span class="p">,</span> <span class="k">float</span> <span class="n">alpha_x</span><span class="p">,</span> <span class="k">float</span> <span class="n">alpha_y</span><span class="p">,</span> <span class="k">float</span> <span class="n">U1</span><span class="p">,</span> <span class="k">float</span> <span class="n">U2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 步骤 1: 将观察方向变换到“半球空间” ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了简化采样数学模型，我们将各向异性的椭球体GGX分布，通过缩放“拉伸”成一个完美的半球形分布。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Ve 是观察方向，这里将其变换到这个虚拟的“拉伸空间”中。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">Vh</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="n">alpha_x</span> <span class="o">*</span> <span class="n">Ve</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha_y</span> <span class="o">*</span> <span class="n">Ve</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Ve</span><span class="p">.</span><span class="n">z</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 步骤 2: 构建局部坐标系 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 以变换后的观察方向 Vh 为 Z 轴，构建一个局部坐标系（T1, T2, Vh）。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 所有的采样将在这个方便的局部坐标系中进行。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">lensq</span> <span class="o">=</span> <span class="n">Vh</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">Vh</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">Vh</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">Vh</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">T1</span> <span class="o">=</span> <span class="n">lensq</span> <span class="o">&gt;</span> <span class="mo">0</span> <span class="o">?</span> <span class="k">vec3</span><span class="p">(</span><span class="o">-</span><span class="n">Vh</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">Vh</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="mo">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">inversesqrt</span><span class="p">(</span><span class="n">lensq</span><span class="p">)</span> <span class="o">:</span> <span class="k">vec3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mo">0</span><span class="p">,</span><span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">T2</span> <span class="o">=</span> <span class="n">cross</span><span class="p">(</span><span class="n">Vh</span><span class="p">,</span> <span class="n">T1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 步骤 3: 在2D投影面上采样 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是算法的精髓。它将两个均匀的随机数 U1, U2 映射到 Vh 向量所“看”到的</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 微表面法线投影圆盘上的一个点 (t1, t2)。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这个映射不是简单的均匀映射，而是经过精心设计的，以匹配可见法线分布的形状。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">r</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">U1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">phi</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">PI</span> <span class="o">*</span> <span class="n">U2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">phi</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">phi</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Vh</span><span class="p">.</span><span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">t1</span><span class="o">*</span><span class="n">t1</span><span class="p">)</span> <span class="o">+</span> <span class="n">s</span><span class="o">*</span><span class="n">t2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 步骤 4: 从2D投影点反算回3D法线 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将2D采样点 (t1, t2) 从投影圆盘上“提拉”回半球表面，得到在局部坐标系中的采样法线 Nh。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">Nh</span> <span class="o">=</span> <span class="n">t1</span><span class="o">*</span><span class="n">T1</span> <span class="o">+</span> <span class="n">t2</span><span class="o">*</span><span class="n">T2</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">t1</span><span class="o">*</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t2</span><span class="o">*</span><span class="n">t2</span><span class="p">))</span><span class="o">*</span><span class="n">Vh</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 步骤 5: 将法线变换回“椭球空间” ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将在“拉伸空间”中采样到的法线 Nh，通过逆向的缩放操作，变换回原始的、</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 符合各向异性GGX分布的椭球空间，得到最终的微表面法线 Ne。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">Ne</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="n">alpha_x</span> <span class="o">*</span> <span class="n">Nh</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha_y</span> <span class="o">*</span> <span class="n">Nh</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">Nh</span><span class="p">.</span><span class="n">z</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">Ne</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>最终，这个 <code>Ne</code> (vndf_normal) 会被用于 <code>reflect()</code> 函数，生成一条高度符合物理规律的反射光线。</p>
+<h4 id="光源重要性采样-many-light-importance-sampling">
+<a class="header-anchor" href="#%e5%85%89%e6%ba%90%e9%87%8d%e8%a6%81%e6%80%a7%e9%87%87%e6%a0%b7-many-light-importance-sampling"></a>
+光源重要性采样 (Many-Light Importance Sampling)
+</h4><p>在有成百上千个光源的复杂场景中，如果每个反射点都计算所有光源的直接光照，性能开销将是灾难性的。</p>
+<ul>
+<li><strong>技术原理</strong>: 该着色器采用了一种类似 &ldquo;<a href="https://research.nvidia.com/labs/rtr/publication/moreau2019manylight_rtg/">Importance Sampling of Many Lights on the GPU</a>&rdquo; 的技术。
+<ol>
+<li><strong>计算重要性</strong>: 遍历所有光源，根据光源的<strong>强度 (Intensity)</strong>、<strong>距离 (Distance)</strong> 和<strong>方向 (Orientation)</strong>，为每个光源计算一个“重要性”权重。一个离得近、亮度高且正对着命中点表面的光源，其重要性就高。</li>
+<li><strong>随机选择</strong>: 将所有重要性归一化，形成一个概率分布函数 (PDF)。然后生成一个随机数，根据这个PDF随机选择<strong>一个</strong>光源。</li>
+<li><strong>计算光照</strong>: 只为这一个被选中的光源计算阴影和光照贡献。虽然单次计算有偏差，但在多个像素、多帧上进行蒙特卡洛积分，最终结果会收敛到正确的全局光照效果，同时性能开销极低。</li>
+</ol>
+</li>
+</ul>
+<h4 id="手动属性获取与lod计算">
+<a class="header-anchor" href="#%e6%89%8b%e5%8a%a8%e5%b1%9e%e6%80%a7%e8%8e%b7%e5%8f%96%e4%b8%8elod%e8%ae%a1%e7%ae%97"></a>
+手动属性获取与LOD计算
+</h4><p>与一些简单的光追教程不同，这里的最近命中着色器（Closest-Hit）非常“轻量”，只负责传递ID和坐标。所有复杂的材质和几何属性获取（如UV、顶点位置）都在光线生成着色器中<strong>手动完成</strong>。</p>
+<ul>
+<li><strong>设计选择</strong>: 这是一种设计模式。它将复杂的着色逻辑（PBR计算、多光源采样等）集中在Ray Generation Shader中，简化了Shader Binding Table (SBT) 的管理，但代价是需要在RayGen中编写大量手动获取和插值数据的代码。</li>
+<li><strong>手动LOD</strong>: <code>float lod = 0.5 * log2( texel_area / triangle_area )</code> 是一个经典的<strong>纹理细节层次 (LOD)</strong> 计算方法。它通过比较纹理在纹理空间中的面积与它在屏幕空间中的投影面积的比率，来估算应该采样哪个 Mipmap 级别，有效防止了纹理在远处产生摩尔纹（Moiré pattern）并提升了纹理缓存的效率。</li>
+</ul>
+<p>如果不计算LOD，直接用最高精度的 Mipmap 0 级去采样，当一个布满精细纹理的表面被投影到远处很小的几个像素上时，就会发生<strong>纹理混叠 (Texture Aliasing)</strong>，产生闪烁和摩尔纹。正确的LOD可以根据物体在屏幕上的大小，选择合适的 Mipmap 等级进行采样，既能抗锯齿，又能提升纹理缓存的命中率。</p>
+<p>该方法通过计算 <strong>“纹素(texel)到像素(pixel)的面积比”</strong> 来估算LOD。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// --- 步骤 1: 计算命中三角形在“纹理空间”中的面积 ---</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// abs(...)这部分是利用顶点叉乘的几何意义计算三角形面积的2D版本。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// (uv1 - uv0) 和 (uv2 - uv0) 是三角形在UV空间的两条边向量。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 这里的计算结果是三角形在 [0,1] UV空间中所占面积的两倍。</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">uv_area</span> <span class="o">=</span> <span class="n">abs</span><span class="p">((</span><span class="n">uv1</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">uv0</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">uv2</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">uv0</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">uv2</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">uv0</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">uv1</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">uv0</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 将UV空间面积乘以纹理的实际尺寸，得到三角形覆盖的总“纹素(texel)”数量。</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">texel_area</span> <span class="o">=</span> <span class="n">texture_size</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">texture_size</span><span class="p">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">uv_area</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// --- 步骤 2: 计算命中三角形在“屏幕空间”中的面积 ---</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 使用完全相同的公式，但输入的是三角形顶点在屏幕上的投影坐标。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// (p1_screen, p0_screen, p2_screen)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 计算出三角形在屏幕上覆盖的“像素(pixel)”数量。</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">triangle_area</span> <span class="o">=</span> <span class="n">abs</span><span class="p">((</span><span class="n">p1_screen</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">p0_screen</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p2_screen</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">p0_screen</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">p2_screen</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">p0_screen</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p1_screen</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">p0_screen</span><span class="p">.</span><span class="n">y</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// --- 步骤 3: 根据面积比计算LOD ---</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// texel_area / triangle_area 就是“每个像素对应多少个纹素”的比率，即纹素密度。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// - 如果比值 &gt;&gt; 1: 说明纹理被急剧缩小（minification），需要使用更高（更模糊）的Mipmap等级。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// - 如果比值 &lt;&lt; 1: 说明纹理被放大（magnification），应该使用更低（更清晰）的Mipmap等级。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// log2: Mipmap的等级是按2的对数关系组织的，所以用log2来转换。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 0.5 *: 面积是长度的平方，而LOD与长度成正比。log2(Area) = log2(Length^2) = 2*log2(Length)。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//         所以需要乘以0.5来抵消这个平方关系。</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">lod</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">log2</span><span class="p">(</span><span class="n">texel_area</span> <span class="o">/</span> <span class="n">triangle_area</span><span class="p">));</span>
+</span></span></code></pre></div><p>这个 <code>lod</code> 值最终会被传递给 <code>textureLod</code> 函数，以精确的 Mipmap 等级进行纹理采样，从而获得高质量、无锯齿的纹理外观。</p>
+<h2 id="svgf-降噪">
+<a class="header-anchor" href="#svgf-%e9%99%8d%e5%99%aa"></a>
+SVGF 降噪
+</h2><h3 id="accumulation-pass">
+<a class="header-anchor" href="#accumulation-pass"></a>
+Accumulation Pass
+</h3><h3 id="variance-pass">
+<a class="header-anchor" href="#variance-pass"></a>
+Variance Pass
+</h3><h3 id="wavelet-pass">
+<a class="header-anchor" href="#wavelet-pass"></a>
+Wavelet Pass
+</h3>
       
     </div>
     <footer class="article-footer">
@@ -1419,7 +2257,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -1467,6 +2305,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
   <ul>
     <li><a href="#dynamic-diffuse-global-illumination-ddgi">Dynamic Diffuse Global Illumination (DDGI)</a>
       <ul>
+        <li><a href="#工作流程">工作流程</a></li>
         <li><a href="#辐射度采集-gather-radiance">辐射度采集 (Gather Radiance)</a>
           <ul>
             <li><a href="#数据流与gpu调度">数据流与GPU调度</a></li>
@@ -1505,6 +2344,50 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           <ul>
             <li><a href="#更新探针偏移">更新探针偏移</a></li>
             <li><a href="#更新探针状态">更新探针状态</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#ray-traced-shadows">Ray Traced Shadows</a>
+      <ul>
+        <li><a href="#工作流程-1">工作流程</a></li>
+        <li><a href="#计算可见性方差">计算可见性方差</a></li>
+        <li><a href="#计算阴影可见性">计算阴影可见性</a>
+          <ul>
+            <li><a href="#光线追踪辅助函数">光线追踪辅助函数</a></li>
+            <li><a href="#共享内存优化-shared-memory">共享内存优化 (Shared Memory)</a></li>
+            <li><a href="#空间滤波扩张与平滑">空间滤波：扩张与平滑</a></li>
+            <li><a href="#采样数估算的时间滞后效应-hysteresis">采样数估算的“时间滞后效应” (Hysteresis)</a></li>
+          </ul>
+        </li>
+        <li><a href="#降噪">降噪</a>
+          <ul>
+            <li><a href="#关键技术与原理">关键技术与原理</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#ray-traced-reflections">Ray Traced Reflections</a>
+      <ul>
+        <li><a href="#工作流程-2">工作流程</a></li>
+        <li><a href="#reflections-shaders">Reflections Shaders</a>
+          <ul>
+            <li><a href="#光线生成着色器-ray-generation-shader">光线生成着色器 (Ray Generation Shader)</a></li>
+            <li><a href="#最近命中与未命中着色器-closest-hit--miss-shaders">最近命中与未命中着色器 (Closest-Hit &amp; Miss Shaders)</a></li>
+            <li><a href="#核心原理与关键技术">核心原理与关键技术</a>
+              <ul>
+                <li><a href="#基于物理的反射与-ggx-vndf-采样">基于物理的反射与 GGX-VNDF 采样</a></li>
+                <li><a href="#光源重要性采样-many-light-importance-sampling">光源重要性采样 (Many-Light Importance Sampling)</a></li>
+                <li><a href="#手动属性获取与lod计算">手动属性获取与LOD计算</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#svgf-降噪">SVGF 降噪</a>
+          <ul>
+            <li><a href="#accumulation-pass">Accumulation Pass</a></li>
+            <li><a href="#variance-pass">Variance Pass</a></li>
+            <li><a href="#wavelet-pass">Wavelet Pass</a></li>
           </ul>
         </li>
       </ul>
@@ -1768,7 +2651,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
       <div>
         <span class="icon-brush"
           >&nbsp;
-            60.6k
+            63.1k
           </span
         >
         &nbsp;|&nbsp;
@@ -1776,7 +2659,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           
           
 
-          04:58
+          05:10
         </span>
       </div>
     
@@ -1821,6 +2704,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
   <ul>
     <li><a href="#dynamic-diffuse-global-illumination-ddgi">Dynamic Diffuse Global Illumination (DDGI)</a>
       <ul>
+        <li><a href="#工作流程">工作流程</a></li>
         <li><a href="#辐射度采集-gather-radiance">辐射度采集 (Gather Radiance)</a>
           <ul>
             <li><a href="#数据流与gpu调度">数据流与GPU调度</a></li>
@@ -1859,6 +2743,50 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           <ul>
             <li><a href="#更新探针偏移">更新探针偏移</a></li>
             <li><a href="#更新探针状态">更新探针状态</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#ray-traced-shadows">Ray Traced Shadows</a>
+      <ul>
+        <li><a href="#工作流程-1">工作流程</a></li>
+        <li><a href="#计算可见性方差">计算可见性方差</a></li>
+        <li><a href="#计算阴影可见性">计算阴影可见性</a>
+          <ul>
+            <li><a href="#光线追踪辅助函数">光线追踪辅助函数</a></li>
+            <li><a href="#共享内存优化-shared-memory">共享内存优化 (Shared Memory)</a></li>
+            <li><a href="#空间滤波扩张与平滑">空间滤波：扩张与平滑</a></li>
+            <li><a href="#采样数估算的时间滞后效应-hysteresis">采样数估算的“时间滞后效应” (Hysteresis)</a></li>
+          </ul>
+        </li>
+        <li><a href="#降噪">降噪</a>
+          <ul>
+            <li><a href="#关键技术与原理">关键技术与原理</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#ray-traced-reflections">Ray Traced Reflections</a>
+      <ul>
+        <li><a href="#工作流程-2">工作流程</a></li>
+        <li><a href="#reflections-shaders">Reflections Shaders</a>
+          <ul>
+            <li><a href="#光线生成着色器-ray-generation-shader">光线生成着色器 (Ray Generation Shader)</a></li>
+            <li><a href="#最近命中与未命中着色器-closest-hit--miss-shaders">最近命中与未命中着色器 (Closest-Hit &amp; Miss Shaders)</a></li>
+            <li><a href="#核心原理与关键技术">核心原理与关键技术</a>
+              <ul>
+                <li><a href="#基于物理的反射与-ggx-vndf-采样">基于物理的反射与 GGX-VNDF 采样</a></li>
+                <li><a href="#光源重要性采样-many-light-importance-sampling">光源重要性采样 (Many-Light Importance Sampling)</a></li>
+                <li><a href="#手动属性获取与lod计算">手动属性获取与LOD计算</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#svgf-降噪">SVGF 降噪</a>
+          <ul>
+            <li><a href="#accumulation-pass">Accumulation Pass</a></li>
+            <li><a href="#variance-pass">Variance Pass</a></li>
+            <li><a href="#wavelet-pass">Wavelet Pass</a></li>
           </ul>
         </li>
       </ul>
