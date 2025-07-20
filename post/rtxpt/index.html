@@ -384,7 +384,8 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="raygen-shader">
+        <p>这篇博客主要探讨了 NVIDIA 开源的 <a href="https://github.com/NVIDIA-RTX/RTXPT">RTX Path Tracing (RTXPT)</a> 项目。路径追踪的基础知识我是在 TU Wien 的 Rendering 课程上学习的，当时也写了一篇<a href="https://nothingtosay0031.github.io/post/mis_nee/">关于 MIS 和 NEE 的博客</a>，但一直没有真正编写过完整的 Path Tracing 代码，对 NEE 和 BSDF 在 MIS 中的正确计算也只是略知一二。最近看到这个项目，觉得是个很好的学习机会，正好可以深入理解这些概念。虽然这个库还实现了许多实时路径追踪的优化算法，但本篇主要聚焦于 MIS 和 NEE 的实现过程。</p>
+<h1 id="raygen-shader">
 <a class="header-anchor" href="#raygen-shader"></a>
 <code>RayGen</code> Shader
 </h1><p>我们来开始解析 NVIDIA RTXPT 代码中的 <code>Sample.hlsl</code> 文件，并从 <code>RayGen</code> (光线生成) 着色器入手。这部分是路径追踪的起点，负责为每个像素生成初始光线并驱动整个追踪过程。</p>
@@ -2144,7 +2145,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Ultimate Guide to Profiling Unity Games"
               class="lazyload"
@@ -2167,7 +2168,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
@@ -2519,7 +2520,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
       <div>
         <span class="icon-brush"
           >&nbsp;
-            65.6k
+            65.7k
           </span
         >
         &nbsp;|&nbsp;
