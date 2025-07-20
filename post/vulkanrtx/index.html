@@ -2909,13 +2909,91 @@ TAA 函数完整代码分析与注释
 <h4 id="动态混合权重">
 <a class="header-anchor" href="#%e5%8a%a8%e6%80%81%e6%b7%b7%e5%90%88%e6%9d%83%e9%87%8d"></a>
 动态混合权重
-</h4><p>一个高质量的 TAA 不会使用固定的混合系数（如 <code>blend_factor = 0.1</code>）。代码中省略的那些 <code>if</code> 判断，正是实现了<strong>动态权重</strong>。</p>
+</h4><p>一个高质量的 TAA 不会使用固定的混合系数（如 <code>blend_factor = 0.1</code>）。<strong>动态权重</strong>可以基于如下因素进行调整：</p>
 <ul>
 <li><strong>对比度/亮度检测</strong>: 在图像对比度高（细节丰富）的区域，可能会增加历史权重，以便用更多的时间样本来更好地解析这些细节。</li>
 <li><strong>亮度差异检测</strong>: 如果当前帧和历史帧的亮度差异很大，可能说明场景发生了剧烈变化（如爆炸），此时会降低历史权重（增加当前帧权重），让画面更快地更新到新状态，减少拖影。</li>
 <li><strong>逆亮度权重</strong>: <code>current_weight *= 1.0 / (1.0 + luminance_source)</code> 是一种特殊技巧，用于抑制<strong>高光噪点 (Fireflies)</strong>。它降低了非常亮的像素在混合中的权重，防止这些偶然出现的闪烁噪点被 TAA “锁定”并保留在画面上。</li>
 </ul>
-<p>综上所述，一个生产级别的 TAA 算法是一个复杂的系统工程，它通过高质量的重投影、多模态的历史约束和动态的混合策略，在实现卓越抗锯齿效果的同时，与鬼影、模糊等副作用进行持续的、智能的博弈。</p>
+<h5 id="基于对比度的自适应滤波-contrast-adaptive-filtering">
+<a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e%e5%af%b9%e6%af%94%e5%ba%a6%e7%9a%84%e8%87%aa%e9%80%82%e5%ba%94%e6%bb%a4%e6%b3%a2-contrast-adaptive-filtering"></a>
+基于对比度的自适应滤波 (Contrast-Adaptive Filtering)
+</h5><p>这个 <code>if (use_temporal_filtering())</code> 分支的目的是根据<strong>图像的局部对比度</strong>来调整混合权重。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// --- 1. 基于对比度的自适应滤波 ---</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">use_temporal_filtering</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1a. 计算局部对比度</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// abs(neighborhood_max - neighborhood_min) 计算了3x3邻域颜色AABB的大小，</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 是一个衡量局部颜色变化范围（即对比度）的指标。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 再除以邻域的平均颜色 current_sample 进行归一化。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 结果 temporal_weight 是一个 [0, 1] 的值，代表了局部对比度的高低。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">temporal_weight</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">neighborhood_max</span> <span class="o">-</span> <span class="n">neighborhood_min</span><span class="p">)</span> <span class="o">/</span> <span class="n">current_sample</span><span class="p">,</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1b. 将对比度映射到历史权重</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用 mix 函数进行线性映射：</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// - 如果对比度低 (temporal_weight 接近 0)，history_weight 接近 0.25。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// - 如果对比度高 (temporal_weight 接近 1)，history_weight 接近 0.85。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">history_weight</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">mix</span><span class="p">(</span><span class="k">vec3</span><span class="p">(</span><span class="mf">0.25</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.85</span><span class="p">),</span> <span class="n">temporal_weight</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="k">vec3</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 当前帧的权重与历史权重互补。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">current_weight</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">f</span> <span class="o">-</span> <span class="n">history_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>目的解析</strong>:
+<ul>
+<li><strong>在低对比度区域 (如平坦的墙面)</strong>: <code>history_weight</code> 会较低（~0.25），意味着当前帧的权重较高（~0.75）。图像会<strong>更快地收敛</strong>到当前帧。这样做的好处是，在这些平滑区域，鬼影会特别明显，所以快速混合有助于<strong>抑制鬼影</strong>。</li>
+<li><strong>在高对比度区域 (如物体边缘、精细纹理)</strong>: <code>history_weight</code> 会较高（~0.85），意味着当前帧的权重较低（~0.15）。图像会<strong>更慢地收敛</strong>，更多地依赖历史信息。这样做的好处是，这些区域是<strong>锯齿最明显</strong>的地方，通过累积更多的历史样本，可以更好地<strong>平滑锯齿</strong>，提升抗锯齿质量。</li>
+</ul>
+</li>
+</ul>
+<h5 id="基于亮度的权重调整-luminance-based-weight-adjustment">
+<a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e%e4%ba%ae%e5%ba%a6%e7%9a%84%e6%9d%83%e9%87%8d%e8%b0%83%e6%95%b4-luminance-based-weight-adjustment"></a>
+基于亮度的权重调整 (Luminance-Based Weight Adjustment)
+</h5><p>这个 <code>if (use_inverse_luminance_filtering() || ...)</code> 分支包含两种基于亮度信息的、用于抑制特定类型瑕疵的启发式算法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// --- 2. 基于亮度的权重调整 ---</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">use_inverse_luminance_filtering</span><span class="p">()</span> <span class="o">||</span> <span class="n">use_luminance_difference_filtering</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2a. 准备工作：计算压缩后的颜色和亮度</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了让亮度比较不受HDR高动态范围的极端值影响，先将颜色压缩到[0,1]范围。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">compressed_source</span> <span class="o">=</span> <span class="n">current_sample</span> <span class="o">/</span> <span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">current_sample</span><span class="p">.</span><span class="n">r</span><span class="p">,</span> <span class="n">current_sample</span><span class="p">.</span><span class="n">g</span><span class="p">),</span> <span class="n">current_sample</span><span class="p">.</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">compressed_history</span> <span class="o">=</span> <span class="n">history_color</span> <span class="o">/</span> <span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">history_color</span><span class="p">.</span><span class="n">r</span><span class="p">,</span> <span class="n">history_color</span><span class="p">.</span><span class="n">g</span><span class="p">),</span> <span class="n">history_color</span><span class="p">.</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">luminance_source</span> <span class="o">=</span> <span class="n">luminance</span><span class="p">(</span><span class="n">compressed_source</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">luminance_history</span> <span class="o">=</span> <span class="n">luminance</span><span class="p">(</span><span class="n">compressed_history</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2b. 启发式算法一：亮度差异滤波</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">use_luminance_difference_filtering</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算当前帧和历史帧之间归一化的亮度差异。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">unbiased_diff</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">luminance_source</span> <span class="o">-</span> <span class="n">luminance_history</span><span class="p">)</span> <span class="o">/</span> <span class="n">max</span><span class="p">(</span><span class="n">luminance_source</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="n">luminance_history</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 将差异（0-1）转化为相似度（1-0）。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">unbiased_weight</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">unbiased_diff</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 对相似度进行平方，使得权重对差异更敏感。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">unbiased_weight_sqr</span> <span class="o">=</span> <span class="n">unbiased_weight</span> <span class="o">*</span> <span class="n">unbiased_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// k_feedback 是最终的混合因子，unbiased_weight_sqr 越高，k_feedback 越接近1。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">k_feedback</span> <span class="o">=</span> <span class="n">mix</span><span class="p">(</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="n">unbiased_weight_sqr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 用 k_feedback 来设置权重。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果亮度相似 (k_feedback高)，则更多地混合当前帧，以快速响应细微的光照变化。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果亮度差异大 (k_feedback低)，则更多地信任历史，以防止突变。</span>
+</span></span><span class="line"><span class="cl">        <span class="n">history_weight</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">k_feedback</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">current_weight</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="n">k_feedback</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2c. 启发式算法二：反向亮度滤波 (抑制高光噪点)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是在之前计算出的权重基础上，再乘上一个衰减因子。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">current_weight</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">luminance_source</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">history_weight</span> <span class="o">*=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">luminance_history</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>目的解析</strong>:
+<ul>
+<li><strong>亮度差异滤波</strong>: 这是一个额外的动态权重调节器。它根据当前帧和历史帧的亮度相似度来微调混合速度，其具体策略（相似时混合快还是慢）取决于引擎的整体调优目标。</li>
+<li><strong>反向亮度滤波 (核心)</strong>: 这是抑制<strong>高光噪点 (Fireflies)</strong> 或<strong>镜面高光闪烁</strong>的关键技巧。
+<ul>
+<li>在光线追踪或某些PBR着色中，偶尔会因为采样不足而产生一些随机的、亮度极高的“野像素”（即“萤火虫”）。</li>
+<li><code>1.0 / (1.0 + luminance)</code> 这个公式的特性是，当 <code>luminance</code> 非常大时，结果会非常接近 0。</li>
+<li>通过将权重乘以这个因子，TAA 会<strong>极大地降低这些“萤火虫”像素的权重</strong>，无论它们出现在当前帧还是历史帧。这可以有效防止这些偶然出现的亮斑被 TAA 的反馈循环“锁定”，从而避免它们在屏幕上停留多帧，形成恼人的闪烁。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -2951,7 +3029,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
@@ -3400,7 +3478,7 @@ TAA 函数完整代码分析与注释
       <div>
         <span class="icon-brush"
           >&nbsp;
-            65.4k
+            65.7k
           </span
         >
         &nbsp;|&nbsp;
@@ -3408,7 +3486,7 @@ TAA 函数完整代码分析与注释
           
           
 
-          05:21
+          05:22
         </span>
       </div>
     
