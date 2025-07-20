@@ -462,12 +462,6 @@ Ray Generation Shader (射线生成着色器)
 <h3 id="closest-hit-shader-最近命中着色器">
 <a class="header-anchor" href="#closest-hit-shader-%e6%9c%80%e8%bf%91%e5%91%bd%e4%b8%ad%e7%9d%80%e8%89%b2%e5%99%a8"></a>
 Closest Hit Shader (最近命中着色器)
-</h3><p>当然，这是一个非常重要的细节。对背面三角形的特殊处理是DDGI算法稳健性的关键一环，主要用于防止探针陷入几何体内部时产生的光照泄漏。</p>
-<p>以下是重写的 <code>Closest Hit Shader</code> 章节，重点解释了背面三角形的处理逻辑。</p>
-<hr>
-<h3 id="closest-hit-shader-最近命中着色器-1">
-<a class="header-anchor" href="#closest-hit-shader-%e6%9c%80%e8%bf%91%e5%91%bd%e4%b8%ad%e7%9d%80%e8%89%b2%e5%99%a8-1"></a>
-Closest Hit Shader (最近命中着色器)
 </h3><p>当光线击中场景中的某个几何体时，该着色器被调用。它的核心职责是确定命中点的光照信息。然而，与传统渲染不同，DDGI中的光线是从探针发出的，探针本身可能位于几何体内部或与其表面非常接近。因此，我们必须区分光线是击中了物体的“正面”还是“背面”。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">buffer_reference</span><span class="p">,</span> <span class="n">std430</span><span class="p">,</span> <span class="n">buffer_reference_align</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span> <span class="n">buffer</span> <span class="n">int_array_type</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">uint16_t</span> <span class="n">v</span><span class="p">;</span>
@@ -1402,7 +1396,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
@@ -1478,7 +1472,6 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
             <li><a href="#数据流与gpu调度">数据流与GPU调度</a></li>
             <li><a href="#ray-generation-shader-射线生成着色器">Ray Generation Shader (射线生成着色器)</a></li>
             <li><a href="#closest-hit-shader-最近命中着色器">Closest Hit Shader (最近命中着色器)</a></li>
-            <li><a href="#closest-hit-shader-最近命中着色器-1">Closest Hit Shader (最近命中着色器)</a></li>
             <li><a href="#miss-shader-未命中着色器">Miss Shader (未命中着色器)</a></li>
           </ul>
         </li>
@@ -1833,7 +1826,6 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
             <li><a href="#数据流与gpu调度">数据流与GPU调度</a></li>
             <li><a href="#ray-generation-shader-射线生成着色器">Ray Generation Shader (射线生成着色器)</a></li>
             <li><a href="#closest-hit-shader-最近命中着色器">Closest Hit Shader (最近命中着色器)</a></li>
-            <li><a href="#closest-hit-shader-最近命中着色器-1">Closest Hit Shader (最近命中着色器)</a></li>
             <li><a href="#miss-shader-未命中着色器">Miss Shader (未命中着色器)</a></li>
           </ul>
         </li>
