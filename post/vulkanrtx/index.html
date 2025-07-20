@@ -1930,7 +1930,7 @@ Ray Traced Reflections
 <h2 id="reflections-shaders">
 <a class="header-anchor" href="#reflections-shaders"></a>
 Reflections Shaders
-</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201918857.png" alt=""></p>
+</h2><p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202007124.png" alt=""></p>
 <h3 id="光线生成着色器-ray-generation-shader">
 <a class="header-anchor" href="#%e5%85%89%e7%ba%bf%e7%94%9f%e6%88%90%e7%9d%80%e8%89%b2%e5%99%a8-ray-generation-shader"></a>
 光线生成着色器 (Ray Generation Shader)
@@ -2053,13 +2053,11 @@ Reflections Shaders
 </span></span><span class="line"><span class="cl">    <span class="c1">// 将计算出的反射颜色写入到输出图像中。</span>
 </span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">out_image_index</span><span class="p">],</span> <span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">reflection_colour</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
 </span></span></code></pre></div><h3 id="最近命中与未命中着色器-closest-hit--miss-shaders">
 <a class="header-anchor" href="#%e6%9c%80%e8%bf%91%e5%91%bd%e4%b8%ad%e4%b8%8e%e6%9c%aa%e5%91%bd%e4%b8%ad%e7%9d%80%e8%89%b2%e5%99%a8-closest-hit--miss-shaders"></a>
 最近命中与未命中着色器 (Closest-Hit &amp; Miss Shaders)
 </h3><p>这两个着色器的作用非常简单：它们在 <code>traceRayEXT</code> 函数执行过程中被调用，其唯一目的就是填充 <code>RayPayload</code> 结构体，将结果返回给调用者（Ray Generation Shader）。</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#if defined (CLOSEST_HIT_REFLECTIONS_RT)</span>
-</span></span><span class="line"><span class="cl"><span class="c1">// 当光线命中物体时，此着色器被调用。</span>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// 当光线命中物体时，此着色器被调用。</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mo">0</span><span class="p">)</span> <span class="n">rayPayloadInEXT</span> <span class="n">RayPayload</span> <span class="n">payload</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="n">hitAttributeEXT</span> <span class="k">vec2</span> <span class="n">barycentric_weights</span><span class="p">;</span> <span class="c1">// 由硬件提供的重心坐标插值</span>
@@ -2074,9 +2072,7 @@ Reflections Shaders
 </span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">t</span>                 <span class="o">=</span> <span class="n">gl_HitTEXT</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">triangle_facing</span>   <span class="o">=</span> <span class="n">gl_HitKindEXT</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="cp">#if defined (MISS_REFLECTIONS_RT)</span>
 </span></span><span class="line"><span class="cl"><span class="c1">// 当光线未命中任何物体时，此着色器被调用。</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">location</span> <span class="o">=</span> <span class="mo">0</span><span class="p">)</span> <span class="n">rayPayloadInEXT</span> <span class="n">RayPayload</span> <span class="n">payload</span><span class="p">;</span>
@@ -2086,7 +2082,6 @@ Reflections Shaders
 </span></span><span class="line"><span class="cl">    <span class="c1">// 作为一个标记，告诉光线生成着色器“此次追踪未命中”。</span>
 </span></span><span class="line"><span class="cl">    <span class="n">payload</span><span class="p">.</span><span class="n">geometry_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
 </span></span></code></pre></div><h3 id="核心原理与关键技术">
 <a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e5%8e%9f%e7%90%86%e4%b8%8e%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af"></a>
 核心原理与关键技术
@@ -2193,13 +2188,735 @@ SVGF 降噪
 </h2><h3 id="accumulation-pass">
 <a class="header-anchor" href="#accumulation-pass"></a>
 Accumulation Pass
-</h3><h3 id="variance-pass">
+</h3><p>这个着色器是 <strong>SVGF (Spatiotemporal Variance-Guided Filtering)</strong> 降噪算法中的<strong>时间累积 (Temporal Accumulation)</strong> 阶段。它的核心任务是将当前帧带有噪点的反射颜色，与前几帧积累的、相对干净的颜色历史进行混合，从而在时间维度上平滑噪点。</p>
+<p>为了防止混合出错（例如，将墙壁的颜色历史混合到移动的角色上），这个阶段花费了大量精力去进行<strong>时间一致性检查 (Temporal Consistency Check)</strong>，只有在确认当前像素和它在上一帧的对应像素属于同一个物体表面时，才会进行混合。</p>
+<p>混合后的颜色
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202050802.png" alt="integrated_reflection_color"></p>
+<p>混合后的矩
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202050674.png" alt="integrated_reflection_moments"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// ... [此处省略 check_temporal_consistency 函数的定义] ...</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义工作组大小 8x8</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 读取输入并计算矩 (Moments) ---</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uvec2</span> <span class="n">frag_coord</span> <span class="o">=</span> <span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取当前帧由光追计算出的、带有噪点的原始反射颜色。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">reflections_color</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">reflections_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算颜色亮度的“一阶矩”和“二阶矩”。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是为后续空间滤波阶段计算“方差”做准备。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">u_1</span> <span class="o">=</span> <span class="n">luminance</span><span class="p">(</span><span class="n">reflections_color</span><span class="p">);</span> <span class="c1">// 一阶矩 (均值)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">u_2</span> <span class="o">=</span> <span class="n">u_1</span> <span class="o">*</span> <span class="n">u_1</span><span class="p">;</span>                    <span class="c1">// 二阶矩的一部分</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">moments</span> <span class="o">=</span> <span class="k">vec2</span><span class="p">(</span><span class="n">u_1</span><span class="p">,</span> <span class="n">u_2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 执行时间一致性检查 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 调用辅助函数，判断当前像素是否有有效的、可供复用的历史数据。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">bool</span> <span class="n">is_consistent</span> <span class="o">=</span> <span class="n">check_temporal_consistency</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 条件性时间累积 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">integrated_color_out</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">integrated_moments_out</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 A：如果历史数据一致、有效</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">is_consistent</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取上一帧累积的颜色和矩</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec3</span> <span class="n">history_reflections_color</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">history_reflections_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">vec2</span> <span class="n">history_moments</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">history_moments_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 使用一个混合因子 alpha，将当前帧的数据与历史数据进行指数移动平均 (Exponential Moving Average)。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// alpha 较小，意味着更信任历史数据，画面更稳定但可能产生拖影；alpha 较大则相反。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">integrated_color_out</span> <span class="o">=</span> <span class="n">mix</span><span class="p">(</span><span class="n">history_reflections_color</span><span class="p">,</span> <span class="n">reflections_color</span><span class="p">,</span> <span class="n">alpha</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">integrated_moments_out</span> <span class="o">=</span> <span class="n">mix</span><span class="p">(</span><span class="n">history_moments</span><span class="p">,</span> <span class="n">moments</span><span class="p">,</span> <span class="n">alpha</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 B：如果历史数据不一致（例如发生遮挡）</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 丢弃无效的历史数据，直接使用当前帧的原始颜色和矩。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 这相当于重置(reset)了该像素的时间累积。</span>
+</span></span><span class="line"><span class="cl">        <span class="n">integrated_color_out</span> <span class="o">=</span> <span class="n">reflections_color</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">integrated_moments_out</span> <span class="o">=</span> <span class="n">moments</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 4. 写入输出 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将本轮累积后的颜色和矩写入到新的纹理中，供下一阶段（空间滤波）使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">integrated_color_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="k">vec4</span><span class="p">(</span><span class="n">integrated_color_out</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">integrated_moments_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="k">vec4</span><span class="p">(</span><span class="n">integrated_moments_out</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  检查当前像素在时间上是否与前一帧连续。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param  frag_coord 当前像素的屏幕坐标。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return bool 如果历史数据有效且可复用，返回true。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">bool</span> <span class="n">check_temporal_consistency</span><span class="p">(</span><span class="n">uvec2</span> <span class="n">frag_coord</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 时间重投影 (Temporal Reprojection) ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 读取当前像素的运动矢量。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">motion_vector</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">motion_vectors_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 根据运动矢量，计算出当前像素在上一帧的屏幕坐标 (prev_frag_coord)。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">prev_frag_coord</span> <span class="o">=</span> <span class="k">vec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">motion_vector</span> <span class="o">*</span> <span class="n">resolution_scale</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 边界与物体ID检查 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查历史坐标是否超出屏幕范围。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">any</span><span class="p">(</span><span class="n">lessThan</span><span class="p">(</span><span class="n">prev_frag_coord</span><span class="p">,</span> <span class="k">vec2</span><span class="p">(</span><span class="mo">0</span><span class="p">)))</span> <span class="o">||</span> <span class="n">any</span><span class="p">(</span><span class="n">greaterThanEqual</span><span class="p">(</span><span class="n">prev_frag_coord</span><span class="p">,</span> <span class="n">resolution</span> <span class="o">*</span> <span class="n">resolution_scale</span><span class="p">)))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查当前像素与历史像素是否属于同一个物体。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是最强的剔除标准之一，可以有效防止前景物体移开时，背景错误地复用前景的颜色历史（鬼影）。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint</span> <span class="n">mesh_id</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_utextures</span><span class="p">[</span><span class="n">mesh_id_texture_index</span><span class="p">],</span> <span class="p">...,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uint</span> <span class="n">prev_mesh_id</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_utextures</span><span class="p">[</span><span class="n">history_mesh_id_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">prev_frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">mesh_id</span> <span class="o">!=</span> <span class="n">prev_mesh_id</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 深度与法线检查 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了处理物体内部的形变或视角变化，还需要比较几何属性。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">z</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">linear_z_dd_texture_index</span><span class="p">],</span> <span class="p">...,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">prev_z</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">history_linear_depth_texture</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">prev_frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算深度差异。如果差异过大，认为历史无效。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">depth_diff</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">prev_z</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">depth_normal_fwidth</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">depth_diff</span> <span class="o">&gt;</span> <span class="n">temporal_depth_difference</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">normal</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">prev_normal</span> <span class="o">=</span> <span class="p">...;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算法线差异。如果法线夹角过大，认为历史无效。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">normal_diff</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="n">prev_normal</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">depth_normal_fwidth</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">normal_diff</span> <span class="o">&gt;</span> <span class="n">temporal_normal_difference</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 所有检查都通过，返回true。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h4 id="核心原理与关键技术-1">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e5%8e%9f%e7%90%86%e4%b8%8e%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af-1"></a>
+核心原理与关键技术
+</h4><h5 id="时间累积与历史拒绝-temporal-accumulation--history-rejection">
+<a class="header-anchor" href="#%e6%97%b6%e9%97%b4%e7%b4%af%e7%a7%af%e4%b8%8e%e5%8e%86%e5%8f%b2%e6%8b%92%e7%bb%9d-temporal-accumulation--history-rejection"></a>
+时间累积与历史拒绝 (Temporal Accumulation &amp; History Rejection)
+</h5><ul>
+<li><strong>指数移动平均 (Exponential Moving Average)</strong>: <code>integrated_color_out = mix(history, current, alpha)</code> 这行代码是时间累积的核心。它不是简单地取平均，而是给予当前帧一个固定的权重 <code>alpha</code>，历史一个 <code>1 - alpha</code> 的权重。这种方式可以在平滑噪声的同时，让画面能逐渐响应光照变化。</li>
+<li><strong>鲁棒的历史拒绝</strong>: <code>check_temporal_consistency</code> 函数是该算法鲁棒性的关键。一个糟糕的时间降噪器会在物体移动时产生大量<strong>鬼影 (Ghosting)</strong>。通过依次检查<strong>物体ID</strong>、<strong>深度</strong>和<strong>法线</strong>，SVGF 能非常精确地判断历史数据是否可用，一旦判断为不可用（例如，角色跑开露出了后面的墙），就果断丢弃历史（<code>else</code> 分支），从而极大地抑制了鬼影。</li>
+</ul>
+<p>Mesh ID
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202009435.png" alt=""></p>
+<h5 id="基于矩的方差估计-moment-based-variance-estimation">
+<a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e%e7%9f%a9%e7%9a%84%e6%96%b9%e5%b7%ae%e4%bc%b0%e8%ae%a1-moment-based-variance-estimation"></a>
+基于矩的方差估计 (Moment-based Variance Estimation)
+</h5><p>SVGF 的一个精妙之处在于它指导空间滤波的方式。它需要知道一个像素邻域内的颜色<strong>方差 (Variance)</strong>，方差越大说明噪声越多。</p>
+<ul>
+<li><strong>矩 (Moments)</strong>: 直接在邻域内计算方差开销很大。SVGF 采用了一种更高效的方法：在时间累积阶段，顺便累积颜色亮度的一阶矩（就是亮度本身 $E[X]$）和二阶矩（亮度的平方 $E[X^2]$）。</li>
+<li><strong>方差公式</strong>: 根据统计学公式，方差可以由这两个矩计算得出：
+$$\sigma^2 = E[X^2] - (E[X])^2
+    $$
+在本 Pass 中，<code>integrated_moments_out</code> 的 <code>.x</code> 分量存储了累积后的 $E[X]$，<code>.y</code> 分量存储了累积后的 $E[X^2]$。在后续的空间滤波 Pass 中，可以直接利用这些预计算好的值，快速估算出像素邻域的方差，从而决定模糊的强度。</li>
+</ul>
+<h5 id="使用fwidth自适应设置阈值">
+<a class="header-anchor" href="#%e4%bd%bf%e7%94%a8fwidth%e8%87%aa%e9%80%82%e5%ba%94%e8%ae%be%e7%bd%ae%e9%98%88%e5%80%bc"></a>
+使用<code>fwidth</code>自适应设置阈值
+</h5><p><code>depth_normal_fwidth = vec2(length(fwidth(world_position)), length(fwidth(normal)));</code></p>
+<p><code>depth_normal_fwidth</code> 是一个预先计算好的 <code>vec2</code> 数据，它存储了每个像素的<strong>几何复杂度</strong>信息。</p>
+<p>这个值通常是在一个单独的 Pass 中，通过对线性深度图和法线图应用 GLSL 的 <code>fwidth()</code> 函数来计算并存入一张纹理中的。<code>fwidth(p)</code> 函数会计算变量 <code>p</code> 在屏幕空间中相邻像素间的变化量总和，是衡量一个值变化有多“剧烈”的有效指标。</p>
+<p><code>depth_normal_fwidth</code> 的核心作用是<strong>让时间一致性检查的阈值变得自适应 (Adaptive)，从而更“智能”地判断历史数据是否有效</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">float</span> <span class="n">depth_diff</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">prev_z</span> <span class="o">-</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">depth_normal_fwidth</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">depth_diff</span> <span class="o">&gt;</span> <span class="n">temporal_depth_difference</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><strong>当表面平坦、正对相机时</strong>: <code>depth_normal_fwidth.x</code> 的值非常小。这时分母很小，即使一个微小的 <code>abs(prev_z - z)</code> 也会导致 <code>depth_diff</code> 变得很大。这使得检查在这种区域<strong>非常敏感和严格</strong>，能捕捉到最细微的不连续。</li>
+<li><strong>当表面是斜坡或曲面时</strong>: <code>depth_normal_fwidth.x</code> 的值很大。这时分母很大，即使 <code>abs(prev_z - z)</code> 较大，也会被这个大的分母“稀释”，使得最终的 <code>depth_diff</code> 保持在一个较小的范围内。这使得检查在这种区域<strong>非常宽松和容忍</strong>，允许因透视和曲率产生的正常深度变化，而不会错误地丢弃历史。</li>
+</ul>
+<p>对法线的检查 <code>normal_diff</code> 也是完全相同的道理。</p>
+<p>综上所述，<code>depth_normal_fwidth</code> 通过提供一个对局部几何复杂度的衡量，将一个“一刀切”的固定阈值，升级为了一个能适应不同表面特性的、高度鲁棒的动态阈值。</p>
+<h3 id="variance-pass">
 <a class="header-anchor" href="#variance-pass"></a>
 Variance Pass
-</h3><h3 id="wavelet-pass">
+</h3><p>它的唯一职责就是接收前一阶段累积的颜色“矩”，并用一个简单的统计学公式计算出每个像素的亮度方差。</p>
+<p>这张最终生成的“方差图”就像一张“噪点地图”，它会精确地告诉最后一个 Pass（空间滤波）：“图中越亮的地方，噪点越多，你需要更用力地去模糊！”</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202112239.png" alt=""></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  根据累积的颜色矩，计算亮度方差。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 该计算着色器是 SVGF 流程中的一步。它接收由时间累积 Pass
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * (COMPUTE_SVGF_ACCUMULATION) 生成的“矩”纹理，并应用统计学公式
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Variance = E[X^2] - (E[X])^2 来计算每个像素亮度的方差。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 输出的方差图将作为下一阶段空间滤波强度的指导图。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义工作组大小 8x8</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 获取像素坐标并读取累积的矩 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="n">uvec2</span> <span class="n">frag_coord</span> <span class="o">=</span> <span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从上一 Pass 输出的纹理中，读取时间累积后的“颜色矩”。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// moments.x 存储的是亮度的一阶矩 (均值, E[X])。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// moments.y 存储的是亮度的二阶矩 (平方的均值, E[X^2])。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">moments</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">integrated_moments_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO(marco): 注释提到，一个更完整的实现应该在这里处理时间重投影失败的情况，</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 例如，如果历史无效，则通过对邻域进行双边滤波来重新估算一个临时的方差。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 计算方差 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 应用核心统计学公式：方差 = 平方的期望 - 期望的平方。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">variance</span> <span class="o">=</span> <span class="n">moments</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">pow</span><span class="p">(</span><span class="n">moments</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 存储方差结果 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将计算出的方差值写入到一张新的“方差图”纹理中。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这张图将在后续的空间滤波 Pass 中被用作指导。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">variance_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="k">vec4</span><span class="p">(</span><span class="n">variance</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li><strong>读取输入</strong>：对于屏幕上的每一个像素，它首先从 <code>integrated_moments_texture_index</code> 纹理中读取一个 <code>vec2</code> 数据。这个数据是前一个 Accumulation Pass 的输出，包含了经过时间累积（与历史数据混合）后的颜色亮度的“一阶矩”和“二阶矩”。</li>
+<li><strong>计算方差</strong>：它应用 <code>variance = moments.y - pow(moments.x, 2);</code> 这个公式。这行代码是整个着色器的核心，它将两个矩值转换为了一个统计学上有效的方差值。</li>
+<li><strong>写入输出</strong>：最后，它将计算出的 <code>variance</code> 值存入一张新的单通道纹理中。这张纹理就是“方差指导图”，供下一个也是最后一个 SVGF Pass 使用。</li>
+</ol>
+<p>这个 Pass 的精髓在于它计算方差的方法。方差 ($\sigma^2$) 在统计学上的基本定义是“一组数据与其均值差异的平方的平均值”，即 $\sigma^2 = E[(X - \mu)^2]$，其中 $\mu$ 是均值 $E[X]$。</p>
+$$\sigma^2 = E[X^2] - (E[X])^2$$<h4 id="如何映射到代码">
+<a class="header-anchor" href="#%e5%a6%82%e4%bd%95%e6%98%a0%e5%b0%84%e5%88%b0%e4%bb%a3%e7%a0%81"></a>
+如何映射到代码
+</h4><ul>
+<li><strong>$E[X]$ (期望/均值)</strong>: 在前一个 Pass 中，我们累积了颜色的亮度，存放在 <code>moments.x</code> 中。它就是我们对亮度均值的最佳估计。</li>
+<li><strong>$E[X^2]$ (平方的期望/二阶矩)</strong>: 同样，我们累积了亮度值的平方，存放在 <code>moments.y</code> 中。它就是对亮度平方的均值的最佳估计。</li>
+</ul>
+<p>因此，GLSL 代码 <code>variance = moments.y - pow(moments.x, 2);</code> 就是对 $\sigma^2 = E[X^2] - (E[X])^2$ 这个公式<strong>最直接、最高效的实现</strong>。</p>
+<h3 id="wavelet-pass">
 <a class="header-anchor" href="#wavelet-pass"></a>
 Wavelet Pass
-</h3>
+</h3><p>最后一步，也是最核心的一步：<strong>基于小波变换的方差引导空间滤波 (Wavelet-based, Variance-Guided Spatial Filtering)</strong>。</p>
+<p>这个着色器通常会执行多轮（一般是3到5轮），每一轮都会增大采样步长 (<code>step_size</code>)。这种特殊的、带孔的滤波方式也称为 <strong>À-trous Filter</strong>（法语，意为 &ldquo;with holes&rdquo;），它能在保持极高效率的同时，实现大范围的模糊效果。</p>
+<p>它的最终目标是将时间累积阶段生成的、依然有些许噪点和条纹的图像，彻底平滑成一幅干净、自然且保留了关键细节的最终图像。</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507202117202.png" alt=""></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  计算中心像素p和邻居像素q之间的交叉双边权重。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param n_p             中心像素p的法线。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param linear_z_dd     中心像素p的线性深度及其梯度 {z, fwidth(z)}。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param l_p             中心像素p的亮度。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param l_q             邻居像素q的亮度。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param p, q            中心和邻居像素的坐标。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param phi_depth       一个根据p的深度梯度和atrous步长计算出的自适应深度阈值。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return float          最终的相似度权重，介于[0, 1]之间。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">compute_w</span><span class="p">(</span><span class="k">vec3</span> <span class="n">n_p</span><span class="p">,</span> <span class="k">vec2</span> <span class="n">linear_z_dd</span><span class="p">,</span> <span class="k">float</span> <span class="n">l_p</span><span class="p">,</span> <span class="k">float</span> <span class="n">l_q</span><span class="p">,</span> <span class="k">ivec2</span> <span class="n">p</span><span class="p">,</span> <span class="k">ivec2</span> <span class="n">q</span><span class="p">,</span> <span class="k">float</span> <span class="n">phi_depth</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 准备工作: 获取邻居像素 q 的属性 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">scaled_q</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">q</span> <span class="o">*</span> <span class="n">resolution_scale_rcp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec2</span> <span class="n">encoded_normal_q</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">normals_texture_index</span><span class="p">],</span> <span class="n">scaled_q</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">n_q</span> <span class="o">=</span> <span class="n">octahedral_decode</span><span class="p">(</span><span class="n">encoded_normal_q</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">z_q</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">linear_z_dd_texture_index</span><span class="p">],</span> <span class="n">scaled_q</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 权重 1: 法线权重 w_n (几何边缘保护)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算两个法线的点积。如果法线相同，点积为1；如果垂直，点积为0。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用 pow() 函数可以使权重的衰减变得更陡峭，sigma_n 控制陡峭程度。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这意味着只有法线方向非常接近的像素，才能获得较高的权重。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">w_n</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span> <span class="n">dot</span><span class="p">(</span><span class="n">n_p</span><span class="p">,</span> <span class="n">n_q</span><span class="p">)),</span> <span class="n">sigma_n</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 权重 2: 深度权重 w_z (深度不连续保护)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 来自 https://github.com/NVIDIAGameWorks/Falcor/blob/master/Source/RenderPasses/SVGFPass/SVGFAtrous.ps.slang</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 它用原始的深度差，除以一个自适应的阈值 phi_depth。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// phi_depth = max(linear_z_dd.y, 1e-8) * step_size，它会随着</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 中心像素的深度梯度（几何陡峭程度）和 atrous 步长的增大而增大。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这使得深度检查在平坦区域更严格，在陡峭区域和大的采样步长下更宽松。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">w_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">phi_depth</span> <span class="o">==</span> <span class="mo">0</span><span class="p">)</span> <span class="o">?</span> <span class="mf">0.0</span><span class="n">f</span> <span class="o">:</span> <span class="n">abs</span><span class="p">(</span><span class="n">linear_z_dd</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">z_q</span><span class="p">)</span> <span class="o">/</span> <span class="n">phi_depth</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 权重 3: 亮度权重 w_l (方差引导的材质/光照边缘保护)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3a. 计算中心像素p的局部平均方差 g ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 在计算亮度权重前，先对“方差图”进行一次 3x3 的高斯模糊。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 得到的 g 代表了中心像素p附近区域的平均“噪点程度”。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">16.0</span><span class="p">}};</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">g</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">int</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">yy</span> <span class="o">=</span> <span class="o">-</span><span class="n">radius</span><span class="p">;</span> <span class="n">yy</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">;</span> <span class="n">yy</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">xx</span> <span class="o">=</span> <span class="o">-</span><span class="n">radius</span><span class="p">;</span> <span class="n">xx</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">;</span> <span class="n">xx</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">ivec2</span> <span class="n">s</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="n">yy</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// ... [边界检查] ...</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="n">abs</span><span class="p">(</span><span class="n">xx</span><span class="p">)][</span><span class="n">abs</span><span class="p">(</span><span class="n">yy</span><span class="p">)];</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">v</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">variance_texture_index</span><span class="p">],</span> <span class="n">s</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">g</span> <span class="o">+=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3b. 计算方差引导的亮度权重 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是 SVGF 的灵魂。分母中的 sqrt(g) 是关键。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果局部方差 g 很高（噪点区），分母会很大，w_l 会趋近于1，从而允许混合不同亮度的颜色来降噪。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果局部方差 g 很低（干净区），分母会很小，w_l 对亮度差异会非常敏感，从而避免模糊，保护细节。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">w_l</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">l_p</span> <span class="o">-</span> <span class="n">l_q</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma_l</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span> <span class="n">g</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 最终权重组合</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将三个权重组合成最终的混合权重。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里的组合方式 exp(-a -b) * c 是双边滤波中的一种常见形式。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">final_weight</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="mf">0.0</span> <span class="o">-</span> <span class="n">max</span><span class="p">(</span><span class="n">w_z</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">-</span> <span class="n">max</span><span class="p">(</span><span class="n">w_l</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span> <span class="o">*</span> <span class="n">w_n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">final_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">float</span> <span class="n">h</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="mf">3.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">16.0</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 初始化 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">frag_coord</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xy</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从上一 Pass 读取中心像素p的各种属性</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">scaled_xy</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span> <span class="o">*</span> <span class="n">resolution_scale_rcp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">normal_p</span> <span class="o">=</span> <span class="n">octahedral_decode</span><span class="p">(</span><span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">normals_texture_index</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">linear_z_dd</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">linear_z_dd_texture_index</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span> <span class="c1">// .x是深度, .y是深度梯度</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">color_p</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">integrated_color_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">luminance_p</span> <span class="o">=</span> <span class="n">luminance</span><span class="p">(</span><span class="n">color_p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 初始化累加器</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">new_filtered_color</span> <span class="o">=</span> <span class="n">color_p</span><span class="p">;</span> <span class="c1">// 中心像素首先计入</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">color_weight</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">new_variance</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">variance_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. À-trous 滤波循环 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是一个 3x3 的滤波核，但采样点是“带孔”的，由 step_size 控制间隔。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">int</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> 
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="n">radius</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">;</span> <span class="o">++</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="n">radius</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">radius</span><span class="p">;</span> <span class="o">++</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mo">0</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">==</span> <span class="mo">0</span><span class="p">)</span> <span class="k">continue</span><span class="p">;</span> <span class="c1">// 跳过中心点</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 计算邻居像素q的坐标，间隔为 step_size</span>
+</span></span><span class="line"><span class="cl">            <span class="k">ivec2</span> <span class="n">q</span> <span class="o">=</span> <span class="n">frag_coord</span> <span class="o">+</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// ... [边界检查] ...</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// --- 3. 计算权重并累加 ---</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 读取邻居像素q的颜色和亮度</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">c_q</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">integrated_color_texture_index</span><span class="p">],</span> <span class="n">q</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">l_q</span> <span class="o">=</span> <span class="n">luminance</span><span class="p">(</span><span class="n">c_q</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// h_q 是空间距离权重（高斯权重）</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">h_q</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)]</span> <span class="o">*</span> <span class="n">h</span><span class="p">[</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">)];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// w_pq 是基于几何和亮度相似度的“双边权重”</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">w_pq</span> <span class="o">=</span> <span class="n">compute_w</span><span class="p">(</span><span class="n">normal_p</span><span class="p">,</span> <span class="n">linear_z_dd</span><span class="p">,</span> <span class="n">luminance_p</span><span class="p">,</span> <span class="n">l_q</span><span class="p">,</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="p">...);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 最终样本权重是两者的乘积</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">h_q</span> <span class="o">*</span> <span class="n">w_pq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 累加带权的颜色和总权重</span>
+</span></span><span class="line"><span class="cl">            <span class="n">new_filtered_color</span> <span class="o">+=</span> <span class="n">sample_weight</span> <span class="o">*</span> <span class="n">c_q</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">color_weight</span> <span class="o">+=</span> <span class="n">sample_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 同时，根据权重传播和更新方差</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">prev_variance</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">variance_texture_index</span><span class="p">],</span> <span class="n">q</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">new_variance</span> <span class="o">+=</span> <span class="n">pow</span><span class="p">(</span><span class="n">h_q</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">pow</span><span class="p">(</span><span class="n">w_pq</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">prev_variance</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 4. 归一化并输出 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="n">new_filtered_color</span> <span class="o">/=</span> <span class="n">color_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">new_variance</span> <span class="o">/=</span> <span class="n">pow</span><span class="p">(</span><span class="n">color_weight</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将本轮滤波后的结果写回，供下一轮（或最终显示）使用</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">filtered_color_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">new_filtered_color</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">updated_variance_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">new_variance</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h4 id="à-trous-带孔-小波滤波">
+<a class="header-anchor" href="#%c3%a0-trous-%e5%b8%a6%e5%ad%94-%e5%b0%8f%e6%b3%a2%e6%bb%a4%e6%b3%a2"></a>
+À-trous (带孔) 小波滤波
+</h4><p>常规的大范围模糊需要一个巨大的滤波核，这会导致每个像素需要进行数千次纹理采样，性能极低。À-trous 滤波解决了这个问题。</p>
+<ul>
+<li><strong>原理</strong>: 它使用一个很小的核（这里是3x3），但在采样邻居时，会跳过一些像素，这个跳过的距离由 <code>step_size</code> 控制。</li>
+<li><strong>流程</strong>:
+<ul>
+<li><strong>Pass 1</strong>: <code>step_size = 1</code>。进行一次标准的 3x3 滤波。</li>
+<li><strong>Pass 2</strong>: <code>step_size = 2</code>。采样点间隔变为1个像素，等效于一个 5x5 的滤波范围。</li>
+<li><strong>Pass 3</strong>: <code>step_size = 4</code>。采样点间隔变为3个像素，等效于一个 9x9 的滤波范围。</li>
+<li><strong>Pass 4</strong>: <code>step_size = 8</code>。等效于一个 17x17 的滤波范围。</li>
+<li><strong>Pass 5</strong>: <code>step_size = 16</code>。等效于一个 33x33 的滤波范围。</li>
+</ul>
+</li>
+<li><strong>优势</strong>: 仅用 5 个 Pass，每个 Pass 只需采样 9 个点，就实现了过去需要一个巨大卷积核才能达到的模糊范围，效率极高。</li>
+</ul>
+<h4 id="交叉双边滤波-cross-bilateral-filter">
+<a class="header-anchor" href="#%e4%ba%a4%e5%8f%89%e5%8f%8c%e8%be%b9%e6%bb%a4%e6%b3%a2-cross-bilateral-filter"></a>
+交叉双边滤波 (Cross-Bilateral Filter)
+</h4><p>这是 <code>compute_w</code> 函数的核心思想。一个普通的模糊滤波会无差别地混合所有邻居的颜色，导致边缘也被模糊掉。双边滤波则会根据“相似度”来决定混合权重。</p>
+<ul>
+<li><strong>交叉 (Cross)</strong>: 它的“智能”之处在于，判断相似度所依据的数据（指导图），和最终被模糊处理的图像（输入图）不是同一个。
+<ul>
+<li><strong>输入图</strong>: <code>integrated_color_texture</code> (需要被模糊的颜色图)</li>
+<li><strong>指导图</strong>: <code>normals_texture</code>, <code>linear_z_dd_texture</code>, <code>variance_texture</code></li>
+</ul>
+</li>
+<li>该实现综合了三种指导信息：
+<ol>
+<li><strong>法线相似度 (<code>w_n</code>)</strong>: 防止模糊跨越物体的几何棱角。</li>
+<li><strong>深度相似度 (<code>w_z</code>)</strong>: 防止模糊跨越物体的边缘轮廓。</li>
+<li><strong>亮度相似度 (<code>w_l</code>)</strong>: 防止模糊跨越材质或光照的明暗变化。</li>
+</ol>
+</li>
+</ul>
+<p><code>compute_w</code> 本质上是一个<strong>交叉双边权重 (Cross-Bilateral Weight)</strong> 的计算器，它同时考量了三个方面的相似性：<strong>几何法线、几何深度、以及由方差引导的颜色亮度</strong>。</p>
+<p>权重 1: 法线权重 $w_n$ - 保护几何棱角</p>
+<ul>
+<li><strong>目的</strong>: 防止模糊效果“泄露”到不相关的几何表面上。例如，墙壁的颜色不应该模糊到地板上。</li>
+<li><strong>方法</strong>: <code>dot(n_p, n_q)</code> 计算两个法线向量的余弦相似度。</li>
+<li><strong><code>pow(..., sigma_n)</code></strong>: <code>sigma_n</code> 参数像一个“锐度”调节器。当 <code>sigma_n &gt; 1</code> 时，它会惩罚那些不是几乎完全平行的法线，使得只有在非常平坦的表面上，权重才接近1，从而让边缘保护更严格。</li>
+</ul>
+<p>权重 2: 深度权重 $w_z$ - 保护物体轮廓</p>
+<ul>
+<li><strong>目的</strong>: 防止模糊跨越有深度差异的边缘，例如一个物体与其后方背景的交界处。</li>
+<li><strong>方法</strong>: <code>abs(linear_z_dd.x - z_q) / phi_depth</code>
+<ul>
+<li><strong>分子</strong>: <code>abs(linear_z_dd.x - z_q)</code> 是中心点 <code>p</code> 和邻居 <code>q</code> 之间最直接的深度差。</li>
+<li><strong>分母</strong>: <code>phi_depth</code> 是一个<strong>自适应的容差</strong>。它由 <code>linear_z_dd.y</code> (中心点的深度梯度) 和 <code>step_size</code> (atrous滤波步长) 决定。
+<ul>
+<li>在<strong>平坦表面</strong> (<code>linear_z_dd.y</code> 小)，<code>phi_depth</code> 小，容差低，检查严格。</li>
+<li>在<strong>陡峭表面</strong> (<code>linear_z_dd.y</code> 大)，<code>phi_depth</code> 大，容差高，检查宽松。</li>
+<li>随着 <code>step_size</code> 增大，采样点距离变远，<code>phi_depth</code> 也随之增大，允许更大的深度差异。</li>
+</ul>
+</li>
+<li>这个归一化后的 <code>w_z</code> 可以被认为是一个标准化的深度差异值。</li>
+</ul>
+</li>
+</ul>
+<p>权重 3: 亮度权重 $w_l$ - 保护材质与光照细节</p>
+<ul>
+<li><strong>目的</strong>: 这是 SVGF 最智能的部分。它既要能在噪点区域强力模糊，又要能在干净区域保护材质和阴影的精细边缘。</li>
+<li><strong>方法</strong>: <code>exp(-(abs(l_p - l_q) / (sigma_l * sqrt(g) + 1e-5)))</code>
+<ul>
+<li><strong>分子</strong>: <code>abs(l_p - l_q)</code> 是中心点 <code>p</code> 和邻居 <code>q</code> 之间的亮度差异。</li>
+<li><strong>分母</strong>: <code>sigma_l * sqrt(g)</code> 是一个<strong>由方差引导的自适应亮度容差</strong>。<code>g</code> 是我们刚刚在3x3邻域内计算出的局部平均方差。
+<ul>
+<li><strong>高方差区域 (噪点多)</strong>: <code>g</code> 很大，导致分母很大。此时，即使 <code>abs(l_p - l_q)</code> 也很大，整个分数也会很小，<code>w_l</code> 趋近于1。这意味着<strong>亮度差异被忽略</strong>，滤波器会强力混合颜色以消除噪点。</li>
+<li><strong>低方差区域 (已干净)</strong>: <code>g</code> 很小，导致分母很小。此时，即使一个微小的亮度差异 <code>abs(l_p - l_q)</code> 都会导致分数很大，<code>w_l</code> 快速趋近于0。这意味着<strong>亮度差异被严格尊重</strong>，滤波器拒绝混合不同亮度的颜色，从而保护了细节。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>最终权重组合 <code>final_weight = exp(-max(w_z, 0.0) - max(w_l, 0.0)) * w_n</code></p>
+<p>这个公式将三个权重因子非线性地组合在一起。深度和亮度权重在指数部分相加，这意味着它们中任何一个的惩罚效果都会被放大。法线权重则作为一个最终的乘数，如果法线不匹配，它可以一票否决掉整个权重。这种组合方式能产生平滑且自然的权重衰减，是实现高质量滤波效果的关键。</p>
+<h4 id="方差引导滤波-variance-guided-filtering">
+<a class="header-anchor" href="#%e6%96%b9%e5%b7%ae%e5%bc%95%e5%af%bc%e6%bb%a4%e6%b3%a2-variance-guided-filtering"></a>
+方差引导滤波 (Variance-Guided Filtering)
+</h4><p>这是 SVGF 的灵魂，体现在 <code>w_l</code> 的计算上。</p>
+<p><code>w_l = exp(-(abs(l_p - l_q) / (sigma_l * sqrt(g) + 1e-5)))</code></p>
+<p>这里的 <code>g</code> 是通过模糊方差图得到的<strong>局部平均方差</strong>。这个分母是整个算法的“自动调节旋钮”：</p>
+<ul>
+<li>
+<p><strong>当局部方差 <code>g</code> 很高时 (噪点区域)</strong>:</p>
+<ul>
+<li>分母 <code>sigma_l * sqrt(g)</code> 变得很大。</li>
+<li>整个分数项 <code>abs(l_p - l_q) / ...</code> 趋近于 0。</li>
+<li><code>w_l</code> 趋近于 <code>exp(0)</code>，也就是 1。</li>
+<li><strong>结果</strong>: 亮度权重失效了！滤波器会大胆地将差异巨大的颜色混合在一起，从而强力地抹除噪点。</li>
+</ul>
+</li>
+<li>
+<p><strong>当局部方差 <code>g</code> 很低时 (干净区域)</strong>:</p>
+<ul>
+<li>分母很小。</li>
+<li>整个分数项对 <code>abs(l_p - l_q)</code> 的变化非常敏感。</li>
+<li><code>w_l</code> 会因为微小的亮度差异而快速衰减到 0。</li>
+<li><strong>结果</strong>: 亮度权重变得极其严格！滤波器会拒绝混合任何有细微明暗变化的颜色，从而完美地保护了图像细节。</li>
+</ul>
+</li>
+</ul>
+<p>通过这种方式，SVGF 算法实现了终极目标：<strong>在噪点多的地方大力模糊，在细节多的地方精细保护</strong>，而这一切都是根据前几步计算出的数据自动完成的。</p>
+<h3 id="downsample-pass">
+<a class="header-anchor" href="#downsample-pass"></a>
+Downsample Pass
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  对全分辨率的G-Buffer进行智能降采样，为下一帧生成历史纹理。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 该计算着色器为每个低分辨率（半分辨率）像素，检查其对应的 2x2 高分辨率像素块。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 它根据深度值选择这个 2x2 块中最“有代表性”的一个像素——即最靠近摄像机的那个像素。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 然后，它将这个被选中像素的 G-Buffer 数据（法线、物体ID、线性深度等）
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 拷贝到低分辨率的历史纹理中。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 这种方法能有效保留物体边缘轮廓，防止前景的精细物体在降采样中被背景“侵蚀”。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义一个 2x2 像素块的相对偏移</span>
+</span></span><span class="line"><span class="cl"><span class="k">ivec2</span> <span class="n">pixel_offsets</span><span class="p">[]</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">[](</span><span class="k">ivec2</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mo">0</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// frag_coord 是当前正在处理的低分辨率（目标分辨率）像素坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">frag_coord</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xy</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 1. 在 2x2 邻域内选择“最佳”像素 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">int</span> <span class="n">chosen_hiresolution_sample_index</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">closer_depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历当前低分辨率像素对应的 2x2 高分辨率像素块。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 计算高分辨率像素的坐标。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">ivec2</span> <span class="n">hires_coord</span> <span class="o">=</span> <span class="n">frag_coord</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">pixel_offsets</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 读取该高分辨率像素的深度值。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">depth_texture_index</span><span class="p">)],</span> <span class="n">hires_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="c1">// 寻找 2x2 块中深度值最小的像素。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">closer_depth</span> <span class="o">&gt;</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">closer_depth</span> <span class="o">=</span> <span class="n">depth</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">chosen_hiresolution_sample_index</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// 记录下这个“获胜”像素的索引</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 拷贝“最佳”像素的数据到历史纹理 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算出获胜像素的最终高分辨率坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">chosen_coord</span> <span class="o">=</span> <span class="n">frag_coord</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">pixel_offsets</span><span class="p">[</span><span class="n">chosen_hiresolution_sample_index</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从全分辨率 G-Buffer 的“获胜”坐标处读取法线、物体ID、线性深度等信息...</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">normals</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">normals_texture_index</span><span class="p">)],</span> <span class="n">chosen_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">mesh_id</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">mesh_id_texture_index</span><span class="p">)],</span> <span class="n">chosen_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">linear_z_dd</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">linear_z_dd_texture_index</span><span class="p">)],</span> <span class="n">chosen_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...然后将这些信息写入到半分辨率的历史纹理中，供下一帧的时间性算法使用。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">history_normals_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="n">normals</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">history_mesh_id_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="n">mesh_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">history_linear_depth_texture</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="n">linear_z_dd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 3. 更新其他历史纹理 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 对于某些已经是低分辨率的纹理（如上一Pass的输出），直接拷贝即可。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">moments</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">integrated_moments_texture_index</span><span class="p">)],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">history_moments_texture_index</span><span class="p">],</span> <span class="n">frag_coord</span><span class="p">,</span> <span class="n">moments</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="temporal-anti-aliasing-taa">
+<a class="header-anchor" href="#temporal-anti-aliasing-taa"></a>
+Temporal Anti-Aliasing (TAA)
+</h1><h2 id="工作流程-3">
+<a class="header-anchor" href="#%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b-3"></a>
+工作流程
+</h2><ol>
+<li><strong>速度采样 (Velocity Sampling)</strong>:
+<ul>
+<li>首先，在3x3邻域内寻找<strong>深度最近</strong>的像素，并使用它的运动矢量。这对于处理细小物体或物体边缘的运动非常重要。</li>
+</ul>
+</li>
+<li><strong>历史重投影与采样 (History Reprojection &amp; Sampling)</strong>:
+<ul>
+<li>使用获取到的 <code>velocity</code> 计算出重投影的UV坐标 <code>reprojected_uv</code>。</li>
+<li>根据 <code>history_sampling_filter</code> 模式，使用单点采样或高质量的 Catmull-Rom 滤波来获取 <code>history_color</code>。</li>
+</ul>
+</li>
+<li><strong>当前邻域分析 (Current Neighborhood Analysis)</strong>:
+<ul>
+<li>遍历当前像素的3x3邻域。</li>
+<li>使用 <code>subsample_filter</code>（如 Mitchell-Netravali 或 Blackman-Harris）对邻域进行加权平均，得到一个高质量的当前帧颜色 <code>current_sample</code>。</li>
+<li>同时，计算出该邻域的颜色AABB (<code>neighborhood_min/max</code>) 和颜色矩 (<code>m1</code>, <code>m2</code>)，为历史裁剪做准备。</li>
+</ul>
+</li>
+<li><strong>历史约束 (History Constraint)</strong>:
+<ul>
+<li>这是抑制鬼影的关键。根据 <code>history_constraint_mode</code> 的不同，对 <code>history_color</code> 执行不同的裁剪策略，包括简单的钳位（Clamp）、AABB裁剪（Clip），以及更高级的方差裁剪（VarianceClip）。</li>
+</ul>
+</li>
+<li><strong>最终颜色混合 (Resolve)</strong>:
+<ul>
+<li>这是最后一步，将<strong>经过约束的历史颜色</strong>和<strong>经过滤波的当前颜色</strong>进行混合。</li>
+<li>混合的权重 <code>current_weight</code> 和 <code>history_weight</code> 不是固定的 <code>0.1/0.9</code>，而是可以通过 <code>options</code> 进一步动态调整，例如：
+<ul>
+<li><code>use_temporal_filtering()</code>: 根据邻域颜色的变化幅度来调整权重。</li>
+<li><code>use_inverse_luminance_filtering()</code>: 根据颜色的亮度来调整权重，有助于抑制高光区域的闪烁。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="temporal-anti-aliasing">
+<a class="header-anchor" href="#temporal-anti-aliasing"></a>
+Temporal Anti-Aliasing
+</h2><p>TAA 是一种强大且在现代游戏中应用极其广泛的技术。它的核心思想是<strong>复用前几帧的历史信息</strong>，将时间上的分辨率转化为空间上的分辨率。通过每一帧对场景进行微小的抖动（Jitter），然后将当前帧与经过校正的历史图像进行混合，TAA 能以极低的性能开销实现媲美超采样 (Supersampling) 的高质量抗锯齿效果。</p>
+<p>然而，TAA 的最大挑战是处理动态场景，如果历史信息校正不当，就会产生<strong>鬼影 (Ghosting)</strong> 和<strong>模糊 (Blur)</strong> 等副作用。因此，这段代码的大部分内容都是在用各种先进的技术来智能地约束历史数据，以抑制这些副作用。</p>
+<p>您说得对，之前的分析为了聚焦核心思想而简化了实现细节。TAA 的质量正取决于这些细节的处理。现在，我们来对这段 <code>taa</code> 函数进行一次完整的、不省略任何步骤的深度剖析。</p>
+<hr>
+<h3 id="taa-函数完整代码分析与注释">
+<a class="header-anchor" href="#taa-%e5%87%bd%e6%95%b0%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90%e4%b8%8e%e6%b3%a8%e9%87%8a"></a>
+TAA 函数完整代码分析与注释
+</h3><p>下面的代码展示了一个功能非常完备的 TAA 实现。它不仅包含了基础的时间混合，还融合了多种可选的、用于提升稳定性和抑制鬼影的高级技术。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">taa</span><span class="p">(</span><span class="k">ivec2</span> <span class="n">pos</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 1 步：速度矢量与时间重投影</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了更稳定地拾取运动矢量（尤其是在物体边缘），可以在 3x3 邻域内搜索最靠近的像素。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这里我们假设已找到最近像素的坐标 `closest_position`。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec2</span> <span class="n">closest_position</span> <span class="o">=</span> <span class="n">find_closest_fragment_3x3</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 采样该位置的运动矢量。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec2</span> <span class="n">velocity</span> <span class="o">=</span> <span class="n">sample_motion_vector_point</span><span class="p">(</span><span class="n">closest_position</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算当前像素的 UV 坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec2</span> <span class="n">screen_uv</span> <span class="o">=</span> <span class="n">uv_nearest</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">resolution</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 根据运动矢量，反向计算出当前像素在上一帧的 UV 坐标 (reprojected_uv)。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec2</span> <span class="n">reprojected_uv</span> <span class="o">=</span> <span class="n">screen_uv</span> <span class="o">-</span> <span class="n">velocity</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 2 步：历史颜色采样</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 使用高质量的 Catmull-Rom 样条插值，从历史纹理中采样颜色。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这比简单的双线性插值更能保留细节，有效减缓 TAA 累积多帧后带来的模糊。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">history_color</span> <span class="o">=</span> <span class="n">sample_texture_catmull_rom</span><span class="p">(</span><span class="n">reprojected_uv</span><span class="p">,</span> <span class="n">history_color_texture_index</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 3 步：当前帧邻域分析 (无省略)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 遍历当前像素的 3x3 邻域，以收集用于验证和约束历史颜色的统计信息。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">current_sample_total</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>  <span class="c1">// 邻域加权颜色累加器</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">current_sample_weight</span> <span class="o">=</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">;</span> <span class="c1">// 邻域权重累加器</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">neighborhood_min</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mi">10000</span><span class="p">);</span>  <span class="c1">// 邻域颜色AABB的最小值</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">neighborhood_max</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="o">-</span><span class="mi">10000</span><span class="p">);</span> <span class="c1">// 邻域颜色AABB的最大值</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">m1</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span> <span class="c1">// 邻域颜色的一阶矩（用于计算均值）</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">m2</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span> <span class="c1">// 邻域颜色的二阶矩（用于计算方差）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">y</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="o">++</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">ivec2</span> <span class="n">pixel_position</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">pixel_position</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">pixel_position</span><span class="p">,</span> <span class="k">ivec2</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">resolution</span> <span class="o">-</span> <span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">current_sample_neighbor</span> <span class="o">=</span> <span class="n">sample_current_color_point</span><span class="p">(</span><span class="n">pixel_position</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 根据邻域像素与中心点的距离，计算一个空间权重。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这通常是一个中心点权重最高的滤波核，如 Tent 或 Gaussian 核。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">subsample_distance</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="k">vec2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">subsample_weight</span> <span class="o">=</span> <span class="n">subsample_filter</span><span class="p">(</span><span class="n">subsample_distance</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 累加加权后的颜色和权重。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">current_sample_total</span> <span class="o">+=</span> <span class="n">current_sample_neighbor</span> <span class="o">*</span> <span class="n">subsample_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">current_sample_weight</span> <span class="o">+=</span> <span class="n">subsample_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="c1">// 更新邻域颜色的AABB包围盒。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">neighborhood_min</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">neighborhood_min</span><span class="p">,</span> <span class="n">current_sample_neighbor</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">neighborhood_max</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">neighborhood_max</span><span class="p">,</span> <span class="n">current_sample_neighbor</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            
+</span></span><span class="line"><span class="cl">            <span class="c1">// 累加矩，用于后续的方差计算。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">m1</span> <span class="o">+=</span> <span class="n">current_sample_neighbor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">m2</span> <span class="o">+=</span> <span class="n">current_sample_neighbor</span> <span class="o">*</span> <span class="n">current_sample_neighbor</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算经过空间滤波后的当前帧颜色。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">current_sample</span> <span class="o">=</span> <span class="n">current_sample_total</span> <span class="o">/</span> <span class="n">current_sample_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果重投影坐标超出了屏幕范围，则无法复用历史，直接返回经过邻域滤波的当前颜色。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">any</span><span class="p">(</span><span class="n">lessThan</span><span class="p">(</span><span class="n">reprojected_uv</span><span class="p">,</span> <span class="k">vec2</span><span class="p">(</span><span class="mf">0.0</span><span class="n">f</span><span class="p">)))</span> <span class="o">||</span> <span class="n">any</span><span class="p">(</span><span class="n">greaterThan</span><span class="p">(</span><span class="n">reprojected_uv</span><span class="p">,</span> <span class="k">vec2</span><span class="p">(</span><span class="mf">1.0</span><span class="n">f</span><span class="p">))))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">current_sample</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 4 步：历史约束与鬼影抑制 (所有模式)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是 TAA 算法的灵魂，用于判断采样到的 history_color 是否“合理”。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">history_constraint_mode</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">case</span> <span class="n">HistoryConstraintModeNone</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 不做任何处理，完全相信历史颜色。容易产生鬼影。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">case</span> <span class="n">HistoryConstraintModeClamp</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 硬性裁剪：将历史颜色强制限制在当前邻域颜色的AABB包围盒内。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span><span class="p">,</span> <span class="n">neighborhood_min</span><span class="p">,</span> <span class="n">neighborhood_max</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">case</span> <span class="n">HistoryConstraintModeClip</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// AABB 裁剪：将从 current_sample 指向 history_color 的线段，</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 与邻域 AABB 包围盒求交。这比 Clamp 更柔和，能保留颜色的变化方向。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">clip_aabb</span><span class="p">(</span><span class="n">neighborhood_min</span><span class="p">,</span> <span class="n">neighborhood_max</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">history_color</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">),</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">case</span> <span class="n">HistoryConstraintModeVarianceClip</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 方差裁剪：计算邻域颜色的均值(mu)和标准差(sigma)。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">/</span> <span class="mf">9.0</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">abs</span><span class="p">((</span><span class="n">m2</span> <span class="o">/</span> <span class="mf">9.0</span><span class="n">f</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 构建一个基于统计的“智能”包围盒 [mu - gamma*sigma, mu + gamma*sigma]。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">minc</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">maxc</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 将历史颜色裁剪到这个统计包围盒内。</span>
+</span></span><span class="line"><span class="cl">            <span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">clip_aabb</span><span class="p">(</span><span class="n">minc</span><span class="p">,</span> <span class="n">maxc</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">history_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        
+</span></span><span class="line"><span class="cl">        <span class="n">case</span> <span class="n">HistoryConstraintModeVarianceClipClamp</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">default</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 混合模式：先进行一次硬性的 AABB Clamp，再进行一次方差裁剪。</span>
+</span></span><span class="line"><span class="cl">            <span class="c1">// 这是最鲁棒的模式，Clamp 移除了极端异常值，VarianceClip 进行更精细的统计约束。</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">rcp_sample_count</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">f</span> <span class="o">/</span> <span class="mf">9.0</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">*</span> <span class="n">rcp_sample_count</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">abs</span><span class="p">((</span><span class="n">m2</span> <span class="o">*</span> <span class="n">rcp_sample_count</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">mu</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">minc</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">maxc</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">clamped_history_color</span> <span class="o">=</span> <span class="n">clamp</span><span class="p">(</span><span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span><span class="p">,</span> <span class="n">neighborhood_min</span><span class="p">,</span> <span class="n">neighborhood_max</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">            <span class="n">history_color</span><span class="p">.</span><span class="n">rgb</span> <span class="o">=</span> <span class="n">clip_aabb</span><span class="p">(</span><span class="n">minc</span><span class="p">,</span> <span class="n">maxc</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">clamped_history_color</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">).</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 5 步：最终混合与解析</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 动态计算混合权重，以在稳定性和响应性之间取得平衡。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">current_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">history_weight</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ... [此处省略了多个复杂的动态权重计算逻辑] ...</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这些逻辑会根据亮度、对比度等因素，动态调整 current_weight 和 history_weight。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了简化，我们假设一个基础的混合因子。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">blend_factor</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">;</span> <span class="c1">// 10% 当前帧, 90% 历史</span>
+</span></span><span class="line"><span class="cl">    <span class="n">current_weight</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="n">blend_factor</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">history_weight</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">blend_factor</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 最终颜色是当前颜色和（经过约束的）历史颜色的加权平均。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">current_sample</span> <span class="o">*</span> <span class="n">current_weight</span> <span class="o">+</span> <span class="n">history_color</span> <span class="o">*</span> <span class="n">history_weight</span><span class="p">)</span> <span class="o">/</span> <span class="n">max</span><span class="p">(</span><span class="n">current_weight</span> <span class="o">+</span> <span class="n">history_weight</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="核心原理与关键技术详解">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e5%8e%9f%e7%90%86%e4%b8%8e%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af%e8%af%a6%e8%a7%a3"></a>
+核心原理与关键技术详解
+</h3><h4 id="邻域加权采样">
+<a class="header-anchor" href="#%e9%82%bb%e5%9f%9f%e5%8a%a0%e6%9d%83%e9%87%87%e6%a0%b7"></a>
+邻域加权采样
+</h4><p>在分析当前帧时，TAA 并不仅仅看中心像素 <code>pos</code> 的颜色，而是对其 3x3 邻域进行一次<strong>空间滤波</strong>。<code>subsample_filter</code> 函数定义了一个空间权重核（例如中心点权重最高，角落权重最低），这样做有两个目的：</p>
+<ul>
+<li><strong>预滤波</strong>: 得到的 <code>current_sample</code> 本身就是一个轻微模糊、抗锯齿的颜色，这有助于减少高频闪烁。</li>
+<li><strong>收集统计数据</strong>: 更重要的是，这个 3x3 邻域提供了丰富的统计信息（min/max AABB, 均值，方差），它们是后续<strong>历史约束</strong>步骤做出智能判断的依据。</li>
+</ul>
+<h4 id="历史约束的所有模式">
+<a class="header-anchor" href="#%e5%8e%86%e5%8f%b2%e7%ba%a6%e6%9d%9f%e7%9a%84%e6%89%80%e6%9c%89%e6%a8%a1%e5%bc%8f"></a>
+历史约束的所有模式
+</h4><p>这是 TAA 算法质量的分水岭，用于解决<strong>鬼影 (Ghosting)</strong> 问题。</p>
+<ul>
+<li><strong><code>None</code></strong>: 不做任何操作，用于调试或对比。</li>
+<li><strong><code>Clamp</code></strong>: “硬”限制。非常暴力地将历史颜色拉回邻域AABB内，能有效防止极端鬼影，但可能在某些情况下丢失颜色变化的方向性，显得生硬。</li>
+<li><strong><code>Clip</code></strong>: “软”限制。它将 <code>current_sample</code> 和 <code>history_color</code> 看作一条线段的两个端点。如果 <code>history_color</code> 在AABB之外，它会找到这条线段与AABB的交点作为新的 <code>history_color</code>。这比 <code>Clamp</code> 更优，因为它保留了颜色从当前帧到历史帧的变化趋势。</li>
+<li><strong><code>VarianceClip</code></strong>: 统计限制。这是最智能的方法。它认为一个“合理”的历史颜色，应该落在当前邻域颜色分布的几个标准差之内。它创建了一个统计学上的置信区间，任何落在这个区间外的历史颜色都被视为“异常值”（即鬼影）并被修正。</li>
+<li><strong><code>VarianceClipClamp</code></strong>: 终极鲁棒模式。它结合了 <code>Clamp</code> 和 <code>VarianceClip</code> 的优点。先用 <code>Clamp</code> 粗暴地干掉那些最离谱的鬼影颜色，防止它们污染后续的统计计算。然后，在被“预处理”过的颜色上，再用更精细的 <code>VarianceClip</code> 进行约束。这在快速运动和高对比度场景中表现得最为稳定。</li>
+</ul>
+<h4 id="动态混合权重">
+<a class="header-anchor" href="#%e5%8a%a8%e6%80%81%e6%b7%b7%e5%90%88%e6%9d%83%e9%87%8d"></a>
+动态混合权重
+</h4><p>一个高质量的 TAA 不会使用固定的混合系数（如 <code>blend_factor = 0.1</code>）。代码中省略的那些 <code>if</code> 判断，正是实现了<strong>动态权重</strong>。</p>
+<ul>
+<li><strong>对比度/亮度检测</strong>: 在图像对比度高（细节丰富）的区域，可能会增加历史权重，以便用更多的时间样本来更好地解析这些细节。</li>
+<li><strong>亮度差异检测</strong>: 如果当前帧和历史帧的亮度差异很大，可能说明场景发生了剧烈变化（如爆炸），此时会降低历史权重（增加当前帧权重），让画面更快地更新到新状态，减少拖影。</li>
+<li><strong>逆亮度权重</strong>: <code>current_weight *= 1.0 / (1.0 + luminance_source)</code> 是一种特殊技巧，用于抑制<strong>高光噪点 (Fireflies)</strong>。它降低了非常亮的像素在混合中的权重，防止这些偶然出现的闪烁噪点被 TAA “锁定”并保留在画面上。</li>
+</ul>
+<p>综上所述，一个生产级别的 TAA 算法是一个复杂的系统工程，它通过高质量的重投影、多模态的历史约束和动态的混合策略，在实现卓越抗锯齿效果的同时，与鬼影、模糊等副作用进行持续的、智能的博弈。</p>
+
       
     </div>
     <footer class="article-footer">
@@ -2257,7 +2974,7 @@ Wavelet Pass
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -2385,9 +3102,41 @@ Wavelet Pass
         </li>
         <li><a href="#svgf-降噪">SVGF 降噪</a>
           <ul>
-            <li><a href="#accumulation-pass">Accumulation Pass</a></li>
-            <li><a href="#variance-pass">Variance Pass</a></li>
-            <li><a href="#wavelet-pass">Wavelet Pass</a></li>
+            <li><a href="#accumulation-pass">Accumulation Pass</a>
+              <ul>
+                <li><a href="#核心原理与关键技术-1">核心原理与关键技术</a></li>
+              </ul>
+            </li>
+            <li><a href="#variance-pass">Variance Pass</a>
+              <ul>
+                <li><a href="#如何映射到代码">如何映射到代码</a></li>
+              </ul>
+            </li>
+            <li><a href="#wavelet-pass">Wavelet Pass</a>
+              <ul>
+                <li><a href="#à-trous-带孔-小波滤波">À-trous (带孔) 小波滤波</a></li>
+                <li><a href="#交叉双边滤波-cross-bilateral-filter">交叉双边滤波 (Cross-Bilateral Filter)</a></li>
+                <li><a href="#方差引导滤波-variance-guided-filtering">方差引导滤波 (Variance-Guided Filtering)</a></li>
+              </ul>
+            </li>
+            <li><a href="#downsample-pass">Downsample Pass</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#temporal-anti-aliasing-taa">Temporal Anti-Aliasing (TAA)</a>
+      <ul>
+        <li><a href="#工作流程-3">工作流程</a></li>
+        <li><a href="#temporal-anti-aliasing">Temporal Anti-Aliasing</a>
+          <ul>
+            <li><a href="#taa-函数完整代码分析与注释">TAA 函数完整代码分析与注释</a></li>
+            <li><a href="#核心原理与关键技术详解">核心原理与关键技术详解</a>
+              <ul>
+                <li><a href="#邻域加权采样">邻域加权采样</a></li>
+                <li><a href="#历史约束的所有模式">历史约束的所有模式</a></li>
+                <li><a href="#动态混合权重">动态混合权重</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
@@ -2651,7 +3400,7 @@ Wavelet Pass
       <div>
         <span class="icon-brush"
           >&nbsp;
-            63.1k
+            65.4k
           </span
         >
         &nbsp;|&nbsp;
@@ -2659,7 +3408,7 @@ Wavelet Pass
           
           
 
-          05:10
+          05:21
         </span>
       </div>
     
@@ -2784,9 +3533,41 @@ Wavelet Pass
         </li>
         <li><a href="#svgf-降噪">SVGF 降噪</a>
           <ul>
-            <li><a href="#accumulation-pass">Accumulation Pass</a></li>
-            <li><a href="#variance-pass">Variance Pass</a></li>
-            <li><a href="#wavelet-pass">Wavelet Pass</a></li>
+            <li><a href="#accumulation-pass">Accumulation Pass</a>
+              <ul>
+                <li><a href="#核心原理与关键技术-1">核心原理与关键技术</a></li>
+              </ul>
+            </li>
+            <li><a href="#variance-pass">Variance Pass</a>
+              <ul>
+                <li><a href="#如何映射到代码">如何映射到代码</a></li>
+              </ul>
+            </li>
+            <li><a href="#wavelet-pass">Wavelet Pass</a>
+              <ul>
+                <li><a href="#à-trous-带孔-小波滤波">À-trous (带孔) 小波滤波</a></li>
+                <li><a href="#交叉双边滤波-cross-bilateral-filter">交叉双边滤波 (Cross-Bilateral Filter)</a></li>
+                <li><a href="#方差引导滤波-variance-guided-filtering">方差引导滤波 (Variance-Guided Filtering)</a></li>
+              </ul>
+            </li>
+            <li><a href="#downsample-pass">Downsample Pass</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#temporal-anti-aliasing-taa">Temporal Anti-Aliasing (TAA)</a>
+      <ul>
+        <li><a href="#工作流程-3">工作流程</a></li>
+        <li><a href="#temporal-anti-aliasing">Temporal Anti-Aliasing</a>
+          <ul>
+            <li><a href="#taa-函数完整代码分析与注释">TAA 函数完整代码分析与注释</a></li>
+            <li><a href="#核心原理与关键技术详解">核心原理与关键技术详解</a>
+              <ul>
+                <li><a href="#邻域加权采样">邻域加权采样</a></li>
+                <li><a href="#历史约束的所有模式">历史约束的所有模式</a></li>
+                <li><a href="#动态混合权重">动态混合权重</a></li>
+              </ul>
+            </li>
           </ul>
         </li>
       </ul>
