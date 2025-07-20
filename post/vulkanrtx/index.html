@@ -393,6 +393,7 @@ Dynamic Diffuse Global Illumination (DDGI)
 辐射度采集 (Gather Radiance)
 </h2><p>此阶段的目标是为场景中的每个光照探针（Light Probe）计算其从各个方向接收到的入射光（Radiance）和对应的光线传播距离。这本质上是一个大规模的光线追踪过程，我们从每个探针的位置向半球或全球领域发射大量光线，记录它们击中场景后的光照信息。</p>
 <p>最终的输出是一张二维纹理 <code>probe_raytrace_radiance_texture</code>，其尺寸为 <code>[num_rays, num_probes]</code>。纹理中的每一个像素 <code>(x, y)</code> 存储了第 <code>y</code> 个探针沿第 <code>x</code> 个方向发射的光线所采集到的辐射度（RGB）和距离（A）。</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201311937.png" alt=""></p>
 <h3 id="数据流与gpu调度">
 <a class="header-anchor" href="#%e6%95%b0%e6%8d%ae%e6%b5%81%e4%b8%8egpu%e8%b0%83%e5%ba%a6"></a>
 数据流与GPU调度
@@ -762,8 +763,14 @@ Miss Shader (未命中着色器)
 更新辐照度与可见性 (Update Irradiance and Visibility)
 </h2><p>在“辐射度采集”阶段之后，我们得到了每个探针从数百个方向射出的光线的原始数据（颜色和距离）。这个原始数据是离散且充满噪声的。本阶段的目标就是将这些离散的射线数据，通过滤波和积分，转换成两张最终可供场景采样、平滑且稳定的<strong>探针图集（Probe Atlas）</strong>：</p>
 <ol>
-<li><strong>辐照度图集 (Irradiance Atlas)</strong>: 存储每个探针从各个方向接收到的颜色信息。</li>
-<li><strong>可见性图集 (Visibility Atlas)</strong>: 存储每个探针在各个方向上的平均距离和距离的平方，用于后续计算柔和阴影。</li>
+<li>
+<p><strong>辐照度图集 (Irradiance Atlas)</strong>: 存储每个探针从各个方向接收到的颜色信息。
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201311676.png" alt=""></p>
+</li>
+<li>
+<p><strong>可见性图集 (Visibility Atlas)</strong>: 存储每个探针在各个方向上的平均距离和距离的平方，用于后续计算柔和阴影。
+<img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201312903.png" alt=""></p>
+</li>
 </ol>
 <h3 id="cpu端调度">
 <a class="header-anchor" href="#cpu%e7%ab%af%e8%b0%83%e5%ba%a6"></a>
@@ -1222,6 +1229,8 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
 <a class="header-anchor" href="#%e6%9b%b4%e6%96%b0%e6%8e%a2%e9%92%88%e5%81%8f%e7%a7%bb"></a>
 更新探针偏移
 </h3><p>这个Shader的核心目标是：如果探针位置不佳（例如在墙内或离表面太近），就计算一个偏移量将它移动到更好的位置。</p>
+<p>Offset纹理的大小为 <code>probe_count_x * probe_count_y, probe_count_z</code>。</p>
+<p><img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201312076.png" alt=""></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// 每个线程负责一个光照探针</span>
 </span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
@@ -1416,7 +1425,7 @@ $$P(X \ge t) \le \frac{\sigma^2}{\sigma^2 + (t - \mu)^2}$$<p>
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
