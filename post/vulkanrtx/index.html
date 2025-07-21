@@ -837,7 +837,7 @@ CPU端调度
 </span></span><span class="line"><span class="cl">            <span class="c1">// a. 处理背面击中：如果距离为负，说明探针可能在几何体内，跳过此射线。</span>
 </span></span><span class="line"><span class="cl">            <span class="c1">//    如果背面射线过多，则认为此探针完全被遮挡，提前退出，结果为黑色。</span>
 </span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">raw_data</span><span class="p">.</span><span class="n">w</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="n">f</span> <span class="o">&amp;&amp;</span> <span class="n">use_backfacing_blending</span><span class="p">())</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="n">backfaces</span> <span class="o">&gt;=</span> <span class="n">uint</span><span class="p">(</span><span class="n">probe_rays</span> <span class="o">*</span> <span class="mf">0.1</span><span class="n">f</span><span class="p">))</span> <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="n">backfaces</span> <span class="o">&gt;=</span> <span class="n">max_backfaces</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">                <span class="k">continue</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
@@ -1117,10 +1117,10 @@ CPU端调度
 </span></span><span class="line"><span class="cl">    <span class="c1">// 这是为了在升采样时，保留边缘（深度不连续处）的正确信息</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">output_resolution_half</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="k">ivec2</span> <span class="n">pixel_offsets</span><span class="p">[]</span> <span class="o">=</span> <span class="k">ivec2</span><span class="p">[](</span><span class="k">ivec2</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span><span class="mo">0</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mo">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mo">0</span><span class="p">),</span> <span class="k">ivec2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
-</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">closer_depth</span> <span class="o">=</span> <span class="mf">0.</span><span class="n">f</span><span class="p">;</span> <span class="c1">// 线性深度，所以0是最近的</span>
+</span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">closer_depth</span> <span class="o">=</span> <span class="mf">1.</span><span class="n">f</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="k">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mo">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">depth_fullscreen_texture_index</span><span class="p">)],</span> <span class="p">(</span><span class="n">coords</span><span class="p">.</span><span class="n">xy</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">pixel_offsets</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">closer_depth</span> <span class="o">&lt;</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">closer_depth</span> <span class="o">&gt;</span> <span class="n">depth</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">                <span class="n">closer_depth</span> <span class="o">=</span> <span class="n">depth</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">                <span class="n">chosen_hiresolution_sample_index</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">            <span class="p">}</span>
@@ -1558,7 +1558,7 @@ Ray Traced Shadows
 </span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span> 
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效 (Disocclusion Detected) 🛡️</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效 (Disocclusion Detected)</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// 对于没有历史的“新”像素，我们无法预测其复杂度。</span>
@@ -1587,7 +1587,7 @@ Ray Traced Shadows
 </span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">new_visibility_history</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 1: 历史有效 🔄</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 1: 历史有效</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">motion_vectors_value</span><span class="p">.</span><span class="n">r</span> <span class="o">!=</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// 读取旧的历史值</span>
@@ -1599,7 +1599,7 @@ Ray Traced Shadows
 </span></span><span class="line"><span class="cl">        <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">new_visibility_history</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span> 
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效 🗑️</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 分支 2: 历史无效</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">        <span class="c1">// 历史数据是错误的（属于上一个物体），必须被丢弃。</span>
@@ -1629,6 +1629,117 @@ Ray Traced Shadows
 <img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201758141.png" alt="visibility_cache"></p>
 <p>采样数缓存 (Samples Count History)
 <img src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202507201759184.png" alt="samples_count_cache"></p>
+<h3 id="motion-vectors">
+<a class="header-anchor" href="#motion-vectors"></a>
+Motion Vectors
+</h3><p>计算<strong>运动矢量 (Motion Vector)</strong> 的计算着色器代码。</p>
+<p>这个 Pass 在渲染管线中扮演着至关重要的角色，它是所有<strong>时间性技术 (Temporal Techniques)</strong>，如 TAA（时间性抗锯齿）和 SVGF（时空方差引导滤波）的基石。它的核心任务是为屏幕上的每个像素计算一个2D向量，这个向量描述了该像素上的物体从上一帧到当前帧在屏幕空间中移动的方向和距离。</p>
+<p>值得注意的是，这段代码实际上计算并输出了<strong>两种</strong>不同的运动矢量，分别用于不同的目的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief  计算屏幕空间的运动矢量。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @details
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 该计算着色器通过比较当前帧和上一帧的顶点位置，为每个像素生成运动矢量。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 它会输出两种运动矢量：
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 1. 标准运动矢量：用于 TAA，精确计算了物体运动并移除了相机抖动(Jitter)的影响。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 2. 可见性运动矢量：用于阴影等需要历史有效性判断的场景，如果重投影不合法，
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * 则存入一个特殊标记(-1, -1)。
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 输出目标：一个用于TAA的标准运动矢量纹理</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">rg16f</span><span class="p">,</span> <span class="n">set</span> <span class="o">=</span> <span class="n">MATERIAL_SET</span><span class="p">,</span> <span class="n">binding</span> <span class="o">=</span> <span class="mi">51</span><span class="p">)</span> <span class="k">uniform</span> <span class="n">image2D</span> <span class="n">motion_vectors</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 输出目标：一个用于可见性/阴影缓冲区的运动矢量纹理</span>
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">rg16f</span><span class="p">,</span> <span class="n">set</span> <span class="o">=</span> <span class="n">MATERIAL_SET</span><span class="p">,</span> <span class="n">binding</span> <span class="o">=</span> <span class="mi">52</span><span class="p">)</span> <span class="k">uniform</span> <span class="n">image2D</span> <span class="n">visibility_motion_vectors</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">set</span> <span class="o">=</span> <span class="n">MATERIAL_SET</span><span class="p">,</span> <span class="n">binding</span> <span class="o">=</span> <span class="mi">53</span><span class="p">)</span> <span class="k">uniform</span> <span class="k">sampler2D</span> <span class="n">normals_texture</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">ivec3</span> <span class="n">pos</span> <span class="o">=</span> <span class="k">ivec3</span><span class="p">(</span><span class="n">gl_GlobalInvocationID</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 1 步：重建当前像素的世界坐标 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">raw_depth</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">depth_texture_index</span><span class="p">)],</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">r</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果是天空盒或背景，则没有运动，直接返回。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">raw_depth</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">imageStore</span><span class="p">(</span><span class="n">motion_vectors</span><span class="p">,</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="n">imageStore</span><span class="p">(</span><span class="n">visibility_motion_vectors</span><span class="p">,</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span> <span class="c1">// 标记为无效</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec2</span> <span class="n">screen_uv</span> <span class="o">=</span> <span class="n">uv_nearest</span><span class="p">(</span><span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="n">resolution</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">vec3</span> <span class="n">pixel_world_position</span> <span class="o">=</span> <span class="n">world_position_from_depth</span><span class="p">(</span><span class="n">screen_uv</span><span class="p">,</span> <span class="n">raw_depth</span><span class="p">,</span> <span class="n">inverse_view_projection</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// --- 第 2 步：计算当前和历史的NDC坐标 ---</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算当前像素在当前帧的NDC（归一化设备坐标，范围[-1, 1]）坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">current_position_ndc</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="n">ndc_from_uv_raw_depth</span><span class="p">(</span><span class="n">screen_uv</span><span class="p">,</span> <span class="n">raw_depth</span><span class="p">),</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将当前世界坐标用【上一帧】的视图投影矩阵进行变换，得到该点在【上一帧】的NDC坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">previous_position_ndc</span> <span class="o">=</span> <span class="n">previous_view_projection</span> <span class="o">*</span> <span class="k">vec4</span><span class="p">(</span><span class="n">pixel_world_position</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">previous_position_ndc</span><span class="p">.</span><span class="n">xyz</span> <span class="o">/=</span> <span class="n">previous_position_ndc</span><span class="p">.</span><span class="n">w</span><span class="p">;</span> <span class="c1">// 执行透视除法</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 任务 A: 计算标准运动矢量 (用于 TAA)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2D运动矢量即为两帧NDC坐标的xy差值。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">velocity</span> <span class="o">=</span> <span class="n">current_position_ndc</span><span class="p">.</span><span class="n">xy</span> <span class="o">-</span> <span class="n">previous_position_ndc</span><span class="p">.</span><span class="n">xy</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 为了实现 TAA，每一帧的投影矩阵都会有一个亚像素级别的抖动(Jitter)。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 计算出的速度必须减去这个相机抖动带来的位移，以得到物体纯粹的运动。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">jitter_difference</span> <span class="o">=</span> <span class="p">(</span><span class="n">jitter_xy</span> <span class="o">-</span> <span class="n">previous_jitter_xy</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">velocity</span> <span class="o">-=</span> <span class="n">jitter_difference</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将最终的、经过抖动校正的运动矢量写入纹理。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">motion_vectors</span><span class="p">,</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 任务 B: 计算可见性运动矢量 (用于阴影)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是一个带有效性检查的运动矢量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 首先，计算两帧之间归一化的深度差异。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">depth_diff</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="n">previous_position_ndc</span><span class="p">.</span><span class="n">z</span> <span class="o">/</span> <span class="n">current_position_ndc</span><span class="p">.</span><span class="n">z</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 然后，计算一个自适应的深度差异阈值 eps。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这个阈值会根据表面法线与视线夹角（view_normal.z）动态变化。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 表面越是正对屏幕，eps越大，容差越高。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">normal</span> <span class="o">=</span> <span class="n">octahedral_decode</span><span class="p">(</span><span class="n">texelFetch</span><span class="p">(</span><span class="n">normals_texture</span><span class="p">,</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">view_normal</span> <span class="o">=</span> <span class="n">world_to_camera</span> <span class="o">*</span> <span class="k">vec4</span><span class="p">(</span><span class="n">normal</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">c1</span> <span class="o">=</span> <span class="mf">0.003</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span> <span class="mf">0.017</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">eps</span> <span class="o">=</span> <span class="n">c1</span> <span class="o">+</span> <span class="n">c2</span> <span class="o">*</span> <span class="n">abs</span><span class="p">(</span><span class="n">view_normal</span><span class="p">.</span><span class="n">z</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果深度差异在容差范围内，则认为重投影有效，存储原始的运动矢量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 否则，认为发生了遮挡剔除 (disocclusion)，存入一个特殊标记值 (-1, -1)。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">visibility_motion</span> <span class="o">=</span> <span class="n">depth_diff</span> <span class="o">&lt;</span> <span class="n">eps</span> <span class="o">?</span> <span class="p">(</span><span class="n">current_position_ndc</span><span class="p">.</span><span class="n">xy</span> <span class="o">-</span> <span class="n">previous_position_ndc</span><span class="p">.</span><span class="n">xy</span><span class="p">)</span> <span class="o">:</span> <span class="k">vec2</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">visibility_motion_vectors</span><span class="p">,</span> <span class="n">pos</span><span class="p">.</span><span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">visibility_motion</span><span class="p">,</span> <span class="mo">0</span><span class="p">,</span> <span class="mo">0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h4 id="第一部分计算标准运动矢量-用于taa">
+<a class="header-anchor" href="#%e7%ac%ac%e4%b8%80%e9%83%a8%e5%88%86%e8%ae%a1%e7%ae%97%e6%a0%87%e5%87%86%e8%bf%90%e5%8a%a8%e7%9f%a2%e9%87%8f-%e7%94%a8%e4%ba%8etaa"></a>
+第一部分：计算标准运动矢量 (用于TAA)
+</h4><ol>
+<li><strong>重建世界坐标</strong>: 首先，着色器利用深度图和当前帧的相机逆矩阵，从2D屏幕坐标反推出该像素在3D世界中的坐标 <code>pixel_world_position</code>。</li>
+<li><strong>计算今/昔NDC坐标</strong>:
+<ul>
+<li><strong>当前NDC</strong>: 将当前像素的UV和深度直接转换为当前帧的NDC坐标。</li>
+<li><strong>历史NDC</strong>: 这是最关键的一步。它拿起当前点的3D世界坐标，问一个问题：“在<strong>上一帧</strong>的相机视角下，这个3D点会被投影到屏幕的哪个位置？” 它通过将 <code>pixel_world_position</code> 乘以 <code>previous_view_projection</code> (上一帧的视图投影矩阵) 来得到答案。</li>
+</ul>
+</li>
+<li><strong>计算原始速度</strong>: 两个NDC坐标的 <code>xy</code> 分量之差，<code>current_position_ndc.xy - previous_position_ndc.xy</code>，就是该点在屏幕上从上一帧到当前帧的移动向量。</li>
+<li><strong>移除相机抖动 (Jitter Correction)</strong>: TAA为了达到超采样效果，每帧都会对相机做亚像素级别的微小平移（Jitter）。这个平移也会体现在运动矢量中。为了只保留物体的纯粹运动，必须减去两帧之间相机抖动的差值 <code>jitter_difference</code>。</li>
+<li><strong>存储结果</strong>: 最终得到的 <code>velocity</code> 被写入 <code>motion_vectors</code> 纹理，供 TAA Pass 使用。</li>
+</ol>
+<h4 id="第二部分计算可见性运动矢量-用于阴影">
+<a class="header-anchor" href="#%e7%ac%ac%e4%ba%8c%e9%83%a8%e5%88%86%e8%ae%a1%e7%ae%97%e5%8f%af%e8%a7%81%e6%80%a7%e8%bf%90%e5%8a%a8%e7%9f%a2%e9%87%8f-%e7%94%a8%e4%ba%8e%e9%98%b4%e5%bd%b1"></a>
+第二部分：计算可见性运动矢量 (用于阴影)
+</h4><ol>
+<li><strong>计算深度差异</strong>: 它比较了重投影后的历史NDC深度 <code>previous_position_ndc.z</code> 和当前NDC深度 <code>current_position_ndc.z</code>。如果两者差异巨大，通常意味着这个像素在上一帧被其他物体遮挡了。</li>
+<li><strong>计算自适应阈值</strong>: 为了让深度比较更鲁棒，它没有使用固定的阈值，而是根据表面的朝向计算了一个动态阈值 <code>eps</code>。</li>
+<li><strong>有效性判断</strong>: 如果深度差异小于这个自适应阈值，就认为历史数据是有效的，存储一个<strong>未经抖动校正</strong>的运动矢量。</li>
+<li><strong>存储结果或标记</strong>: 如果深度差异过大，就存入一个特殊的标记值 <code>vec2(-1, -1)</code>。后续的 Pass（如我们之前分析过的阴影和SVGF Pass）在读取这个纹理时，一旦看到 <code>(-1, -1)</code>，就知道这个像素的历史数据不可信，需要丢弃。</li>
+</ol>
+<p>时间性算法最大的敌人就是<strong>遮挡剔除 (Disocclusion)</strong>，即前景物体移开，暴露出新的背景。此时，新的背景像素如果错误地重投影，就会采样到前景物体的历史颜色，产生鬼影。</p>
+<ul>
+<li><code>visibility_motion_vectors</code> 纹理就是为了解决这个问题而生的。它不仅仅是速度，更是一个<strong>带有“有效/无效”状态的速度</strong>。</li>
+<li>通过比较深度，可以非常可靠地检测出 Disocclusion 事件。当后续的着色器需要复用历史时，它会先检查这个运动矢量是否为 <code>(-1, -1)</code>，从而做出是“复用”还是“丢弃”历史的正确决策。</li>
+</ul>
 <h3 id="光线追踪辅助函数">
 <a class="header-anchor" href="#%e5%85%89%e7%ba%bf%e8%bf%bd%e8%b8%aa%e8%be%85%e5%8a%a9%e5%87%bd%e6%95%b0"></a>
 光线追踪辅助函数
@@ -3052,7 +3163,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -3149,6 +3260,12 @@ TAA 函数完整代码分析与注释
         <li><a href="#计算可见性方差">计算可见性方差</a></li>
         <li><a href="#计算阴影可见性">计算阴影可见性</a>
           <ul>
+            <li><a href="#motion-vectors">Motion Vectors</a>
+              <ul>
+                <li><a href="#第一部分计算标准运动矢量-用于taa">第一部分：计算标准运动矢量 (用于TAA)</a></li>
+                <li><a href="#第二部分计算可见性运动矢量-用于阴影">第二部分：计算可见性运动矢量 (用于阴影)</a></li>
+              </ul>
+            </li>
             <li><a href="#光线追踪辅助函数">光线追踪辅助函数</a></li>
             <li><a href="#共享内存优化-shared-memory">共享内存优化 (Shared Memory)</a></li>
             <li><a href="#空间滤波扩张与平滑">空间滤波：扩张与平滑</a></li>
@@ -3489,7 +3606,7 @@ TAA 函数完整代码分析与注释
       <div>
         <span class="icon-brush"
           >&nbsp;
-            65.7k
+            66.0k
           </span
         >
         &nbsp;|&nbsp;
@@ -3497,7 +3614,7 @@ TAA 函数完整代码分析与注释
           
           
 
-          05:22
+          05:24
         </span>
       </div>
     
@@ -3591,6 +3708,12 @@ TAA 函数完整代码分析与注释
         <li><a href="#计算可见性方差">计算可见性方差</a></li>
         <li><a href="#计算阴影可见性">计算阴影可见性</a>
           <ul>
+            <li><a href="#motion-vectors">Motion Vectors</a>
+              <ul>
+                <li><a href="#第一部分计算标准运动矢量-用于taa">第一部分：计算标准运动矢量 (用于TAA)</a></li>
+                <li><a href="#第二部分计算可见性运动矢量-用于阴影">第二部分：计算可见性运动矢量 (用于阴影)</a></li>
+              </ul>
+            </li>
             <li><a href="#光线追踪辅助函数">光线追踪辅助函数</a></li>
             <li><a href="#共享内存优化-shared-memory">共享内存优化 (Shared Memory)</a></li>
             <li><a href="#空间滤波扩张与平滑">空间滤波：扩张与平滑</a></li>
