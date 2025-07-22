@@ -2032,12 +2032,7 @@ Ray Traced Reflections
 工作流程
 </h2><ol>
 <li><strong>G-buffer Check:</strong> 检查每个片段的表面粗糙度是否低于指定阈值，以决定是否计算反射。</li>
-<li><strong>Ray Casting:</strong> 每个片段发射一条反射光线。
-<ul>
-<li>使用镜面反射方向</li>
-<li>使用 GGX 分布采样</li>
-</ul>
-</li>
+<li><strong>Ray Casting:</strong> 每个片段发射一条反射光线，方向使用 GGX 分布采样。</li>
 <li><strong>Secondary Lighting:</strong> 如果反射光线命中几何体，则向一个重要采样的光源发射次级光线。如果光源可见，则使用照明模型计算颜色。</li>
 <li><strong>Denoising:</strong> 由于每个片段只使用一个样本（导致输出噪点），使用 <strong>时空方差引导滤波</strong> (<a href="https://research.nvidia.com/publication/2017-07_spatiotemporal-variance-guided-filtering-real-time-reconstruction-path-traced">SVGF</a>) 处理原始反射数据，以显著减少噪点，利用空间和时间信息。</li>
 <li><strong>Lighting Integration:</strong> 将去噪后的反射数据集成到场景的镜面光照计算中。</li>
@@ -3167,7 +3162,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
