@@ -850,9 +850,9 @@
 <a class="header-anchor" href="#%e6%b7%b1%e5%85%a5-closesthit-%e4%b8%8e%e6%a0%b8%e5%bf%83%e5%85%89%e7%ba%bf%e5%91%bd%e4%b8%ad%e5%a4%84%e7%90%86-pathtracerhandlehit"></a>
 深入 ClosestHit 与核心光线命中处理 PathTracer::HandleHit
 </h1><p>在前两部分，我们了解了 <code>RayGen</code> 如何启动路径追踪，以及 <code>nextHit</code> 和 <code>firstHitFromBasePlane</code> 如何管理光线的投射与初步命中。现在，当一条光线确实命中了场景中的某个物体时，DXR管线会调用相应的 <code>ClosestHit</code> (最近命中) 着色器。</p>
-<h2 id="samplehlsl-中的-closesthit-着色器">
-<a class="header-anchor" href="#samplehlsl-%e4%b8%ad%e7%9a%84-closesthit-%e7%9d%80%e8%89%b2%e5%99%a8"></a>
-<code>Sample.hlsl</code> 中的 <code>ClosestHit</code> 着色器
+<h2 id="closesthit-着色器">
+<a class="header-anchor" href="#closesthit-%e7%9d%80%e8%89%b2%e5%99%a8"></a>
+ClosestHit 着色器
 </h2><p>在 <code>Sample.hlsl</code> 文件中，你会看到 <code>ClosestHit</code> 着色器是通过一个宏 <code>CLOSEST_HIT_VARIANT</code> 来定义的。这种设计非常巧妙，它允许为不同类型的表面或交互定义多个 <code>ClosestHit</code> 着色器变体，每个变体可以携带一些优化提示。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hlsl" data-lang="hlsl"><span class="line"><span class="cl"><span class="c1">// 定义 ClosestHit 着色器变体的宏</span>
 </span></span><span class="line"><span class="cl"><span class="c1">// name: 着色器名称后缀</span>
@@ -1464,9 +1464,9 @@
 多重重要性采样 (MIS) 权重详解
 </h1><p>在之前的讨论中，我们看到 Next Event Estimation (NEE) 和 BSDF 采样是路径追踪中产生光线路径的两种主要方式。当一个NEE样本（直接采样光源）或者一个BSDF样本（材质表面散射）最终“殊途同归”（例如，NEE采样了某个光源，而BSDF采样也恰好散射到了同一个光源），MIS就变得至关重要，以避免重复计算光照贡献或产生过高方差。</p>
 <p>这些函数的核心是使用 <code>EvalMIS</code> 函数（它会实现某种MIS启发式，如平衡启发式Balance Heuristic）来计算权重。平衡启发式的基本形式对于技术 $i$ 的权重是 $w_i = \frac{n_i p_i}{\sum_j n_j p_j}$，其中 $n_j$ 是技术 $j$ 的样本数，$p_j$ 是技术 $j$ 产生该特定样本的概率密度函数 (PDF)。</p>
-<h2 id="1-computeinternalmis为nee样本计算mis权重">
-<a class="header-anchor" href="#1-computeinternalmis%e4%b8%banee%e6%a0%b7%e6%9c%ac%e8%ae%a1%e7%ae%97mis%e6%9d%83%e9%87%8d"></a>
-1. <code>ComputeInternalMIS</code>：为NEE样本计算MIS权重
+<h2 id="computeinternalmis为nee样本计算mis权重">
+<a class="header-anchor" href="#computeinternalmis%e4%b8%banee%e6%a0%b7%e6%9c%ac%e8%ae%a1%e7%ae%97mis%e6%9d%83%e9%87%8d"></a>
+<code>ComputeInternalMIS</code>：为NEE样本计算MIS权重
 </h2><p>此函数计算当通过NEE（光源显式采样）得到一个光源样本 <code>lightSample</code> 时，这个样本应有的MIS权重。它考虑了以下采样策略：</p>
 <ol>
 <li><strong>当前NEE策略</strong>（可能是“窄域(Narrow)”或“全局(Global)”采样）。</li>
@@ -1562,9 +1562,9 @@
 </li>
 <li><strong>返回值 <code>thisMIS / thisCount</code></strong>：这里的 <code>thisMIS</code> 是由 <code>EvalMIS</code> 计算得到的分子项（即 <code>thisCount * thisPdf_full</code>）。这是一种将蒙特卡洛估计器的 $1/N$ 项部分融入权重计算的方式。</li>
 </ul>
-<h2 id="2-computebsdfmis为bsdf命中光源的样本计算mis权重">
-<a class="header-anchor" href="#2-computebsdfmis%e4%b8%babsdf%e5%91%bd%e4%b8%ad%e5%85%89%e6%ba%90%e7%9a%84%e6%a0%b7%e6%9c%ac%e8%ae%a1%e7%ae%97mis%e6%9d%83%e9%87%8d"></a>
-2. <code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重
+<h2 id="computebsdfmis为bsdf命中光源的样本计算mis权重">
+<a class="header-anchor" href="#computebsdfmis%e4%b8%babsdf%e5%91%bd%e4%b8%ad%e5%85%89%e6%ba%90%e7%9a%84%e6%a0%b7%e6%9c%ac%e8%ae%a1%e7%ae%97mis%e6%9d%83%e9%87%8d"></a>
+<code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重
 </h2><p>此函数用于当BSDF采样（材质表面散射）恰好命中了某个光源时，计算该BSDF样本的MIS权重。它需要与两种NEE策略（窄域和全局）进行比较。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hlsl" data-lang="hlsl"><span class="line"><span class="cl"><span class="c1">// PathTracer/Lighting/LightSampler.hlsli</span>
 </span></span><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">ComputeBSDFMIS</span><span class="p">(</span><span class="k">const</span> <span class="kt">uint</span> <span class="n">lightIndex</span><span class="p">,</span> <span class="n">lpfloat</span> <span class="n">bsdfPdf</span><span class="p">,</span> <span class="kt">float</span> <span class="n">solidAnglePdf</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">narrowSamples</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">totalSamples</span><span class="p">)</span>
@@ -1618,9 +1618,9 @@
 </li>
 <li><strong>返回值</strong>：返回的是标准的MIS权重，没有像 <code>ComputeInternalMIS</code> 那样除以样本数。</li>
 </ul>
-<h2 id="3-computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本">
-<a class="header-anchor" href="#3-computebsdfmisforemissivetriangle%e9%92%88%e5%af%b9%e5%91%bd%e4%b8%ad%e4%b8%89%e8%a7%92%e5%bd%a2%e5%85%89%e6%ba%90%e7%9a%84bsdf%e6%a0%b7%e6%9c%ac"></a>
-3. <code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本
+<h2 id="computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本">
+<a class="header-anchor" href="#computebsdfmisforemissivetriangle%e9%92%88%e5%af%b9%e5%91%bd%e4%b8%ad%e4%b8%89%e8%a7%92%e5%bd%a2%e5%85%89%e6%ba%90%e7%9a%84bsdf%e6%a0%b7%e6%9c%ac"></a>
+<code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本
 </h2><p>这是一个特化版本，用于BSDF样本命中了三角形光源的情况。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hlsl" data-lang="hlsl"><span class="line"><span class="cl"><span class="c1">// PathTracer/Lighting/LightSampler.hlsli</span>
 </span></span><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">ComputeBSDFMISForEmissiveTriangle</span><span class="p">(</span><span class="k">const</span> <span class="kt">uint</span> <span class="n">emissiveTriangleLightIndex</span><span class="p">,</span> <span class="n">lpfloat</span> <span class="n">bsdfPdf</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float3</span> <span class="n">viewerPosition</span><span class="p">,</span> <span class="k">const</span> <span class="kt">float3</span> <span class="n">lightSamplePosition</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">narrowSamples</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">totalSamples</span><span class="p">)</span>
@@ -1647,9 +1647,9 @@
 <li><strong>计算 <code>solidAnglePdf</code></strong>：关键在于调用 <code>triangleLight.CalcSolidAnglePdfForMIS(...)</code>。这个函数计算从 <code>viewerPosition</code> 看向三角形光源上的 <code>lightSamplePosition</code> 点时，该光源在该方向发射的概率密度（以立体角衡量）。这个PDF是光源本身的固有属性，对于MIS至关重要。</li>
 <li><strong>调用通用函数</strong>：计算出特定于三角形光源的 <code>solidAnglePdf</code>后，将其连同其他参数传递给 <code>ComputeBSDFMIS</code> 进行最终的权重计算。</li>
 </ul>
-<h2 id="4-computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本">
-<a class="header-anchor" href="#4-computebsdfmisforenvironmentquad%e9%92%88%e5%af%b9%e5%91%bd%e4%b8%ad%e7%8e%af%e5%a2%83%e5%9b%9b%e8%be%b9%e5%bd%a2%e5%85%89%e6%ba%90%e7%9a%84bsdf%e6%a0%b7%e6%9c%ac"></a>
-4. <code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本
+<h2 id="computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本">
+<a class="header-anchor" href="#computebsdfmisforenvironmentquad%e9%92%88%e5%af%b9%e5%91%bd%e4%b8%ad%e7%8e%af%e5%a2%83%e5%9b%9b%e8%be%b9%e5%bd%a2%e5%85%89%e6%ba%90%e7%9a%84bsdf%e6%a0%b7%e6%9c%ac"></a>
+<code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本
 </h2><p>与三角形光源类似，这是为命中环境四边形光源的BSDF样本设计的。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-hlsl" data-lang="hlsl"><span class="line"><span class="cl"><span class="c1">// PathTracer/Lighting/LightSampler.hlsli</span>
 </span></span><span class="line"><span class="cl"><span class="kt">float</span> <span class="n">ComputeBSDFMISForEnvironmentQuad</span><span class="p">(</span><span class="k">const</span> <span class="kt">uint</span> <span class="n">environmentQuadLightIndex</span><span class="p">,</span> <span class="n">lpfloat</span> <span class="n">bsdfPdf</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">narrowSamples</span><span class="p">,</span> <span class="k">const</span> <span class="kt">uint</span> <span class="n">totalSamples</span><span class="p">)</span>
@@ -1688,12 +1688,12 @@
 <h1 id="从细节到整体">
 <a class="header-anchor" href="#%e4%bb%8e%e7%bb%86%e8%8a%82%e5%88%b0%e6%95%b4%e4%bd%93"></a>
 从细节到整体
-</h1><h2 id="1-handlehit-函数的行为分析">
-<a class="header-anchor" href="#1-handlehit-%e5%87%bd%e6%95%b0%e7%9a%84%e8%a1%8c%e4%b8%ba%e5%88%86%e6%9e%90"></a>
-1. <code>HandleHit</code> 函数的行为分析
-</h2><h3 id="a-当光线打到不发光的三角形时handlehit-会做什么">
-<a class="header-anchor" href="#a-%e5%bd%93%e5%85%89%e7%ba%bf%e6%89%93%e5%88%b0%e4%b8%8d%e5%8f%91%e5%85%89%e7%9a%84%e4%b8%89%e8%a7%92%e5%bd%a2%e6%97%b6handlehit-%e4%bc%9a%e5%81%9a%e4%bb%80%e4%b9%88"></a>
-a. 当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么？
+</h1><h2 id="handlehit-函数的行为分析">
+<a class="header-anchor" href="#handlehit-%e5%87%bd%e6%95%b0%e7%9a%84%e8%a1%8c%e4%b8%ba%e5%88%86%e6%9e%90"></a>
+<code>HandleHit</code> 函数的行为分析
+</h2><h3 id="当光线打到不发光的三角形时handlehit-会做什么">
+<a class="header-anchor" href="#%e5%bd%93%e5%85%89%e7%ba%bf%e6%89%93%e5%88%b0%e4%b8%8d%e5%8f%91%e5%85%89%e7%9a%84%e4%b8%89%e8%a7%92%e5%bd%a2%e6%97%b6handlehit-%e4%bc%9a%e5%81%9a%e4%bb%80%e4%b9%88"></a>
+当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么
 </h3><ol>
 <li>
 <p><strong>加载表面数据 (<code>Bridge::loadSurface</code>)</strong>:</p>
@@ -1749,9 +1749,9 @@ a. 当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么
 </li>
 </ol>
 <p><strong>总结 (不发光三角形)</strong>: <code>HandleHit</code> 会加载其材质属性，<strong>不添加自发光贡献</strong>。但它会通过 <strong>NEE 计算来自场景中其他光源的直接光照</strong>，并累加到路径中。然后，它会根据该表面的BSDF<strong>产生一条散射光线</strong>，让路径继续传播（除非因达到最大深度、俄罗斯轮盘赌或无效散射而终止）。</p>
-<h3 id="b-当光线打到发光的三角形时handlehit-会做什么">
-<a class="header-anchor" href="#b-%e5%bd%93%e5%85%89%e7%ba%bf%e6%89%93%e5%88%b0%e5%8f%91%e5%85%89%e7%9a%84%e4%b8%89%e8%a7%92%e5%bd%a2%e6%97%b6handlehit-%e4%bc%9a%e5%81%9a%e4%bb%80%e4%b9%88"></a>
-b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
+<h3 id="当光线打到发光的三角形时handlehit-会做什么">
+<a class="header-anchor" href="#%e5%bd%93%e5%85%89%e7%ba%bf%e6%89%93%e5%88%b0%e5%8f%91%e5%85%89%e7%9a%84%e4%b8%89%e8%a7%92%e5%bd%a2%e6%97%b6handlehit-%e4%bc%9a%e5%81%9a%e4%bb%80%e4%b9%88"></a>
+当光线打到发光的三角形时，<code>HandleHit</code> 会做什么
 </h3><ol>
 <li>
 <p><strong>加载表面数据 (<code>Bridge::loadSurface</code>)</strong>:</p>
@@ -1797,9 +1797,9 @@ b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
 </li>
 </ol>
 <p><strong>总结 (发光三角形)</strong>: <code>HandleHit</code> 会加载其材质和自发光属性。它会<strong>计算并累加该发光表面本身的辐射贡献</strong>（经过MIS加权，以正确处理与NEE的组合）。同时，它也<strong>会通过NEE计算来自场景中其他光源的直接光照</strong>。并且，它还会尝试根据该表面的（非自发光）BSDF<strong>产生散射光线</strong>。</p>
-<h2 id="2-nee又做了什么呢">
-<a class="header-anchor" href="#2-nee%e5%8f%88%e5%81%9a%e4%ba%86%e4%bb%80%e4%b9%88%e5%91%a2"></a>
-2. NEE又做了什么呢？
+<h2 id="nee又做了什么呢">
+<a class="header-anchor" href="#nee%e5%8f%88%e5%81%9a%e4%ba%86%e4%bb%80%e4%b9%88%e5%91%a2"></a>
+NEE又做了什么呢
 </h2><p>在<code>HandleHit</code>的上下文中，NEE（通过<code>HandleNEE</code>及其辅助函数实现）的核心作用是<strong>在当前光线与表面交互点（无论是发光还是不发光表面），主动地、显式地向场景中的已知光源投射光线，以计算这些光源对该点的直接光照贡献。</strong></p>
 <p>具体步骤如下（在<code>HandleNEE_MultipleSamples</code> 和 <code>ProcessLightSample</code>中）：</p>
 <ol>
@@ -1821,9 +1821,9 @@ b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
 <li><strong>重复</strong>: 如果配置了多次NEE采样，则重复以上步骤。</li>
 </ol>
 <p>NEE通过这种方式，确保了即使BSDF采样很难“偶然”碰到光源（特别是小光源或远距离光源），直接光照也能被有效地采样，从而显著降低渲染图像中直接光照部分的噪声，并加速收敛。</p>
-<h2 id="3-nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">
-<a class="header-anchor" href="#3-nee%e7%9a%84bsdf%e5%92%8c%e5%85%89%e6%ba%90%e9%87%87%e6%a0%b7%e7%9a%84mis-weight%e6%9c%89%e4%bb%80%e4%b9%88%e7%89%b9%e6%ae%8a%e7%9a%84%e5%a4%84%e7%90%86%e5%90%97"></a>
-3. NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗？
+<h2 id="nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">
+<a class="header-anchor" href="#nee%e7%9a%84bsdf%e5%92%8c%e5%85%89%e6%ba%90%e9%87%87%e6%a0%b7%e7%9a%84mis-weight%e6%9c%89%e4%bb%80%e4%b9%88%e7%89%b9%e6%ae%8a%e7%9a%84%e5%a4%84%e7%90%86%e5%90%97"></a>
+NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗
 </h2><ol>
 <li>
 <p><strong><code>ComputeInternalMIS</code> 的返回值</strong>:</p>
@@ -1864,9 +1864,9 @@ b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？
 </li>
 </ol>
 <p>这些特殊处理反映了在复杂渲染器中实现MIS时需要考虑的细微之处和优化技巧，旨在提高鲁棒性、性能和最终图像质量。</p>
-<h2 id="4-为什么这样是正确的">
-<a class="header-anchor" href="#4-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e6%a0%b7%e6%98%af%e6%ad%a3%e7%a1%ae%e7%9a%84"></a>
-4. 为什么这样是正确的？
+<h2 id="为什么这样是正确的">
+<a class="header-anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e6%a0%b7%e6%98%af%e6%ad%a3%e7%a1%ae%e7%9a%84"></a>
+为什么这样是正确的
 </h2><p>“正确性”在路径追踪中通常指<strong>无偏性</strong>（随着样本数量增加，结果收敛到物理精确解）和<strong>有效性</strong>（在有限样本下能有效降低方差，更快收敛）。</p>
 <ol>
 <li>
@@ -2223,7 +2223,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
     </li>
     <li><a href="#深入-closesthit-与核心光线命中处理-pathtracerhandlehit">深入 ClosestHit 与核心光线命中处理 PathTracer::HandleHit</a>
       <ul>
-        <li><a href="#samplehlsl-中的-closesthit-着色器"><code>Sample.hlsl</code> 中的 <code>ClosestHit</code> 着色器</a>
+        <li><a href="#closesthit-着色器">ClosestHit 着色器</a>
           <ul>
             <li><a href="#pathtracerhandlehit核心命中处理逻辑"><code>PathTracer::HandleHit</code>：核心命中处理逻辑</a></li>
           </ul>
@@ -2240,23 +2240,23 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
     </li>
     <li><a href="#多重重要性采样-mis-权重详解">多重重要性采样 (MIS) 权重详解</a>
       <ul>
-        <li><a href="#1-computeinternalmis为nee样本计算mis权重">1. <code>ComputeInternalMIS</code>：为NEE样本计算MIS权重</a></li>
-        <li><a href="#2-computebsdfmis为bsdf命中光源的样本计算mis权重">2. <code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重</a></li>
-        <li><a href="#3-computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本">3. <code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本</a></li>
-        <li><a href="#4-computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本">4. <code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本</a></li>
+        <li><a href="#computeinternalmis为nee样本计算mis权重"><code>ComputeInternalMIS</code>：为NEE样本计算MIS权重</a></li>
+        <li><a href="#computebsdfmis为bsdf命中光源的样本计算mis权重"><code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重</a></li>
+        <li><a href="#computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本"><code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本</a></li>
+        <li><a href="#computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本"><code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本</a></li>
       </ul>
     </li>
     <li><a href="#从细节到整体">从细节到整体</a>
       <ul>
-        <li><a href="#1-handlehit-函数的行为分析">1. <code>HandleHit</code> 函数的行为分析</a>
+        <li><a href="#handlehit-函数的行为分析"><code>HandleHit</code> 函数的行为分析</a>
           <ul>
-            <li><a href="#a-当光线打到不发光的三角形时handlehit-会做什么">a. 当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么？</a></li>
-            <li><a href="#b-当光线打到发光的三角形时handlehit-会做什么">b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？</a></li>
+            <li><a href="#当光线打到不发光的三角形时handlehit-会做什么">当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么</a></li>
+            <li><a href="#当光线打到发光的三角形时handlehit-会做什么">当光线打到发光的三角形时，<code>HandleHit</code> 会做什么</a></li>
           </ul>
         </li>
-        <li><a href="#2-nee又做了什么呢">2. NEE又做了什么呢？</a></li>
-        <li><a href="#3-nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">3. NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗？</a></li>
-        <li><a href="#4-为什么这样是正确的">4. 为什么这样是正确的？</a></li>
+        <li><a href="#nee又做了什么呢">NEE又做了什么呢</a></li>
+        <li><a href="#nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗</a></li>
+        <li><a href="#为什么这样是正确的">为什么这样是正确的</a></li>
       </ul>
     </li>
     <li><a href="#miss-shader揭秘--handlemiss-与环境光处理">Miss Shader揭秘 —— HandleMiss 与环境光处理</a></li>
@@ -2580,7 +2580,7 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
     </li>
     <li><a href="#深入-closesthit-与核心光线命中处理-pathtracerhandlehit">深入 ClosestHit 与核心光线命中处理 PathTracer::HandleHit</a>
       <ul>
-        <li><a href="#samplehlsl-中的-closesthit-着色器"><code>Sample.hlsl</code> 中的 <code>ClosestHit</code> 着色器</a>
+        <li><a href="#closesthit-着色器">ClosestHit 着色器</a>
           <ul>
             <li><a href="#pathtracerhandlehit核心命中处理逻辑"><code>PathTracer::HandleHit</code>：核心命中处理逻辑</a></li>
           </ul>
@@ -2597,23 +2597,23 @@ Miss Shader揭秘 —— HandleMiss 与环境光处理
     </li>
     <li><a href="#多重重要性采样-mis-权重详解">多重重要性采样 (MIS) 权重详解</a>
       <ul>
-        <li><a href="#1-computeinternalmis为nee样本计算mis权重">1. <code>ComputeInternalMIS</code>：为NEE样本计算MIS权重</a></li>
-        <li><a href="#2-computebsdfmis为bsdf命中光源的样本计算mis权重">2. <code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重</a></li>
-        <li><a href="#3-computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本">3. <code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本</a></li>
-        <li><a href="#4-computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本">4. <code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本</a></li>
+        <li><a href="#computeinternalmis为nee样本计算mis权重"><code>ComputeInternalMIS</code>：为NEE样本计算MIS权重</a></li>
+        <li><a href="#computebsdfmis为bsdf命中光源的样本计算mis权重"><code>ComputeBSDFMIS</code>：为BSDF命中光源的样本计算MIS权重</a></li>
+        <li><a href="#computebsdfmisforemissivetriangle针对命中三角形光源的bsdf样本"><code>ComputeBSDFMISForEmissiveTriangle</code>：针对命中三角形光源的BSDF样本</a></li>
+        <li><a href="#computebsdfmisforenvironmentquad针对命中环境四边形光源的bsdf样本"><code>ComputeBSDFMISForEnvironmentQuad</code>：针对命中环境四边形光源的BSDF样本</a></li>
       </ul>
     </li>
     <li><a href="#从细节到整体">从细节到整体</a>
       <ul>
-        <li><a href="#1-handlehit-函数的行为分析">1. <code>HandleHit</code> 函数的行为分析</a>
+        <li><a href="#handlehit-函数的行为分析"><code>HandleHit</code> 函数的行为分析</a>
           <ul>
-            <li><a href="#a-当光线打到不发光的三角形时handlehit-会做什么">a. 当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么？</a></li>
-            <li><a href="#b-当光线打到发光的三角形时handlehit-会做什么">b. 当光线打到发光的三角形时，<code>HandleHit</code> 会做什么？</a></li>
+            <li><a href="#当光线打到不发光的三角形时handlehit-会做什么">当光线打到不发光的三角形时，<code>HandleHit</code> 会做什么</a></li>
+            <li><a href="#当光线打到发光的三角形时handlehit-会做什么">当光线打到发光的三角形时，<code>HandleHit</code> 会做什么</a></li>
           </ul>
         </li>
-        <li><a href="#2-nee又做了什么呢">2. NEE又做了什么呢？</a></li>
-        <li><a href="#3-nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">3. NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗？</a></li>
-        <li><a href="#4-为什么这样是正确的">4. 为什么这样是正确的？</a></li>
+        <li><a href="#nee又做了什么呢">NEE又做了什么呢</a></li>
+        <li><a href="#nee的bsdf和光源采样的mis-weight有什么特殊的处理吗">NEE的BSDF和光源采样的MIS weight有什么特殊的处理吗</a></li>
+        <li><a href="#为什么这样是正确的">为什么这样是正确的</a></li>
       </ul>
     </li>
     <li><a href="#miss-shader揭秘--handlemiss-与环境光处理">Miss Shader揭秘 —— HandleMiss 与环境光处理</a></li>
