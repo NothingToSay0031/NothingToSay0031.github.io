@@ -1442,9 +1442,9 @@ GPU端 光照剔除与计算
 附录
 </h2><p>如何为一个三维的光源包围球计算出其在二维屏幕上的紧凑包围盒 (AABB)。</p>
 <p>这是一个比看起来要复杂的问题。由于透视投影的非线性特性，我们不能简单地将球心投影到屏幕上，然后在屏幕空间加上半径——这样做会得到一个不准确、过大的包围盒。我查询到三种不同的实现方法，每种方法都在精度、鲁棒性和性能之间做出了不同的权衡。</p>
-<h3 id="2d-平面解法">
-<a class="header-anchor" href="#2d-%e5%b9%b3%e9%9d%a2%e8%a7%a3%e6%b3%95"></a>
-2D 平面解法
+<h3 id="平面解法">
+<a class="header-anchor" href="#%e5%b9%b3%e9%9d%a2%e8%a7%a3%e6%b3%95"></a>
+平面解法
 </h3><p>其核心思想是，将 3D 问题分解为两个独立的 2D 问题来求解：一个在视图空间的 XZ 平面上，另一个在 YZ 平面上。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 1. 在 XZ 平面上求解
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">cx</span><span class="p">{</span><span class="n">view_space_pos</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">view_space_pos</span><span class="p">.</span><span class="n">z</span><span class="p">};</span>
@@ -1551,9 +1551,9 @@ McGuire 方法 (最精确)
 <li><strong>完整投影:</strong> 计算出的 <code>left</code>, <code>right</code>, <code>top</code>, <code>bottom</code> 是视图空间中的 3D 点，它们通过标准的 <code>project</code> 函数（矩阵乘法后进行透视除法）转换到 NDC，保证了结果的正确性。</li>
 </ol>
 <p>此方法是三者中最精确的，因为它严格遵循了经过验证的几何算法，但其计算开销也相对更高。</p>
-<h3 id="3d-包围盒投影法-最简单近似">
-<a class="header-anchor" href="#3d-%e5%8c%85%e5%9b%b4%e7%9b%92%e6%8a%95%e5%bd%b1%e6%b3%95-%e6%9c%80%e7%ae%80%e5%8d%95%e8%bf%91%e4%bc%bc"></a>
-3D 包围盒投影法 (最简单，近似)
+<h3 id="包围盒投影法-最简单近似">
+<a class="header-anchor" href="#%e5%8c%85%e5%9b%b4%e7%9b%92%e6%8a%95%e5%bd%b1%e6%b3%95-%e6%9c%80%e7%ae%80%e5%8d%95%e8%bf%91%e4%bc%bc"></a>
+包围盒投影法 (最简单，近似)
 </h3><p>一种最简单直观，但也是最不精确的方法。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">context</span><span class="p">.</span><span class="n">use_view_aabb</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">vec3s</span> <span class="n">aabb_min</span><span class="p">{...},</span> <span class="n">aabb_max</span><span class="p">{...};</span>
@@ -1656,7 +1656,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1816,9 +1816,9 @@ McGuire 方法 (最精确)
         </li>
         <li><a href="#附录">附录</a>
           <ul>
-            <li><a href="#2d-平面解法">2D 平面解法</a></li>
+            <li><a href="#平面解法">平面解法</a></li>
             <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
-            <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
+            <li><a href="#包围盒投影法-最简单近似">包围盒投影法 (最简单，近似)</a></li>
             <li><a href="#总结">总结</a></li>
           </ul>
         </li>
@@ -2225,9 +2225,9 @@ McGuire 方法 (最精确)
         </li>
         <li><a href="#附录">附录</a>
           <ul>
-            <li><a href="#2d-平面解法">2D 平面解法</a></li>
+            <li><a href="#平面解法">平面解法</a></li>
             <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
-            <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
+            <li><a href="#包围盒投影法-最简单近似">包围盒投影法 (最简单，近似)</a></li>
             <li><a href="#总结">总结</a></li>
           </ul>
         </li>
