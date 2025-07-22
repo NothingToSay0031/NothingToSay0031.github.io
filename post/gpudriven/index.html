@@ -1107,9 +1107,9 @@ Improved Culling for Tiled and Clustered Rendering
 分块 (Tiled) 与集群 (Clustered)
 </h2><p><strong>分块着色 (Tiled Shading)</strong> 将屏幕划分为一个个 2D 网格（Tiles）。它预先计算出每个 Tile 可能受哪些光源影响，并将这个光源列表存储起来。在最终着色时，一个片元（Fragment）只需要检查其所在 Tile 的光源列表即可，大大减少了需要遍历的光源数量。</p>
 <p><strong>集群着色 (Clustered Shading)</strong> 则在 2D 的基础上增加了一个维度：<strong>深度</strong>。它将摄像机的视锥体（View Frustum）划分为一个 3D 网格（Clusters）。这样，剔除光源时不仅考虑了它们在屏幕上的位置，还考虑了它们的远近。这使得光源剔除更加精准，尤其是在场景深度复杂的情况下。</p>
-<h2 id="混合动力activision-的改进方案">
-<a class="header-anchor" href="#%e6%b7%b7%e5%90%88%e5%8a%a8%e5%8a%9bactivision-%e7%9a%84%e6%94%b9%e8%bf%9b%e6%96%b9%e6%a1%88"></a>
-混合动力：Activision 的改进方案
+<h2 id="混合动力-activision-的改进方案">
+<a class="header-anchor" href="#%e6%b7%b7%e5%90%88%e5%8a%a8%e5%8a%9b-activision-%e7%9a%84%e6%94%b9%e8%bf%9b%e6%96%b9%e6%a1%88"></a>
+混合动力: Activision 的改进方案
 </h2><p>动视提出的这项技术，可以说是对上述两种思想的精炼与融合。它既利用了集群着色的深度信息，又保留了分块着色在屏幕空间的简洁性，形成了一套高效的混合剔除系统。</p>
 <p>其核心算法流程如下：</p>
 <ol>
@@ -1442,9 +1442,9 @@ GPU端 光照剔除与计算
 附录
 </h2><p>如何为一个三维的光源包围球计算出其在二维屏幕上的紧凑包围盒 (AABB)。</p>
 <p>这是一个比看起来要复杂的问题。由于透视投影的非线性特性，我们不能简单地将球心投影到屏幕上，然后在屏幕空间加上半径——这样做会得到一个不准确、过大的包围盒。我查询到三种不同的实现方法，每种方法都在精度、鲁棒性和性能之间做出了不同的权衡。</p>
-<h3 id="方法一2d-平面解法">
-<a class="header-anchor" href="#%e6%96%b9%e6%b3%95%e4%b8%802d-%e5%b9%b3%e9%9d%a2%e8%a7%a3%e6%b3%95"></a>
-方法一：2D 平面解法
+<h3 id="2d-平面解法">
+<a class="header-anchor" href="#2d-%e5%b9%b3%e9%9d%a2%e8%a7%a3%e6%b3%95"></a>
+2D 平面解法
 </h3><p>其核心思想是，将 3D 问题分解为两个独立的 2D 问题来求解：一个在视图空间的 XZ 平面上，另一个在 YZ 平面上。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 1. 在 XZ 平面上求解
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">vec2s</span> <span class="n">cx</span><span class="p">{</span><span class="n">view_space_pos</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">view_space_pos</span><span class="p">.</span><span class="n">z</span><span class="p">};</span>
@@ -1656,7 +1656,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1679,7 +1679,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -1786,7 +1786,7 @@ McGuire 方法 (最精确)
     <li><a href="#improved-culling-for-tiled-and-clustered-rendering">Improved Culling for Tiled and Clustered Rendering</a>
       <ul>
         <li><a href="#分块-tiled-与集群-clustered">分块 (Tiled) 与集群 (Clustered)</a></li>
-        <li><a href="#混合动力activision-的改进方案">混合动力：Activision 的改进方案</a>
+        <li><a href="#混合动力-activision-的改进方案">混合动力: Activision 的改进方案</a>
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
@@ -1816,7 +1816,7 @@ McGuire 方法 (最精确)
         </li>
         <li><a href="#附录">附录</a>
           <ul>
-            <li><a href="#方法一2d-平面解法">方法一：2D 平面解法</a></li>
+            <li><a href="#2d-平面解法">2D 平面解法</a></li>
             <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
             <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
             <li><a href="#总结">总结</a></li>
@@ -2195,7 +2195,7 @@ McGuire 方法 (最精确)
     <li><a href="#improved-culling-for-tiled-and-clustered-rendering">Improved Culling for Tiled and Clustered Rendering</a>
       <ul>
         <li><a href="#分块-tiled-与集群-clustered">分块 (Tiled) 与集群 (Clustered)</a></li>
-        <li><a href="#混合动力activision-的改进方案">混合动力：Activision 的改进方案</a>
+        <li><a href="#混合动力-activision-的改进方案">混合动力: Activision 的改进方案</a>
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
@@ -2225,7 +2225,7 @@ McGuire 方法 (最精确)
         </li>
         <li><a href="#附录">附录</a>
           <ul>
-            <li><a href="#方法一2d-平面解法">方法一：2D 平面解法</a></li>
+            <li><a href="#2d-平面解法">2D 平面解法</a></li>
             <li><a href="#mcguire-方法-最精确">McGuire 方法 (最精确)</a></li>
             <li><a href="#3d-包围盒投影法-最简单近似">3D 包围盒投影法 (最简单，近似)</a></li>
             <li><a href="#总结">总结</a></li>
