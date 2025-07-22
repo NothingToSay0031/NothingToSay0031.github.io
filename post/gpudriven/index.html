@@ -438,7 +438,7 @@ Mesh Shader 的解决方案
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
 </span></span></code></pre></div><h3 id="使用-meshoptimizer-构建-meshlet">
 <a class="header-anchor" href="#%e4%bd%bf%e7%94%a8-meshoptimizer-%e6%9e%84%e5%bb%ba-meshlet"></a>
-使用 <code>meshoptimizer</code> 构建 Meshlet
+使用 meshoptimizer 构建 Meshlet
 </h3><p>这是整个流程的魔法所在。我们调用 <code>meshopt_buildMeshlets</code> 函数，它会智能地将输入的网格分割成符合我们设定大小限制的、对 GPU 缓存友好的 Meshlet。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 计算构建 meshlet 所需的最大空间
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="n">sizet</span> <span class="n">max_meshlets</span> <span class="o">=</span> <span class="n">meshopt_buildMeshletsBound</span><span class="p">(</span><span class="n">index_count</span><span class="p">,</span> <span class="n">max_vertices</span><span class="p">,</span> <span class="n">max_triangles</span><span class="p">);</span>
@@ -1656,7 +1656,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1679,7 +1679,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -1736,7 +1736,7 @@ McGuire 方法 (最精确)
         <li><a href="#构建-meshlet">构建 Meshlet</a>
           <ul>
             <li><a href="#定义-meshlet-的大小并准备数据">定义 Meshlet 的大小并准备数据</a></li>
-            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
+            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 meshoptimizer 构建 Meshlet</a></li>
             <li><a href="#数据打包与优化">数据打包与优化</a></li>
             <li><a href="#生成最终的-gpu-meshlet-结构">生成最终的 GPU Meshlet 结构</a></li>
           </ul>
@@ -2145,7 +2145,7 @@ McGuire 方法 (最精确)
         <li><a href="#构建-meshlet">构建 Meshlet</a>
           <ul>
             <li><a href="#定义-meshlet-的大小并准备数据">定义 Meshlet 的大小并准备数据</a></li>
-            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 <code>meshoptimizer</code> 构建 Meshlet</a></li>
+            <li><a href="#使用-meshoptimizer-构建-meshlet">使用 meshoptimizer 构建 Meshlet</a></li>
             <li><a href="#数据打包与优化">数据打包与优化</a></li>
             <li><a href="#生成最终的-gpu-meshlet-结构">生成最终的 GPU Meshlet 结构</a></li>
           </ul>
