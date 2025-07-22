@@ -716,9 +716,9 @@ Two-Pass Culling
 </span></span><span class="line"><span class="cl">    <span class="n">draw_late_commands</span><span class="p">[</span><span class="n">draw_index</span><span class="p">].</span><span class="n">drawId</span> <span class="o">=</span> <span class="n">mesh_instance_index</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>通过这种方式，整个剔除和绘制指令生成过程无需任何CPU干预，也无需GPU到CPU的数据回读，实现了真正高效的GPU驱动管线。</p>
-<h2 id="taskmesh-shader">
-<a class="header-anchor" href="#taskmesh-shader"></a>
-Task/Mesh Shader
+<h2 id="task-shader-and-mesh-shader">
+<a class="header-anchor" href="#task-shader-and-mesh-shader"></a>
+Task Shader and Mesh Shader
 </h2><ul>
 <li><strong>输入</strong>：由第一阶段 Compute Shader 生成的、包含“可能可见”物体的间接绘制指令列表 (<code>DrawIndirect commands</code>)。同时，也接收上一帧生成的深度金字塔（Depth Pyramid）用于遮挡测试。</li>
 <li><strong>处理</strong>：
@@ -1656,7 +1656,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1679,7 +1679,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -1758,7 +1758,7 @@ McGuire 方法 (最精确)
             <li><a href="#原子操作生成绘制列表">原子操作生成绘制列表</a></li>
           </ul>
         </li>
-        <li><a href="#taskmesh-shader">Task/Mesh Shader</a>
+        <li><a href="#task-shader-and-mesh-shader">Task Shader and Mesh Shader</a>
           <ul>
             <li><a href="#task-shader">Task Shader</a>
               <ul>
@@ -2167,7 +2167,7 @@ McGuire 方法 (最精确)
             <li><a href="#原子操作生成绘制列表">原子操作生成绘制列表</a></li>
           </ul>
         </li>
-        <li><a href="#taskmesh-shader">Task/Mesh Shader</a>
+        <li><a href="#task-shader-and-mesh-shader">Task Shader and Mesh Shader</a>
           <ul>
             <li><a href="#task-shader">Task Shader</a>
               <ul>
