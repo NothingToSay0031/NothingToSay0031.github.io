@@ -384,9 +384,9 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
       
-        <h1 id="mesh-shader-vulkan-中的下一代渲染管线">
-<a class="header-anchor" href="#mesh-shader-vulkan-%e4%b8%ad%e7%9a%84%e4%b8%8b%e4%b8%80%e4%bb%a3%e6%b8%b2%e6%9f%93%e7%ae%a1%e7%ba%bf"></a>
-Mesh Shader: Vulkan 中的下一代渲染管线
+        <h1 id="mesh-shader">
+<a class="header-anchor" href="#mesh-shader"></a>
+Mesh Shader
 </h1><h2 id="为什么选择-mesh-shader">
 <a class="header-anchor" href="#%e4%b8%ba%e4%bb%80%e4%b9%88%e9%80%89%e6%8b%a9-mesh-shader"></a>
 为什么选择 Mesh Shader
@@ -530,7 +530,7 @@ Mesh Shader 的解决方案
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h1 id="two-pass-culling">
 <a class="header-anchor" href="#two-pass-culling"></a>
-Two-Pass Culling
+Two Pass Culling
 </h1><p>我们已经介绍了如何使用 Mesh Shader 构建高效的 Meshlet。现在，我们将探讨如何在 Vulkan 中基于 <a href="https://advances.realtimerendering.com/s2015/aaltonenhaar_siggraph2015_combined_final_footer_220dpi.pdf">SIGGRAPH 2015 &ldquo;GPU-Driven Rendering Pipelines&rdquo;</a> 实现一个高效的基于 Meshlet 的双通道剔除管线。</p>
 <h2 id="整体管线架构">
 <a class="header-anchor" href="#%e6%95%b4%e4%bd%93%e7%ae%a1%e7%ba%bf%e6%9e%b6%e6%9e%84"></a>
@@ -833,8 +833,8 @@ Subgroup 操作与动态任务分发
 </ul>
 </li>
 </ul>
-<h3 id="mesh-shader">
-<a class="header-anchor" href="#mesh-shader"></a>
+<h3 id="mesh-shader-1">
+<a class="header-anchor" href="#mesh-shader-1"></a>
 Mesh Shader
 </h3><p>只有在 Task Shader 判定有可见的 Meshlet 时，Mesh Shader 才会被启动。它的任务很简单：根据传入的 Meshlet 索引，生成最终的顶点和图元。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="n">layout</span><span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
@@ -1107,9 +1107,9 @@ Improved Culling for Tiled and Clustered Rendering
 分块 (Tiled) 与集群 (Clustered)
 </h2><p><strong>分块着色 (Tiled Shading)</strong> 将屏幕划分为一个个 2D 网格（Tiles）。它预先计算出每个 Tile 可能受哪些光源影响，并将这个光源列表存储起来。在最终着色时，一个片元（Fragment）只需要检查其所在 Tile 的光源列表即可，大大减少了需要遍历的光源数量。</p>
 <p><strong>集群着色 (Clustered Shading)</strong> 则在 2D 的基础上增加了一个维度：<strong>深度</strong>。它将摄像机的视锥体（View Frustum）划分为一个 3D 网格（Clusters）。这样，剔除光源时不仅考虑了它们在屏幕上的位置，还考虑了它们的远近。这使得光源剔除更加精准，尤其是在场景深度复杂的情况下。</p>
-<h2 id="混合动力-activision-的改进方案">
-<a class="header-anchor" href="#%e6%b7%b7%e5%90%88%e5%8a%a8%e5%8a%9b-activision-%e7%9a%84%e6%94%b9%e8%bf%9b%e6%96%b9%e6%a1%88"></a>
-混合动力: Activision 的改进方案
+<h2 id="activision-的改进方案">
+<a class="header-anchor" href="#activision-%e7%9a%84%e6%94%b9%e8%bf%9b%e6%96%b9%e6%a1%88"></a>
+Activision 的改进方案
 </h2><p>动视提出的这项技术，可以说是对上述两种思想的精炼与融合。它既利用了集群着色的深度信息，又保留了分块着色在屏幕空间的简洁性，形成了一套高效的混合剔除系统。</p>
 <p>其核心算法流程如下：</p>
 <ol>
@@ -1183,9 +1183,9 @@ CPU端 Light Culling 准备
 <li>位打包：<code>(min_bin &amp; 0xffff) | ((max_bin &amp; 0xffff) &lt;&lt; 16)</code>。它将两个 16 位的索引（<code>min_bin</code> 和 <code>max_bin</code>）合并存储到一个 32 位的整数中。这是一种常见的内存优化技巧，避免了为每个光源定义一个复杂的结构体。</li>
 </ul>
 <p>经过这个循环，我们得到了一个临时数组 <code>bin_range_per_light</code>，它记录了每个光源所影响的深度区间。</p>
-<h5 id="为每个z-bin计算其包含的光源索引范围">
-<a class="header-anchor" href="#%e4%b8%ba%e6%af%8f%e4%b8%aaz-bin%e8%ae%a1%e7%ae%97%e5%85%b6%e5%8c%85%e5%90%ab%e7%9a%84%e5%85%89%e6%ba%90%e7%b4%a2%e5%bc%95%e8%8c%83%e5%9b%b4"></a>
-为每个Z-Bin计算其包含的光源索引范围
+<h5 id="为每个bin计算其包含的光源索引范围">
+<a class="header-anchor" href="#%e4%b8%ba%e6%af%8f%e4%b8%aabin%e8%ae%a1%e7%ae%97%e5%85%b6%e5%8c%85%e5%90%ab%e7%9a%84%e5%85%89%e6%ba%90%e7%b4%a2%e5%bc%95%e8%8c%83%e5%9b%b4"></a>
+为每个Bin计算其包含的光源索引范围
 </h5><p>接下来，代码反过来遍历每一个 Z-Bin，并根据上一步的结果，找出影响该 Bin 的所有光源，并记录下它们在已排序光源列表中的最小和最大索引。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="n">u32</span> <span class="n">bin</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">bin</span> <span class="o">&lt;</span> <span class="n">k_light_z_bins</span><span class="p">;</span> <span class="o">++</span><span class="n">bin</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="n">u32</span> <span class="n">min_light_id</span> <span class="o">=</span> <span class="n">k_num_lights</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 初始为一个无效的最大值
@@ -1309,9 +1309,9 @@ CPU端 Light Culling 准备
 <a class="header-anchor" href="#gpu%e7%ab%af-%e5%85%89%e7%85%a7%e5%89%94%e9%99%a4%e4%b8%8e%e8%ae%a1%e7%ae%97"></a>
 GPU端 光照剔除与计算
 </h3><p>当渲染管线进入像素着色阶段，GPU 面临着为屏幕上数百万个像素独立计算颜色的艰巨任务。我们的目标是，让每个像素都能高效地从成百上千的光源中，只挑选出真正对它有贡献的几个，并完成光照计算。</p>
-<h4 id="双重过滤获取初步光源列表">
-<a class="header-anchor" href="#%e5%8f%8c%e9%87%8d%e8%bf%87%e6%bb%a4%e8%8e%b7%e5%8f%96%e5%88%9d%e6%ad%a5%e5%85%89%e6%ba%90%e5%88%97%e8%a1%a8"></a>
-双重过滤，获取初步光源列表
+<h4 id="双重过滤-获取初步光源列表">
+<a class="header-anchor" href="#%e5%8f%8c%e9%87%8d%e8%bf%87%e6%bb%a4-%e8%8e%b7%e5%8f%96%e5%88%9d%e6%ad%a5%e5%85%89%e6%ba%90%e5%88%97%e8%a1%a8"></a>
+双重过滤 获取初步光源列表
 </h4><p>对于任意一个正在被着色的片元（Fragment/Pixel），我们首先需要确定它在我们的剔除结构中的位置。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">vec4</span> <span class="n">final_color</span> <span class="o">=</span> <span class="k">vec4</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
@@ -1679,7 +1679,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Sampling on the Unit Hemisphere and Disk"
               class="lazyload"
@@ -1725,7 +1725,7 @@ McGuire 方法 (最精确)
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#mesh-shader-vulkan-中的下一代渲染管线">Mesh Shader: Vulkan 中的下一代渲染管线</a>
+    <li><a href="#mesh-shader">Mesh Shader</a>
       <ul>
         <li><a href="#为什么选择-mesh-shader">为什么选择 Mesh Shader</a>
           <ul>
@@ -1743,7 +1743,7 @@ McGuire 方法 (最精确)
         </li>
       </ul>
     </li>
-    <li><a href="#two-pass-culling">Two-Pass Culling</a>
+    <li><a href="#two-pass-culling">Two Pass Culling</a>
       <ul>
         <li><a href="#整体管线架构">整体管线架构</a></li>
         <li><a href="#剔除并生成draw指令">剔除并生成Draw指令</a>
@@ -1766,7 +1766,7 @@ McGuire 方法 (最精确)
                 <li><a href="#subgroup-操作与动态任务分发">Subgroup 操作与动态任务分发</a></li>
               </ul>
             </li>
-            <li><a href="#mesh-shader">Mesh Shader</a>
+            <li><a href="#mesh-shader-1">Mesh Shader</a>
               <ul>
                 <li><a href="#并行顶点生成与图元装配">并行顶点生成与图元装配</a></li>
                 <li><a href="#primitiveindices">PrimitiveIndices</a></li>
@@ -1786,14 +1786,14 @@ McGuire 方法 (最精确)
     <li><a href="#improved-culling-for-tiled-and-clustered-rendering">Improved Culling for Tiled and Clustered Rendering</a>
       <ul>
         <li><a href="#分块-tiled-与集群-clustered">分块 (Tiled) 与集群 (Clustered)</a></li>
-        <li><a href="#混合动力-activision-的改进方案">混合动力: Activision 的改进方案</a>
+        <li><a href="#activision-的改进方案">Activision 的改进方案</a>
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
                 <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a>
                   <ul>
                     <li><a href="#为每个光源计算其覆盖的z-bin范围">为每个光源计算其覆盖的Z-Bin范围</a></li>
-                    <li><a href="#为每个z-bin计算其包含的光源索引范围">为每个Z-Bin计算其包含的光源索引范围</a></li>
+                    <li><a href="#为每个bin计算其包含的光源索引范围">为每个Bin计算其包含的光源索引范围</a></li>
                   </ul>
                 </li>
                 <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a>
@@ -1806,7 +1806,7 @@ McGuire 方法 (最精确)
             </li>
             <li><a href="#gpu端-光照剔除与计算">GPU端 光照剔除与计算</a>
               <ul>
-                <li><a href="#双重过滤获取初步光源列表">双重过滤，获取初步光源列表</a></li>
+                <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
                 <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
@@ -2134,7 +2134,7 @@ McGuire 方法 (最精确)
   <div class="sidebar-toc-wrapper toc-div-class">
     <nav id="TableOfContents">
   <ul>
-    <li><a href="#mesh-shader-vulkan-中的下一代渲染管线">Mesh Shader: Vulkan 中的下一代渲染管线</a>
+    <li><a href="#mesh-shader">Mesh Shader</a>
       <ul>
         <li><a href="#为什么选择-mesh-shader">为什么选择 Mesh Shader</a>
           <ul>
@@ -2152,7 +2152,7 @@ McGuire 方法 (最精确)
         </li>
       </ul>
     </li>
-    <li><a href="#two-pass-culling">Two-Pass Culling</a>
+    <li><a href="#two-pass-culling">Two Pass Culling</a>
       <ul>
         <li><a href="#整体管线架构">整体管线架构</a></li>
         <li><a href="#剔除并生成draw指令">剔除并生成Draw指令</a>
@@ -2175,7 +2175,7 @@ McGuire 方法 (最精确)
                 <li><a href="#subgroup-操作与动态任务分发">Subgroup 操作与动态任务分发</a></li>
               </ul>
             </li>
-            <li><a href="#mesh-shader">Mesh Shader</a>
+            <li><a href="#mesh-shader-1">Mesh Shader</a>
               <ul>
                 <li><a href="#并行顶点生成与图元装配">并行顶点生成与图元装配</a></li>
                 <li><a href="#primitiveindices">PrimitiveIndices</a></li>
@@ -2195,14 +2195,14 @@ McGuire 方法 (最精确)
     <li><a href="#improved-culling-for-tiled-and-clustered-rendering">Improved Culling for Tiled and Clustered Rendering</a>
       <ul>
         <li><a href="#分块-tiled-与集群-clustered">分块 (Tiled) 与集群 (Clustered)</a></li>
-        <li><a href="#混合动力-activision-的改进方案">混合动力: Activision 的改进方案</a>
+        <li><a href="#activision-的改进方案">Activision 的改进方案</a>
           <ul>
             <li><a href="#cpu端-light-culling-准备">CPU端 Light Culling 准备</a>
               <ul>
                 <li><a href="#构建z轴分箱查找表-z-bin-lut">构建Z轴分箱查找表 (Z-Bin LUT)</a>
                   <ul>
                     <li><a href="#为每个光源计算其覆盖的z-bin范围">为每个光源计算其覆盖的Z-Bin范围</a></li>
-                    <li><a href="#为每个z-bin计算其包含的光源索引范围">为每个Z-Bin计算其包含的光源索引范围</a></li>
+                    <li><a href="#为每个bin计算其包含的光源索引范围">为每个Bin计算其包含的光源索引范围</a></li>
                   </ul>
                 </li>
                 <li><a href="#构建屏幕分块位掩码-tile-bitmask">构建屏幕分块位掩码 (Tile Bitmask)</a>
@@ -2215,7 +2215,7 @@ McGuire 方法 (最精确)
             </li>
             <li><a href="#gpu端-光照剔除与计算">GPU端 光照剔除与计算</a>
               <ul>
-                <li><a href="#双重过滤获取初步光源列表">双重过滤，获取初步光源列表</a></li>
+                <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
                 <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
