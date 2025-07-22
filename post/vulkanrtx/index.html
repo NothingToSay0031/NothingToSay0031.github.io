@@ -677,9 +677,9 @@ Miss Shader (未命中着色器)
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">?</span> <span class="mf">1.0</span> <span class="o">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><p>八面体映射通过将单位球体投影到一个紧密包围它的八面体上，再将八面体展开成一个2D正方形来实现。相比于立方体贴图（Cubemap），它没有接缝问题，且所有数据都存储在一张连续的2D纹理中，有利于利用硬件的双线性插值和Mipmapping。这种编码方式在存储方向性数据（如法线、光照方向等）时非常高效。</p>
-<h3 id="3-探针网格与世界空间变换">
-<a class="header-anchor" href="#3-%e6%8e%a2%e9%92%88%e7%bd%91%e6%a0%bc%e4%b8%8e%e4%b8%96%e7%95%8c%e7%a9%ba%e9%97%b4%e5%8f%98%e6%8d%a2"></a>
-3. 探针网格与世界空间变换
+<h3 id="探针网格与世界空间变换">
+<a class="header-anchor" href="#%e6%8e%a2%e9%92%88%e7%bd%91%e6%a0%bc%e4%b8%8e%e4%b8%96%e7%95%8c%e7%a9%ba%e9%97%b4%e5%8f%98%e6%8d%a2"></a>
+探针网格与世界空间变换
 </h3><p>DDGI的核心是在3D空间中维护一个规则的探针网格。因此，我们需要一系列函数来在这几种坐标系之间进行转换：</p>
 <ul>
 <li><strong>1D 探针索引</strong>: 在缓冲区或循环中使用的线性索引。</li>
@@ -730,9 +730,9 @@ Miss Shader (未命中着色器)
 </span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">grid_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">world_position</span> <span class="o">-</span> <span class="n">probe_grid_position</span><span class="p">)</span> <span class="o">*</span> <span class="n">reciprocal_probe_spacing</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">clamp</span><span class="p">(</span><span class="k">ivec3</span><span class="p">(</span><span class="n">grid_pos</span><span class="p">),</span> <span class="k">ivec3</span><span class="p">(</span><span class="mo">0</span><span class="p">),</span> <span class="n">probe_counts</span> <span class="o">-</span> <span class="k">ivec3</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h3 id="4-探针图集坐标计算-probe-atlas-coordinates">
-<a class="header-anchor" href="#4-%e6%8e%a2%e9%92%88%e5%9b%be%e9%9b%86%e5%9d%90%e6%a0%87%e8%ae%a1%e7%ae%97-probe-atlas-coordinates"></a>
-4. 探针图集坐标计算 (Probe Atlas Coordinates)
+</span></span></code></pre></div><h3 id="探针图集坐标计算-probe-atlas-coordinates">
+<a class="header-anchor" href="#%e6%8e%a2%e9%92%88%e5%9b%be%e9%9b%86%e5%9d%90%e6%a0%87%e8%ae%a1%e7%ae%97-probe-atlas-coordinates"></a>
+探针图集坐标计算 (Probe Atlas Coordinates)
 </h3><p>为了高效渲染，所有探针的环境光数据（通常是经过八面体编码的2D图像）都被存储在一张巨大的 <strong>纹理图集（Texture Atlas）</strong> 中。每个探针占据图集中的一小块正方形区域，周围通常有1像素的边界（Border）以防止在纹理采样时发生数据“渗漏”。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cm">/**
 </span></span></span><span class="line"><span class="cl"><span class="cm"> * @brief 根据3D方向和探针索引，计算出在整个探针图集纹理中对应的UV坐标。
@@ -805,9 +805,9 @@ CPU端调度
 <a class="header-anchor" href="#%e8%ae%a1%e7%ae%97%e7%9d%80%e8%89%b2%e5%99%a8%e8%af%a6%e8%a7%a3"></a>
 计算着色器详解
 </h3><p>以下是核心的计算着色器代码。它通过预处理器宏 (<code>#if defined</code>) 来区分是计算辐照度还是可见性，但核心逻辑是共享的。代码主要分为两个部分：<strong>核心计算</strong>（针对探针内部像素）和<strong>边界处理</strong>（针对探针边缘像素）。</p>
-<h4 id="1-核心计算探针内部像素">
-<a class="header-anchor" href="#1-%e6%a0%b8%e5%bf%83%e8%ae%a1%e7%ae%97%e6%8e%a2%e9%92%88%e5%86%85%e9%83%a8%e5%83%8f%e7%b4%a0"></a>
-1. 核心计算（探针内部像素）
+<h4 id="核心计算探针内部像素">
+<a class="header-anchor" href="#%e6%a0%b8%e5%bf%83%e8%ae%a1%e7%ae%97%e6%8e%a2%e9%92%88%e5%86%85%e9%83%a8%e5%83%8f%e7%b4%a0"></a>
+核心计算（探针内部像素）
 </h4><p>这部分代码对探针图集内每个有效的像素进行计算。每个像素代表探针所看到的一个特定方向。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// 该着色器在一个 8x8 的线程组中执行</span>
 </span></span><span class="line"><span class="cl"><span class="n">layout</span> <span class="p">(</span><span class="n">local_size_x</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_y</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">local_size_z</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="k">in</span><span class="p">;</span>
@@ -902,9 +902,9 @@ CPU端调度
 <li><strong>余弦加权积分 (Cosine-Weighted Integration)</strong>: 核心计算是在估算渲染方程中的半球积分。对于一个给定的出射方向（<code>texel_direction</code>），它接收到的光照是所有入射光线（<code>ray_direction</code>）贡献的总和，且每条光线的贡献由其与出射方向夹角的余弦值（<code>dot(...)</code>）进行加权。此过程在物理上模拟了 Lambertian 表面的漫反射。</li>
 <li><strong>方差阴影贴图 (Variance Shadow Mapping, VSM)</strong>: 在计算可见性时，我们存储了距离 <code>d</code> 和距离的平方 <code>d^2</code>。通过这两个<strong>矩（Moments）</strong>，可以在后续的光照计算中，快速估算一个像素点是否处于阴影中，并且能以很小的代价实现具有可变半影的柔和阴影效果。</li>
 </ul>
-<h4 id="2-边界处理探针边缘像素">
-<a class="header-anchor" href="#2-%e8%be%b9%e7%95%8c%e5%a4%84%e7%90%86%e6%8e%a2%e9%92%88%e8%be%b9%e7%bc%98%e5%83%8f%e7%b4%a0"></a>
-2. 边界处理（探针边缘像素）
+<h4 id="边界处理探针边缘像素">
+<a class="header-anchor" href="#%e8%be%b9%e7%95%8c%e5%a4%84%e7%90%86%e6%8e%a2%e9%92%88%e8%be%b9%e7%bc%98%e5%83%8f%e7%b4%a0"></a>
+边界处理（探针边缘像素）
 </h4><p>这部分代码处理图集中每个探针周围的1像素边界。其目的是为了让硬件在对图集进行双线性插值采样时，能够无缝地“环绕”读取数据。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl">    <span class="c1">// ... 内部像素计算之后 ...</span>
 </span></span><span class="line"><span class="cl">
@@ -3140,7 +3140,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
@@ -3163,7 +3163,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -3224,8 +3224,8 @@ TAA 函数完整代码分析与注释
           <ul>
             <li><a href="#球面斐波那契采样-spherical-fibonacci-sampling">球面斐波那契采样 (Spherical Fibonacci Sampling)</a></li>
             <li><a href="#八面体映射-octahedral-mapping">八面体映射 (Octahedral Mapping)</a></li>
-            <li><a href="#3-探针网格与世界空间变换">3. 探针网格与世界空间变换</a></li>
-            <li><a href="#4-探针图集坐标计算-probe-atlas-coordinates">4. 探针图集坐标计算 (Probe Atlas Coordinates)</a></li>
+            <li><a href="#探针网格与世界空间变换">探针网格与世界空间变换</a></li>
+            <li><a href="#探针图集坐标计算-probe-atlas-coordinates">探针图集坐标计算 (Probe Atlas Coordinates)</a></li>
           </ul>
         </li>
         <li><a href="#更新辐照度与可见性-update-irradiance-and-visibility">更新辐照度与可见性 (Update Irradiance and Visibility)</a>
@@ -3233,8 +3233,8 @@ TAA 函数完整代码分析与注释
             <li><a href="#cpu端调度">CPU端调度</a></li>
             <li><a href="#计算着色器详解">计算着色器详解</a>
               <ul>
-                <li><a href="#1-核心计算探针内部像素">1. 核心计算（探针内部像素）</a></li>
-                <li><a href="#2-边界处理探针边缘像素">2. 边界处理（探针边缘像素）</a></li>
+                <li><a href="#核心计算探针内部像素">核心计算（探针内部像素）</a></li>
+                <li><a href="#边界处理探针边缘像素">边界处理（探针边缘像素）</a></li>
               </ul>
             </li>
           </ul>
@@ -3672,8 +3672,8 @@ TAA 函数完整代码分析与注释
           <ul>
             <li><a href="#球面斐波那契采样-spherical-fibonacci-sampling">球面斐波那契采样 (Spherical Fibonacci Sampling)</a></li>
             <li><a href="#八面体映射-octahedral-mapping">八面体映射 (Octahedral Mapping)</a></li>
-            <li><a href="#3-探针网格与世界空间变换">3. 探针网格与世界空间变换</a></li>
-            <li><a href="#4-探针图集坐标计算-probe-atlas-coordinates">4. 探针图集坐标计算 (Probe Atlas Coordinates)</a></li>
+            <li><a href="#探针网格与世界空间变换">探针网格与世界空间变换</a></li>
+            <li><a href="#探针图集坐标计算-probe-atlas-coordinates">探针图集坐标计算 (Probe Atlas Coordinates)</a></li>
           </ul>
         </li>
         <li><a href="#更新辐照度与可见性-update-irradiance-and-visibility">更新辐照度与可见性 (Update Irradiance and Visibility)</a>
@@ -3681,8 +3681,8 @@ TAA 函数完整代码分析与注释
             <li><a href="#cpu端调度">CPU端调度</a></li>
             <li><a href="#计算着色器详解">计算着色器详解</a>
               <ul>
-                <li><a href="#1-核心计算探针内部像素">1. 核心计算（探针内部像素）</a></li>
-                <li><a href="#2-边界处理探针边缘像素">2. 边界处理（探针边缘像素）</a></li>
+                <li><a href="#核心计算探针内部像素">核心计算（探针内部像素）</a></li>
+                <li><a href="#边界处理探针边缘像素">边界处理（探针边缘像素）</a></li>
               </ul>
             </li>
           </ul>
