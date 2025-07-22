@@ -2852,12 +2852,6 @@ Temporal Anti-Aliasing (TAA)
 Temporal Anti-Aliasing
 </h2><p>TAA 是一种强大且在现代游戏中应用极其广泛的技术。它的核心思想是<strong>复用前几帧的历史信息</strong>，将时间上的分辨率转化为空间上的分辨率。通过每一帧对场景进行微小的抖动（Jitter），然后将当前帧与经过校正的历史图像进行混合，TAA 能以极低的性能开销实现媲美超采样 (Supersampling) 的高质量抗锯齿效果。</p>
 <p>然而，TAA 的最大挑战是处理动态场景，如果历史信息校正不当，就会产生<strong>鬼影 (Ghosting)</strong> 和<strong>模糊 (Blur)</strong> 等副作用。因此，这段代码的大部分内容都是在用各种先进的技术来智能地约束历史数据，以抑制这些副作用。</p>
-<p>您说得对，之前的分析为了聚焦核心思想而简化了实现细节。TAA 的质量正取决于这些细节的处理。现在，我们来对这段 <code>taa</code> 函数进行一次完整的、不省略任何步骤的深度剖析。</p>
-<hr>
-<h3 id="taa-函数完整代码分析与注释">
-<a class="header-anchor" href="#taa-%e5%87%bd%e6%95%b0%e5%ae%8c%e6%95%b4%e4%bb%a3%e7%a0%81%e5%88%86%e6%9e%90%e4%b8%8e%e6%b3%a8%e9%87%8a"></a>
-TAA 函数完整代码分析与注释
-</h3><p>下面的代码展示了一个功能非常完备的 TAA 实现。它不仅包含了基础的时间混合，还融合了多种可选的、用于提升稳定性和抑制鬼影的高级技术。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">taa</span><span class="p">(</span><span class="k">ivec2</span> <span class="n">pos</span><span class="p">)</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 第 1 步：速度矢量与时间重投影</span>
@@ -2881,7 +2875,7 @@ TAA 函数完整代码分析与注释
 </span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">history_color</span> <span class="o">=</span> <span class="n">sample_texture_catmull_rom</span><span class="p">(</span><span class="n">reprojected_uv</span><span class="p">,</span> <span class="n">history_color_texture_index</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 第 3 步：当前帧邻域分析 (无省略)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 3 步：当前帧邻域分析</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 遍历当前像素的 3x3 邻域，以收集用于验证和约束历史颜色的统计信息。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">current_sample_total</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>  <span class="c1">// 邻域加权颜色累加器</span>
@@ -2926,7 +2920,7 @@ TAA 函数完整代码分析与注释
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 第 4 步：历史约束与鬼影抑制 (所有模式)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 4 步：历史约束与鬼影抑制</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 这是 TAA 算法的灵魂，用于判断采样到的 history_color 是否“合理”。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">switch</span> <span class="p">(</span><span class="n">history_constraint_mode</span><span class="p">)</span> <span class="p">{</span>
@@ -3139,7 +3133,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Temporal Anti-Aliasing稳定性探究"
               class="lazyload"
@@ -3162,7 +3156,7 @@ TAA 函数完整代码分析与注释
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
@@ -3329,7 +3323,6 @@ TAA 函数完整代码分析与注释
         <li><a href="#工作流程-3">工作流程</a></li>
         <li><a href="#temporal-anti-aliasing">Temporal Anti-Aliasing</a>
           <ul>
-            <li><a href="#taa-函数完整代码分析与注释">TAA 函数完整代码分析与注释</a></li>
             <li><a href="#核心原理与关键技术详解">核心原理与关键技术详解</a>
               <ul>
                 <li><a href="#邻域加权采样">邻域加权采样</a></li>
@@ -3777,7 +3770,6 @@ TAA 函数完整代码分析与注释
         <li><a href="#工作流程-3">工作流程</a></li>
         <li><a href="#temporal-anti-aliasing">Temporal Anti-Aliasing</a>
           <ul>
-            <li><a href="#taa-函数完整代码分析与注释">TAA 函数完整代码分析与注释</a></li>
             <li><a href="#核心原理与关键技术详解">核心原理与关键技术详解</a>
               <ul>
                 <li><a href="#邻域加权采样">邻域加权采样</a></li>
