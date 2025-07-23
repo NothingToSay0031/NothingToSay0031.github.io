@@ -2469,8 +2469,7 @@ Variance Pass
 </span></span><span class="line"><span class="cl">    <span class="c1">// moments.y 存储的是亮度的二阶矩 (平方的均值, E[X^2])。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">moments</span> <span class="o">=</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">integrated_moments_texture_index</span><span class="p">],</span> <span class="k">ivec2</span><span class="p">(</span><span class="n">frag_coord</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rg</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="c1">// TODO(marco): 注释提到，一个更完整的实现应该在这里处理时间重投影失败的情况，</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 例如，如果历史无效，则通过对邻域进行双边滤波来重新估算一个临时的方差。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果历史无效，则可以通过对邻域进行双边滤波来重新估算一个临时的方差。</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// --- 2. 计算方差 ---</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 应用核心统计学公式：方差 = 平方的期望 - 期望的平方。</span>
@@ -3156,7 +3155,7 @@ Temporal Anti-Aliasing
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Unreal Engine 与着色器卡顿：PSO 预缓存解决方案"
               class="lazyload"
