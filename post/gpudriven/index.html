@@ -412,6 +412,7 @@ Mesh Shader 的解决方案
 <li><strong>显著的带宽节省</strong>：顶点重用 (vertex re-use) 可以在预处理阶段完成，并将结果（称为 <strong>Meshlet</strong>）缓存起来复用。Meshlet 是一种高度优化的微型网格，它包含一小撮唯一的顶点和引用这些顶点的图元。这意味着 GPU 不再需要每次都扫描庞大的主索引缓冲区。使用 Meshlet 后，索引数据的大小通常能减少到原来的 75% 左右。</li>
 <li><strong>前所未有的灵活性</strong>：开发者可以自由定义网格拓扑，甚至在 GPU 上程序化地生成几何体，而无需受限于旧管线的固定模式。</li>
 </ul>
+<p>更详细的分析可见 <a href="https://nothingtosay0031.github.io/post/gpu/#turing-%E6%9E%B6%E6%9E%84-mesh-shader">Turing 架构: Mesh Shader</a>。</p>
 <h2 id="构建-meshlet">
 <a class="header-anchor" href="#%e6%9e%84%e5%bb%ba-meshlet"></a>
 构建 Meshlet
@@ -696,7 +697,8 @@ Two Pass Culling
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// ... in occlusion_cull()</span>
 </span></span><span class="line"><span class="cl"><span class="c1">// 如果物体最近点的深度大于（远于）采样区域的最远遮挡物深度，则被遮挡</span>
 </span></span><span class="line"><span class="cl"><span class="n">occlusion_visible</span> <span class="o">=</span> <span class="p">(</span><span class="n">depth_sphere</span> <span class="o">&lt;=</span> <span class="n">depth</span><span class="p">);</span>
-</span></span></code></pre></div><p>这里的 <code>depth</code> 是上一帧的 $Z_{occluder}$，<code>depth_sphere</code> 是当前帧的 $Z_{object}$。如果 $Z_{object} \le Z_{occluder}$，则物体不被上一帧的深度所遮挡，判定为可见。</p>
+</span></span></code></pre></div><p>这里的 <code>depth</code> 是上一帧的 $Z_{occluder}$，<code>depth_sphere</code> 是上一帧的 $Z_{object}$。如果 $Z_{object} \le Z_{occluder}$，则物体不被上一帧的深度所遮挡，判定为可见。</p>
+<p>第二次剔除则使用当前帧的深度。</p>
 <h3 id="原子操作生成绘制列表">
 <a class="header-anchor" href="#%e5%8e%9f%e5%ad%90%e6%93%8d%e4%bd%9c%e7%94%9f%e6%88%90%e7%bb%98%e5%88%b6%e5%88%97%e8%a1%a8"></a>
 原子操作生成绘制列表
@@ -1656,7 +1658,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
