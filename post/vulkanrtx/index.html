@@ -3097,6 +3097,162 @@ Temporal Anti-Aliasing
 </ul>
 </li>
 </ul>
+<h4 id="catmull-rom-滤波优化">
+<a class="header-anchor" href="#catmull-rom-%e6%bb%a4%e6%b3%a2%e4%bc%98%e5%8c%96"></a>
+Catmull-Rom 滤波优化
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// 使用 Catmull-Rom 滤波对纹理进行采样，但只用 9 次纹理拾取（而非 16 次）。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 这种优化利用了硬件的双线性过滤能力。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 更多细节请参阅：http://vec3.ca/bicubic-filtering-in-fewer-taps/</span>
+</span></span><span class="line"><span class="cl"><span class="k">vec3</span> <span class="n">sample_texture_catmull_rom</span><span class="p">(</span><span class="k">vec2</span> <span class="n">uv</span><span class="p">,</span> <span class="n">uint</span> <span class="n">texture_index</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 计算基础纹素坐标和分数偏移量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我们首先确定输入 UV 坐标周围的 4x4 纹素网格。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">sample_position</span> <span class="o">=</span> <span class="n">uv</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// &#39;tex_pos_1&#39; 是中心 2x2 块左上角纹素的坐标。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">tex_pos_1</span> <span class="o">=</span> <span class="n">floor</span><span class="p">(</span><span class="n">sample_position</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// &#39;f&#39; 是相对 &#39;tex_pos_1&#39; 的分数偏移量，用于插值计算。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">f</span> <span class="o">=</span> <span class="n">sample_position</span> <span class="o">-</span> <span class="n">tex_pos_1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 计算 Catmull-Rom 样条权重。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是四个标准的 1D Catmull-Rom 核函数权重，根据分数偏移量 &#39;f&#39; 分别为 x 和 y 轴计算。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">w0</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">w1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.5</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">w2</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="mf">0.5</span> <span class="o">+</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">w3</span> <span class="o">=</span> <span class="n">f</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">f</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. 合并中间样本的权重并计算新的偏移量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是优化的核心。我们合并中间两个样本 (w1, w2) 的权重，并计算一个新的偏移量，</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从而利用硬件的双线性插值器在一次拾取中完成采样。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">w12</span> <span class="o">=</span> <span class="n">w1</span> <span class="o">+</span> <span class="n">w2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">offset_12</span> <span class="o">=</span> <span class="n">w2</span> <span class="o">/</span> <span class="n">w12</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4. 计算最终用于采样的 3x3 UV 坐标网格。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 现在我们不再需要 4x4 的网格，只需在 3x3 的位置上采样。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">tex_pos_0</span> <span class="o">=</span> <span class="n">tex_pos_1</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">tex_pos_3</span> <span class="o">=</span> <span class="n">tex_pos_1</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec2</span> <span class="n">tex_pos_12</span> <span class="o">=</span> <span class="n">tex_pos_1</span> <span class="o">+</span> <span class="n">offset_12</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 将坐标归一化到 [0, 1] 范围以便进行纹理拾取。</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tex_pos_0</span> <span class="o">/=</span> <span class="n">resolution</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tex_pos_3</span> <span class="o">/=</span> <span class="n">resolution</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">tex_pos_12</span> <span class="o">/=</span> <span class="n">resolution</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 5. 执行 9 次纹理拾取并应用权重。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我们在计算出的 9 个 UV 坐标上对纹理进行采样，并乘以相应的组合权重，以计算出最终颜色。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">result</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mf">0.0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 0 行</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_0</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_0</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>   <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_12</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_0</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_3</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_0</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>  <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 1 行</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_0</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_12</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>   <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_12</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_12</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_3</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_12</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>  <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 第 2 行</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_0</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_3</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>   <span class="o">*</span> <span class="n">w0</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_12</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_3</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">w12</span><span class="p">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">+=</span> <span class="n">textureLod</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">nonuniformEXT</span><span class="p">(</span><span class="n">texture_index</span><span class="p">)],</span> <span class="k">vec2</span><span class="p">(</span><span class="n">tex_pos_3</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">tex_pos_3</span><span class="p">.</span><span class="n">y</span><span class="p">),</span> <span class="mo">0</span><span class="p">).</span><span class="n">rgb</span>  <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">x</span>  <span class="o">*</span> <span class="n">w3</span><span class="p">.</span><span class="n">y</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 6. 可选步骤：转换颜色空间。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">use_ycocg</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span> <span class="o">=</span> <span class="n">rgb_to_ycocg</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">rgb</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这个着色器（shader）使用 <strong>Catmull-Rom 样条</strong>来进行高质量的纹理过滤，这是一种三次插值（cubic interpolation）。该方法在视觉上比标准的双线性过滤更平滑，并避免了其他一些技术可能导致的过度模糊。这里的关键创新是一个极大地减少了所需纹理采样次数的优化。</p>
+<h5 id="数学原理catmull-rom-样条">
+<a class="header-anchor" href="#%e6%95%b0%e5%ad%a6%e5%8e%9f%e7%90%86catmull-rom-%e6%a0%b7%e6%9d%a1"></a>
+数学原理：Catmull-Rom 样条
+</h5><p>双三次滤波（Bicubic filtering）的原理是，通过一个 4x4 的纹素（texel）网格拟合出一条平滑曲线，从而找到特定 UV 坐标上的颜色。这通常需要先沿着一个轴（如水平方向）进行四次插值，然后用得到的结果在另一个轴（垂直方向）上进行最终的一次插值。</p>
+<p>Catmull-Rom 插值公式根据一个分数距离 $f$ 和四个控制点 ($P_0, P_1, P_2, P_3$) 来计算一个点 $P$。最终值是一个加权和：</p>
+<p>$P(f) = w_0 P_0 + w_1 P_1 + w_2 P_2 + w_3 P_3$</p>
+<p>权重 ($w_0, w_1, w_2, w_3$) 是从 $f$ 推导出的三次多项式。代码为 x 和 y 轴预先计算了这些权重：</p>
+<ul>
+<li>$w_0(f) = -0.5f + f^2 - 0.5f^3$</li>
+<li>$w_1(f) = 1 - 2.5f^2 + 1.5f^3$</li>
+<li>$w_2(f) = 0.5f + 2f^2 - 1.5f^3$</li>
+<li>$w_3(f) = -0.5f^2 + 0.5f^3$</li>
+</ul>
+<p>代码中的 <code>vec2 w0</code>, <code>w1</code>, <code>w2</code>, 和 <code>w3</code> 存储了这四个权重，其 <code>.x</code> 分量用于水平轴，<code>.y</code> 分量用于垂直轴。</p>
+<p>这段代码中最精彩的优化是将所需的纹理拾取（texture fetch）次数从 16 次（对应 4x4 网格）大幅减少到 9 次。它通过巧妙地利用 GPU 内置的<strong>双线性过滤（bilinear filtering）硬件</strong>来实现这一点。</p>
+<p>标准的 1D Catmull-Rom 插值需要四个纹素值：$T_0, T_1, T_2, T_3$。插值结果为：
+$C = w_0 T_0 + w_1 T_1 + w_2 T_2 + w_3 T_3$</p>
+<p>优化的重点在于中间的两个纹素 $T_1$ 和 $T_2$。它们贡献的部分是 $w_1 T_1 + w_2 T_2$。这个表达式可以改写为：</p>
+<p>$w_1 T_1 + w_2 T_2 = (w_1 + w_2) \left( \frac{w_1}{w_1 + w_2} T_1 + \frac{w_2}{w_1 + w_2} T_2 \right)$</p>
+<p>请注意括号中的部分：这是 $T_1$ 和 $T_2$ 之间的<strong>线性插值</strong>。这恰好是 GPU 的纹理采样器在两个纹素之间拾取纹理（即双线性过滤）时所做的工作！</p>
+<ol>
+<li><strong>组合权重</strong>：代码计算一个新的组合权重 <code>w12 = w1 + w2</code>。</li>
+<li><strong>新偏移量</strong>：代码计算一个新的采样偏移 <code>offset_12 = w2 / w12</code>。这个偏移量精确地告诉 GPU 应该在纹素 $T_1$ 和 $T_2$ 之间的哪个位置进行采样，以获得我们想要的线性插值结果。</li>
+<li><strong>单次拾取</strong>：通过在 <code>tex_pos_1 + offset_12</code> 位置采样，我们用<strong>一次纹理拾取</strong>就得到了括号中表达式的结果。</li>
+</ol>
+<p>这个技巧将每行/每列的四次采样减少到三次。当在二维（x 和 y 轴）上都应用这个技巧时，总的拾取次数就从 $4 \times 4 = 16$ 次减少到 $3 \times 3 = 9$ 次，从而在保持高质量视觉效果的同时，显著提升了性能。</p>
+<h4 id="clip-aabb-函数">
+<a class="header-anchor" href="#clip-aabb-%e5%87%bd%e6%95%b0"></a>
+Clip AABB 函数
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="c1">// &#34;Inside&#34; 游戏中使用的优化版 AABB 裁剪函数。</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 该函数将一个点裁剪到一个轴对齐包围盒（AABB）的边界内。</span>
+</span></span><span class="line"><span class="cl"><span class="k">vec4</span> <span class="n">clip_aabb</span><span class="p">(</span><span class="k">vec3</span> <span class="n">aabb_min</span><span class="p">,</span> <span class="k">vec3</span> <span class="n">aabb_max</span><span class="p">,</span> <span class="k">vec4</span> <span class="n">previous_sample</span><span class="p">,</span> <span class="k">float</span> <span class="n">average_alpha</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 注意：此方法总是将点朝向 AABB 的中心进行裁剪，但速度非常快！</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 1. 计算 AABB 的中心点 (p_clip) 和半尺寸向量（范围, extents）。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 这是表示 AABB 的一种常用且高效的方式。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">p_clip</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">aabb_max</span> <span class="o">+</span> <span class="n">aabb_min</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">e_clip</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">aabb_max</span> <span class="o">-</span> <span class="n">aabb_min</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.0000001</span><span class="p">;</span> <span class="c1">// 加上一个极小值以防止除以零</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 2. 计算点相对于 AABB 中心的向量。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 我们在四维空间中进行计算，以同时处理位置（xyz）和 alpha 值（w）。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec4</span> <span class="n">v_clip</span> <span class="o">=</span> <span class="n">previous_sample</span> <span class="o">-</span> <span class="k">vec4</span><span class="p">(</span><span class="n">p_clip</span><span class="p">,</span> <span class="n">average_alpha</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 3. 将向量归一化到 AABB 的单位空间内，并计算其 L-∞ 范数。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// &#39;v_unit&#39; 是点在 AABB 的局部坐标系中的位置，其中 AABB 本身变成了一个从 [-1, -1, -1] 到 [1, 1, 1] 的单位立方体。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">v_unit</span> <span class="o">=</span> <span class="n">v_clip</span><span class="p">.</span><span class="n">xyz</span> <span class="o">/</span> <span class="n">e_clip</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">a_unit</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">v_unit</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// &#39;ma_unit&#39; 是点在单位化空间中的切比雪夫距离（Chebyshev distance），也称为 L-∞ 范数。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 它表示所有坐标轴分量中的最大值。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">ma_unit</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">a_unit</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">max</span><span class="p">(</span><span class="n">a_unit</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a_unit</span><span class="p">.</span><span class="n">z</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 4. 判断点是否在 AABB 外部，如果是，则将其拉回边界。</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">ma_unit</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果 ma_unit &gt; 1.0，说明点在单位立方体之外，即在 AABB 之外。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 我们通过除以 ma_unit 来缩放从中心出发的向量 v_clip，</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 从而将点精确地投射回 AABB 的边界上。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="k">vec4</span><span class="p">(</span><span class="n">p_clip</span><span class="p">,</span> <span class="n">average_alpha</span><span class="p">)</span> <span class="o">+</span> <span class="n">v_clip</span> <span class="o">/</span> <span class="n">ma_unit</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 如果 ma_unit &lt;= 1.0，说明点在 AABB 内部，无需裁剪。</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">previous_sample</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这个函数实现了一种非常快速的算法，用于将一个点“拉回”到一个轴对齐包围盒（AABB）的边界内。它因其在著名游戏《Inside》中的使用而为人所知。其核心思想是<strong>空间变换</strong>和利用<strong>切比雪夫距离</strong>进行判断，从而避免了传统方法中复杂的、逐个平面的裁剪测试。</p>
+<h5 id="关键技术与数学原理">
+<a class="header-anchor" href="#%e5%85%b3%e9%94%ae%e6%8a%80%e6%9c%af%e4%b8%8e%e6%95%b0%e5%ad%a6%e5%8e%9f%e7%90%86"></a>
+关键技术与数学原理
+</h5><p>该算法的巧妙之处在于，它将针对任意 AABB 的裁剪问题，转化为一个针对单位立方体的、非常简单的裁剪问题。</p>
+<p><strong>1. AABB 的中心-范围表示法 (Center-Extents Representation)</strong></p>
+<p>代码首先没有直接使用 <code>aabb_min</code> 和 <code>aabb_max</code>，而是计算出了 AABB 的<strong>中心点 <code>p_clip</code></strong> 和<strong>半尺寸向量（或称范围）<code>e_clip</code></strong>。</p>
+<ul>
+<li><strong>中心 <code>p_clip</code></strong>: $(aabb_{max} + aabb_{min}) / 2$</li>
+<li><strong>范围 <code>e_clip</code></strong>: $(aabb_{max} - aabb_{min}) / 2$</li>
+</ul>
+<p>这种表示法在后续计算中更为方便。</p>
+<p><strong>2. 空间归一化 (Space Normalization)</strong></p>
+<p>接下来是最关键的一步。代码计算了从 AABB 中心 <code>p_clip</code> 指向采样点 <code>previous_sample</code> 的向量 <code>v_clip</code>，然后用 AABB 的范围 <code>e_clip</code> 去除它：</p>
+<p><code>vec3 v_unit = v_clip.xyz / e_clip;</code></p>
+<p>这个除法操作在几何上等同于进行一次<strong>非均匀缩放</strong>。它将整个坐标系进行变换，使得原来的 AABB 在这个新的“单位空间”里，变成了一个<strong>中心在原点、大小为 2x2x2 的单位立方体</strong>（即从 <code>[-1,-1,-1]</code> 到 <code>[1,1,1]</code>）。而 <code>v_unit</code> 就是原始点在这个新空间中的坐标。</p>
+<p><strong>3. 切比雪夫距离 (Chebyshev Distance)</strong></p>
+<p>在单位立方体空间中，判断一个点是否在立方体内变得异常简单。一个点在立方体内，当且仅当它的 x, y, z 坐标的绝对值都小于等于 1。</p>
+<p>代码计算的 <code>ma_unit</code> 正是这个判断依据：</p>
+<p><code>float ma_unit = max(abs(v_unit.x), max(abs(v_unit.y), abs(v_unit.z)));</code></p>
+<p>这个值在数学上被称为<strong>切比雪夫距离</strong>或 <strong>$L_∞$ 范数</strong>。</p>
+<ul>
+<li>如果 <code>ma_unit &lt;= 1.0</code>，说明点的所有分量都在 <code>[-1, 1]</code> 区间内，点位于 AABB <strong>内部</strong>。</li>
+<li>如果 <code>ma_unit &gt; 1.0</code>，说明点至少有一个分量超出了 <code>[-1, 1]</code> 区间，点位于 AABB <strong>外部</strong>。</li>
+</ul>
+<p><strong>4. 投影裁剪 (Projection Clipping)</strong></p>
+<p>当点在外部时 (<code>ma_unit &gt; 1.0</code>)，代码执行以下操作：</p>
+<p><code>return vec4(p_clip, average_alpha) + v_clip / ma_unit;</code></p>
+<p>这里的 <code>v_clip / ma_unit</code> 是一个非常精妙的计算。由于 <code>ma_unit</code> 是 <code>v_clip</code> 在单位空间中“超出”边界的比例，将原始的 <code>v_clip</code> 向量除以 <code>ma_unit</code>，会将其<strong>等比例缩短</strong>，使得其缩短后的终点<strong>恰好落在 AABB 的边界上</strong>。这个投影的方向始终是<strong>从 AABB 的中心指向原始点</strong>。</p>
+<p><strong>总结</strong>：该算法通过一次向量减法、一次向量除法和一次最大值比较，就完成了裁剪判断和操作，完全避免了分支和复杂的几何测试，因此执行效率极高。其唯一的“限制”是裁剪方向固定为朝向包围盒中心，但这在许多图形学应用（如体积雾、TAA等）中是完全可以接受的。</p>
 
       
     </div>
@@ -3330,6 +3486,16 @@ Temporal Anti-Aliasing
                   <ul>
                     <li><a href="#基于对比度的自适应滤波-contrast-adaptive-filtering">基于对比度的自适应滤波 (Contrast-Adaptive Filtering)</a></li>
                     <li><a href="#基于亮度的权重调整-luminance-based-weight-adjustment">基于亮度的权重调整 (Luminance-Based Weight Adjustment)</a></li>
+                  </ul>
+                </li>
+                <li><a href="#catmull-rom-滤波优化">Catmull-Rom 滤波优化</a>
+                  <ul>
+                    <li><a href="#数学原理catmull-rom-样条">数学原理：Catmull-Rom 样条</a></li>
+                  </ul>
+                </li>
+                <li><a href="#clip-aabb-函数">Clip AABB 函数</a>
+                  <ul>
+                    <li><a href="#关键技术与数学原理">关键技术与数学原理</a></li>
                   </ul>
                 </li>
               </ul>
@@ -3597,7 +3763,7 @@ Temporal Anti-Aliasing
       <div>
         <span class="icon-brush"
           >&nbsp;
-            66.0k
+            66.8k
           </span
         >
         &nbsp;|&nbsp;
@@ -3605,7 +3771,7 @@ Temporal Anti-Aliasing
           
           
 
-          05:23
+          05:27
         </span>
       </div>
     
@@ -3777,6 +3943,16 @@ Temporal Anti-Aliasing
                   <ul>
                     <li><a href="#基于对比度的自适应滤波-contrast-adaptive-filtering">基于对比度的自适应滤波 (Contrast-Adaptive Filtering)</a></li>
                     <li><a href="#基于亮度的权重调整-luminance-based-weight-adjustment">基于亮度的权重调整 (Luminance-Based Weight Adjustment)</a></li>
+                  </ul>
+                </li>
+                <li><a href="#catmull-rom-滤波优化">Catmull-Rom 滤波优化</a>
+                  <ul>
+                    <li><a href="#数学原理catmull-rom-样条">数学原理：Catmull-Rom 样条</a></li>
+                  </ul>
+                </li>
+                <li><a href="#clip-aabb-函数">Clip AABB 函数</a>
+                  <ul>
+                    <li><a href="#关键技术与数学原理">关键技术与数学原理</a></li>
                   </ul>
                 </li>
               </ul>
