@@ -2540,7 +2540,7 @@ Wavelet Pass
 </span></span><span class="line"><span class="cl">    <span class="c1">// 权重 3: 亮度权重 w_l (方差引导的材质/光照边缘保护)</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// ===================================================================</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// --- 3a. 计算中心像素p的局部平均方差 g ---</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// 在计算亮度权重前，先对“方差图”进行一次 3x3 的高斯模糊。</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 在计算亮度权重前，先对“方差图”进行一次的高斯模糊。</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 得到的 g 代表了中心像素p附近区域的平均“噪点程度”。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">const</span> <span class="k">float</span> <span class="n">kernel</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">16.0</span><span class="p">}};</span>
 </span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">g</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
