@@ -1406,10 +1406,7 @@ GPU端 光照剔除与计算
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
-</span></span></code></pre></div><h5 id="矢量寄存器-vs-标量寄存器">
-<a class="header-anchor" href="#%e7%9f%a2%e9%87%8f%e5%af%84%e5%ad%98%e5%99%a8-vs-%e6%a0%87%e9%87%8f%e5%af%84%e5%ad%98%e5%99%a8"></a>
-矢量寄存器 vs. 标量寄存器
-</h5><p>首先，我们需要理解GPU硬件的工作方式。在一个Subgroup/Wavefront（例如32或64个线程）中，线程是并行执行的，但它们共享一些资源。</p>
+</span></span></code></pre></div><p>在一个Subgroup/Wavefront（例如32或64个线程）中，线程是并行执行的，但它们共享一些资源。</p>
 <ol>
 <li>
 <p><strong>矢量寄存器 (Vector Registers)</strong>:</p>
@@ -1424,13 +1421,12 @@ GPU端 光照剔除与计算
 <ul>
 <li>这是一种更高效、更节省空间的寄存器。</li>
 <li>当一个值对于subgroup里的<strong>所有</strong>线程都是<strong>完全相同</strong>的时候，编译器就可以把这个值存放到标量寄存器中。</li>
-<li>硬件只需要为整个subgroup存一份这个值，然后将它广播给所有线程的计算单元。这比从矢量寄存器中读取32/64个不同值要快得多，也更省电。</li>
+<li>硬件只需要为整个subgroup存一份这个值，然后将它广播给所有线程的计算单元。</li>
 </ul>
 </li>
 </ol>
 <p>这个优化的核心思想就是：<strong>将原本分散在矢量寄存器中的数据，转换成可以存放在标量寄存器中的统一数据。</strong></p>
-<p>代码中的关键步骤：</p>
-<p><strong>第一步：将变化的循环边界 (<code>min/max_light_id</code>) 变成标量</strong></p>
+<p><strong>将变化的循环边界 (<code>min/max_light_id</code>) 变成标量</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// NOTE(marco): ...these values are stored in scalar registers and we avoid storing them in vector registers
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint</span> <span class="n">merged_min</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupMin</span><span class="p">(</span><span class="n">min_light_id</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl"><span class="n">uint</span> <span class="n">merged_max</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupMax</span><span class="p">(</span><span class="n">max_light_id</span><span class="p">));</span>
@@ -1445,7 +1441,7 @@ GPU端 光照剔除与计算
 </ul>
 </li>
 </ul>
-<p><strong>第二步：将变化的掩码 (<code>mask</code>) 变成标量</strong></p>
+<p><strong>将变化的掩码 (<code>mask</code>) 变成标量</strong></p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// NOTE(marco): ...The while loop below can then use scalar
 </span></span></span><span class="line"><span class="cl"><span class="c1">// registers as we know the value will be uniform across all threads
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint</span> <span class="n">merged_mask</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupOr</span><span class="p">(</span><span class="n">mask</span><span class="p">));</span>
@@ -1466,34 +1462,7 @@ GPU端 光照剔除与计算
 </span></span><span class="line"><span class="cl">  <span class="n">merged_mask</span> <span class="o">^=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bit_index</span><span class="p">);</span> <span class="c1">// 标量操作
 </span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">...</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>整个循环的控制流对所有线程来说都是完全一致的，GPU可以以最高效率执行。</p>
-<table>
-  <thead>
-      <tr>
-          <th style="text-align: left">方面</th>
-          <th style="text-align: left">未优化版本 (<code>#else</code>)</th>
-          <th style="text-align: left">优化版本 (<code>#if</code>)</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: left"><strong>数据存储</strong></td>
-          <td style="text-align: left">关键变量 (<code>min_light_id</code>, <code>mask</code>) 存储在<strong>矢量寄存器</strong>中。</td>
-          <td style="text-align: left">通过 <code>subgroup</code> 操作将关键变量转换成统一值，存储在<strong>标量寄存器</strong>中。</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><strong>控制流</strong></td>
-          <td style="text-align: left"><code>for</code> 循环和 <code>if</code> 判断都基于矢量值，导致<strong>线程分歧</strong>。</td>
-          <td style="text-align: left"><code>for</code> 和 <code>while</code> 循环都基于标量值，实现<strong>统一控制流</strong>，无分歧。</td>
-      </tr>
-      <tr>
-          <td style="text-align: left"><strong>硬件效率</strong></td>
-          <td style="text-align: left">效率低。GPU需处理分歧，导致部分核心空闲等待。</td>
-          <td style="text-align: left">效率高。整个Subgroup/Wavefront步调一致地执行，硬件利用率最大化。</td>
-      </tr>
-  </tbody>
-</table>
-<h4 id="光照合成与最终着色">
+</span></span></code></pre></div><h4 id="光照合成与最终着色">
 <a class="header-anchor" href="#%e5%85%89%e7%85%a7%e5%90%88%e6%88%90%e4%b8%8e%e6%9c%80%e7%bb%88%e7%9d%80%e8%89%b2"></a>
 光照合成与最终着色
 </h4><p>在通过上述剔除方法计算完所有动态点光源的贡献后，着色器还会继续完成其他光照成分的计算。</p>
@@ -1738,7 +1707,7 @@ McGuire 方法 (最精确)
           
           
             <img
-              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910158.jpg"
+              data-src="https://raw.githubusercontent.com/NothingToSay0031/Images/main/202412220910052.png"
               data-sizes="auto"
               alt="Real-Time High Quality Rendering"
               class="lazyload"
@@ -1890,11 +1859,7 @@ McGuire 方法 (最精确)
               <ul>
                 <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
-                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a>
-                  <ul>
-                    <li><a href="#矢量寄存器-vs-标量寄存器">矢量寄存器 vs. 标量寄存器</a></li>
-                  </ul>
-                </li>
+                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
@@ -2303,11 +2268,7 @@ McGuire 方法 (最精确)
               <ul>
                 <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
-                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a>
-                  <ul>
-                    <li><a href="#矢量寄存器-vs-标量寄存器">矢量寄存器 vs. 标量寄存器</a></li>
-                  </ul>
-                </li>
+                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
