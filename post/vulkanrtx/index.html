@@ -858,8 +858,7 @@ CPU端调度
 </span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">+=</span> <span class="k">vec4</span><span class="p">(</span><span class="n">radiance</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl"><span class="cp">#else</span>
 </span></span><span class="line"><span class="cl">            <span class="c1">// 模式2: 可见性。累加 (距离, 距离^2, 0) * 权重。</span>
-</span></span><span class="line"><span class="cl">            <span class="c1">// 这是为方差阴影贴图(VSM)准备的矩(Moments)。</span>
-</span></span><span class="line"><span class="cl">            <span class="n">weight</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">2.5</span><span class="n">f</span><span class="p">);</span> <span class="c1">// 权重锐化，使深度更清晰</span>
+</span></span><span class="line"><span class="cl">            <span class="n">weight</span> <span class="o">=</span> <span class="n">pow</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="mf">2.5</span><span class="n">f</span><span class="p">);</span> <span class="c1">// 权重调整</span>
 </span></span><span class="line"><span class="cl">            <span class="k">float</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">raw_data</span><span class="p">.</span><span class="n">w</span><span class="p">),</span> <span class="n">probe_max_ray_distance</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">value</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="n">distance</span> <span class="o">*</span> <span class="n">distance</span><span class="p">,</span> <span class="mo">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">            <span class="n">result</span> <span class="o">+=</span> <span class="k">vec4</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="n">weight</span><span class="p">,</span> <span class="n">weight</span><span class="p">);</span>
@@ -1030,8 +1029,8 @@ CPU端调度
 </span></span><span class="line"><span class="cl">        <span class="c1">// --- 计算各项权重 ---</span>
 </span></span><span class="line"><span class="cl">        <span class="k">float</span> <span class="n">weight</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">        <span class="c1">// 【关键点2: 背面剔除权重】</span>
-</span></span><span class="line"><span class="cl">        <span class="c1">// 为了防止光线从墙后“泄漏”过来，需要降低位于表面背后的探针的权重。</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 【关键点2: 方向系数】</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 我们只是使用探针进行插值，因此背面的探针也会考虑。</span>
 </span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">use_smooth_backface</span><span class="p">())</span> <span class="p">{</span>
 </span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">direction_to_probe</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">probe_pos</span> <span class="o">-</span> <span class="n">world_position</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">            <span class="c1">// 使用 &#34;wrap shading&#34; 的思想，将 dot(dir, n) 从 [-1, 1] 映射到 [0, 1]</span>
