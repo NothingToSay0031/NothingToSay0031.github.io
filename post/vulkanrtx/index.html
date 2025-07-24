@@ -2058,7 +2058,7 @@ Reflections Shaders
 </span></span><span class="line"><span class="cl">    <span class="c1">// 从G-Buffer中读取当前像素的粗糙度。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">float</span> <span class="n">roughness</span> <span class="o">=</span> <span class="n">forced_roughness</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="o">?</span> <span class="n">forced_roughness</span> <span class="o">:</span> <span class="n">texelFetch</span><span class="p">(</span><span class="n">global_textures</span><span class="p">[</span><span class="n">gbuffer_texures</span><span class="p">.</span><span class="n">x</span><span class="p">],</span> <span class="n">scaled_xy</span><span class="p">,</span> <span class="mo">0</span><span class="p">).</span><span class="n">y</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">    
-</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">reflection_colour</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">vec3</span> <span class="n">reflection_color</span> <span class="o">=</span> <span class="k">vec3</span><span class="p">(</span><span class="mo">0</span><span class="p">);</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// 只为粗糙度较低（镜面反射较强）的表面计算反射。</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">roughness</span> <span class="o">&lt;=</span> <span class="mf">0.3</span><span class="p">)</span> <span class="p">{</span>
@@ -2147,20 +2147,20 @@ Reflections Shaders
 </span></span><span class="line"><span class="cl">                    <span class="c1">// ...</span>
 </span></span><span class="line"><span class="cl">                    <span class="c1">// 计算最终的光照贡献。</span>
 </span></span><span class="line"><span class="cl">                    <span class="k">vec4</span> <span class="n">albedo</span> <span class="o">=</span> <span class="n">textureLod</span><span class="p">(...);</span>
-</span></span><span class="line"><span class="cl">                    <span class="n">reflection_colour</span> <span class="o">=</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">intensity</span> <span class="o">*</span> <span class="n">attenuation</span> <span class="o">*</span> <span class="n">NoL</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">color</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">reflection_color</span> <span class="o">=</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">intensity</span> <span class="o">*</span> <span class="n">attenuation</span> <span class="o">*</span> <span class="n">NoL</span> <span class="o">*</span> <span class="n">light</span><span class="p">.</span><span class="n">color</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">                <span class="p">}</span>
 </span></span><span class="line"><span class="cl">            <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">            <span class="c1">// --- 4e. 添加间接光照贡献 ---</span>
 </span></span><span class="line"><span class="cl">            <span class="c1">// 从光照探针或类似结构中采样间接光照。</span>
 </span></span><span class="line"><span class="cl">            <span class="k">vec3</span> <span class="n">indirect_color</span> <span class="o">=</span> <span class="n">sample_irradiance</span><span class="p">(</span><span class="n">p_world</span><span class="p">,</span> <span class="n">triangle_normal</span><span class="p">,</span> <span class="n">camera_position</span><span class="p">.</span><span class="n">xyz</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">            <span class="n">reflection_colour</span> <span class="o">+=</span> <span class="n">indirect_color</span> <span class="o">*</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">reflection_color</span> <span class="o">+=</span> <span class="n">indirect_color</span> <span class="o">*</span> <span class="n">albedo</span><span class="p">.</span><span class="n">rgb</span><span class="p">;</span>
 </span></span><span class="line"><span class="cl">        <span class="p">}</span>
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">    <span class="c1">// --- 5. 写入最终结果 ---</span>
 </span></span><span class="line"><span class="cl">    <span class="c1">// 将计算出的反射颜色写入到输出图像中。</span>
-</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">out_image_index</span><span class="p">],</span> <span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">reflection_colour</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">imageStore</span><span class="p">(</span><span class="n">global_images_2d</span><span class="p">[</span><span class="n">out_image_index</span><span class="p">],</span> <span class="n">xy</span><span class="p">,</span> <span class="k">vec4</span><span class="p">(</span><span class="n">reflection_color</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">));</span>
 </span></span><span class="line"><span class="cl"><span class="p">}</span>
 </span></span></code></pre></div><h3 id="最近命中与未命中着色器-closest-hit--miss-shaders">
 <a class="header-anchor" href="#%e6%9c%80%e8%bf%91%e5%91%bd%e4%b8%ad%e4%b8%8e%e6%9c%aa%e5%91%bd%e4%b8%ad%e7%9d%80%e8%89%b2%e5%99%a8-closest-hit--miss-shaders"></a>
