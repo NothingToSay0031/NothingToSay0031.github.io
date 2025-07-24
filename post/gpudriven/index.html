@@ -1368,7 +1368,7 @@ GPU端 光照剔除与计算
 <h4 id="基于-subgroup-的协同计算">
 <a class="header-anchor" href="#%e5%9f%ba%e4%ba%8e-subgroup-%e7%9a%84%e5%8d%8f%e5%90%8c%e8%ae%a1%e7%ae%97"></a>
 基于 Subgroup 的协同计算
-</h4><p>为了解决线程发散问题，现代 GPU 提供了 <code>subgroup</code> 操作，允许一个 <code>wavefront</code> 内的所有线程协同工作，共享数据，并统一执行路径。</p>
+</h4><p>现代 GPU 提供了 <code>subgroup</code> 操作，允许一个 <code>wavefront</code> 内的所有线程协同工作，共享数据，并统一执行路径。同时还可以减少矢量寄存器的使用，提升Occupancy。</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-glsl" data-lang="glsl"><span class="line"><span class="cl"><span class="cp">#if ENABLE_OPTIMIZATION</span>
 </span></span><span class="line"><span class="cl">  <span class="c1">// 1. 在整个 subgroup 中找到一个统一的、更大的光源索引范围</span>
 </span></span><span class="line"><span class="cl">  <span class="n">uint</span> <span class="n">merged_min</span> <span class="o">=</span> <span class="n">subgroupBroadcastFirst</span><span class="p">(</span><span class="n">subgroupMin</span><span class="p">(</span><span class="n">min_light_id</span><span class="p">));</span>
@@ -1406,13 +1406,93 @@ GPU端 光照剔除与计算
 </span></span><span class="line"><span class="cl">    <span class="p">}</span>
 </span></span><span class="line"><span class="cl">  <span class="p">}</span>
 </span></span><span class="line"><span class="cl"><span class="cp">#endif</span>
-</span></span></code></pre></div><ol>
-<li><strong>统一循环范围:</strong> 使用 <code>subgroupMin</code> 和 <code>subgroupMax</code> 在 <code>wavefront</code> 内找到所有线程中最小的 <code>min_light_id</code> 和最大的 <code>max_light_id</code>。<code>subgroupBroadcastFirst</code> 确保每个线程都使用这个<strong>统一的范围</strong> (<code>merged_min</code>, <code>merged_max</code>)。这使得外层的 <code>for</code> 循环对 <code>wavefront</code> 内所有线程来说都是一致的，<strong>消除了循环层面的发散</strong>。</li>
-<li><strong>重建 Z-Bin 过滤:</strong> 虽然外层循环范围扩大了，但每个线程独立的 <code>min/max</code> 信息不能丢。因此，在循环内部，通过 <code>bit_field_mask</code> 为每个线程动态生成一个 <code>zbin_mask</code>。这个掩码代表了在该 32 位 <code>word</code> 中，哪些位是符合当前线程的 Z-Bin 范围的。<code>mask &amp;= zbin_mask;</code> 这一步，巧妙地将 Tile 掩码和 Z-Bin 掩码结合了起来。</li>
-<li><strong>统一迭代掩码:</strong> 再次使用 <code>subgroupOr</code> 将 <code>wavefront</code> 内所有线程的 <code>mask</code> 合并成一个 <code>merged_mask</code>。这个 <code>merged_mask</code> 包含了对 <code>wavefront</code> 内<strong>任何一个线程</strong>有效的所有光源。</li>
-<li><strong>无发散迭代:</strong> 最后的 <code>while</code> 循环在 <code>merged_mask</code> 上进行。因为 <code>merged_mask</code> 对所有线程都是相同的（标量），这个循环以及内部的位操作 (<code>get_lowest_bit</code>, <code>^=</code>) <strong>完全没有线程发散</strong>。</li>
-<li><strong>代价与收益:</strong> 这种方法可能会让某些线程计算一些对它们来说本无效的光源，但因为避免了代价高昂的线程发散，总体性能通常会更高。这是用计算换取更高并行效率的典型案例。</li>
+</span></span></code></pre></div><h5 id="矢量寄存器-vs-标量寄存器">
+<a class="header-anchor" href="#%e7%9f%a2%e9%87%8f%e5%af%84%e5%ad%98%e5%99%a8-vs-%e6%a0%87%e9%87%8f%e5%af%84%e5%ad%98%e5%99%a8"></a>
+矢量寄存器 vs. 标量寄存器
+</h5><p>首先，我们需要理解GPU硬件的工作方式。在一个Subgroup/Wavefront（例如32或64个线程）中，线程是并行执行的，但它们共享一些资源。</p>
+<ol>
+<li>
+<p><strong>矢量寄存器 (Vector Registers)</strong>:</p>
+<ul>
+<li>这是最常见的寄存器类型。</li>
+<li>当每个线程都有一个<strong>不同</strong>的值时，这个变量就存储在矢量寄存器中。</li>
+<li>例如，变量 <code>min_light_id</code> 在优化前，每个线程都有自己的值，所以它是一个矢量值。硬件上，一个矢量寄存器会为这个subgroup里的所有32/64个线程都保存一个独立的副本。</li>
+</ul>
+</li>
+<li>
+<p><strong>标量寄存器 (Scalar Registers)</strong>:</p>
+<ul>
+<li>这是一种更高效、更节省空间的寄存器。</li>
+<li>当一个值对于subgroup里的<strong>所有</strong>线程都是<strong>完全相同</strong>的时候，编译器就可以把这个值存放到标量寄存器中。</li>
+<li>硬件只需要为整个subgroup存一份这个值，然后将它广播给所有线程的计算单元。这比从矢量寄存器中读取32/64个不同值要快得多，也更省电。</li>
+</ul>
+</li>
 </ol>
+<p>这个优化的核心思想就是：<strong>将原本分散在矢量寄存器中的数据，转换成可以存放在标量寄存器中的统一数据。</strong></p>
+<p>代码中的关键步骤：</p>
+<p><strong>第一步：将变化的循环边界 (<code>min/max_light_id</code>) 变成标量</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// NOTE(marco): ...these values are stored in scalar registers and we avoid storing them in vector registers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint</span> <span class="n">merged_min</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupMin</span><span class="p">(</span><span class="n">min_light_id</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">uint</span> <span class="n">merged_max</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupMax</span><span class="p">(</span><span class="n">max_light_id</span><span class="p">));</span>
+</span></span></code></pre></div><ul>
+<li><strong>优化前</strong>: <code>min_light_id</code> 和 <code>max_light_id</code> 是矢量值，存在矢量寄存器中。</li>
+<li><strong>优化后</strong>:
+<ul>
+<li><code>subgroupMin(min_light_id)</code> 计算出整个subgroup中最小的那个 <code>min_light_id</code>。这是一个<strong>归约 (Reduction)</strong> 操作，结果是一个<strong>标量</strong>。</li>
+<li><code>subgroupBroadcastFirst(...)</code> 将这个单一的标量结果广播给subgroup中的每一个线程。</li>
+<li>现在，变量 <code>merged_min</code> 和 <code>merged_max</code> 的值在所有线程中都是<strong>完全一样</strong>的。</li>
+<li><strong>结果</strong>: 编译器可以非常自信地将 <code>merged_min</code> 和 <code>merged_max</code> 放入<strong>标量寄存器</strong>。外层 <code>for</code> 循环的判断 <code>word_index &lt;= word_max</code> 就变成了一个高效的标量操作。</li>
+</ul>
+</li>
+</ul>
+<p><strong>第二步：将变化的掩码 (<code>mask</code>) 变成标量</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// NOTE(marco): ...The while loop below can then use scalar
+</span></span></span><span class="line"><span class="cl"><span class="c1">// registers as we know the value will be uniform across all threads
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">uint</span> <span class="n">merged_mask</span> <span class="o">=</span> <span class="nf">subgroupBroadcastFirst</span><span class="p">(</span><span class="nf">subgroupOr</span><span class="p">(</span><span class="n">mask</span><span class="p">));</span>
+</span></span></code></pre></div><ul>
+<li><strong>优化前</strong>: 在循环内部，每个线程都有自己的 <code>mask</code>，它是一个矢量值。如果直接用 <code>if (mask &amp; ...)</code> 来判断，就会产生线程分歧。</li>
+<li><strong>优化后</strong>:
+<ul>
+<li><code>subgroupOr(mask)</code> 将所有线程的 <code>mask</code> 按位或（OR）在一起，生成一个代表了整个subgroup工作总集的单一掩码。这同样是一个归约操作，结果是<strong>标量</strong>。</li>
+<li><code>subgroupBroadcastFirst(...)</code> 将这个统一的 <code>merged_mask</code> 广播给所有线程。</li>
+<li><strong>结果</strong>: <code>merged_mask</code> 现在可以存放在<strong>标量寄存器</strong>中。</li>
+</ul>
+</li>
+</ul>
+<p>由于 <code>merged_mask</code> 是一个标量，内部的 <code>while</code> 循环就变成了由一个统一的值驱动的<strong>非分歧循环</strong>：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">merged_mask</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 在标量寄存器上操作，无分歧
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">uint</span> <span class="n">bit_index</span> <span class="o">=</span> <span class="nf">get_lowest_bit</span><span class="p">(</span><span class="n">merged_mask</span><span class="p">);</span> <span class="c1">// 标量操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">...</span>
+</span></span><span class="line"><span class="cl">  <span class="n">merged_mask</span> <span class="o">^=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">bit_index</span><span class="p">);</span> <span class="c1">// 标量操作
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>整个循环的控制流对所有线程来说都是完全一致的，GPU可以以最高效率执行。</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">方面</th>
+          <th style="text-align: left">未优化版本 (<code>#else</code>)</th>
+          <th style="text-align: left">优化版本 (<code>#if</code>)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>数据存储</strong></td>
+          <td style="text-align: left">关键变量 (<code>min_light_id</code>, <code>mask</code>) 存储在<strong>矢量寄存器</strong>中。</td>
+          <td style="text-align: left">通过 <code>subgroup</code> 操作将关键变量转换成统一值，存储在<strong>标量寄存器</strong>中。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>控制流</strong></td>
+          <td style="text-align: left"><code>for</code> 循环和 <code>if</code> 判断都基于矢量值，导致<strong>线程分歧</strong>。</td>
+          <td style="text-align: left"><code>for</code> 和 <code>while</code> 循环都基于标量值，实现<strong>统一控制流</strong>，无分歧。</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>硬件效率</strong></td>
+          <td style="text-align: left">效率低。GPU需处理分歧，导致部分核心空闲等待。</td>
+          <td style="text-align: left">效率高。整个Subgroup/Wavefront步调一致地执行，硬件利用率最大化。</td>
+      </tr>
+  </tbody>
+</table>
 <h4 id="光照合成与最终着色">
 <a class="header-anchor" href="#%e5%85%89%e7%85%a7%e5%90%88%e6%88%90%e4%b8%8e%e6%9c%80%e7%bb%88%e7%9d%80%e8%89%b2"></a>
 光照合成与最终着色
@@ -1810,7 +1890,11 @@ McGuire 方法 (最精确)
               <ul>
                 <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
-                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
+                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a>
+                  <ul>
+                    <li><a href="#矢量寄存器-vs-标量寄存器">矢量寄存器 vs. 标量寄存器</a></li>
+                  </ul>
+                </li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
@@ -2085,7 +2169,7 @@ McGuire 方法 (最精确)
       <div>
         <span class="icon-brush"
           >&nbsp;
-            66.8k
+            66.9k
           </span
         >
         &nbsp;|&nbsp;
@@ -2219,7 +2303,11 @@ McGuire 方法 (最精确)
               <ul>
                 <li><a href="#双重过滤-获取初步光源列表">双重过滤 获取初步光源列表</a></li>
                 <li><a href="#朴素实现">朴素实现</a></li>
-                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a></li>
+                <li><a href="#基于-subgroup-的协同计算">基于 Subgroup 的协同计算</a>
+                  <ul>
+                    <li><a href="#矢量寄存器-vs-标量寄存器">矢量寄存器 vs. 标量寄存器</a></li>
+                  </ul>
+                </li>
                 <li><a href="#光照合成与最终着色">光照合成与最终着色</a></li>
               </ul>
             </li>
