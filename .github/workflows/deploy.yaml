@@ -28,8 +28,6 @@ jobs:
         run: npm ci
       - name: Build Quartz
         run: npx quartz build
-      - name: Add .nojekyll file
-        run: touch public/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
