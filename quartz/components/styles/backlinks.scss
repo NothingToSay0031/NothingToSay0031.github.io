@@ -2,6 +2,8 @@
 
 .backlinks {
   flex-direction: column;
+  overflow: hidden;
+    flex: 0 0 auto;
 
   & > h3 {
     font-size: 1rem;
@@ -20,5 +22,16 @@
         background-color: transparent;
       }
     }
+  }
+}
+
+@media all and ($desktop) {
+  .backlinks {
+    max-height: var(--backlinks-max-height, 30vh);
+  }
+
+  .backlinks>ul.overflow {
+    max-height: min(calc(100% - 2rem),
+        calc(var(--backlinks-max-height, 30vh) - 2rem));
   }
 }
