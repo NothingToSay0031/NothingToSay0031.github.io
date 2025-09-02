@@ -1,5 +1,5 @@
 ---
-title: Welcome to My Blog
+title: About Me
 ---
 
 Hi, I'm **Hongwei Ji**, a developer passionate about **game engines 🎮, graphics rendering 🎨, and GPU programming ⚡**.  
@@ -21,5 +21,3 @@ Feel free to reach out if you’re interested in graphics, rendering, or GPU dev
 > To be continued...
 
 [[Life.md | Life]]
-
-[[https://raw.githubusercontent.com/NothingToSay0031/Images/main/202402222342552.gif]]
