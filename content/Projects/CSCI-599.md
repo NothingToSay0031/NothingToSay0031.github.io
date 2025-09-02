@@ -4,7 +4,7 @@ date: 2024-02-22 22:56:51
 description: Developing geometry processing algorithms from scratch.
 math: true
 ---
-[[GAMES202.md ]]
+
 # Reconstruction
 
 Implement a simplified version of the method in "Poisson Surface Reconstruction" by Kazhdan et al. 2006.
