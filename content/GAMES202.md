@@ -52,20 +52,27 @@ PCF (Percentage Closer Filtering) is an anti-aliasing technique applied to shado
     
 4. **Compute Visibility for Each Neighbor**: For each sampled depth $D_{\text{SM}}(q)$, calculate a **visibility result**:
     
-    $$\chi^{+} \left[ D_{\text{SM}}(q) - D_{\text{scene}}(p) \right] = \begin{cases}  
+    $$
+    \chi^{+} \left[ D_{\text{SM}}(q) - D_{\text{scene}}(p) \right] = \begin{cases}  
     1 & \text{if } D_{\text{SM}}(q) > D_{\text{scene}}(p) \\  
     0 & \text{otherwise}  
-    \end{cases}$$
+    \end{cases}
+    $$
 5. **Weighted Average of Visibility Results**: Using the **weights** $w(p, q)$ from the convolution kernel, compute the **weighted average** of the visibility results to obtain the final visibility $V(p)$ for point $p$:
     
-    $$V(p) = \sum_{q \in \mathcal{N}(p)} w(p, q) \cdot \chi^{+}\left[ D_{\text{SM}}(q) - D_{\text{scene}}(p) \right]$$
+    $$
+    V(p) = \sum_{q \in \mathcal{N}(p)} w(p, q) \cdot \chi^{+}\left[ D_{\text{SM}}(q) - D_{\text{scene}}(p) \right]
+    $$
 
 ### Example
 
 For a **mean filter** with a **$3 \times 3$ kernel**:
 
 * For a shading point $p$, gather the **9 neighboring pixels** in the shadow map, and compare each depth to $D_{\text{scene}}(p)$.
-* Suppose the visibility results are: $$\begin{bmatrix} 1 & 0 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix}$$
+* Suppose the visibility results are: 
+$$
+\begin{bmatrix} 1 & 0 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix}
+$$
 * The **final visibility** for $p$ is the **average** of these values, yielding $V(p) = 0.667$.
 
 ### Effect of Kernel Size
