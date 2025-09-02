@@ -1,5 +1,5 @@
 ---
-title: Welcome to NothingToSay0031's Blog
+title: Welcome to My Blog
 ---
 
 Hi, I'm **Hongwei Ji**, a developer passionate about **game engines 🎮, graphics rendering 🎨, and GPU programming ⚡**.  
