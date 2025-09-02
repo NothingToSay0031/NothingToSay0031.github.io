@@ -19,3 +19,5 @@ Feel free to reach out if you’re interested in graphics, rendering, or GPU dev
 
 
 > To be continued...
+
+[[Life.md]]
