@@ -1871,7 +1871,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
     Triangles → Fragments → Depth Test → Shade → Pixel.
 * **Problem:**  
     Every fragment is shaded, even those later discarded due to occlusion (e.g., fragments from distant objects are shaded unnecessarily).
-    * Complexity: **O(\#fragments × \#lights)** because every fragment interacts with all lights.
+    * Complexity: **O(\# fragments × \# lights)** because every fragment interacts with all lights.
 
 ### Key Idea
 
@@ -1911,7 +1911,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
 
 ### Complexity Reduction
 
-* From **O(\#visible fragments × \# lights)** to **O(\#visible fragments × avg \# lights per tile)**.
+* From **O(\# visible fragments × \# lights)** to **O(\# visible fragments × avg \# lights per tile)**.
 
 
 ## Clustered Shading
@@ -1928,7 +1928,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
 * By subdividing along the depth axis, **fewer lights are associated with each cluster**.
 
 ### Complexity Reduction
-* From **O(\#visible fragments × avg \# lights per tile)** to **O(\# visible fragments × avg \# lights per cluster)**.
+* From **O(\# visible fragments × avg \# lights per tile)** to **O(\# visible fragments × avg \# lights per cluster)**.
 
 ### Final Result
 
