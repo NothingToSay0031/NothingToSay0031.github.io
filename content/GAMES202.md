@@ -1864,7 +1864,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
     Triangles → Fragments → Depth Test → Shade → Pixel.
 * **Problem:**  
     Every fragment is shaded, even those later discarded due to occlusion (e.g., fragments from distant objects are shaded unnecessarily).
-    * Complexity: **O(#fragments × #lights)** because every fragment interacts with all lights.
+    * Complexity: **O(\#fragments × \#lights)** because every fragment interacts with all lights.
 
 ### Key Idea
 
