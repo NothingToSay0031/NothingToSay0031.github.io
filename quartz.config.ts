@@ -23,8 +23,8 @@ const config: QuartzConfig = {
       fontOrigin: "googleFonts",
       cdnCaching: true,
       typography: {
-        header: "Noto Serif SC",
-        body: "Noto Serif SC",
+        header: "Noto Sans Simplified Chinese",
+        body: "Noto Sans Simplified Chinese",
         code: "Fira Code",
       },
       colors: {
