@@ -18,5 +18,4 @@ Feel free to reach out if you’re interested in graphics, rendering, or GPU dev
 🔗 [LinkedIn](https://www.linkedin.com/in/hongweiji/)
 
 > To be continued...
-
-[[Life.md | Life]]
+> [[Life.md | Life]]
