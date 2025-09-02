@@ -80,11 +80,13 @@ You will also be passed an array containing a header and a body font (where the 
 
 An example of a component using the header font could look like this:
 
+{% raw %}
 ```tsx title="socialImage.tsx"
 export const myImage: SocialImageOptions["imageStructure"] = (...) => {
   return <p style={{ fontFamily: fonts[0].name }}>Cool Header!</p>
 }
 ```
+{% endraw %}
 
 > [!example]- Local fonts
 >
@@ -102,6 +104,7 @@ export const myImage: SocialImageOptions["imageStructure"] = (...) => {
 >
 > Then in `quartz/util/og.tsx`, you can load the Satori fonts like so:
 >
+> {% raw %}
 > ```tsx title="quartz/util/og.tsx"
 > import { joinSegments, QUARTZ } from "../path"
 > import fs from "fs"
@@ -134,6 +137,7 @@ export const myImage: SocialImageOptions["imageStructure"] = (...) => {
 >   return fonts
 > }
 > ```
+> {% endraw %}
 >
 > This font then can be used with your custom structure.
 
@@ -149,6 +153,7 @@ This example will generate images that look as follows:
 | ------------------------------------------ | ----------------------------------------- |
 | ![[custom-social-image-preview-light.png]] | ![[custom-social-image-preview-dark.png]] |
 
+{% raw %}
 ```tsx
 import { SatoriOptions } from "satori/wasm"
 import { GlobalConfiguration } from "../cfg"
@@ -231,11 +236,13 @@ export const customImage: SocialImageOptions["imageStructure"] = (
   )
 }
 ```
+{% endraw %}
 
 ### Advanced Example
 
 The following example includes a customized social image with a custom background and formatted date:
 
+{% raw %}
 ```typescript title="custom-og.tsx"
 export const og: SocialImageOptions["Component"] = (
   cfg: GlobalConfiguration,
@@ -358,3 +365,4 @@ export const og: SocialImageOptions["Component"] = (
   )
 }
 ```
+{% endraw %}
