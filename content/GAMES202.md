@@ -1880,7 +1880,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
 
 ### Benefits
 
-* Complexity reduced to **O(#visible fragments × #lights)**.
+* Complexity reduced to **O(\#visible fragments × \#lights)**.
 * This approach assumes that **rasterization is faster than shading unseen fragments**, which is usually true.
 
 ### Issue
@@ -1921,7 +1921,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
 * By subdividing along the depth axis, **fewer lights are associated with each cluster**.
 
 ### Complexity Reduction
-* From **O(#visible fragments × avg #lights per tile)** to **O(#visible fragments × avg #lights per cluster)**.
+* From **O(\#visible fragments × avg \#lights per tile)** to **O(\#visible fragments × avg \#lights per cluster)**.
 
 ### Final Result
 
