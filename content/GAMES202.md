@@ -1904,7 +1904,7 @@ Temporal clamping mitigates **ghosting** caused by motion vectors or excessive d
 
 ### Complexity Reduction
 
-* From **O(#visible fragments × #lights)** to **O(#visible fragments × avg #lights per tile)**.
+* From **O(\#visible fragments × \#lights)** to **O(\#visible fragments × avg \#lights per tile)**.
 
 
 ## Clustered Shading
