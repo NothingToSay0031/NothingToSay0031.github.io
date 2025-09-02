@@ -3,7 +3,7 @@ title: Interesting C++ Code Snippets
 date: 2024-06-18 22:27:03
 description: From my ARM GPU Software Internship.
 ---
-[[GAMES202.md ]]
+
 A couple of fun and intriguing C++ code snippets I explored while developing a Vulkan trace tool at ARM.
 
 # Compile-Time Type-to-Type Map

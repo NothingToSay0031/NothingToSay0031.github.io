@@ -3,7 +3,7 @@ title: Multimedia Systems Design
 date: 2023-10-08 19:32:01
 description: Yeah, grade is something you need to worry about. But after five years when you graduate and you're working in the industry, the grade is not. You're going to remember what you learned and how you're applying it.
 ---
-[[GAMES202.md ]]
+
 
 > I especially try to tell students, yeah, grade is something you need to worry about. But after five years when you graduate and you're working in the industry, the grade is not. You're not going to remember the grade. You're going to remember what you learned and how you're applying it.  
 > ——Parag Havaldar

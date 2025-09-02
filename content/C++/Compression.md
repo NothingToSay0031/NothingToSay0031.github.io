@@ -3,7 +3,7 @@ date: '2025-01-04T22:47:09+08:00'
 title: 'Compression-Oriented Programming'
 description: 'Explore semantic compression to achieve efficient abstraction and natural architecture in real-world software development.'
 ---
-[[GAMES202.md ]]
+
 # Compression-Oriented Programming: A Practical Approach to Abstraction
 
 Casey Muratori's blog post, [Semantic Compression](https://caseymuratori.com/blog_0015), presents a compelling alternative to traditional object-oriented programming (OOP) practices. By optimizing the UI code for The Witness, the author demonstrates how step-by-step code compression can lead to improved readability, maintainability, and scalability. This article distills the core ideas and methodology outlined in the post.

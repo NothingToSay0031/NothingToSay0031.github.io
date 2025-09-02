@@ -3,7 +3,7 @@ title: CS Learning Road
 date: 2021-10-13 13:09:03
 description: To be Continued.
 ---
-[[GAMES202.md ]]
+
 记录的[笔记](https://github.com/NothingToSay0031/Notes)
 
 ### 机器学习与深度学习
