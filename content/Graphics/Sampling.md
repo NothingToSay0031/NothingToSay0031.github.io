@@ -11,29 +11,41 @@ math: true
     
 * **The transformation $T$** from $(r, \theta, \phi)$ to $(x, y, z)$:
     
-$$x = r \sin \theta \cos \phi$$ 
-$$y = r \sin \theta \sin \phi$$ 
-$$z = r \cos \theta$$
+$$
+x = r \sin \theta \cos \phi
+$$ 
+$$
+y = r \sin \theta \sin \phi
+$$ 
+$$
+z = r \cos \theta
+$$
 * **The Jacobian** of the transformation $T$ gives $|J_T| = r^2 \sin \theta$.
     
 * $r = 1$, so we have:
     
-    $$p(1, \theta, \phi) = \sin \theta \, p(x, y, z) = \sin \theta \, p(\omega)$$
+    $$
+    p(1, \theta, \phi) = \sin \theta \, p(x, y, z) = \sin \theta \, p(\omega)
+    $$
 
 ## Jacobian Determinant Derivation
 
 **Transformation from spherical to Cartesian coordinates**:
 
-$$x = r \sin \theta \cos \phi, \quad y = r \sin \theta \sin \phi, \quad z = r \cos \theta$$
+$$
+x = r \sin \theta \cos \phi, \quad y = r \sin \theta \sin \phi, \quad z = r \cos \theta
+$$
 
 **Jacobian matrix $J_T$**:
 
-$$J_T =  
+$$
+J_T =  
 \begin{bmatrix}  
 \frac{\partial x}{\partial r} & \frac{\partial x}{\partial \theta} & \frac{\partial x}{\partial \phi} \\  
 \frac{\partial y}{\partial r} & \frac{\partial y}{\partial \theta} & \frac{\partial y}{\partial \phi} \\  
 \frac{\partial z}{\partial r} & \frac{\partial z}{\partial \theta} & \frac{\partial z}{\partial \phi}  
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 Compute each partial derivative:
 
@@ -43,36 +55,50 @@ Compute each partial derivative:
 
 Substituting into $J_T$:
 
-$$J_T =  
+$$
+J_T =  
 \begin{bmatrix}  
 \sin \theta \cos \phi & r \cos \theta \cos \phi & -r \sin \theta \sin \phi \\  
 \sin \theta \sin \phi & r \cos \theta \sin \phi & r \sin \theta \cos \phi \\  
 \cos \theta & -r \sin \theta & 0  
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 
 **Determinant**:
 
-$$|J_T| = \text{det}(J_T)$$
+$$
+|J_T| = \text{det}(J_T)
+$$
 
 Using Laplace expansion along the third row:
 
-$$|J_T| = \cos \theta \cdot M_{31} + (-r \sin \theta) \cdot M_{32}$$
+$$
+|J_T| = \cos \theta \cdot M_{31} + (-r \sin \theta) \cdot M_{32}
+$$
 
 Computing $M_{31}$ and $M_{32}$:
 
-$$M_{31} = r^2 \cos \theta \sin \theta, \quad M_{32} = r \sin^2 \theta$$
+$$
+M_{31} = r^2 \cos \theta \sin \theta, \quad M_{32} = r \sin^2 \theta
+$$
 
 Substituting:
 
-$$|J_T| = r^2 \sin \theta (\cos^2 \theta + \sin^2 \theta)$$
+$$
+|J_T| = r^2 \sin \theta (\cos^2 \theta + \sin^2 \theta)
+$$
 
 Using $\cos^2 \theta + \sin^2 \theta = 1$:
 
-$$|J_T| = r^2 \sin \theta$$
+$$
+|J_T| = r^2 \sin \theta
+$$
 
 For $r = 1$:
 
-$$|J_T| = \sin \theta$$
+$$
+|J_T| = \sin \theta
+$$
 
 
 # Uniformly Sampling the Unit Hemisphere
@@ -82,42 +108,56 @@ $$|J_T| = \sin \theta$$
 * **The domain**, i.e., the unit hemisphere surface area, is $2\pi$.  
     Uniformly sampling the domain over $\omega$ implies:
     
-    $$p(\omega) = \frac{1}{2\pi}$$
+    $$
+    p(\omega) = \frac{1}{2\pi}
+    $$
     
 * Since $p(1, \theta, \phi) = \sin \theta \, p(\omega)$, we want:
     
-    $$p(\theta, \phi) = \frac{\sin \theta}{2\pi}$$
+    $$
+    p(\theta, \phi) = \frac{\sin \theta}{2\pi}
+    $$
     
 
 ## Marginal and Conditional Densities
 
 ### Marginal Density $p_\Theta(\theta)$:
 
-$$\int_{0}^{2\pi} p(\theta, \phi) \, d\phi = \sin \theta$$
+$$
+\int_{0}^{2\pi} p(\theta, \phi) \, d\phi = \sin \theta
+$$
 
 
 ### Conditional Density $p(\phi | \theta)$:
 
-$$p(\phi | \theta) = \frac{p(\theta, \phi)}{p_\Theta(\theta)} = \frac{1}{2\pi}$$
+$$
+p(\phi | \theta) = \frac{p(\theta, \phi)}{p_\Theta(\theta)} = \frac{1}{2\pi}
+$$
 
 
 ## Antiderivatives
 
 ### Antiderivative of $p_\Theta(\theta)$:
 
-$$\int \sin \theta \, d\theta = 1 - \cos \theta \, (\text{added constant 1})$$
+$$
+\int \sin \theta \, d\theta = 1 - \cos \theta \, (\text{added constant 1})
+$$
 
 
 ### Antiderivative of $p(\phi | \theta)$:
 
-$$\int \frac{1}{2\pi} \, d\phi = \frac{\phi}{2\pi}$$
+$$
+\int \frac{1}{2\pi} \, d\phi = \frac{\phi}{2\pi}
+$$
 
 
 ## Inversion and Sampling
 
 ### Invert to Get $\theta$ and $\phi$:
 
-$$\theta = \cos^{-1} \xi_1 \, (\text{cos is symmetric}), \quad \phi = 2\pi \xi_2$$
+$$
+\theta = \cos^{-1} \xi_1 \, (\text{cos is symmetric}), \quad \phi = 2\pi \xi_2
+$$
 
 
 ### Apply Transformation:
@@ -130,7 +170,9 @@ Apply transformation $T$ on $(\theta, \phi)$ to obtain uniformly distributed $\o
 
 The cosine-weighted sampling is based on a probability density function (PDF) proportional to the cosine of the angle between the sample direction $\omega$ and the normal $\mathbf{n}$:
 
-$$p(\omega) = \frac{\cos \theta}{\pi}$$
+$$
+p(\omega) = \frac{\cos \theta}{\pi}
+$$
 
 where $\cos \theta = \mathbf{n} \cdot \mathbf{\omega}$.
 
@@ -139,7 +181,9 @@ where $\cos \theta = \mathbf{n} \cdot \mathbf{\omega}$.
 
 The PDF in spherical coordinates becomes:
 
-$$p(\theta, \phi) = \frac{\cos \theta \sin \theta}{\pi}$$
+$$
+p(\theta, \phi) = \frac{\cos \theta \sin \theta}{\pi}
+$$
 
 where $\cos \theta$ represents the cosine of the angle between the sample direction and the normal, and $\sin \theta$ is the Jacobian determinant.
 
@@ -147,14 +191,18 @@ where $\cos \theta$ represents the cosine of the angle between the sample direct
 
 To obtain the marginal density $p_\Theta(\theta)$, integrate over $\phi$:
 
-$$p_\Theta(\theta) = \int_0^{2\pi} \frac{\cos \theta \sin \theta}{\pi} \, d\phi = 2 \cos \theta \sin \theta$$
+$$
+p_\Theta(\theta) = \int_0^{2\pi} \frac{\cos \theta \sin \theta}{\pi} \, d\phi = 2 \cos \theta \sin \theta
+$$
 
 
 ## Conditional Density $p(\phi | \theta)$
 
 The conditional density of $\phi$ given $\theta$ is uniform:
 
-$$p(\phi | \theta) = \frac{1}{2\pi}$$
+$$
+p(\phi | \theta) = \frac{1}{2\pi}
+$$
 
 
 ## Inverse Transform Sampling
@@ -163,31 +211,43 @@ $$p(\phi | \theta) = \frac{1}{2\pi}$$
 
 The cumulative distribution function (CDF) for $\theta$ is:
 
-$$C_\Theta(\theta) = 1 - \cos^2(\theta)$$
+$$
+C_\Theta(\theta) = 1 - \cos^2(\theta)
+$$
 
 By setting $C_\Theta(\theta) = \xi_1$, where $\xi_1$ is a random variable, we obtain:
 
-$$ \cos \theta = \sqrt{1 - \xi_1}$$
+$$
+ \cos \theta = \sqrt{1 - \xi_1}
+ $$
 
 ### Conditional $p(\phi | \theta)$
 
 The CDF for $\phi$ is:
 
-$$C_\Phi(\phi) = \frac{\phi}{2\pi}$$
+$$
+C_\Phi(\phi) = \frac{\phi}{2\pi}
+$$
 
 Set $C_\Phi(\phi) = \xi_2$, where $\xi_2$ is a random variable, leading to:
 
-$$\phi = 2\pi \xi_2$$
+$$
+\phi = 2\pi \xi_2
+$$
 
 ## Final Sampling Transformation
 
 Using $\xi_1$ and $\xi_2$, we compute:
 
-$$\theta =  \cos^{-1}(\sqrt{1 - \xi_1}), \quad \phi = 2\pi \xi_2$$
+$$
+\theta =  \cos^{-1}(\sqrt{1 - \xi_1}), \quad \phi = 2\pi \xi_2
+$$
 
 Converting these spherical coordinates to Cartesian coordinates:
 
-$$x = \sin \theta \cos \phi, \quad y = \sin \theta \sin \phi, \quad z = \cos \theta$$
+$$
+x = \sin \theta \cos \phi, \quad y = \sin \theta \sin \phi, \quad z = \cos \theta
+$$
 
 
 ## Why use this target PDF $p(\omega) = \frac{\cos \theta}{\pi}$?
@@ -205,34 +265,50 @@ $$x = \sin \theta \cos \phi, \quad y = \sin \theta \sin \phi, \quad z = \cos \th
     
     **(2) Integral over the unit hemisphere:** In spherical coordinates, the solid angle element is given by $d\omega = \sin \theta \, d\theta \, d\phi$. Therefore:
     
-    $$\int_\text{hemisphere} p(\omega) \, d\omega = 1$$
+    $$
+    \int_\text{hemisphere} p(\omega) \, d\omega = 1
+    $$
     
     Substituting $p(\omega) = \frac{\cos \theta}{C}$ (where $C$ is the normalization factor), the integral becomes:
     
-    $$\int_\text{hemisphere} \frac{\cos \theta}{C} \, d\omega = 1$$
+    $$
+    \int_\text{hemisphere} \frac{\cos \theta}{C} \, d\omega = 1
+    $$
     
     Substituting $d\omega = \sin \theta \, d\theta \, d\phi$:
     
-    $$\int_0^{2\pi} \int_0^{\pi/2} \frac{\cos \theta}{C} \sin \theta \, d\theta \, d\phi = 1$$
+    $$
+    \int_0^{2\pi} \int_0^{\pi/2} \frac{\cos \theta}{C} \sin \theta \, d\theta \, d\phi = 1
+    $$
     
     Separating the variables:
     
-    $$\frac{1}{C} \int_0^{2\pi} d\phi \int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = 1$$
+    $$
+    \frac{1}{C} \int_0^{2\pi} d\phi \int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = 1
+    $$
     
     **(3) Computing the Integral:**
     
     First, integrate with respect to $\phi$:
     
-    $$\int_0^{2\pi} d\phi = 2\pi$$
+    $$
+    \int_0^{2\pi} d\phi = 2\pi
+    $$
     
     Next, for $\theta$, use $\cos \theta \sin \theta = \frac{1}{2} \sin(2\theta)$:
     
-    $$\int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = \frac{1}{2} \int_0^{\pi/2} \sin(2\theta) \, d\theta$$ 
-    $$\int_0^{\pi/2} \sin(2\theta) \, d\theta = \frac{-\cos(2\theta)}{2} \Big|_0^{\pi/2} = \frac{-\cos(\pi) + \cos(0)}{2} = \frac{-(-1) + 1}{2} = 1$$
+    $$
+    \int_0^{\pi/2} \cos \theta \sin \theta \, d\theta = \frac{1}{2} \int_0^{\pi/2} \sin(2\theta) \, d\theta
+    $$ 
+    $$
+    \int_0^{\pi/2} \sin(2\theta) \, d\theta = \frac{-\cos(2\theta)}{2} \Big|_0^{\pi/2} = \frac{-\cos(\pi) + \cos(0)}{2} = \frac{-(-1) + 1}{2} = 1
+    $$
     
     Therefore:
     
-    $$\frac{1}{C} \cdot 2\pi \cdot \frac{1}{2} = 1$$
+    $$
+    \frac{1}{C} \cdot 2\pi \cdot \frac{1}{2} = 1
+    $$
     
     Solving for $C$, we get $C = \pi$.
    
@@ -240,7 +316,9 @@ $$x = \sin \theta \cos \phi, \quad y = \sin \theta \sin \phi, \quad z = \cos \th
     
     After normalization, the probability density function becomes:
     
-    $$p(\omega) = \frac{\cos \theta}{\pi}$$
+    $$
+    p(\omega) = \frac{\cos \theta}{\pi}
+    $$
 
 # Implementation
 
@@ -281,12 +359,15 @@ vec3 random_uniform_direction() {
 
 To transform polar coordinates to Cartesian coordinates, we use:
 
-$$ \begin{pmatrix} x \\  y  
+$$ 
+\begin{pmatrix} x \\  y  
 \end{pmatrix} = T \begin{pmatrix}  r \\  \theta  
-\end{pmatrix} = \begin{pmatrix} r \cos \theta \\ r \sin \theta  \end{pmatrix}. $$
+\end{pmatrix} = \begin{pmatrix} r \cos \theta \\ r \sin \theta  \end{pmatrix}. 
+$$
 
 The Jacobian determinant of the transformation is:
-$$ \left| \frac{\partial T \begin{pmatrix} r \\ \theta \end{pmatrix} }{\partial \begin{pmatrix} r \\ \theta \end{pmatrix}} \right| 
+$$ 
+\left| \frac{\partial T \begin{pmatrix} r \\ \theta \end{pmatrix} }{\partial \begin{pmatrix} r \\ \theta \end{pmatrix}} \right| 
 = |J_T| 
 = \begin{vmatrix} 
 \frac{\partial x}{\partial r} & \frac{\partial x}{\partial \theta} \\ 
@@ -296,11 +377,14 @@ $$ \left| \frac{\partial T \begin{pmatrix} r \\ \theta \end{pmatrix} }{\partial 
 \cos \theta & -r \sin \theta \\ 
 \sin \theta & r \cos \theta 
 \end{vmatrix} 
-= r. $$
+= r. 
+$$
 
 Thus, the relationship between probability densities in Cartesian and polar coordinates is:
 
-$$ p(x, y) = \frac{p(r, \theta)}{r}, \quad \text{or } p(r, \theta) = r \, p(x, y), $$
+$$ 
+p(x, y) = \frac{p(r, \theta)}{r}, \quad \text{or } p(r, \theta) = r \, p(x, y), 
+$$
 
 indicating that the change in probability density from $(r, \theta)$ to $(x, y)$ is **inversely proportional to $r$**.
 
@@ -308,33 +392,45 @@ indicating that the change in probability density from $(r, \theta)$ to $(x, y)$
 
 The proportionality constant is the area of the unit disk, $\pi$. For uniform sampling, the target PDF in Cartesian coordinates is:
 
-$$p(x, y) = \frac{1}{\pi}.$$
+$$
+p(x, y) = \frac{1}{\pi}.
+$$
 
 ## PDF in Polar Coordinates
 
 Using the Jacobian determinant:
 
-$$p(r, \theta) = r \, p(x, y),$$
+$$
+p(r, \theta) = r \, p(x, y),
+$$
 
 we get:
 
-$$p(r, \theta) = \frac{r}{\pi}.$$
+$$
+p(r, \theta) = \frac{r}{\pi}.
+$$
 
 ## Marginal and Conditional PDFs
 
 The marginal PDF for $r$ is:
 
-$$p_R(r) = \int_0^{2\pi} p(r, \theta) \, d\theta = 2r,$$
+$$
+p_R(r) = \int_0^{2\pi} p(r, \theta) \, d\theta = 2r,
+$$
 
 The conditional PDF for $\theta$ given $r$ is:
 
-$$p(\theta | r) = \frac{p(r, \theta)}{p_R(r)} = \frac{1}{2\pi}.$$
+$$
+p(\theta | r) = \frac{p(r, \theta)}{p_R(r)} = \frac{1}{2\pi}.
+$$
 
 ## Sampling from the PDFs
 
 To sample $r$ and $\theta$, integrate the marginal and conditional PDFs:
 
-$$r = P_R^{-1}(\xi_1) = \sqrt{\xi_1}, \quad \theta = P_\Theta^{-1}(\xi_2) = 2\pi \xi_2,$$
+$$
+r = P_R^{-1}(\xi_1) = \sqrt{\xi_1}, \quad \theta = P_\Theta^{-1}(\xi_2) = 2\pi \xi_2,
+$$
 
 where $\xi_1, \xi_2 \sim U(0, 1)$. This ensures:
 
@@ -384,11 +480,14 @@ We are projecting points from the unit disk $(r, \phi)$ to the hemisphere $(\the
 
 From the projection, the radial distance $r$ maps to $\sin \theta$:
 
-$$r = \sin \theta \quad \text{or equivalently} \quad \theta = \arcsin(r).$$
+$$
+r = \sin \theta \quad \text{or equivalently} \quad \theta = \arcsin(r).
+$$
 
 Thus, the transformation is:
 
-$$\begin{pmatrix}  
+$$
+\begin{pmatrix}  
 r \\  
 \phi  
 \end{pmatrix}  
@@ -396,21 +495,26 @@ r \\
 \begin{pmatrix}  
 \theta \\  
 \phi  
-\end{pmatrix},$$
+\end{pmatrix},
+$$
 
 with:
 
-$$\theta = \arcsin(r), \quad \phi = \phi.$$
+$$
+\theta = \arcsin(r), \quad \phi = \phi.
+$$
 
 #### Step 2: Write the Jacobian Matrix
 
 The Jacobian matrix $J_T$ for the transformation is:
 
-$$J_T =  
+$$
+J_T =  
 \begin{pmatrix}  
 \frac{\partial \theta}{\partial r} & \frac{\partial \theta}{\partial \phi} \\  
 \frac{\partial \phi}{\partial r} & \frac{\partial \phi}{\partial \phi}  
-\end{pmatrix}.$$
+\end{pmatrix}.
+$$
 
 From the transformation equations:
 
@@ -421,33 +525,41 @@ From the transformation equations:
 
 Thus, the Jacobian matrix becomes:
 
-$$J_T =  
+$$
+J_T =  
 \begin{pmatrix}  
 \frac{1}{\cos \theta} & 0 \\  
 0 & 1  
-\end{pmatrix}.$$
+\end{pmatrix}.
+$$
 
 #### Step 3: Compute the Determinant
 
 The Jacobian determinant is the absolute value of the determinant of $J_T$:
 
-$$\left| J_T \right| = \left|  
+$$
+\left| J_T \right| = \left|  
 \begin{vmatrix}  
 \frac{1}{\cos \theta} & 0 \\  
 0 & 1  
 \end{vmatrix}  
-\right| = \frac{1}{\cos \theta}.$$
+\right| = \frac{1}{\cos \theta}.
+$$
 
 #### Step 4: Adjust for Density Transformation
 
 The relationship between densities is proportional to the inverse of the Jacobian determinant. Thus, the transformation of probability density scales proportionally to $\cos \theta$:
 
-$$p(\theta, \phi) = p(r, \phi) \cdot \left| J_T \right|^{-1} = p(r, \phi) \cdot \cos \theta.$$
+$$
+p(\theta, \phi) = p(r, \phi) \cdot \left| J_T \right|^{-1} = p(r, \phi) \cdot \cos \theta.
+$$
 
 ### Final Result
 
 The Jacobian determinant for the transformation $(r, \phi) \to (\theta, \phi)$ is:
 
-$$\left| J_T \right| = \frac{1}{\cos \theta}.$$
+$$
+\left| J_T \right| = \frac{1}{\cos \theta}.
+$$
 
 The density transforms proportionally to $\cos \theta$, aligning with the cosine-weighted sampling over the hemisphere.
