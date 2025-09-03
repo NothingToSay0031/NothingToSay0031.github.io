@@ -161,6 +161,18 @@ async function renderGraph(graph: HTMLElement, fullSlug: FullSlug) {
       })),
   }
 
+  // If local graph is effectively empty (no links), hide the component and skip rendering
+  const isLocalGraphContainer = graph.classList.contains("graph-container")
+  if (isLocalGraphContainer) {
+    const wrapper = graph.closest(".graph") as HTMLElement | null
+    if (graphData.links.length === 0) {
+      if (wrapper) wrapper.style.display = "none"
+      return () => { }
+    } else {
+      if (wrapper) wrapper.style.display = ""
+    }
+  }
+
   const width = graph.offsetWidth
   const height = Math.max(graph.offsetHeight, 250)
 
