@@ -17,9 +17,9 @@ Feel free to reach out if you’re interested in graphics, rendering, or GPU dev
 📝 [Blog](https://nothingtosay0031.github.io/) | 
 🔗 [LinkedIn](https://www.linkedin.com/in/hongweiji/)
 
+
+View all articles on the [Archive](/archive) page, organized by year and date.
+
+
 > To be continued...
 > [[Life.md | Life]]
-
-## 📚 文章归档
-
-查看所有文章的[时间归档](/archive)页面，按年份和日期整理。
