@@ -12,6 +12,7 @@ import { write } from "./helpers"
 import { i18n } from "../../i18n"
 import { BuildCtx } from "../../util/ctx"
 import { StaticResources } from "../../util/resources"
+import * as Component from "../../components"
 
 interface ArchivePageOptions extends FullPageLayout {
     sort?: (f1: QuartzPluginData, f2: QuartzPluginData) => number

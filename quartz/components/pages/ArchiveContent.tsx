@@ -27,18 +27,18 @@ export default ((opts?: Partial<ArchiveContentOptions>) => {
             throw new Error(`Component "ArchiveContent" tried to render a non-archive page: ${slug}`)
         }
 
-        // 过滤文章文件 - 简化过滤逻辑
+        // Filter article files - simplified filtering logic
         const articleFiles = allFiles.filter((file) => {
-            // 只排除明显的非文章文件
+            // Only exclude obvious non-article files
             return file.slug &&
                 file.slug !== "index" &&
                 file.slug !== "archive" &&
                 !file.slug.startsWith("tags/") &&
                 file.frontmatter?.title &&
-                file.frontmatter.title !== "文章归档"
+                file.frontmatter.title !== i18n(cfg.locale).pages.archiveContent.title
         })
 
-        // 按年份分组
+        // Group by year
         const groupedByYear = new Map<number, QuartzPluginData[]>()
 
         articleFiles.forEach((file) => {
@@ -52,15 +52,13 @@ export default ((opts?: Partial<ArchiveContentOptions>) => {
             }
         })
 
-        // 按年份排序（降序）
+        // Sort by year (descending)
         const sortedYears = Array.from(groupedByYear.keys()).sort((a, b) => b - a)
 
         return (
             <div class="popover-hint">
-                <div class="back-to-home">
-                    <a href="/" class="internal">
-                        ← 返回主页
-                    </a>
+                <div class="home-link">
+                    <a href="/" class="internal">Back to Home</a>
                 </div>
 
                 <div class="archive-header">
@@ -70,18 +68,18 @@ export default ((opts?: Partial<ArchiveContentOptions>) => {
 
                 <div class="archive-stats">
                     <p>{i18n(cfg.locale).pages.archiveContent.totalArticles({ count: articleFiles.length })}</p>
-                    <p>找到 {sortedYears.length} 个年份</p>
+                    <p>Found {sortedYears.length} years.</p>
                 </div>
 
                 {sortedYears.length === 0 ? (
                     <div class="no-articles">
-                        <p>暂无文章或文章没有日期信息</p>
-                        <p>Debug: 总文件数 {allFiles.length}, 文章文件数 {articleFiles.length}</p>
+                        <p>No articles found or articles have no date information</p>
+                        <p>Debug: Total files {allFiles.length}, Article files {articleFiles.length}</p>
                     </div>
                 ) : (
                     sortedYears.map((year) => {
                         const yearFiles = groupedByYear.get(year)!
-                        // 按日期排序（降序）
+                        // Sort by date (descending)
                         yearFiles.sort((a, b) => {
                             const dateA = getDate(cfg, a)
                             const dateB = getDate(cfg, b)
