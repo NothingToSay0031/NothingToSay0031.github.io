@@ -1,6 +1,7 @@
 export { ContentPage } from "./contentPage"
 export { TagPage } from "./tagPage"
 export { FolderPage } from "./folderPage"
+export { ArchivePage } from "./archivePage"
 export { ContentIndex as ContentIndex } from "./contentIndex"
 export { AliasRedirects } from "./aliases"
 export { Assets } from "./assets"

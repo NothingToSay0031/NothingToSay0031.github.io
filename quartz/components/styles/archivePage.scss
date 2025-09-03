@@ -1,0 +1,87 @@
+@use "../../styles/variables.scss" as *;
+
+.year-group {
+    margin-bottom: 3em;
+
+    .year-title {
+        font-size: 2em;
+        font-weight: bold;
+        color: var(--secondary);
+        border-bottom: 2px solid var(--tertiary);
+        padding-bottom: 0.5em;
+        margin-bottom: 1em;
+    }
+
+    .page-listing {
+        margin-left: 1em;
+
+        >p {
+            color: var(--gray);
+            font-style: italic;
+            margin-bottom: 1em;
+        }
+    }
+}
+
+.archive-header {
+    text-align: center;
+    margin-bottom: 2em;
+
+    h1 {
+        color: var(--secondary);
+        margin-bottom: 0.5em;
+    }
+
+    p {
+        color: var(--gray);
+        font-size: 1.1em;
+    }
+}
+
+.back-to-home {
+    margin-bottom: 2em;
+    padding: 1em;
+    border-bottom: 1px solid var(--lightgray);
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        color: var(--secondary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: var(--tertiary);
+        }
+    }
+}
+
+// 自定义面包屑样式
+.breadcrumb {
+    margin-bottom: 2em;
+
+    a {
+        color: var(--secondary);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover {
+            color: var(--tertiary);
+        }
+    }
+}
+
+.archive-stats {
+    background: var(--highlight);
+    padding: 1em;
+    border-radius: 8px;
+    margin-bottom: 2em;
+    text-align: center;
+
+    p {
+        margin: 0;
+        color: var(--secondary);
+        font-weight: 500;
+    }
+}

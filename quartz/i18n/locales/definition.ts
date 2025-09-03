@@ -83,5 +83,11 @@ export interface Translation {
       showingFirst: (variables: { count: number }) => string
       totalTags: (variables: { count: number }) => string
     }
+    archiveContent: {
+      title: string
+      description: string
+      totalArticles: (variables: { count: number }) => string
+      articlesInYear: (variables: { year: number; count: number }) => string
+    }
   }
 }

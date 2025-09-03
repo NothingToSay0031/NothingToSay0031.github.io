@@ -83,5 +83,11 @@ export default {
       showingFirst: ({ count }) => `Showing first ${count} tags.`,
       totalTags: ({ count }) => `Found ${count} total tags.`,
     },
+    archiveContent: {
+      title: "Article Archive",
+      description: "All articles organized by time",
+      totalArticles: ({ count }) => `Total ${count} articles.`,
+      articlesInYear: ({ year, count }) => `${count} articles in ${year}.`,
+    },
   },
 } as const satisfies Translation
