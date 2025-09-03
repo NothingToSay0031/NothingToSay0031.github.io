@@ -31,9 +31,6 @@ Mesh Shader 引入了两个新的可编程阶段：Task Shader 和 Mesh Shader�
   * **显著的带宽节省**：顶点重用 (vertex re-use) 可以在预处理阶段完成，并将结果（称为 **Meshlet**）缓存起来复用。Meshlet 是一种高度优化的微型网格，它包含一小撮唯一的顶点和引用这些顶点的图元。这意味着 GPU 不再需要每次都扫描庞大的主索引缓冲区。使用 Meshlet 后，索引数据的大小通常能减少到原来的 75% 左右。
   * **前所未有的灵活性**：开发者可以自由定义网格拓扑，甚至在 GPU 上程序化地生成几何体，而无需受限于旧管线的固定模式。
 
-更详细的分析可见 [Turing 架构: Mesh Shader](https://nothingtosay0031.github.io/post/gpu/#turing-%E6%9E%B6%E6%9E%84-mesh-shader)。
-
-
 ## 构建 Meshlet
 
 让我们看看如何将传统的顶点/索引数据转换为 Meshlet。我们使用 [meshoptimizer](https://github.com/zeux/meshoptimizer) 来简化这个过程。
