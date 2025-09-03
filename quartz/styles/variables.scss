@@ -23,10 +23,13 @@ $boldWeight: 700;
 $semiBoldWeight: 600;
 $normalWeight: 400;
 
+// 页面标题字体变量
+$titleFontSize: 2rem;
+$titleFontWeight: 600;
 $mobileGrid: (
   templateRows: "auto auto auto auto auto",
   templateColumns: "auto",
-  rowGap: "5px",
+        rowGap: "0px",
   columnGap: "5px",
   templateAreas:
     '"grid-sidebar-left"\

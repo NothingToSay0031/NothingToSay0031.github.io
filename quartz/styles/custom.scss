@@ -1,3 +1,63 @@
 @use "./base.scss";
 
 // put your custom CSS here!
+
+// 页面标题自定义样式
+.page-title {
+    font-family: var(--titleFont) !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    color: var(--dark) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+    letter-spacing: 0.5px !important;
+
+    a {
+        color: inherit !important;
+        text-decoration: none !important;
+
+        &:hover {
+            color: var(--secondary) !important;
+            text-decoration: underline !important;
+        }
+    }
+}
+
+// 移动端页面标题样式调整 - 使用智能布局
+@media (max-width: 800px) {
+
+    // 页面头部容器使用flexbox自动居中
+    .page-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 60px !important; // 固定高度确保居中
+        margin: 0 !important;
+        padding: 0 !important;
+        // 使用calc动态计算顶部间距，确保在不同屏幕尺寸下都能居中
+        padding-top: calc(env(safe-area-inset-top) + 10px) !important;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 10px) !important;
+    }
+
+    // 页面标题自动居中
+    .page-title {
+        margin: 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        line-height: 1.2 !important;
+        font-size: 1.1rem !important;
+        // 移除所有可能影响居中的边距和内边距
+    }
+}
+
+// 超小屏幕设备的额外优化
+@media (max-width: 480px) {
+    .page-header {
+        min-height: 50px !important;
+        padding-top: calc(env(safe-area-inset-top) + 5px) !important;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 5px) !important;
+    }
+
+    .page-title {
+        font-size: 1rem !important;
+    }
+}

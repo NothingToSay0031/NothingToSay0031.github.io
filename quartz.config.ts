@@ -8,7 +8,7 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "Blog",
+    pageTitle: "NothingToSay0031",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
@@ -26,6 +26,7 @@ const config: QuartzConfig = {
         header: "Noto Sans Simplified Chinese",
         body: "Noto Sans Simplified Chinese",
         code: "Fira Code",
+        title: "Emilys Candy",
       },
       colors: {
         lightMode: {
