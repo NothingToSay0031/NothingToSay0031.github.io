@@ -58,7 +58,7 @@ export default ((opts?: Partial<ArchiveContentOptions>) => {
         return (
             <div class="popover-hint">
                 <div class="home-link">
-                    <a href="/" class="internal">Back to Home</a>
+                    <a href="/" class="internal"><strong>Back to Home</strong></a>
                 </div>
 
                 <div class="archive-header">

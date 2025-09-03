@@ -144,5 +144,6 @@ Peter Harris的课很好.
 
 大致看了下.
 
-### To be Continued.
+### To be continued...
 
+> [[Life.md | Life]]

@@ -1,9 +1,9 @@
 ---
 date: '2023-09-01T22:47:09+08:00'
-title: 'Don’t Compare.'
+title: "Don't Compare"
 ---
 
-# Don’t Compare
+# Don't Compare
 
 > When I was getting married, I was a PhD student at the time. My mom pulled me aside on my wedding day and said, "John, I want to give you some advice."
 > I was like, oh, she’s going to tell me to listen to my wife or whatever. But she didn’t.
