@@ -154,7 +154,7 @@ USC的图形学本科以及研究生课程.
 
 ### CSCI 522 Game Engine Development
 
-USC最后一门课, 主讲人是顽皮狗的引擎方向Principle Engineer.
+USC最后一门课, 主讲人是顽皮狗引擎方向的Principle Engineer.
 
 ### To be continued...
 
