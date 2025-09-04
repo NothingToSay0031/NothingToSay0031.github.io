@@ -144,6 +144,18 @@ Peter Harris的课很好.
 
 大致看了下.
 
+### TU Wien Rendering
+> 2025.01.15
+简单的路径追踪基础.
+
+### USC CSCI-420 CSCI-580
+> 2025.05.15
+USC的图形学本科以及研究生课程.
+
+### USC CSCI-522 Game Engine Development
+
+USC最后一门课, 主讲人是顽皮狗的引擎方向Principle Engineer.
+
 ### To be continued...
 
 > [[Life.md | Life]]
