@@ -17,5 +17,5 @@ Feel free to reach out if you’re interested in graphics, rendering, or GPU dev
 📧 [jhwzju@gmail.com](mailto:jhwzju@gmail.com) | 
 💻 [GitHub](https://github.com/NothingToSay0031) | 
 🔗 [LinkedIn](https://www.linkedin.com/in/hongweiji/) | 
-📝 [Blog](https://nothingtosay0031.github.io/)
+📝 [Zhihu](https://www.zhihu.com/people/dian-hua-wei-bo-lu-97)
 
