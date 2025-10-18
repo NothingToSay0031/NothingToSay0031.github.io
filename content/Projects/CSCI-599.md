@@ -135,7 +135,7 @@ void setTargetN(const Eigen::MatrixXd& styleN, const Eigen::MatrixXd& currentN,
 After obtaining a set of target normals $T=\{\mathrm{t}_k\}$ for each vertex $k$, the objective is to derive a deformed output shape $B'$ that approximates the surface normals to $T$. Let's denote $V$ as a matrix comprising vertex locations with a size of $|V|$-by-3. As a deformation of the input shape, our output shape $B'$ uses $V^{\prime}$ to signify the $|V|$-by-3 matrix of the deformed vertex locations. The energy optimization process, driven by normal deformation, can be expressed as:
 
 
-$$$$
+$$
 
 \min_{\mathbf{V}^{\prime}}\sum_{k\in\mathbf{V}}E_R(\mathbf{v}_k,\mathbf{u}_k)+\lambda a_k\|\hat{n}_k(\mathbf{V}^{\prime})-\mathbf{t}_k\|_2^2,
 $$
