@@ -107,8 +107,19 @@ async function _navigate(url: URL, isBack: boolean = false) {
   // scroll into place and add history
   if (!isBack) {
     if (url.hash) {
+      // Temporarily disable smooth scrolling to ensure immediate positioning
+      const originalScrollBehavior = document.documentElement.style.scrollBehavior
+      document.documentElement.style.scrollBehavior = 'auto'
+
       const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
-      el?.scrollIntoView()
+      if (el) {
+        el.scrollIntoView({ behavior: 'instant' })
+      }
+
+      // Restore smooth scrolling after a brief delay
+      setTimeout(() => {
+        document.documentElement.style.scrollBehavior = originalScrollBehavior || 'smooth'
+      }, 100)
     } else {
       window.scrollTo({ top: 0 })
     }
@@ -154,8 +165,20 @@ function createRouter() {
       event.preventDefault()
 
       if (isSamePage(url) && url.hash) {
+        // Temporarily disable smooth scrolling to ensure immediate positioning
+        const originalScrollBehavior = document.documentElement.style.scrollBehavior
+        document.documentElement.style.scrollBehavior = 'auto'
+
         const el = document.getElementById(decodeURIComponent(url.hash.substring(1)))
-        el?.scrollIntoView()
+        if (el) {
+          el.scrollIntoView({ behavior: 'instant' })
+        }
+
+        // Restore smooth scrolling after a brief delay
+        setTimeout(() => {
+          document.documentElement.style.scrollBehavior = originalScrollBehavior || 'smooth'
+        }, 100)
+
         history.pushState({}, "", url)
         return
       }
