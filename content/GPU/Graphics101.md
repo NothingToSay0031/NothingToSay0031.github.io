@@ -1,6 +1,6 @@
 ---
 title: Graphics 101
-date: 2024-08-17 19:25:47
+date: 2024-08-07 19:25:47
 description: Graphics 101 by Arm.
 math: true
 ---
