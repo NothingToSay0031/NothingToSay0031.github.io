@@ -1,3 +1,10 @@
+---
+title: 14 Volumetric and Translucency Rendering
+date: 2025-09-14 10:00:00
+description: Volumetric and Translucency Rendering
+math: true
+---
+
 # 体积与半透明渲染 
 
 ## **引言：从表面到体积 (From Surfaces to Volumes)**
@@ -672,4 +679,3 @@ $$\boldsymbol{\sigma}_{t}=\frac{-\log \left(\mathbf{t}_{c}\right)}{d}$$
 这是实时渲染中内容最丰富、最具挑战性的章节之一。我们从光线与介质作用的物理基础出发，系统性地学习了如何渲染**体积雾和云**、**半透明表面**、具有**次表面散射**的柔和材质，以及极为复杂的**毛发**。这些技术是构建现代高质量、高沉浸感虚拟世界的关键。更重要的是，我们展望了“万物皆散射”的统一渲染未来。
 
 ---
-

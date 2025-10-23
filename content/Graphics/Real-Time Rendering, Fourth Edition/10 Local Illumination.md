@@ -1,3 +1,10 @@
+---
+title: 10 Local Illumination
+date: 2025-09-10 10:00:00
+description: Local Illumination
+math: true
+---
+
 ### 局部光照
 
 #### **引言：从精确光源到真实世界光照**
@@ -625,4 +632,3 @@
 * **IES 标准**: 在追求高级渲染质量时，了解并支持IES光域网文件，可以让场景中的灯光表现得更加真实。
 
 ---
-

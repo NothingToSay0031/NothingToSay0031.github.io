@@ -1,3 +1,9 @@
+---
+title: 20 Efficient Shading
+date: 2025-09-20 10:00:00
+description: Efficient Shading
+math: true
+---
 
 # 高效着色 (Efficient Shading) 
 
@@ -198,4 +204,3 @@
 **结论：没有银弹。** 最佳方案取决于具体应用的需求：硬件平台、场景复杂度、对MSAA/透明度的要求以及开发成本等。现代引擎往往会根据不同物体的特性（不透明、透明、粒子等）混合使用多种技术。
 
 ---
-

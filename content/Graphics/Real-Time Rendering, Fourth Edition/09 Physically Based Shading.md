@@ -1,3 +1,9 @@
+---
+title: 09 Physically Based Shading
+date: 2025-09-09 10:00:00
+description: Physically Based Shading
+math: true
+---
 
 # Physically Based Shading
 
@@ -1055,4 +1061,3 @@ NDF 直接控制了高光的**形状、大小和边缘的锐利程度**，是决
 * **进阶问题：“闪闪发光”的材质 (Sparkly Materials)**: 对于雪地或某些金属漆，其表面在亚像素级别并非平滑分布，而是由少数几个高光点组成。使用方差映射会将其模糊成一个平滑的高光，失去闪烁的细节。模拟这种现象需要更高级的、基于统计学或过程化噪声的技术。
 
 ---
-

@@ -1,3 +1,9 @@
+---
+title: 07 Shadows
+date: 2025-09-07 10:00:00
+description: Shadows
+math: true
+---
 
 ### Shadows (阴影)
 
@@ -359,4 +365,3 @@ IZB是一种革命性的阴影技术，它试图融合**阴影体**的**几何�
 
 
 ---
-

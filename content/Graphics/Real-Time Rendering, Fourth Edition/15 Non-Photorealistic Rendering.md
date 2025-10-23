@@ -1,3 +1,10 @@
+---
+title: 15 Non-Photorealistic Rendering
+date: 2025-09-15 10:00:00
+description: Non-Photorealistic Rendering
+math: true
+---
+
 ## 非真实感渲染 (Non-Photorealistic Rendering, NPR) 
 
 ### 核心引言：NPR是什么？
@@ -319,4 +326,3 @@
 * **现状**: 在现代高DPI屏幕普及的背景下，其重要性已大大降低。
 
 ---
-

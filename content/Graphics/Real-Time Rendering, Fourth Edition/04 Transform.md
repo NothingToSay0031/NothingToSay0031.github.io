@@ -1,3 +1,9 @@
+---
+title: 04 Transform
+date: 2025-09-04 10:00:00
+description: Transform
+math: true
+---
 
 ### 变换 (Transform) 
 
@@ -456,4 +462,3 @@
         * 当与**浮点数深度缓冲**结合使用时，这种方法可以极大地改善深度精度在整个视锥体内的分布，有效解决 Z-Fighting 问题，是当今主流引擎的标准实践。
 
 ---
-

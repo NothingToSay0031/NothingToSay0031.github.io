@@ -1,3 +1,10 @@
+---
+title: 08 Light and Color
+date: 2025-09-08 10:00:00
+description: Light and Color
+math: true
+---
+
 ## 光与颜色 (Light and Color)
 
 ### **引言核心思想**
@@ -203,4 +210,3 @@
     * 实践中，可以将色调映射曲线本身也**一起烘焙进这个 LUT**，从而将颜色分级和色调映射合并为一个高效的查找操作。
 
 ---
-

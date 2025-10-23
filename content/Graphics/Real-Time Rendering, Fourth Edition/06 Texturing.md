@@ -1,3 +1,10 @@
+---
+title: 06 Texturing
+date: 2025-09-06 10:00:00
+description: Texturing
+math: true
+---
+
 # 纹理 (Texturing) 
 
 > "所需要做的就是使渲染出来的图像看起来正确。" — Jim Blinn
@@ -363,4 +370,3 @@
     * **体积光:** 使用**三维纹理**可以定义复杂的光束形状和体积光效果。
 
 ---
-

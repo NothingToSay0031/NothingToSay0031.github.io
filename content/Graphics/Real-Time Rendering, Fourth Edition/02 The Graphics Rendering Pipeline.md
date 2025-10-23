@@ -1,3 +1,10 @@
+---
+title: 02 The Graphics Rendering Pipeline
+date: 2025-09-02 10:00:00
+description: The Graphics Rendering Pipeline
+math: true
+---
+
 # 图形渲染管线
 
 理解图形渲染管线（Graphics Rendering Pipeline）是构建一切高级渲染技术的基础。你可以把它想象成一条高度优化的工厂流水线，它的唯一目标就是高效地将三维场景数据（模型、光源、相机）转化为最终我们在屏幕上看到的二维图像。

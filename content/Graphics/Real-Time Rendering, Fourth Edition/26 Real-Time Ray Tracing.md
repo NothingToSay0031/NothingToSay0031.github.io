@@ -1,3 +1,10 @@
+---
+title: 26 Real-Time Ray Tracing
+date: 2025-09-26 10:00:00
+description: Real-Time Ray Tracing
+math: true
+---
+
 ### 实时光线追踪 (Real-Time Ray Tracing)
 
 #### **引言：光线追踪 vs. 光栅化 (Introduction: Ray Tracing vs. Rasterization)**
@@ -389,4 +396,3 @@ DXR定义了五种不同类型的着色器，它们在光线追踪的不同阶�
 * **未来潜力:** 可以用于构建高度灵活的材质系统、模块化的后处理管线、动态的贴花（Decal）应用等，让艺术家和开发者能以更自由的方式组合渲染功能。
 
 ---
-

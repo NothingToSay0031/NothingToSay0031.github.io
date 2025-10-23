@@ -1,3 +1,9 @@
+---
+title: 11 Global Illumination
+date: 2025-09-11 10:00:00
+description: Global Illumination
+math: true
+---
 
 ###  全局光照 (Global Illumination) 
 
@@ -794,4 +800,3 @@ AO的理论推导过程，本身就是一次对渲染方程进行**层层简化*
 * **《Graphics Codex》:** 一本包含大量图形学公式和算法的电子参考书，非常适合快速查阅。
 
 ---
-

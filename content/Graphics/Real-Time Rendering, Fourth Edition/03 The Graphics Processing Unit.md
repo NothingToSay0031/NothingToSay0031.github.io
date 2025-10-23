@@ -1,3 +1,10 @@
+---
+title: 03 The Graphics Processing Unit
+date: 2025-09-03 10:00:00
+description: The Graphics Processing Unit
+math: true
+---
+
 ##  图形处理单元
 
 ### **引言：从固定功能到完全可编程**
@@ -233,4 +240,3 @@
 计算着色器通常比几何着色器等方式更高效、更灵活，是现代引擎中不可或缺的工具。
 
 ---
-

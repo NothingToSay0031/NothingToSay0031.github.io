@@ -1,3 +1,10 @@
+---
+title: 18 Pipeline Optimization
+date: 2025-09-18 10:00:00
+description: Pipeline Optimization
+math: true
+---
+
 # 管线优化 (Pipeline Optimization)
 
 ## 核心思想与引言
@@ -314,4 +321,3 @@
 * **新API的优势**: 在DX12和Vulkan中，命令缓冲区的概念被进一步强化。它们的创建和重放开销比DX11更低，且API设计本身与现代GPU硬件更匹配，从而将驱动程序的开销降至最低，真正释放了多核CPU的潜力。
 
 ---
-

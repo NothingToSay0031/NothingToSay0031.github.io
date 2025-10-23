@@ -1,3 +1,10 @@
+---
+title: 22 Intersection Test Methods
+date: 2025-09-22 10:00:00
+description: Intersection Test Methods
+math: true
+---
+
 # 相交测试方法
 
 ## 章节引言：相交测试的核心地位
@@ -783,4 +790,3 @@
     * **realtimerendering.com:** 本书的官方网站，有专门的页面总结了各种相交测试的资源链接。
 
 ---
-

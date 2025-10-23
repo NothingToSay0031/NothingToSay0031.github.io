@@ -1,3 +1,10 @@
+---
+title: 16 Polygonal Techniques
+date: 2025-09-16 10:00:00
+description: Polygonal Techniques
+math: true
+---
+
 # 多边形技术 (Polygonal Techniques)
 
 ## **引言：处理不完美的模型数据**
@@ -363,4 +370,3 @@
 | **切线空间** | `float3+float3` (24字节) | `quat` (e.g., `10_10_10_2` 4字节) | 用四元数编码整个TBN矩阵 |
 
 ---
-

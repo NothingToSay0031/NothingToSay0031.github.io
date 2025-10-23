@@ -1,3 +1,10 @@
+---
+title: 17 Curves and Curved Surfaces
+date: 2025-09-17 10:00:00
+description: Curves and Curved Surfaces
+math: true
+---
+
 # 曲线与曲面 (Curves and Curved Surfaces)
 
 > "Where there is matter, there is geometry.” —— Johannes Kepler
@@ -738,4 +745,3 @@ Hull Shader 通常会综合以下几点来决定细分程度：
   * **优点**: 渲染整个基础四边形只需一次绘制调用，能产生更均匀的细分模式，在某些情况下性能可能超过 FAS。是目前最快且最精确的方案之一。
 
 ---
-

@@ -1,3 +1,10 @@
+---
+title: 23 Graphics Hardware
+date: 2025-09-23 10:00:00
+description: Graphics Hardware
+math: true
+---
+
 # 图形硬件 (Graphics Hardware)
 
 ## 23.1 光栅化 (Rasterization)
@@ -444,4 +451,3 @@
 4.  **与传统管线的结合**: 光追硬件与传统光栅化管线协同工作。典型的混合渲染流程可能是：使用光栅化渲染主场景，然后从 G-Buffer 中射出光线，利用光追硬件来计算精确的阴影、反射或全局光照。
 
 ---
-

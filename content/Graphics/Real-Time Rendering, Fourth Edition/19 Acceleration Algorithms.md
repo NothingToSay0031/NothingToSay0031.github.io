@@ -1,3 +1,9 @@
+---
+title: 19 Acceleration Algorithms
+date: 2025-09-19 10:00:00
+description: Acceleration Algorithms
+math: true
+---
 
 # 加速算法
 
@@ -488,4 +494,3 @@ LOD 是一个广义的概念，它可以应用于渲染的多个方面：
     3.  **受限四叉树 (Restricted Quadtree):** 强制规定相邻Chunk的LOD等级最多只能相差一级。这大大简化了裂缝情况，可以用预计算的索引缓冲来直接生成无裂缝的连接。
 
 ---
-

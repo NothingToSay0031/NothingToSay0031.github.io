@@ -1,3 +1,10 @@
+---
+title: 01 Introduction
+date: 2025-09-01 10:00:00
+description: Introduction
+math: true
+---
+
 ### 简介
 
 #### **1. 核心概念：什么是实时渲染？**
@@ -83,5 +90,3 @@
 
 * **官方网站**: **[realtimerendering.com](http://realtimerendering.com)**
     * 这是本书最重要的配套资源，没有之一。它包含了书中内容的更新、勘误、补充章节（如实时光线追踪）、以及大量外部链接。由于技术发展迅速，网站是获取最新信息的最佳渠道。
-
-
