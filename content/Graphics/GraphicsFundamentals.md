@@ -1,6 +1,6 @@
 ---
 title: Graphics Fundamentals
-date: 2025-10-25 12:33:58
+date: 2025-03-25 12:33:58
 description: A comprehensive overview of fundamental graphics concepts.
 math: true
 ---
