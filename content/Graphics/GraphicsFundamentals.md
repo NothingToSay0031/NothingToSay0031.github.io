@@ -461,6 +461,8 @@ This equation describes the light intensity observed at point $x$ from direction
 
 # PBR
 
+[PBR Theory](https://learnopengl.com/PBR/Theory)
+
 漫反射部分为什么要除以一个 π？
 
 是因为：
@@ -479,7 +481,7 @@ $$
 $2\pi\int_0^{\frac \pi 2}\cos(x)\sin(x) \:dx$, $u= \sin ( x)$ , $= \int u \:du = \frac{u ^ 2} 2 =2\pi \int_0^{\frac \pi 2}\frac{sin^2 x} 2 = \frac 1 2 \times 2\pi = \pi$
 
 
-## Blinn-Phong
+# Blinn-Phong
 
 Blinn-Phong 高光使用`dot(norm, halfwayDir)`。具有更平滑的高光效果，并且更稳定，不容易出现镜面闪烁的问题。
 
