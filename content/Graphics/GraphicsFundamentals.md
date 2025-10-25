@@ -723,48 +723,73 @@ Object partitions(e.g., BVH)
 
 对于点 $(x, y, z, 1)$，透视投影矩阵 $M_{\text{persp} \to \text{ortho}}$ 的第三行计算得到：
 
-$$z' = (n+f)z - nf$$
+$$
+z' = (n+f)z - nf
+$$
 
 而第四行计算得到：
 
-$$w' = z$$
+$$
+w' = z
+$$
 
 因此，透视除法后新的 $z$ 值为：
 
-$$f(z) = \frac{z'}{w'} = \frac{(n+f)z - nf}{z} = n + f - \frac{nf}{z}$$
+$$
+f(z) = \frac{z'}{w'} = \frac{(n+f)z - nf}{z} = n + f - \frac{nf}{z}
+$$
 
 我们进行边界条件验证：
 
 * 当 $z = n$ 时：
     
-    $$f(n) = n + f - \frac{nf}{n} = n$$
+    $$
+    f(n) = n + f - \frac{nf}{n} = n
+    $$
 * 当 $z = f$ 时：
     
-    $$f(f) = n + f - \frac{nf}{f} = f$$
+    $$
+    f(f) = n + f - \frac{nf}{f} = f
+    $$
 
 这表明近平面和远平面上的点，其 $z$ 值未发生变化。
 
 现在我们分析 $f(z)$ 在区间 $0 < n < z < f$ 内的大小关系。  
 由于 $n, f$ 均为正数，我们考察不等式：
 
-$$n + f - \frac{nf}{z} > z$$
+$$
+n + f - \frac{nf}{z} > z
+$$
 
 整理得：
 
-$$n + f > z + \frac{nf}{z}$$
+$$
+n + f > z + \frac{nf}{z}
+$$
 
-即： $$z^2 - (n+f)z + nf < 0$$
+即：
+
+$$
+z^2 - (n+f)z + nf < 0
+$$
+
 所以根的表达式为：
 
-$$z = \frac{(n+f) \pm |n-f|}{2}$$
+$$
+z = \frac{(n+f) \pm |n-f|}{2}
+$$
 
 根据 $n < f$，我们得到两个根：
 
-$$z_1 = \frac{(n+f) - (f-n)}{2} = n, \quad z_2 = \frac{(n+f) + (f-n)}{2} = f$$
+$$
+z_1 = \frac{(n+f) - (f-n)}{2} = n, \quad z_2 = \frac{(n+f) + (f-n)}{2} = f
+$$
 
 该二次函数开口向上，在 $z \in (n, f)$ 的范围内恒成立，因此：
 
-$$f(z) > z, \quad \forall z \in (n, f)$$
+$$
+f(z) > z, \quad \forall z \in (n, f)
+$$
 
 这说明经过变换后，视锥体内部的点在 $z$ 方向上被压缩得更偏向远平面 $f$。
 ## View Transformation
@@ -829,7 +854,8 @@ Orthographic projection can be understood as:
 
 Consider the cuboid defined by $[l, r] \times [b, t] \times [f, n]$. The goal is to scale and translate it into the canonical cube $[-1, 1]^3$. The orthographic projection matrix is:
 
-$$M_{\text{ortho}} =  
+$$
+M_{\text{ortho}} =  
 \begin{bmatrix}  
 \frac{2}{r-l} & 0 & 0 & 0 \\  
 0 & \frac{2}{t-b} & 0 & 0 \\  
@@ -841,7 +867,8 @@ $$M_{\text{ortho}} =
 0 & 1 & 0 & -\frac{t+b}{2} \\  
 0 & 0 & 1 & -\frac{n+f}{2} \\  
 0 & 0 & 0 & 1  
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 ### Perspective Projection
 
 The perspective projection follows these steps:
@@ -855,7 +882,8 @@ The final projection matrix is $M_{\text{persp}} = M_{\text{ortho}} M_{\text{per
 
 Let $(x, y, z)$ be a point in the frustum. After applying $M_{\text{persp} \to \text{ortho}}$, this point is transformed to $\left(\frac{nx}{z}, \frac{ny}{z}, \text{unknown}\right)$, meaning:
 
-$$M_{\text{persp} \to \text{ortho}}  
+$$
+M_{\text{persp} \to \text{ortho}}  
 \begin{pmatrix}  
 x \\ y \\ z \\ 1  
 \end{pmatrix}  
@@ -866,21 +894,25 @@ x \\ y \\ z \\ 1
 =  
 \begin{pmatrix}  
 nx \\ ny \\ \text{unknown} \\ z  
-\end{pmatrix}$$
+\end{pmatrix}
+$$
 
 Thus, $M_{\text{persp} \to \text{ortho}}$ has the form:
 
-$$M_{\text{persp} \to \text{ortho}} =  
+$$
+M_{\text{persp} \to \text{ortho}} =  
 \begin{pmatrix}  
 n & 0 & 0 & 0 \\  
 0 & n & 0 & 0 \\  
 ? & ? & ? & ? \\  
 0 & 0 & 1 & 0  
-\end{pmatrix}$$
+\end{pmatrix}
+$$
 
 Given that points on the near plane remain unchanged and the z-coordinate on the far plane remains constant, we have:
 
-$$M_{\text{persp} \to \text{ortho}}  
+$$
+M_{\text{persp} \to \text{ortho}}  
 \begin{pmatrix}  
 x \\ y \\ n \\ 1  
 \end{pmatrix}  
@@ -891,7 +923,10 @@ x \\ y \\ n \\ 1
 =  
 \begin{pmatrix}  
 nx \\ ny \\ n^2 \\ n  
-\end{pmatrix}$$ $$M_{\text{persp} \to \text{ortho}}  
+\end{pmatrix}
+$$
+$$
+M_{\text{persp} \to \text{ortho}}  
 \begin{pmatrix}  
 0 \\ 0 \\ f \\ 1  
 \end{pmatrix}  
@@ -902,27 +937,32 @@ nx \\ ny \\ n^2 \\ n
 =  
 \begin{pmatrix}  
 0 \\ 0 \\ f^2 \\ f  
-\end{pmatrix}$$
+\end{pmatrix}
+$$
 
 Solving these, we get:
 
-$$M_{\text{persp} \to \text{ortho}} =  
+$$
+M_{\text{persp} \to \text{ortho}} =  
 \begin{pmatrix}  
 n & 0 & 0 & 0 \\  
 0 & n & 0 & 0 \\  
 0 & 0 & n + f & -nf \\  
 0 & 0 & 1 & 0  
-\end{pmatrix}$$
+\end{pmatrix}
+$$
 
 **Computing $l$, $r$, $b$, $t$ from fovY and Aspect Ratio**
 
 Instead of defining the near plane using $l$ (left), $r$ (right), $b$ (bottom), and $t$ (top) coordinates, we can use the **field-of-view** (fovY) and **aspect ratio**. The following relations hold:
 
-$$\begin{aligned}  
+$$
+\begin{aligned}  
 & t = |n| \tan \left(\frac{\text{fovY}}{2}\right) \\  
 & r = t \cdot \text{aspect} \\  
 & b = -t, \quad l = -r  
-\end{aligned}$$
+\end{aligned}
+$$
 
 This defines the near plane in terms of field-of-view and aspect ratio.
 ## Normal Transformation Matrix
@@ -934,13 +974,17 @@ In realistic lighting calculations, model vertex normals are typically used. Lig
 Let's assume lighting is calculated in **view space**. The transformation from **local space** to **view space** is represented by $MV$ (where $M$ is the model matrix, and $V$ is the view matrix).
 
 In a **vertex shader**, input data includes vertex positions (`localPosition`) and normals (`N`), both of which are in the local space. The vertex position in the view space is computed as:
-$$MV \cdot localPosition$$
+$$
+MV \cdot localPosition
+$$
 
 However, for the vertex normal in view space, simply applying $MV \cdot N$ is incorrect. For example, if the model undergoes non-uniform scaling, applying $MV \cdot N$ would result in a vector that is no longer perpendicular to the surface—thus no longer a valid normal.
 ### The Correct Normal Transformation Matrix
 
 The matrix used to transform normals from local space to view space is the **transpose of the inverse** of the vertex transformation matrix $MV$, denoted as:
-$$G = \left( (MV)^{-1} \right)^T$$
+$$
+G = \left( (MV)^{-1} \right)^T
+$$
 If lighting calculations are done in **world space**, the normal matrix becomes $\left( M^{-1} \right)^T$.
 
 ### Normals Transformed by Modelview Matrix
@@ -995,7 +1039,9 @@ $$
 
 In some cases, such as when the model undergoes only rotation and translation (no scaling), the transformation matrix $MV$ can be used directly for normal transformation. This is because the upper-left $3 \times 3$ matrix of $MV$ is an **orthogonal matrix**, meaning:
 
-$$(MV)^{-1} = (MV)^T \quad \Rightarrow \quad G = MV$$
+$$
+(MV)^{-1} = (MV)^T \quad \Rightarrow \quad G = MV
+$$
 
 ### Optimization
 
@@ -1013,17 +1059,25 @@ Additionally, [this article](https://lxjk.github.io/2017/10/01/Stop-Using-Normal
 
 Suppose we want to rotate a vector a by an angle $\phi$ counterclockwise to get vector b. If a makes an angle $\alpha$ with the $x$-axis, and its length is $r=\sqrt{x_a^2+y_a^2}$ , then we know that
 
-$$x_{a}=r\cos\alpha,\\y_{a}=r\sin\alpha.$$
+$$
+x_{a}=r\cos\alpha,\\y_{a}=r\sin\alpha.
+$$
 
 Because b is a rotation of a, it also has length $r$. Because it is rotated an angle $\phi$ from a, b makes an angle $(\alpha+\phi)$ with the $x$-axis. Using the trigonometric addition identities:
 
-$$x_b=r\cos(\alpha+\phi)=r\cos\alpha\cos\phi-r\sin\alpha\sin\phi,\\y_b=r\sin(\alpha+\phi)=r\sin\alpha\cos\phi+r\cos\alpha\sin\phi.$$
+$$
+x_b=r\cos(\alpha+\phi)=r\cos\alpha\cos\phi-r\sin\alpha\sin\phi,\\y_b=r\sin(\alpha+\phi)=r\sin\alpha\cos\phi+r\cos\alpha\sin\phi.
+$$
 
 Substituting $x_a=r\cos\alpha$ and $y_a=r\sin\alpha$ gives
-$$x_{b}=x_a\cos\phi-y_a\sin\phi,\\y_{b}=y_a\cos\phi+x_a\sin\phi.$$
+$$
+x_{b}=x_a\cos\phi-y_a\sin\phi,\\y_{b}=y_a\cos\phi+x_a\sin\phi.
+$$
 
 In matrix form, the transformation that takes a to b is then
-$$\text{rotate}(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.$$
+$$
+\text{rotate}(\phi)=\begin{bmatrix}\cos\phi&-\sin\phi\\\sin\phi&\cos\phi\end{bmatrix}.
+$$
 
 ## Reflection Vector Calculation
 
@@ -1074,34 +1128,64 @@ $$
 \text{叉乘}(V_1,V_2)=(x_1,y_1)\times(x_2,y_2)=x_1y_2-y_1x_2
 $$
 
-$$\vec{a}\times\vec{b}=A^*b=\begin{pmatrix}0&-z_a&y_a\\z_a&0&-x_a\\-y_a&x_a&0\end{pmatrix}\begin{pmatrix}x_b\\y_b\\z_b\end{pmatrix}$$
+$$
+\vec{a}\times\vec{b}=A^*b=\begin{pmatrix}0&-z_a&y_a\\z_a&0&-x_a\\-y_a&x_a&0\end{pmatrix}\begin{pmatrix}x_b\\y_b\\z_b\end{pmatrix}
+$$
 ### Barycentric 坐标
 
 给定一个三角形 $\triangle ABC$，其中三个顶点的坐标分别为：
-$$A(x_A, y_A), \quad B(x_B, y_B), \quad C(x_C, y_C)$$
+$$
+A(x_A, y_A), \quad B(x_B, y_B), \quad C(x_C, y_C)
+$$
 那么，任意平面上的点 $P(x, y)$ 可以用 Barycentric 坐标 $(\lambda_1, \lambda_2, \lambda_3)$ 来表示：
-$$P = \lambda_1 A + \lambda_2 B + \lambda_3 C$$
+$$
+P = \lambda_1 A + \lambda_2 B + \lambda_3 C
+$$
 其中 $\lambda_1, \lambda_2, \lambda_3$ 满足：
-$$\lambda_1 + \lambda_2 + \lambda_3 = 1$$
+$$
+\lambda_1 + \lambda_2 + \lambda_3 = 1
+$$
 
 这表示 $P$ 是顶点的线性组合。
 
 Barycentric 坐标可以通过面积法或者向量叉积来计算。最常见的方法是**利用三角形面积**：
-$$\lambda_1 = \frac{\text{Area}(\triangle PBC)}{\text{Area}(\triangle ABC)}$$$$\lambda_2 = \frac{\text{Area}(\triangle PAC)}{\text{Area}(\triangle ABC)}$$$$\lambda_3 = \frac{\text{Area}(\triangle PAB)}{\text{Area}(\triangle ABC)}$$
+$$
+\lambda_1 = \frac{\text{Area}(\triangle PBC)}{\text{Area}(\triangle ABC)}
+$$
+$$
+\lambda_2 = \frac{\text{Area}(\triangle PAC)}{\text{Area}(\triangle ABC)}
+$$
+$$
+\lambda_3 = \frac{\text{Area}(\triangle PAB)}{\text{Area}(\triangle ABC)}
+$$
 由于三角形面积可以用**向量叉积**表示：
-$$\text{Area}(\triangle XYZ) = \frac{1}{2} |(X - Z) \times (Y - Z)|$$
+$$
+\text{Area}(\triangle XYZ) = \frac{1}{2} |(X - Z) \times (Y - Z)|
+$$
 其中向量叉积 $(X - Z) \times (Y - Z)$ 计算的是 2D 叉积：
 
-$$(X - Z) \times (Y - Z) = (x_X - x_Z)(y_Y - y_Z) - (y_X - y_Z)(x_Y - x_Z)$$
+$$
+(X - Z) \times (Y - Z) = (x_X - x_Z)(y_Y - y_Z) - (y_X - y_Z)(x_Y - x_Z)
+$$
 
 所以可以得到：
 
-$$\lambda_1 = \frac{(x_B - x_C)(y - y_C) - (y_B - y_C)(x - x_C)}{(x_B - x_C)(y_A - y_C) - (y_B - y_C)(x_A - x_C)}$$ $$\lambda_2 = \frac{(x_C - x_A)(y - y_C) - (y_C - y_A)(x - x_C)}{(x_B - x_C)(y_A - y_C) - (y_B - y_C)(x_A - x_C)}$$ $$\lambda_3 = 1 - \lambda_1 - \lambda_2$$
+$$
+\lambda_1 = \frac{(x_B - x_C)(y - y_C) - (y_B - y_C)(x - x_C)}{(x_B - x_C)(y_A - y_C) - (y_B - y_C)(x_A - x_C)}
+$$ 
+$$
+\lambda_2 = \frac{(x_C - x_A)(y - y_C) - (y_C - y_A)(x - x_C)}{(x_B - x_C)(y_A - y_C) - (y_B - y_C)(x_A - x_C)}
+$$ 
+$$
+\lambda_3 = 1 - \lambda_1 - \lambda_2
+$$
 #### 如何判断点在三角形内
 
 根据 Barycentric 坐标的性质，点 $P$ 在三角形内部当且仅当：
 
-$$0 \leq \lambda_1 \leq 1, \quad 0 \leq \lambda_2 \leq 1, \quad 0 \leq \lambda_3 \leq 1$$
+$$
+0 \leq \lambda_1 \leq 1, \quad 0 \leq \lambda_2 \leq 1, \quad 0 \leq \lambda_3 \leq 
+$$
 
 如果任何一个 $\lambda$ 超出范围，说明点 $P$ 在三角形外部。
 
@@ -1142,15 +1226,21 @@ Triangle is in a plane
 Möller Trumbore Algorithm
 
 如果一个点在三角形内，就能用重心坐标系去表示这个点；带入方程，有 3 个未知数（b1，b2，t），得到三个等式；解出这三个未知数；判定 t 是否合理，t > 0，然后(1-b1-b2), b1, b2 are barycentric coordinates，就是有解。
-$$\vec{\mathbf{O}}+t\vec{\mathbf{D}}=(1-b_{1}-b_{2})\vec{\mathbf{P}}_{0}+b_{1}\vec{\mathbf{P}}_{1}+b_{2}\vec{\mathbf{P}}_{2}$$
-$$\begin{bmatrix}t\\b_1\\b_2\end{bmatrix}=\frac{1}{\vec{\mathbf{S}}_1\bullet\vec{\mathbf{E}}_1}\begin{bmatrix}\vec{\mathbf{S}}_2\bullet\vec{\mathbf{E}}_2\\\vec{\mathbf{S}}_1\bullet\vec{\mathbf{S}}\\\vec{\mathbf{S}}_2\bullet\vec{\mathbf{D}}\end{bmatrix}$$
-$$\begin{aligned}
+$$
+\vec{\mathbf{O}}+t\vec{\mathbf{D}}=(1-b_{1}-b_{2})\vec{\mathbf{P}}_{0}+b_{1}\vec{\mathbf{P}}_{1}+b_{2}\vec{\mathbf{P}}_{2}
+$$
+$$
+\begin{bmatrix}t\\b_1\\b_2\end{bmatrix}=\frac{1}{\vec{\mathbf{S}}_1\bullet\vec{\mathbf{E}}_1}\begin{bmatrix}\vec{\mathbf{S}}_2\bullet\vec{\mathbf{E}}_2\\\vec{\mathbf{S}}_1\bullet\vec{\mathbf{S}}\\\vec{\mathbf{S}}_2\bullet\vec{\mathbf{D}}\end{bmatrix}
+$$
+$$
+\begin{aligned}
 &\mathbf{\vec{E}}_{1}=\mathbf{\vec{P}}_{1}-\mathbf{\vec{P}}_{0} \\
 &\mathbf{\vec{E}}_{2}=\mathbf{\vec{P}}_{2}-\mathbf{\vec{P}}_{0} \\
 &\mathbf{\vec{S}}=\mathbf{\vec{O}}-\mathbf{\vec{P}}_{0} \\
 &\mathbf{\vec{S}}_{1}=\mathbf{\vec{D}}\times\mathbf{\vec{E}}_{2} \\
 &\mathbf{\vec{S}}_{2}=\mathbf{\vec{S}}\times\mathbf{\vec{E}}_{1}
-\end{aligned}$$
+\end{aligned}
+$$
 Cost = (1 div, 27 mul, 17 add)
 
 Recall: How to determine if the intersection isinside the triangle?
@@ -1261,37 +1351,59 @@ vec3 worldNormal = normalize(TBN * normalMap);
 
 切线空间（Tangent Space）通常用于法线贴图（Normal Mapping），以便在模型表面上正确地应用法线方向。切线空间的计算主要依赖于 **顶点位置、UV 坐标 和 法线**，其核心在于构造 **切线（Tangent）、副切线（Bitangent，也叫 BiNormal） 和 法线（Normal）** 三个向量，从而形成一个局部坐标系。下面是详细计算过程：
 
-* * *
 ### 计算切线空间（Tangent Space）
 
 假设给定一个三角形的三个顶点 $\mathbf{p_0}, \mathbf{p_1}, \mathbf{p_2}$ 及其对应的 UV 坐标 $(u_0, v_0), (u_1, v_1), (u_2, v_2)$，计算切线（Tangent）和副切线（Bitangent）的过程如下：
 #### 计算边向量
 
-$$\mathbf{E_1} = \mathbf{p_1} - \mathbf{p_0}, \quad \mathbf{E_2} = \mathbf{p_2} - \mathbf{p_0}$$
+$$
+\mathbf{E_1} = \mathbf{p_1} - \mathbf{p_0}, \quad \mathbf{E_2} = \mathbf{p_2} - \mathbf{p_0}
+$$
 
 #### 计算 UV 坐标变化量
-$$\Delta u_1 = u_1 - u_0, \quad \Delta v_1 = v_1 - v_0$$ $$\Delta u_2 = u_2 - u_0, \quad \Delta v_2 = v_2 - v_0$$
+
+$$
+\Delta u_1 = u_1 - u_0, \quad \Delta v_1 = v_1 - v_0
+$$ 
+$$
+\Delta u_2 = u_2 - u_0, \quad \Delta v_2 = v_2 - v_0
+$$
+
 #### 计算切线（Tangent） 和 副切线（Bitangent）
 
 定义线性系统：
 
-$$\mathbf{E_1} = \mathbf{T} \Delta u_1 + \mathbf{B} \Delta v_1$$ $$\mathbf{E_2} = \mathbf{T} \Delta u_2 + \mathbf{B} \Delta v_2$$
+$$
+\mathbf{E_1} = \mathbf{T} \Delta u_1 + \mathbf{B} \Delta v_1
+$$ 
+$$
+\mathbf{E_2} = \mathbf{T} \Delta u_2 + \mathbf{B} \Delta v_2
+$$
 
 将其转换为矩阵求解：
 
-$$\begin{bmatrix} \mathbf{T} \\ \mathbf{B} \end{bmatrix}  
+$$
+\begin{bmatrix} \mathbf{T} \\ \mathbf{B} \end{bmatrix}  
 =  
 \begin{bmatrix} \Delta u_1 & \Delta v_1 \\ \Delta u_2 & \Delta v_2 \end{bmatrix}^{-1}  
-\begin{bmatrix} \mathbf{E_1} \\ \mathbf{E_2} \end{bmatrix}$$
+\begin{bmatrix} \mathbf{E_1} \\ \mathbf{E_2} \end{bmatrix}
+$$
 
 求解：
 
-$$\mathbf{T} = \frac{1}{\Delta u_1 \Delta v_2 - \Delta u_2 \Delta v_1} (\Delta v_2 \mathbf{E_1} - \Delta v_1 \mathbf{E_2})$$ $$\mathbf{B} = \frac{1}{\Delta u_1 \Delta v_2 - \Delta u_2 \Delta v_1} (-\Delta u_2 \mathbf{E_1} + \Delta u_1 \mathbf{E_2})$$
+$$
+\mathbf{T} = \frac{1}{\Delta u_1 \Delta v_2 - \Delta u_2 \Delta v_1} (\Delta v_2 \mathbf{E_1} - \Delta v_1 \mathbf{E_2})
+$$ 
+$$
+\mathbf{B} = \frac{1}{\Delta u_1 \Delta v_2 - \Delta u_2 \Delta v_1} (-\Delta u_2 \mathbf{E_1} + \Delta u_1 \mathbf{E_2})
+$$
 其中 **$\mathbf{T}$** 是切线向量，**$\mathbf{B}$** 是副切线向量。
 
 #### 归一化
 
-$$\mathbf{T} = \frac{\mathbf{T}}{||\mathbf{T}||}, \quad \mathbf{B} = \frac{\mathbf{B}}{||\mathbf{B}||}$$
+$$
+\mathbf{T} = \frac{\mathbf{T}}{||\mathbf{T}||}, \quad \mathbf{B} = \frac{\mathbf{B}}{||\mathbf{B}||}
+$$
 
 至此，我们得到了三角形的 **切线（Tangent）和副切线（Bitangent）**。
 
@@ -1300,11 +1412,15 @@ $$\mathbf{T} = \frac{\mathbf{T}}{||\mathbf{T}||}, \quad \mathbf{B} = \frac{\math
 
 1. **切线和副切线正交化：** 在计算得出切线和副切线后，你可以使用正交化方法（例如Gram-Schmidt正交化）来强制它们变得正交。
     具体地说，可以对$\mathbf{B}$向量执行如下操作：
-    $$\mathbf{B}_{\text{ortho}} = \mathbf{B} - (\mathbf{T} \cdot \mathbf{B}) \mathbf{T}$$
+    $$
+    \mathbf{B}_{\text{ortho}} = \mathbf{B} - (\mathbf{T} \cdot \mathbf{B}) \mathbf{T}
+    $$
     
     然后，归一化$\mathbf{B}_{\text{ortho}}$，使其成为单位向量：
     
-    $$\mathbf{B}_{\text{ortho}} = \frac{\mathbf{B}_{\text{ortho}}}{||\mathbf{B}_{\text{ortho}}||}$$
+    $$
+    \mathbf{B}_{\text{ortho}} = \frac{\mathbf{B}_{\text{ortho}}}{||\mathbf{B}_{\text{ortho}}||}
+    $$
     
     这样，$\mathbf{T}$和$\mathbf{B}_{\text{ortho}}$将是正交的。
     
@@ -1327,15 +1443,19 @@ $$\mathbf{N_T} = 2 \times \mathbf{N}_{tex} - 1$$
 这将法线贴图数据转换为切线空间中的法线方向。
 
 用计算得到的 **Tangent（T）**、**Bitangent（B）** 和 **法线（N）** 构造一个变换矩阵：
-$$\mathbf{TBN} =  
+$$
+\mathbf{TBN} =  
 \begin{bmatrix}  
 T_x & B_x & N_x \\  
 T_y & B_y & N_y \\  
 T_z & B_z & N_z  
-\end{bmatrix}$$
+\end{bmatrix}
+$$
 这个矩阵可以将切线空间的法线转换到 **世界空间** 或 **视图空间**。
 
-$$\mathbf{N_W} = \mathbf{TBN} \cdot \mathbf{N_T}$$
+$$
+\mathbf{N_W} = \mathbf{TBN} \cdot \mathbf{N_T}
+$$
 
 其中：
 
@@ -1358,11 +1478,15 @@ $$\mathbf{N_W} = \mathbf{TBN} \cdot \mathbf{N_T}$$
 1. **分量形式**：  
     对于向量 $\mathbf{a} = (a_1, a_2, \dots, a_n)$ 和 $\mathbf{b} = (b_1, b_2, \dots, b_n)$，点乘为：
     
-    $$\mathbf{a} \cdot \mathbf{b} = a_1b_1 + a_2b_2 + \dots + a_nb_n $$
+    $$
+    \mathbf{a} \cdot \mathbf{b} = a_1b_1 + a_2b_2 + \dots + a_nb_n 
+    $$
 2. **几何形式**：  
     用模长和夹角表示：
     
-    $$\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}||\mathbf{b}|\cos\theta $$
+    $$
+    \mathbf{a} \cdot \mathbf{b} = |\mathbf{a}||\mathbf{b}|\cos\theta
+    $$
     
     其中 $\theta$ 是两向量间的夹角。点乘为0时，两向量垂直。
     
@@ -1371,13 +1495,17 @@ $$\mathbf{N_W} = \mathbf{TBN} \cdot \mathbf{N_T}$$
 
 向量 $\mathbf{a}$ 在 $\mathbf{b}$ 方向上的投影长度为：
 
-$$\text{投影长度} = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|} $$
+$$
+\text{投影长度} = \frac{\mathbf{a} \cdot \mathbf{b}}{|\mathbf{b}|}
+$$
 
 或等价于 $|\mathbf{a}|\cos\theta$。
 
 向量 $\mathbf{a}$ 在 $\mathbf{b}$ 方向上的投影向量为：
 
-$$\text{proj}_{\mathbf{b}} \mathbf{a} = \left( \frac{\mathbf{a} \cdot \mathbf{b}}{\mathbf{b} \cdot \mathbf{b}} \right) \mathbf{b} $$
+$$
+\text{proj}_{\mathbf{b}} \mathbf{a} = \left( \frac{\mathbf{a} \cdot \mathbf{b}}{\mathbf{b} \cdot \mathbf{b}} \right) \mathbf{b} 
+$$
 
 其中，$\mathbf{b} \cdot \mathbf{b} = |\mathbf{b}|^2$，分母为标量，分子为点乘结果。
 
@@ -1397,53 +1525,83 @@ $$\text{proj}_{\mathbf{b}} \mathbf{a} = \left( \frac{\mathbf{a} \cdot \mathbf{b}
 
 我们可以从余弦定理的公式
 
-$$c^2 = a^2 + b^2 - 2ab\cos\theta$$
+$$
+c^2 = a^2 + b^2 - 2ab\cos\theta
+$$
 
 推导出点乘的分量形式。
 
 设有两个向量：
 
-$$\mathbf{a} = (a_1, a_2, \dots, a_n), \quad \mathbf{b} = (b_1, b_2, \dots, b_n)$$
+$$
+\mathbf{a} = (a_1, a_2, \dots, a_n), \quad \mathbf{b} = (b_1, b_2, \dots, b_n)
+$$
 
 向量的模长（欧几里得范数）定义为：
 
-$$|\mathbf{a}| = \sqrt{a_1^2 + a_2^2 + \dots + a_n^2}, \quad |\mathbf{b}| = \sqrt{b_1^2 + b_2^2 + \dots + b_n^2}$$
+$$
+|\mathbf{a}| = \sqrt{a_1^2 + a_2^2 + \dots + a_n^2}, \quad |\mathbf{b}| = \sqrt{b_1^2 + b_2^2 + \dots + b_n^2}
+$$
 
 两向量之差为：
 
-$$\mathbf{c} = \mathbf{a} - \mathbf{b} = (a_1 - b_1, a_2 - b_2, \dots, a_n - b_n)$$
+$$
+\mathbf{c} = \mathbf{a} - \mathbf{b} = (a_1 - b_1, a_2 - b_2, \dots, a_n - b_n)
+$$
 
 其模长为：
 
-$$|\mathbf{c}|^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 + \dots + (a_n - b_n)^2$$
+$$
+|\mathbf{c}|^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 + \dots + (a_n - b_n)^2
+$$
 
 根据余弦定理：
 
-$$|\mathbf{c}|^2 = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2 |\mathbf{a}| |\mathbf{b}| \cos\theta$$
+$$
+|\mathbf{c}|^2 = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2 |\mathbf{a}| |\mathbf{b}| \cos\theta
+$$
 
 展开 $|\mathbf{c}|^2$：
 
-$$|\mathbf{c}|^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 + \dots + (a_n - b_n)^2$$ $$= a_1^2 - 2a_1b_1 + b_1^2 + a_2^2 - 2a_2b_2 + b_2^2 + \dots + a_n^2 - 2a_nb_n + b_n^2$$ $$= (a_1^2 + a_2^2 + \dots + a_n^2) + (b_1^2 + b_2^2 + \dots + b_n^2) - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)$$
+$$
+|\mathbf{c}|^2 = (a_1 - b_1)^2 + (a_2 - b_2)^2 + \dots + (a_n - b_n)^2
+$$ 
+$$
+= a_1^2 - 2a_1b_1 + b_1^2 + a_2^2 - 2a_2b_2 + b_2^2 + \dots + a_n^2 - 2a_nb_n + b_n^2
+$$ 
+$$
+= (a_1^2 + a_2^2 + \dots + a_n^2) + (b_1^2 + b_2^2 + \dots + b_n^2) - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)
+$$
 
 由于：
 
-$$|\mathbf{a}|^2 = a_1^2 + a_2^2 + \dots + a_n^2, \quad |\mathbf{b}|^2 = b_1^2 + b_2^2 + \dots + b_n^2$$
+$$
+|\mathbf{a}|^2 = a_1^2 + a_2^2 + \dots + a_n^2, \quad |\mathbf{b}|^2 = b_1^2 + b_2^2 + \dots + b_n^2
+$$
 
 所以：
 
-$$|\mathbf{c}|^2 = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)$$
+$$
+|\mathbf{c}|^2 = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)
+$$
 
 与余弦定理比较：
 
-$$|\mathbf{a}|^2 + |\mathbf{b}|^2 - 2 |\mathbf{a}| |\mathbf{b}| \cos\theta = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)$$
+$$
+|\mathbf{a}|^2 + |\mathbf{b}|^2 - 2 |\mathbf{a}| |\mathbf{b}| \cos\theta = |\mathbf{a}|^2 + |\mathbf{b}|^2 - 2(a_1b_1 + a_2b_2 + \dots + a_nb_n)
+$$
 
 消去相同项：
 
-$$-2 |\mathbf{a}| |\mathbf{b}| \cos\theta = -2 (a_1b_1 + a_2b_2 + \dots + a_nb_n)$$
+$$
+-2 |\mathbf{a}| |\mathbf{b}| \cos\theta = -2 (a_1b_1 + a_2b_2 + \dots + a_nb_n)
+$$
 
 两边除以 $-2$：
 
-$$\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos\theta = a_1b_1 + a_2b_2 + \dots + a_nb_n$$
+$$
+\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos\theta = a_1b_1 + a_2b_2 + \dots + a_nb_n
+$$
 
 从而证明了点乘的分量形式。
 ## 叉乘
@@ -1451,14 +1609,18 @@ $$\mathbf{a} \cdot \mathbf{b} = |\mathbf{a}| |\mathbf{b}| \cos\theta = a_1b_1 + 
 叉乘（或称矢量积、向量积）是向量运算中的一种，用来计算两个向量之间的正交向量（垂直于这两个向量的向量）。在三维空间中，叉乘的结果也是一个向量。
 
 给定两个三维向量 $\mathbf{A} = (A_x, A_y, A_z)$ 和 $\mathbf{B} = (B_x, B_y, B_z)$，它们的叉乘（记作 $\mathbf{A} \times \mathbf{B}$）的结果是一个新的向量：
-$$\mathbf{A} \times \mathbf{B} = \left( A_y B_z - A_z B_y, A_z B_x - A_x B_z, A_x B_y - A_y B_x \right)$$
+$$
+\mathbf{A} \times \mathbf{B} = \left( A_y B_z - A_z B_y, A_z B_x - A_x B_z, A_x B_y - A_y B_x \right)
+$$
 * $x$ 分量：$A_y B_z - A_z B_y$
 * $y$ 分量：$A_z B_x - A_x B_z$
 * $z$ 分量：$A_x B_y - A_y B_x$
 
 * **方向**：结果向量的方向与原来的两个向量都垂直，遵循右手法则。如果你用右手的手指指向第一个向量 $\mathbf{A}$，然后手指弯向第二个向量 $\mathbf{B}$，那么你的大拇指指向的就是叉乘结果向量的方向。
 * **大小**：结果向量的长度等于这两个向量构成的平行四边形的面积
-$$|\mathbf{A} \times \mathbf{B}| = |\mathbf{A}| |\mathbf{B}| \sin \theta$$
+$$
+|\mathbf{A} \times \mathbf{B}| = |\mathbf{A}| |\mathbf{B}| \sin \theta
+$$
 其中，$\theta$ 是两个向量之间的夹角。
 
 
