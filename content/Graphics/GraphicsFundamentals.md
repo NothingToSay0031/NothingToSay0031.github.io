@@ -360,12 +360,18 @@ e.g. for an area light it is the light emitted along a given ray (point on surfa
 ## Irradiance vs. Radiance
 
 Irradiance: total power received by area $\mathrm{d}A$
+
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202411121757207.png)
+
 Radiance: power received by area $\mathrm{d}A$ from "direction" $\mathrm{d}\omega$
-$$\begin{aligned}
+
+$$
+\begin{aligned}
 dE(\mathrm{p},\omega)& =L_i(\mathrm{p},\omega)\cos\theta \mathrm{d}\omega \\
 E(\mathrm{p})& =\int_{H^2}L_i(\mathrm{p},\omega)\cos\theta \mathrm{d}\omega 
-\end{aligned}$$
+\end{aligned}
+$$
+
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202411121826905.png)
 
 
@@ -382,7 +388,10 @@ E(\mathrm{p})& =\int_{H^2}L_i(\mathrm{p},\omega)\cos\theta \mathrm{d}\omega
 $\frac{\mathrm{d}L_r(\omega_r)}{\mathrm{d}E_i(\omega_i)}$ is the **Bidirectional Reflectance Distribution Function (BRDF)**, a measure of how much light a surface reflects from a specific incoming direction $\omega_i$ to a specific outgoing direction $\omega_r$. Physically, it describes the ratio of **radiance** $L_r$ (the power per unit area per unit solid angle) in the outgoing direction to **irradiance** $E_i$ (the power per unit area) from the incoming direction.
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202411122005035.png)
 
-$$f_r(\omega_i\to\omega_r)=\frac{\mathrm{d}L_r(\omega_r)}{\mathrm{d}E_i(\omega_i)}=\frac{\mathrm{d}L_r(\omega_r)}{L_i(\omega_i)\cos\theta_i \mathrm{d}\omega_i}$$
+$$
+f_r(\omega_i\to\omega_r)=\frac{\mathrm{d}L_r(\omega_r)}{\mathrm{d}E_i(\omega_i)}=\frac{\mathrm{d}L_r(\omega_r)}{L_i(\omega_i)\cos\theta_i \mathrm{d}\omega_i}
+$$
+
 Units:  $\frac1{\mathrm{sr}}$
 
 BRDF描述的是材质的一种固有光学属性，它需要将出射的“亮度”与真正“到达并被表面接收”的能量关联起来，而到达表面的能量密度是由辐照度（Irradiance）来衡量的，而非入射的辐射亮度（Radiance）本身。
@@ -395,7 +404,9 @@ $$
 &=\pi f_rL_i 
 \end{aligned}
 $$
-$$f_r=\frac{\rho}{\pi}$$
+$$
+f_r=\frac{\rho}{\pi}
+$$
 
 $\rho$ represents the surface's reflectance or **albedo**, which is the proportion of light that an object reflects.
 
@@ -405,10 +416,14 @@ Note: The integral $\int_{H^2}\cos\theta_i \mathrm{d}\omega_i = \pi$. To ensure 
 ## The Reflection Equation
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202411122333356.png)
 
-$$L_r(\mathrm{p},\omega_r)=\int_{H^2}f_r(\mathrm{p},\omega_i\rightarrow\omega_r) L_i(\mathrm{p},\omega_i) \cos\theta_i \mathrm{d}\omega_i$$
+$$
+L_r(\mathrm{p},\omega_r)=\int_{H^2}f_r(\mathrm{p},\omega_i\rightarrow\omega_r) L_i(\mathrm{p},\omega_i) \cos\theta_i \mathrm{d}\omega_i
+$$
 ## The Rendering Equation
 
-$$L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} L_i(x, \omega_i) \, f(x, \omega_i, \omega_o) \, \cos \theta_i \, \mathrm{d}\omega_i$$
+$$
+L_o(x, \omega_o) = L_e(x, \omega_o) + \int_{\Omega} L_i(x, \omega_i) \, f(x, \omega_i, \omega_o) \, \cos \theta_i \, \mathrm{d}\omega_i
+$$
 
 **The meaning of each term in the equation is as follows:**
 
@@ -467,7 +482,9 @@ This equation describes the light intensity observed at point $x$ from direction
 
 是因为：
 
-$$\int_{2\pi} \cos \theta_o \, d\omega_o = \pi$$
+$$
+\int_{2\pi} \cos \theta_o \, d\omega_o = \pi
+$$
 
 
 如果散射的光线最后都能汇集到一点的话，积分的结果就是会再乘一个 pi。所以分散的时候就需要除 pi。
