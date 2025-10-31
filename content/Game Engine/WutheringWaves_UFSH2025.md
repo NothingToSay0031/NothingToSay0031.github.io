@@ -280,7 +280,7 @@ title: '《鸣潮》中的光线追踪'
 
 *   **问题：Billboard / Imposter 物体投射阴影**
     
-    *   **背景:** 在光栅化中，可以通过不同的 Shader Pass (Base Pass vs Shadow Pass) 控制朝向。但在光追中，**BBH (BVH) 只有一份**，无法这么做。
+    *   **背景:** 在光栅化中，可以通过不同的 Shader Pass (Base Pass vs Shadow Pass) 控制朝向。但在光追中，**BVH 只有一份**，无法这么做。
         
     *   **解决方案 (混合阴影):**
         
