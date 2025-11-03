@@ -13,7 +13,7 @@ math: true
 
 ### 传统管线的瓶颈
 
-[[GPU.md#turing-架构-mesh-shader|Turing 架构: Mesh Shader]]
+[[GPUArchitecture.md#turing-架构-mesh-shader|Turing 架构: Mesh Shader]]
 
 1.  **重复的顶点批处理**：即使场景中模型的拓扑结构（顶点连接关系）固定不变，硬件的“图元分发器” (Primitive Distributor) 每次绘制时仍然需要扫描整个索引缓冲区来创建顶点批次。这是一种不必要的重复劳动。
 2.  **无效的数据拉取**：传统管线会拉取并处理大量最终不可见的顶点数据。这些顶点可能因为背面剔除 (Back-face Culling)、视锥剔除 (Frustum Culling) 或被遮挡而被丢弃，但 GPU 带宽和计算资源已经被浪费了。
