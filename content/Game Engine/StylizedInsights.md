@@ -1,5 +1,5 @@
 ---
-date: '2025-11-06T14:16:31+08:00'
+date: '2025-11-02T14:16:31+08:00'
 title: 'Stylized Rendering Insights from Japan'
 ---
 

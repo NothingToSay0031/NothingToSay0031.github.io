@@ -1,3 +1,8 @@
+---
+date: '2025-11-03T14:16:31+08:00'
+title: 'UE5 Graphics Deep Insights From Japan'
+---
+
 # UE5 Graphics Deep Insights From Japan
 
 [UE5 Graphics Deep Insights From Japan | Unreal Fest Bali 2025](https://www.youtube.com/watch?v=EjxK16koNfQ)

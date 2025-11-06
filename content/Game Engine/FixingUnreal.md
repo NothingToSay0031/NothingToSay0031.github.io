@@ -1,14 +1,14 @@
 ---
-date: '2025-11-06T14:16:31+08:00'
+date: '2025-11-01T14:16:31+08:00'
 title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 ---
 
-##  UE的“破坏”与“修复”：工程师的问题解决指南
+#  UE的“破坏”与“修复”：工程师的问题解决指南
 -----------------------
 
 [Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving | Unreal Fest Bali 2025](https://www.youtube.com/watch?v=6QDE6aMSG8Q)
 
-### 核心思想：建立系统性的问题解决思维
+## 核心思想：建立系统性的问题解决思维
 
 本讲座的目标不是修复某个特定Bug，而是分享一种**真实世界的工程思维**。这套思维模式用于在面临压力（如上线DDL、多平台约束）时，系统性地**识别问题、用数据验证、评估风险**并**应用调试策略**。
 
@@ -16,13 +16,13 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第一部分：理解技术问题的本质
+## 第一部分：理解技术问题的本质
 
-#### 1\. 什么是技术问题解决？
+### 1\. 什么是技术问题解决？
 
 这不仅仅是“修复Bug”。它是**理解、诊断和解决复杂问题**的过程，尤其是当**症状不明确或具有误导性**时。你需要学会使用正确的工具、提出正确的问题，并与引擎协同工作，而不是对抗它。
 
-#### 2\. 技术问题的四大分类
+### 2\. 技术问题的四大分类
 
 几乎所有UE中的技术问题都可以归为以下四类。**正确分类至关重要**，因为它决定了你**需要和谁一起解决问题**。
 
@@ -51,7 +51,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     *   **解决方案：** 同样需要**制作人或主管**介入，重新思考功能范围。
         
 
-#### 3\. 如何克服“无从下手”的窘境
+### 3\. 如何克服“无从下手”的窘境
 
 当遇到一个没有明确复现路径、或者发生在别人代码里、或者“时好时坏”的Bug时，人会很容易感到无助。
 
@@ -70,9 +70,9 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第二部分：问题解决的实战步骤与案例
+## 第二部分：问题解决的实战步骤与案例
 
-#### 步骤一：准确识别问题（定义问题）
+### 步骤一：准确识别问题（定义问题）
 
 错误诊断会浪费时间，甚至引入新Bug。在动手修复前，先通过结构化提问来**“框定”问题**：
 
@@ -85,7 +85,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 *   **最有用的问题：** **“最近有什么变动？”**（代码、配置、引擎升级等）。
     
 
-#### 案例分析一：追踪“关闭时崩溃” (Shutdown Crash)
+### 案例分析一：追踪“关闭时崩溃” (Shutdown Crash)
 
 *   **问题：** 游戏在**关闭应用时**发生崩溃。
     
@@ -126,7 +126,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-#### 步骤二：验证假设（不要猜测！）
+### 步骤二：验证假设（不要猜测！）
 
 *   **常见错误：** **“猜测”**。根据症状（symptoms）而非证据（evidence）草率下结论。
     
@@ -139,7 +139,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     *   可以通过添加自定义的 **Scoped Trace Events**（使用 `TRACE_CPUPROFILER_EVENT_SCOPE` 宏）来轻松扩展，以深入分析你自己的函数。
         
 
-#### 案例分析二：极限性能优化 (90 FPS)
+### 案例分析二：极限性能优化 (90 FPS)
 
 *   **问题：** 游戏已经很精简，但为了达到90 FPS，仍需从每帧中“抠出” **2毫秒**。
     
@@ -213,11 +213,11 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     *   **结果：** 物理Tick时间成功降低，达到性能预算。
         
 
-### 第三部分：深入剖析：高级分析与调试工具
+## 第三部分：深入剖析：高级分析与调试工具
 
 当 `Unreal Insights` 帮我们定位到“宏观”瓶颈后，我们常常需要更专门的工具来解答特定的“微观”问题，尤其是内存和GPU层面。
 
-#### 1\. MemReport (内存快照报告)
+### 1\. MemReport (内存快照报告)
 
 *   **核心功能：** 一个**控制台命令**，用于在运行时抓取一份**静态的内存使用快照**。
     
@@ -262,7 +262,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-#### 2\. Microsoft Pix (DX12 渲染调试器)
+### 2\. Microsoft Pix (DX12 渲染调试器)
 
 *   **核心功能：** 微软为 **DirectX12** (Windows 和 Xbox) 提供的官方性能调优和调试套件。
     
@@ -305,7 +305,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-#### 3\. Nvidia Nsight Aftermath (GPU 崩溃验尸)
+### 3\. Nvidia Nsight Aftermath (GPU 崩溃验尸)
 
 *   **核心功能：** 专为Nvidia GPU设计的**事后调试 (Postmortem Debugging)** 工具。
     
@@ -342,9 +342,9 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第四部分：从诊断到解决方案
+## 第四部分：从诊断到解决方案
 
-#### 1\. 隔离问题的艺术
+### 1\. 隔离问题的艺术
 
 *   **核心原则：** **“剥洋葱”**——将问题精简到只剩你正在测试的系统。**尽可能移除所有变量**。
     
@@ -359,7 +359,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     *   **验证修复：** **“如果一个问题无法复现或无法测量，你如何知道你已经修复了它？”** 你必须能够验证修复是有效的。
         
 
-#### 2\. “爆炸半径”：评估修复的风险
+### 2\. “爆炸半径”：评估修复的风险
 
 *   **核心概念：** 每一个修复都有一个**“爆炸半径” (Blast Radius)**——它可能对其他系统产生的潜在、非预期的负面影响。
     
@@ -372,7 +372,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     3.  **时机 (Timing)：** 我们是否**临近里程碑 (Milestone) 或版本发布**？（越临近发布，风险越高，因为测试时间更少）。
         
 
-#### 3\. 针对不同风险的应用策略
+### 3\. 针对不同风险的应用策略
 
 *   **低风险问题 (Low Risk)**
     
@@ -405,14 +405,14 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
         *   这允许你在**生产环境中快速启用或禁用**你的修复，而无需重新部署整个包，这是管理高风险变更的黄金法则。
 
 
-### 第五部分：高风险实战：发布后修改玩家存档 (Save Game)
+## 第五部分：高风险实战：发布后修改玩家存档 (Save Game)
 
 修改玩家存档是风险最高的操作之一，因为任何失败都可能**永久性地丢失所有用户数据**。
 
 *   **初始状态（“原罪”）：** 游戏“Day Zero”版本上线时，使用的是UE默认的**基于字符串的序列化** (`FObjectNameAndStringProxyArchive`)。这导致存档文件**体积巨大**（磁盘开销和云备份空间问题）。
     
 
-#### 变更一：字符串 -> 自定义二进制 + 版本控制
+### 变更一：字符串 -> 自定义二进制 + 版本控制
 
 *   **目标：** 减小文件体积。
     
@@ -423,7 +423,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 *   **风险评估：** 中风险。此功能在**Day Zero补丁**中就推送了，大部分玩家会使用新版本。QA在发布前几周进行了严格测试。
     
 
-#### 变更二：添加 LZ4 压缩（发布后）
+### 变更二：添加 LZ4 压缩（发布后）
 
 *   **目标：** 进一步压缩，解决某些平台**云备份空间有限**的问题。
     
@@ -446,7 +446,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
     *   **权衡 (Trade-off)：** 压缩比从 14:1 **降至 7.5:1**，但卡顿时间**控制在 50ms 以下**。这是一个巨大的胜利。
         
 
-#### 变更三：自动重写（Resave）所有老存档（“巨型”风险）
+### 变更三：自动重写（Resave）所有老存档（“巨型”风险）
 
 *   **目标：** 解决云存档问题，必须让**已存在的老存档**也享受到压缩。
     
@@ -477,7 +477,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 *   **结果：** 这个流程可以抵御**电源丢失、数据损坏、序列化逻辑错误**。即使最坏的情况（逻辑Bug）发生，游戏可能无法启动，但**玩家的原始存档数据不会丢失**。
     
 
-#### 案例反思 (Postmortem)
+### 案例反思 (Postmortem)
 
 1.  本可以实现**分阶段部署 (Staggered Rollout)**，即使是在内测中，先只推送给一小部分用户，限制“爆炸半径”。
     
@@ -486,7 +486,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第六部分：修复文化：创可贴 vs. 彻底重构
+## 第六部分：修复文化：创可贴 vs. 彻底重构
 
 *   **核心观点：** 有时，最明智的修复不是再打一个“创可贴”，而是**彻底的重新思考**。
     
@@ -503,9 +503,9 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第七部分：工程师的最佳实践
+## 第七部分：工程师的最佳实践
 
-#### 1\. 文档：写好你的提交信息 (Commit Message)
+### 1\. 文档：写好你的提交信息 (Commit Message)
 
 *   **黄金法则：** 解释**“为什么 (Why)”**，而不仅仅是**“做了什么 (What)”**。
     
@@ -516,7 +516,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 *   你的提交信息是写给**几年后**早已忘记所有背景的团队（和你自己）看的。
     
 
-#### 2\. 修改UE引擎源码（高昂的代价）
+### 2\. 修改UE引擎源码（高昂的代价）
 
 *   **风险与成本：**
     
@@ -549,7 +549,7 @@ title: 'Breaking (and Fixing) Unreal: An Engineer’s Guide to Problem-Solving'
 
 * * *
 
-### 第八部分：现场 Q&A
+## 第八部分：现场 Q&A
 
 1.  **Q：如何管理（Time-box）解决问题的时间？**
     
