@@ -17,5 +17,5 @@ Feel free to reach out to me — always happy to connect!
 📧 [jhwzju@gmail.com](mailto:jhwzju@gmail.com) | 
 💻 [GitHub](https://github.com/NothingToSay0031) | 
 🔗 [LinkedIn](https://www.linkedin.com/in/hongweiji/) | 
-📝 [Zhihu](https://www.zhihu.com/people/dian-hua-wei-bo-lu-97)
+📝 [Zhihu](https://www.zhihu.com/people/NothingToSay)
 
