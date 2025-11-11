@@ -1,5 +1,5 @@
 ---
-title: Vulkan subpasses: the good, the bad, and the ugly
+title: "Vulkan subpasses: the good, the bad, and the ugly"
 date: 2025-11-10 12:14:45
 description: Understand when Vulkan subpasses improve efficiency, when they do not, and how modern Arm GPUs close the gap.
 ---
