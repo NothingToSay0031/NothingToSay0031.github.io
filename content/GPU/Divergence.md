@@ -27,7 +27,7 @@ math: true
 
 这是GPU处理简单`if/else`赋值时最常用、最高效的指令之一。
 
-- **核心观点:** 对于简单的赋值`if/else`，GPU会将其转换成一条**`movc` (Conditional Move)** 指令，**并不会产生分支跳转**。
+- **核心观点:** 对于简单的赋值`if/else`，GPU会将其转换成一条`movc` (Conditional Move) 指令，**并不会产生分支跳转**。
     
 - **示例:**
     
