@@ -68,7 +68,7 @@ title: '《鸣潮》UE4多平台效果与性能优化实践'
 
 ### 3.2 鬼影优化 (Ghosting)
 
-核心是**历史像素混合（History Clamping）**的精度与性能权衡。
+核心是历史像素混合（History Clamping）的精度与性能权衡。
 
 *   **采样优化 (Mobile):**
     
