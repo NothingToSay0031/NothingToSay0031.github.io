@@ -627,9 +627,9 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     
     *   传统的 ShadowMap 只存储**最近点的深度**（遮挡物正面，A点）。
         
-    *   **NH 的洞察：** 遮挡物**背面的深度**（B点）也是一个有效的遮挡深度。任何在 \[A, B\] 之间的深度都处于阴影中。
+    *   **洞察：** 遮挡物**背面的深度**（B点）也是一个有效的遮挡深度。任何在 \[A, B\] 之间的深度都处于阴影中。
         
-    *   **DS-Map 存储：** 一个**深度的区间 (Depth Interval) `[Front_Depth, Back_Depth]`**，而不是单一深度值。
+    *   **存储：** 一个**深度的区间 (Depth Interval) `[Front_Depth, Back_Depth]`**，而不是单一深度值。
         
 *   **压缩原理：四叉树压缩 (Quadtree Compression)**
     
@@ -670,7 +670,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     
     *   还原时需要累加深度：`Final_Depth = Self.Relative_Depth + Parent.Depth`。
         
-*   **压缩率：** 相比 NH，数据量又压缩了约 **1/3**。
+*   **压缩率：** 相比 MH，数据量又压缩了约 **1/3**。
     
 
 #### 9.3 算法 3：DAG-MH (Directed Acyclic Graph MH)
