@@ -623,7 +623,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 #### 9.1 算法 1：MH (Multi-resolution Hierarchy)
 
-*   **核心概念：Dual Shadow Map (DS-Map) / 双层阴影贴图**
+*   **核心概念：Dual Shadow Map / 双层阴影贴图**
     
     *   传统的 ShadowMap 只存储**最近点的深度**（遮挡物正面，A点）。
         
@@ -870,7 +870,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 *   **实现：** 有了 Clipmap（本质是一张 ShadowMap），可以套用任意软阴影算法。
     
-*   **选型：** 为贴近 VSM 的效果，项目选用了 **SMRT (Screen-space Soft Shadows)** 算法（转录中可能误称为SNRT）。
+*   **选型：** 为贴近 VSM 的效果，项目选用了 **SMRT(Shadow Map Ray Tracing)** 算法。
     
 
 #### 11.6 动态物体 (Dynamic Objects)
