@@ -2,8 +2,7 @@
 title: About Me
 ---
 
-Hi, I'm **Hongwei Ji**, a developer passionate about **game engines 🎮, graphics rendering 🎨, and GPU programming ⚡**.  
-I’ve interned at **Tencent** and **Arm**, where I worked on **Vulkan, Unreal Engine, and performance optimization**.
+Hi, I'm NothingToSay0031, a developer passionate about **game engines 🎮, graphics rendering 🎨, and GPU programming ⚡**.  
 
 Here, I share:
 - 🔍 Insights on **graphics pipelines and GPU programming**
@@ -16,6 +15,5 @@ Feel free to reach out to me — always happy to connect!
 
 📧 [jhwzju@gmail.com](mailto:jhwzju@gmail.com) | 
 💻 [GitHub](https://github.com/NothingToSay0031) | 
-🔗 [LinkedIn](https://www.linkedin.com/in/hongweiji/) | 
 📝 [Zhihu](https://www.zhihu.com/people/NothingToSay)
 
