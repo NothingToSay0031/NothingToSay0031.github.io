@@ -421,7 +421,7 @@ Kevin 分享了针对 Nanite 的底层优化原则，核心在于减少软件光
 
 * * *
 
-💡 Lumen 与硬件光线追踪：60 FPS 的优化艺术
+Lumen 与硬件光线追踪：60 FPS 的优化艺术
 =============================
 
 1\. 光追场景架构 (Ray Tracing Scene Architecture)
@@ -577,7 +577,7 @@ Kevin 列举了两个常见的导致 Lumen 性能骤降的场景及其修复方�
 
 ---
 
-🚀 迈向 60 FPS：VSM 阴影优化与 TSR 分辨率策略
+迈向 60 FPS：VSM 阴影优化与 TSR 分辨率策略
 ================================
 
 1\. 虚拟阴影贴图 (Virtual Shadow Maps - VSM) 优化
