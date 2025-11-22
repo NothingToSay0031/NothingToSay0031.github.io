@@ -3,7 +3,7 @@ title: "《巫师4》UE5 技术演示：迈向 60 FPS 之路"
 date: 2025-11-22 00:14:45
 ---
 
-《巫师4》UE5 技术演示：迈向 60 FPS 之路
+The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 =============================
 
 **讲座来源:** [The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo | Unreal Fest Orlando 2025](https://www.youtube.com/watch?v=ji0Hfiswcjo)
