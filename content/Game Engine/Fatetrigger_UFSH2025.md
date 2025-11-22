@@ -432,11 +432,11 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     
     *   在烘焙前剔除特定物体，例如：
         
-        *   对GI贡献不大的超大物体（如天空盒）。
+        *   对GI贡献不大的超大物体。
             
-        *   不适合烘焙光照的物体（如动态植被）。
+        *   不适合烘焙光照的物体。
             
-        *   为保证竞技公平性而隐藏的物体（如 `Detail Mode: Hide` 的草丛）。
+        *   为保证竞技公平性而隐藏的物体（如 `Detail Mode: High` 的草丛）。
             
 
 **2\. 材质导出 (Material Export)**
@@ -455,7 +455,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
             
 *   **解决方案 B：分层材质 (Layered Material)**
     
-    *   **问题：** 游戏中使用**顶点色（Vertex Color）**（如 2U）作为材质混合参数，但 Lightmass 导出时默认只使用基础UV（0U/1U），导致导出的纹理错误。
+    *   **问题：** 游戏中使用**顶点**的2U作为材质混合参数，但 Lightmass 导出时默认只使用基础UV（0U/1U），导致导出的纹理错误。
         
     *   **方案：** **重写 Lightmass 的材质导出模块**。
         
@@ -472,7 +472,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 *   **工具：** 使用虚幻官方的 **Unreal Lightmass**，因为它足够稳定。
     
-*   **定制 1：** 增加了自定义烘焙通道，用于计算 **Radiance**、**Occlusion** 和 **Relocation** 数据。
+*   **定制 1：** 增加了自定义烘焙通道，用于计算 **Irradiance**、**Occlusion** 和 **Relocation** 数据。
     
 *   **定制 2：全阶段分布式烘焙 (Full-Stage Distributed Baking)**
     
