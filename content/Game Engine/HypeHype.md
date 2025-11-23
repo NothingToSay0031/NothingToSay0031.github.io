@@ -200,7 +200,7 @@ HypeHype 结合了上述两种方案的优点，设计了一种专为移动端 T
 
 ### 3\. 关键实现 (1): 低成本的 PDF 计算
 
-SRS 采样的质量取决于 PDF（概率密度函数）的质量。但为 128x128 区域精确计算 PDF 代价极高。因此，HypeHype 采用了一种非常低成本的\*\*粗略估算（Rough Estimate）\*\*方法。
+SRS 采样的质量取决于 PDF（概率密度函数）的质量。但为 128x128 区域精确计算 PDF 代价极高。因此，HypeHype 采用了一种非常低成本的**粗略估算（Rough Estimate）**方法。
 
 *   **输入数据:**
     
@@ -283,7 +283,7 @@ SRS 采样的质量取决于 PDF（概率密度函数）的质量。但为 128x1
         
 2.  **大切片瑕疵 (Big Tile Artifacts):**
     
-    *   **原因:** 在小切片中心点\*\*“点采样”（Point Sampling）\*\* 其所属的 Big Tile 蓄水池，会导致在 128x128 的大切片边界上出现明显的跳变。
+    *   **原因:** 在小切片中心点 **“点采样”（Point Sampling）** 其所属的 Big Tile 蓄水池，会导致在 128x128 的大切片边界上出现明显的跳变。
         
 
 * * *
@@ -527,7 +527,7 @@ HypeHype 的阴影数据存储在一个**持久化、动态管理的 16-bit 深�
     
 *   **计算公式:**
     
-    > 最终光照 =  $\sum_{i=1}^{N} (Lambert + GGX)\times ShadowTerm_{i}\times SampleWeight_{i}$ 
+    $Final Lighting =  \sum_{i=1}^{N} (Lambert + GGX)\times ShadowTerm_{i}\times SampleWeight_{i}$ 
     
     *   其中  $N$  为 1 到 4。
         
@@ -673,7 +673,7 @@ HypeHype 的阴影数据存储在一个**持久化、动态管理的 16-bit 深�
     
     *   当前“4 采样点”的 PDF 评估既昂贵又引入了偏差。
         
-    *   _改进方向:_ 尝试将其降为\*\*“1 次保守评估 (1 Conservative Evaluation)”\*\*——使用 Tile 包围盒进行一次保守的阴影和 BRDF 评估（可能需要一个模糊的 G-Buffer）。
+    *   _改进方向:_ 尝试将其降为 **“1 次保守评估 (1 Conservative Evaluation)”**——使用 Tile 包围盒进行一次保守的阴影和 BRDF 评估（可能需要一个模糊的 G-Buffer）。
         
     *   _改进方向:_ 在 PDF 评估中加入**色调映射 (Tone Mapping)**，以降低高光区域的噪声。
         
