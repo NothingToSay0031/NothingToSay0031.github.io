@@ -768,8 +768,6 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
             
         *   **原因：** 树冠内部无法进入，且烘焙精度的降低在视觉上不明显。
             
-        *   **额外好处：** 较低的分辨率会自动产生**更虚、更柔和的软阴影**，效果反而更好。
-            
     *   **观察 2：屋顶、围墙（大块连续平面）**
         
         *   **策略：** 使用 **DAG-MH 算法** 对这类结构有效压缩。
@@ -789,7 +787,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     
 *   **GPU 数据结构：**
     
-    *   **`Memory Pool` (资源池):** 一个**固定大小的 GPU Buffer**。用于存储摄像机 `AORange` (Area of Interest) 范围内的**压缩 Tile 数据**。
+    *   **`Memory Pool` (资源池):** 一个**固定大小的 GPU Buffer**。用于存储摄像机 `Upload Range` 范围内的**压缩 Tile 数据**。
         
     *   **`Index Buffer` (索引)：** 另一个 Buffer，其长度等于 Tile 数量，用于存储每个 Tile 在 `Memory Pool` 中的**起始地址（指针）**。
         
@@ -819,7 +817,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 #### 11.3 Virtual Clipmap 渲染流程
 
-1.  **`Feedback Pass` (反馈):** 读取 G-Buffer 的 Z-Buffer，分析当前帧**哪些 Page 是可见的**。
+1.  **`Feedback Pass` (反馈):** 读取 SceneDepthZ ，分析当前帧**哪些 Page 是可见的**。
     
 2.  **`Async Readback` (异步回读):** CPU 异步获取这个可见性列表。
     
@@ -875,31 +873,33 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 #### 11.6 动态物体 (Dynamic Objects)
 
-*   **角色的阴影：** 使用 **`Composite Shadow`**，该技术独立于CSM/VSM，可直接复用。
+*   **角色的阴影：** 使用 **`PerObject Shadow`**，该技术独立于CSM/VSM，可直接复用。
     
 *   **其他动态物体（含 Nanite）：**
     
-    *   **目标：** 避免同时开启 VSM（双倍显存开销）和 Nanite 的高固有开销。
+    *   **目标：** 避免同时开启 CSM/VSM（双倍显存开销）和 Nanite 的高固有开销。
         
-    *   **解决方案：** **将动态物体绘制（Rasterize）到我们的 Virtual Clipmap 中**。
+    *   **解决方案：** **将动态物体绘制（Rasterize）到我们的 Virtual Clipmap 中**。就像VSM对Non-Nanite物体做的那样。
         
     *   **流程：**
-        
-        1.  收集 Clipmap 范围内的动态物体（Nanite 视为普通 Mesh）。
+
+        1. 构建一个FProjectedShadowInfo。
             
-        2.  **`SubmitPatchesForCulling` (剔除Pass):**
+        2. 收集Clipmap范围内FMeshBatch。
             
-            *   核心步骤。将动态物体的 Bounding Box 与**每一级 Clipmap 的 Page** 进行求交。
+            * 将Nanite当作Fallback Mesh处理。
                 
-        3.  **`InstanceCount` (实例计数):**
+        3.  `Submit Culling Pass`:
             
-            *   维护一个计数器。如果一个 Page 与物体相交，则在对应 Clipmap 级别上 `+1`。
+            * 一个线程处理一个Primitive。
+            * 包围盒跟每级Clipmap判断是否需要绘制。
+            * 如果需要（覆盖了脏页）则InstanceCount加一。
                 
-        4.  **`Draw Pass` (绘制):**
+        4.  `Submit Raster Pass`:
             
-            *   只在 `InstanceCount > 0` 的 Clipmap Page 上绘制动态物体。
+            * 只在 `InstanceCount > 0` 的 Clipmap Page 上绘制动态物体。
                 
-    *   **优势：** 大部分情况下，`InstanceCount` 为 0（因为静态阴影已被缓存），**动态物体的绘制开销接近于零**。
+    *   **优势：** 大部分情况下，`InstanceCount` 为 0（因为阴影已被缓存）。
         
 
 * * *
@@ -934,6 +934,8 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     *   实现 **Time-of-Day (TOD) 动态烘焙**。
         
     *   支持 **Local Lights**（点光源、聚光灯）。
+
+    *   更高效率。
         
 *   **全局光照 (GI):**
     
