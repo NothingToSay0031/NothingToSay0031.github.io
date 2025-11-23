@@ -1532,7 +1532,6 @@ ReSTIR 并非一个全新的渲染管线，而是在经典的**随机直接光�
     -   **后果**: 系统会错误地认为该点处于阴影中，导致物体表面出现不自然的暗斑或噪点。这个现象在业界通常被称为“**阴影粉刺 (Shadow Acne)**”。
     -   **典型解法**: 在发射光线时，将光线的起始点沿着表面法线方向向前推移一个极小的距离（常被称为 **Ray Epsilon** 或 **Ray T-min**），以确保它处于代理网格的外部，从而避免错误的自相交。
 
-![Shadow Acne Illustration](https://raw.githubusercontent.com/RayTracing/raytracing.github.io/master/images/fig-1.10-shadow-acne.png)
 *图示：由于精度问题，光线起点位于代理几何体内部，导致错误的自遮挡，即“阴影粉刺”。*
 
 ## 动态与Alpha-Masked几何体的挑战
