@@ -529,7 +529,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
 
 *   **定义：** 一块（或多块）**有限的、固定大小的显存空间**（类似于内存池或大 Texture Array）。
     
-*   **作用：** 存储**实际的GI数据**（Radiance, Occlusion等）。`Brick` 数据被动态换入换出到这个池中。
+*   **作用：** 存储**实际的GI数据**（Irradiance, Occlusion等）。`Brick` 数据被动态换入换出到这个池中。
     
 
 **2\. 层次化索引 (Hierarchical Index)**
@@ -540,7 +540,7 @@ Probe GI 像 Lumen 一样，需要对场景进行预处理。
     
 *   **“层次化”：** 索引的编码方式可以指向**不同MIP层级**（MIP0或MIP1）的数据。
     
-*   **更新：** `Ring Update` 过程是一个 **Compute Shader** (`CS`)，它负责计算并更新这个 `Hierarchical Index`。
+*   **更新：** `Ring Update` 过程 **Compute Shader** 负责计算并更新这个 `Hierarchical Index`。
     
 
 **3\. 运行时采样 (Shader - Final Gather)**
