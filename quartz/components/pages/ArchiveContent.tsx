@@ -99,7 +99,7 @@ export default ((opts?: Partial<ArchiveContentOptions>) => {
                                 <h2 class="year-title">{year}</h2>
                                 <div class="page-listing">
                                     <p>{i18n(cfg.locale).pages.archiveContent.articlesInYear({ year, count: yearFiles.length })}</p>
-                                    <PageList limit={options.numPages} {...listProps} />
+                                    <PageList {...listProps} />
                                 </div>
                             </div>
                         )
