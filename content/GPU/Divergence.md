@@ -188,3 +188,5 @@ Volta 及其后续架构 (Turing, Ampere等) 彻底改变了`branch`的底层逻
 [Volta Tuning Guide 13.0 documentation](https://docs.nvidia.com/cuda/volta-tuning-guide/index.html)
 
 [Volta Architecture Whitepaper](https://images.nvidia.com/content/volta-architecture/pdf/volta-architecture-whitepaper.pdf) 
+
+[GPU中的if else](https://zhuanlan.zhihu.com/p/717054128)
