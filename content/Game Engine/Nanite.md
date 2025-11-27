@@ -5,7 +5,6 @@ date: 2025-11-27 10:22:45
 
 # A Deep Dive into Nanite Virtualized Geometry
 
-
 [A Deep Dive into Nanite Virtualized Geometry](https://www.youtube.com/watch?v=eviSykqSUUw&list=PLabw4gCouThkLIavA-dn4QDmJ_3tqH4LK&index=4) 
 
 ### **Nanite 虚拟几何技术深入解析: 讲座介绍与核心愿景**
@@ -522,7 +521,7 @@ HZB 遮挡剔除非常高效，但它引出了一个根本问题：**在我们�
 
 ---
 
-### 第十部分：层级LOD构建 - 动态群集分组与简化
+### 层级LOD构建 - 动态群集分组与简化
 
 本节深入探讨了为实现无缝的层级细节（LOD）过渡，系统是如何在预计算阶段构建几何体群集（Clusters）的层级结构的。核心在于一种巧妙的、逐级交替的分组简化策略，以避免产生传统LOD的接缝问题，并防止简化误差在边界上累积。
 
