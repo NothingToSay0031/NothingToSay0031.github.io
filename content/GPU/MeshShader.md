@@ -6,6 +6,9 @@ date: 2025-11-28 08:35:45
 
 # From vertex shader to mesh shader
 
+[From vertex shader to mesh shader - AMD GPUOpen](https://gpuopen.com/learn/mesh_shaders/mesh_shaders-from_vertex_shader_to_mesh_shader/)
+
+
 从顶点着色器到网格着色：演进的动机
 --------------------
 
@@ -289,11 +292,8 @@ DispatchMesh(threadGroupCountX, threadGroupCountY, threadGroupCountZ, payload);
         
     2.  **串行化风险：** 在高度并行的 GPU 架构中，任何固定功能的、需要执行复杂查找和决策的阶段，都可能成为**串行化瓶颈**，拖慢整个几何体处理流水线。特别是当绘制调用数量极多或图元数量巨大时，IA 的处理速度可能跟不上后续高度并行的着色器阶段。
         
-    3.  **难以适应现代 GPU 架构：** 现代 GPU 趋向于统一的**计算核心**（如 CUDA Cores 或 Compute Units），更适合**类计算着色器（Compute-like）** 的并行模型。IA 作为传统管线的前置阶段，其工作方式（逐索引/逐顶点处理）与现代计算模型的映射效率不高。
-        
-
-
-
+    3.  **难以适应现代 GPU 架构：** 现代 GPU 趋向于统一的**计算核心**（如 CUDA Cores 或 Compute Units），更适合**类计算着色器（Compute-like）**的并行模型。IA 作为传统管线的前置阶段，其工作方式（逐索引/逐顶点处理）与现代计算模型的映射效率不高。
+    
 网格着色器如何解决 IA 瓶颈？
 -------------------
 
