@@ -1,10 +1,9 @@
 ---
-date: '2025-11-28T14:48:00+08:00'
+date: 2025-11-28 14:48:00
 title: 'TSR, Nanite, Lumen, VSM: UE5 Graphics Features Insights from Japan'
 ---
 
-# TSR, Nanite, Lumen, VSM: UE5 Graphics Features Insights from Japan | Unreal Fest Gold Coast 2024
-
+# TSR, Nanite, Lumen, VSM: UE5 Graphics Features Insights from Japan
 
 [TSR, Nanite, Lumen, VSM: UE5 Graphics Features Insights from Japan | Unreal Fest Gold Coast 2024](https://www.youtube.com/watch?v=szgnZx2b0Zg)
 
