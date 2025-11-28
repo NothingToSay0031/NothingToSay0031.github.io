@@ -144,7 +144,7 @@ AMD RDNA™ 架构下的 **NGG（Next Generation Geometry）** 管线将传统�
         
     *   **原始着色器 (Primitive Shader):** 能够直接写入**着色器输出 (Shader Export)** 的顶点和图元部分，从而直接送入光栅化器。
         
-![](https://gpuopen.com/images/primitive-shader.kPJ9q_bn.svg)s
+![](https://gpuopen.com/images/primitive-shader.kPJ9q_bn.svg)
 ### 原始着色器的执行细节
 
 *   **执行方式:** 原始着色器中的每个线程分配给**一个顶点索引**和**一个原始图元**。
@@ -293,7 +293,7 @@ DispatchMesh(threadGroupCountX, threadGroupCountY, threadGroupCountZ, payload);
     2.  **串行化风险：** 在高度并行的 GPU 架构中，任何固定功能的、需要执行复杂查找和决策的阶段，都可能成为**串行化瓶颈**，拖慢整个几何体处理流水线。特别是当绘制调用数量极多或图元数量巨大时，IA 的处理速度可能跟不上后续高度并行的着色器阶段。
         
     3.  **难以适应现代 GPU 架构：** 现代 GPU 趋向于统一的**计算核心**（如 CUDA Cores 或 Compute Units），更适合**类计算着色器（Compute-like）**的并行模型。IA 作为传统管线的前置阶段，其工作方式（逐索引/逐顶点处理）与现代计算模型的映射效率不高。
-    
+
 网格着色器如何解决 IA 瓶颈？
 -------------------
 
