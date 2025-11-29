@@ -4,10 +4,12 @@ date: 2025-11-29 15:31
 ---
 
 
+# UE5中的开放世界光线追踪 (Ray Tracing Open Worlds in Unreal Engine 5)
+
+
 [SIGGRAPH 2022 Advances in Real-Time Rendering in Games course](https://advances.realtimerendering.com/s2022/index.html#Matrix_ray_trace)
 
 [Ray Tracing Open Worlds in Unreal Engine 5](https://youtu.be/Pv33__3XZPM?si=QQNnpXr-Klr73zBO&t=7626)
-# UE5中的开放世界光线追踪 (Ray Tracing Open Worlds in Unreal Engine 5)
 
 由 Epic Games 的渲染程序员 Alexander Nettle 和 Thiago Kosa 主讲。它清晰地阐述了在UE5中改进光线追踪技术的动机、核心目标以及技术验证的实际案例。
 
