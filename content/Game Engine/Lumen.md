@@ -11,12 +11,12 @@ date: 2025-12-01 10:00:00
 
 ## Part 1: Introduction to Lumen and Screen Tracing
 
-### 1. 核心目标与愿景
+### 核心目标与愿景
 
 *   **关键系统**: **Lumen**，是 Unreal Engine 5 中内置的 **实时全局光照 (Real-time Global Illumination)** 系统。
 *   **最终愿景**: 实现 **完全动态的间接光照 (Fully Dynamic Indirect Lighting)**，彻底改变游戏世界的光照交互方式。
 
-### 2. 对比传统烘焙光照 (Baked Lighting) 的革命性意义
+### 对比传统烘焙光照 (Baked Lighting) 的革命性意义
 
 *   **传统方法的局限性**: **烘焙光照 (Baked Lighting)** 本质上是静态的，它极大地**限制了**游戏世界的动态交互性。
 *   **痛点举例**:
