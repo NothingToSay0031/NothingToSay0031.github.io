@@ -79,7 +79,7 @@ void foo(std::unique_ptr<int> ptr) { // foo receives ownership
 }
 ```
 
-The code on the right is undoubtedly clearer and safer. However, it's precisely when we pass `unique_ptr` between functions like this (especially via pass-by-value with `std::move` into `baz`) that the hidden costs can start to manifest.
+The code of the modern C++ style is undoubtedly clearer and safer. However, it's precisely when we pass `unique_ptr` between functions like this (especially via pass-by-value with `std::move` into `baz`) that the hidden costs can start to manifest.
 
 ## Analyzing the Sources of Overhead
 
