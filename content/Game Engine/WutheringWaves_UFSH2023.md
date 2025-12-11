@@ -319,6 +319,7 @@ One Pass Deferred 管线避坑指南
 ----------------------
 
 作为移动端近景和PC中景的主力方案，旨在替代传统的插片树模型。
+> 这里的Billboard 树指的是RTR4 13.6.5小节 Billboard Representation提到的Billboard Cloud方法。
 
 *   **实现原理:** 将原本复杂的插片树叶，替换为多层面朝相机的 Billboard 面片。
     
