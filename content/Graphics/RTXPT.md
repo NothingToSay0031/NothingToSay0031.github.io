@@ -5,7 +5,7 @@ description: Real-time path tracing library and sample.
 math: true
 ---
 
-这篇博客主要探讨了 NVIDIA 开源的 [RTX Path Tracing (RTXPT)](https://github.com/NVIDIA-RTX/RTXPT) 项目。路径追踪的基础知识我是在 TU Wien 的 Rendering 课程上学习的，当时也写了一篇[关于 MIS 和 NEE 的博客](https://nothingtosay0031.github.io/post/mis_nee/)，但一直没有真正编写过完整的 Path Tracing 代码，对 NEE 和 BSDF 在 MIS 中的正确计算也只是略知一二。最近看到这个项目，觉得是个很好的学习机会，正好可以深入理解这些概念。虽然这个库还实现了许多实时路径追踪的优化算法，但本篇主要聚焦于 MIS 和 NEE 的实现过程。
+这篇博客主要探讨了 NVIDIA 开源的 [RTX Path Tracing (RTXPT)](https://github.com/NVIDIA-RTX/RTXPT) 项目。路径追踪的基础知识我是在 TU Wien 的 Rendering 课程上学习的，当时也写了一篇[[MIS_NEE.md|关于 MIS 和 NEE 的博客]]，但一直没有真正编写过完整的 Path Tracing 代码，对 NEE 和 BSDF 在 MIS 中的正确计算也只是略知一二。最近看到这个项目，觉得是个很好的学习机会，正好可以深入理解这些概念。虽然这个库还实现了许多实时路径追踪的优化算法，但本篇主要聚焦于 MIS 和 NEE 的实现过程。
 
 # `RayGen` Shader
 
