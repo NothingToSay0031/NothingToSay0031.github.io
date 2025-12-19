@@ -256,7 +256,7 @@ SRS 采样的质量取决于 PDF（概率密度函数）的质量。但为 128x1
         
         *   **Light Index (16 bits):** 光源在列表中的索引。
             
-        *   **Light Weight (16 bits):** 光源的采样权重，即 **PDF 的倒数  $1/p\left(light\right)$ **。
+        *   **Light Weight (16 bits):** 光源的采样权重，即 **PDF 的倒数  $1/p\left(light\right)$**。
             
     *   为了缓存友好，16 个样本（对应一个 Big Tile）被打包存在一个 **4x4 像素块**中。整个蓄水池 Buffer 非常小（例如 1080p 仅需 16x36 像素）。
         
