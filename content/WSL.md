@@ -17,6 +17,20 @@ PicGo
 WSL2
 
 TeX Live
+## Powershell 7
+
+```powershell
+oh-my-posh init pwsh --config 'C:\Users\<username>\Documents\PowerShell\catppuccin_frappe.omp.json' | Invoke-Expression
+Import-Module PSColor
+Import-Module posh-git
+Import-Module CompletionPredictor
+Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView
+Set-PSReadlineKeyHandler -Chord Ctrl+u,Ctrl+U -Function DeleteLine
+Set-PSReadlineOption -EditMode vi
+Set-PSReadlineKeyHandler -Chord Alt+j -Function NextSuggestion
+Set-PSReadlineKeyHandler -Chord Alt+k -Function PreviousSuggestion
+Set-PSReadlineKeyHandler -Chord Tab -Function MenuComplete
+```
 
 # Windows Subsystem for Linux 
 
