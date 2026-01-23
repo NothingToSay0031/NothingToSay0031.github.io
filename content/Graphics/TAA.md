@@ -99,3 +99,152 @@ Temporal AA (TAA) 在处理远处细小几何体（如线状物）时，由于�
     * 另一种是作者更倾向的，通过边缘检测，在几何边缘处“优待”历史样本，鼓励混合以实现抗锯齿，而不是轻易拒绝它们。这需要区分真正的物体边缘和普通着色区域。
 
 作者的整个分析都是围绕着如何在“去除鬼影”和“保留并利用有效的历史信息进行超采样”之间找到更好的平衡点，特别是在那些本身就包含高频信息的区域（如细线、几何边缘）。
+
+
+# TAA 深度解析：核心矛盾与解决思路
+
+## 核心矛盾
+
+**False Positive vs False Negative 不可兼得**
+
+历史样本的处理策略：
+- 激进 ——> Reject：去鬼影效果好，时域稳定性抖动
+- 保守 ——> Accept：去鬼影效果差，时域稳定性稳定
+
+
+## 问题根源
+
+### 高频变化的两种来源（无法区分）
+
+```
+情况 A：像素本身处于高频区域（几何边缘）
+        → 应该 BLEND（这是有效的超采样！）
+
+情况 B：场景变化导致历史失效（移动/光照变化）
+        → 应该 REJECT（这是鬼影！）
+
+问题：两者在数据上表现一致 → 无法准确区分
+```
+
+### Neighboring Clip 的困境
+
+```hlsl
+// AABB 越小 → reject 越激进 → 去鬼影效果好 → 但抖动更严重
+// AABB 越大 → reject 越宽松 → 稳定性好 → 但鬼影明显
+
+// Variance Clipping（更 tight）
+float3 stddev = sqrt(...);
+minColor = mean - stddev * γ;  // γ 越小，box 越 tight
+maxColor = mean + stddev * γ;
+
+// COD 选择：宁可模糊，也不抖动 → 放弃 variance clipping
+```
+
+---
+
+## 解决方案思路
+
+### 方案 1：静态场景特殊处理
+
+**思路**：静态时像素位置不变，颜色变化 = 自然的 Jitter 超采样
+
+```hlsl
+// 连续 3+ 帧像素没动，但颜色变了
+if (motionLength < threshold && frameCount >= 3)
+{
+    // 这是有效的超采样，正常 blend，不要 reject
+    blendFactor = normalBlend;
+}
+```
+
+---
+
+### 方案 2：COD Filmic SMAA T2x
+
+**前提条件**：
+- 60 FPS（帧间隔短）
+- 只用 2 帧 Jitter（不是 4-8 帧）
+
+```
+帧 N:     Jitter A  ●
+帧 N-1:   Jitter B  ○
+帧 N-2:   Jitter A  ●  ← 对比这帧！(同一个 jitter 位置)
+```
+
+```hlsl
+// 对比同一 Jitter 位置的前后帧
+// 如果颜色变了 → 肯定是场景变化 → Reject
+// 如果颜色没变 → 是稳定的高频区域 → Blend
+
+float3 sameJitterHistory = HistoryBuffer[N-2];  // 两帧前
+if (ColorDiff(current, sameJitterHistory) > threshold)
+{
+    reject = true;  // 真的失效了
+}
+```
+
+**局限**：
+- 30 FPS + 8 帧 Jitter → 回溯 8 帧 → 显存爆炸 + 样本基本都失效
+
+---
+
+### 方案 3：边缘感知 + Stencil Tag
+
+**神海 4 的做法**：
+
+```hlsl
+// 用 Stencil 标记物体类型（2 bit → 最多 3 种特殊物体）
+if (currentStencil != historyStencil)
+{
+    // 不同物体 → Reject（防止物体间 ghost）
+}
+
+// 但是！边缘情况要反过来
+if (IsGeometricEdge(uv))
+{
+    // 边缘处高频变化是正常的超采样 → 增加 history 权重
+    blendFactor *= edgeBoost;
+}
+```
+
+**扩展思路**：
+
+```hlsl
+// 1. 边缘检测（基于深度 + 法线）
+float edgeMask = DetectEdge(depth, normal);
+
+// 2. 边缘处降低 reject 敏感度
+if (edgeMask > 0.5)
+{
+    clipAABB *= 1.5;  // 放大 AABB，更宽容
+    blendFactor = lerp(blendFactor, 0.3, edgeMask);  // 更信任 history
+}
+
+// 3. 非边缘处正常 reject
+else
+{
+    // 正常 neighboring clip
+}
+```
+
+**可能的改进**：用 Object/Instance ID 替代 Stencil（如果硬件支持）
+
+---
+
+## 总结表
+
+| 方案 | 适用场景 | 开销 | 效果 |
+|------|----------|------|------|
+| 静态检测 | 静止场景 | 低 | 解决静态抖动 |
+| 2帧 Jitter 回溯 | 60FPS 游戏 | 中 | 精准区分变化来源 |
+| 边缘感知 Reject | 几何边缘 | 中高 | 减少边缘抖动 |
+| Stencil Tag | 复杂场景 | 低 | 减少物体间 ghost |
+
+---
+
+## 一句话总结
+
+> TAA 的本质困境：**无法区分"我该 blend 的高频"和"我该 reject 的失效"**
+> 
+> 所有技巧都是在用**额外信息**（时间一致性、几何边缘、物体标记）来辅助判断。
+
