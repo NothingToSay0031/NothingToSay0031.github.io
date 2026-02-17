@@ -30,21 +30,34 @@ const defaultOptions: Options = {
     return node
   },
   sortFn: (a, b) => {
-    // Sort order: folders first, then files. Sort folders and files alphabeticall
-    if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
-      // numeric: true: Whether numeric collation should be used, such that "1" < "2" < "10"
-      // sensitivity: "base": Only strings that differ in base letters compare as unequal. Examples: a ≠ b, a = á, a = A
-      return a.displayName.localeCompare(b.displayName, undefined, {
-        numeric: true,
-        sensitivity: "base",
-      })
+    // 1. 文件夹始终排在文件前面
+    if (a.isFolder && !b.isFolder) return -1
+    if (!a.isFolder && b.isFolder) return 1
+
+    // 2. 同为文件时，优先按日期（创建/修改时间）倒序
+    if (!a.isFolder && !b.isFolder) {
+      const aDateRaw = (a.data as any)?.date
+      const bDateRaw = (b.data as any)?.date
+
+      if (aDateRaw || bDateRaw) {
+        const aTime = aDateRaw ? new Date(aDateRaw).getTime() : NaN
+        const bTime = bDateRaw ? new Date(bDateRaw).getTime() : NaN
+
+        if (!Number.isNaN(aTime) && !Number.isNaN(bTime) && aTime !== bTime) {
+          // 新的在上面
+          return bTime - aTime
+        }
+
+        if (!Number.isNaN(aTime) && Number.isNaN(bTime)) return -1
+        if (Number.isNaN(aTime) && !Number.isNaN(bTime)) return 1
+      }
     }
 
-    if (!a.isFolder && b.isFolder) {
-      return 1
-    } else {
-      return -1
-    }
+    // 3. 其余情况按名称排序（含：同为文件夹；无日期或日期相同的文件）
+    return a.displayName.localeCompare(b.displayName, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    })
   },
   filterFn: (node) => node.slugSegment !== "tags",
   order: ["filter", "map", "sort"],

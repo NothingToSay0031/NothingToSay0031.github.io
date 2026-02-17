@@ -18,7 +18,8 @@ const config: QuartzConfig = {
     locale: "en-US",
     baseUrl: "nothingtosay0031.github.io",
     ignorePatterns: ["private", "templates", ".obsidian"],
-    defaultDateType: "modified",
+    // 统一使用创建时间作为默认日期类型（影响 Archive、Explorer 等）
+    defaultDateType: "created",
     theme: {
       fontOrigin: "googleFonts",
       cdnCaching: true,
