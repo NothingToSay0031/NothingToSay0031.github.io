@@ -118,17 +118,45 @@ button.desktop-explorer {
     list-style: none;
     margin: 0;
     padding: 0;
-    overscroll-behavior: contain;
+    // 允许滚轮事件在必要时继续向外传播，避免“悬停在标题上无法滚动页面”的问题
+    // overscroll-behavior: contain;
+
+    // 每一条记录之间保留更明显的间距 + 分隔线，方便区分不同标题
+    & li {
+      margin: 0 0 0.3rem 0;
+      padding-bottom: 0.15rem;
+    }
+
+    // 中间条目使用分割线
+    & li:not(:last-child) {
+      border-bottom: 1px solid var(--lightgray);
+    }
+
+    // 最后一个条目与下方内容之间不再留多余空隙
+    & li:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
 
     & li > a {
       color: var(--dark);
       opacity: 0.75;
       pointer-events: all;
       font-size: 0.85rem;
+      // 与文件夹标题统一的行高，避免上下错位
+      line-height: 1.3rem;
+      display: block;
+      // 只做轻微内边距，避免撑大行高
+      padding: 0.05rem 0.25rem;
+      border-radius: 4px;
 
       &.active {
         opacity: 1;
         color: var(--tertiary);
+      }
+
+      &:hover {
+        background-color: var(--highlight);
       }
     }
   }
@@ -148,6 +176,12 @@ button.desktop-explorer {
     margin-left: 6px;
     padding-left: 0.8rem;
     border-left: 1px solid var(--lightgray);
+    // 打开文件夹后，第一个子条目与文件夹标题之间也加上分隔线
+    & > li:first-child {
+      padding-top: 0.15rem;
+      margin-top: 0.15rem;
+      border-top: 1px solid var(--lightgray);
+    }
   }
 }
 
@@ -156,6 +190,8 @@ button.desktop-explorer {
   display: flex;
   align-items: center;
   user-select: none;
+  // 让文字区域在 flex 中能正确触发截断
+  min-width: 0;
 
   & div > a {
     color: var(--secondary);
@@ -181,6 +217,7 @@ button.desktop-explorer {
     display: flex;
     align-items: center;
     font-family: var(--headerFont);
+    border-radius: 4px;
 
     & span {
       font-size: 0.85rem;
@@ -194,6 +231,14 @@ button.desktop-explorer {
   }
 }
 
+// 统一控制标题文本（文件 & 文件夹）：
+.explorer-title-text {
+  // 完全展示标题，不再做省略号和行数限制
+  display: inline;
+  max-width: 100%;
+  white-space: normal;
+}
+
 .folder-icon {
   margin-right: 5px;
   color: var(--secondary);
@@ -201,6 +246,8 @@ button.desktop-explorer {
   transition: transform 0.3s ease;
   backface-visibility: visible;
   flex-shrink: 0;
+  // 稍微上移一点，让图标中心对齐文字中线
+  margin-top: -0.05rem;
 }
 
 li:has(> .folder-outer:not(.open)) > .folder-container > svg {
