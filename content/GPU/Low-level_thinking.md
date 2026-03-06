@@ -1,3 +1,8 @@
+---
+title: "Low-level thinking in high-level shading languages"
+date: 2026-03-03 15:33:58
+---
+
 # Low-level thinking in high-level shading languages
 
 [Low-level thinking in high-level shading languages 2023](https://interplayoflight.wordpress.com/2023/12/29/low-level-thinking-in-high-level-shading-languages-2023/)
