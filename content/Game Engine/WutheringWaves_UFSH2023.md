@@ -189,7 +189,7 @@ One Pass Deferred 管线避坑指南
     *   _注：ARM 表示最新的 Immortalis-G720 可能已在驱动层面解决此问题，但旧设备仍受影响。_
         
 
-### 1.1 解决方案：混合管线重构 (Hybrid Pipeline)
+### 解决方案：混合管线重构 (Hybrid Pipeline)
 
 为了在 Mali 上保持高性能且不降低画质，团队选择了艰难的重构之路。
 
