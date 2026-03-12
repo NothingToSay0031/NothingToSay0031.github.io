@@ -7,16 +7,16 @@ date: 2026-03-11 14:15:58
 
 > [It Just Works: Ray-Traced Reflections in Battlefield V](https://www.youtube.com/watch?v=ncUNLDQZMzQ)
 
-## 一、项目背景
+## 项目背景
 
-### 1.1 游戏与团队概况
+### 游戏与团队概况
 
 - **Battlefield V** 是一款以 **二战** 为背景的第一人称射击游戏，于 **2018 年 11 月** 发布
 - 演讲者 Johannes Dalianes 是 EA DICE 的 **渲染工程师** ，自 2014 年加入，参与过 Battlefield 和 Battlefront 系列
 - 光线追踪功能的开发周期约 **10 个月** ，团队配置为 **4 名全职工程师** ，并有 DICE 和 NVIDIA 的其他人员协助
 - **这是第一款搭载 DXR（DirectX Raytracing）发布的游戏**
 
-### 1.2 面临的核心挑战
+### 面临的核心挑战
 
 #### 内容已锁定，无法为光追量身定制
 
@@ -48,15 +48,15 @@ date: 2026-03-11 14:15:58
 
 ---
 
-## 二、GPU 光线追踪管线概览
+## GPU 光线追踪管线概览
 
-### 2.1 演讲者背景
+### 演讲者背景
 
 - Jan（Yan）是 DICE 渲染团队的 **技术负责人（Lead）** ，在 DICE 工作六年
 - 参与过 Battlefield 4、Battlefield 1、Mirror's Edge 等项目的引擎与渲染技术
 - 他负责讲解的是光线追踪 **周边的所有机制（machinery）** ——即 **围绕光追本身的非光追部分**
 
-### 2.2 简化的光线追踪管线三阶段
+### 简化的光线追踪管线三阶段
 
 Jan 将整个光追反射的处理流程简化为三个关键阶段：
 
@@ -72,7 +72,7 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 3. **着色 / 光照计算**
    - 基于求交返回的材质信息进行后续处理
 
-### 2.3 延迟光照的设计决策
+### 延迟光照的设计决策
 
 - Battlefield V 使用 **延迟渲染（Deferred Rendering）** 架构
 - 团队从一开始就决定光追反射也采用 **延迟光照（Deferred Lighting）** 方式
@@ -82,7 +82,7 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 
 ---
 
-## 三、关键术语速查
+## 关键术语速查
 
 | 术语 | 含义 |
 |------|------|
@@ -98,9 +98,9 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 
 ---
 
-## 一、光线追踪反射的完整流程（详细版）
+## 光线追踪反射的完整流程（详细版）
 
-### 1.1 三阶段回顾与衔接
+### 三阶段回顾与衔接
 
 整个光追反射管线的三阶段在实际实现中的流转如下：
 
@@ -112,15 +112,15 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 
 ---
 
-## 二、光线生成阶段（Ray Generation）
+## 光线生成阶段（Ray Generation）
 
-### 2.1 基本设置
+### 基本设置
 
 - 已有 **G-Buffer** 中的采样点（Sample Point）和 **视线方向（View Vector）**
 - 因为做的是 **反射** ，所以关注的是 BRDF 中的 **高光波瓣（Specular Lobe）**
 - 理论上可以在高光波瓣分布上的很多位置进行采样
 
-### 2.2 BRDF 截断（Tail Clamping）
+### BRDF 截断（Tail Clamping）
 
 #### 灵感来源
 
@@ -135,7 +135,7 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 - **解决方案** ：当 BRDF 分布值 **低于某个阈值** 时，直接 **截断（chop off）** 并对剩余部分 **重新归一化（renormalize）**
 - 团队从一开始就采用了这个策略
 
-### 2.3 光线选择与查找表
+### 光线选择与查找表
 
 - 使用 **Halton 序列（Halton Sequence）** 从截断后的 BRDF 分布中 **随机选取一条光线**
   - Halton 序列是一种 **低差异序列（Low-Discrepancy Sequence）** ，比纯随机采样分布更均匀
@@ -147,9 +147,9 @@ Jan 将整个光追反射的处理流程简化为三个关键阶段：
 
 ---
 
-## 三、光照计算阶段（Lighting）
+## 光照计算阶段（Lighting）
 
-### 3.1 最简单的实现方式
+### 最简单的实现方式
 
 光线命中后拿到材质数据，最直接的做法就是 **暴力遍历所有光源** ：
 
@@ -165,7 +165,7 @@ for each reflection_volume:
 return radiance
 ```
 
-### 3.2 与光栅化结果合并
+### 与光栅化结果合并
 
 - Battlefield V 使用 **能量守恒的 GDX（Energy-Preserving GDX）** 分光模型
 - 该模型提供了 **高光与漫反射的能量比（Specular-to-Diffuse Ratio）**
@@ -177,9 +177,9 @@ $$\text{FinalPixel} = \text{RasterizedResult} + \text{RayTracedRadiance} \times 
 
 ---
 
-## 四、初始结果的问题分析
+## 初始结果的问题分析
 
-### 4.1 直接结果展示
+### 直接结果展示
 
 使用上述"最简管线"（每像素 1 条光线）得到的画面存在严重问题：
 
@@ -189,7 +189,7 @@ $$\text{FinalPixel} = \text{RasterizedResult} + \text{RayTracedRadiance} \times 
 | **性能极差** | 仅光线追踪部分就耗时约 **18.5 毫秒** ，远超预算，不可能发布 |
 | **大量无效光线** | 很多区域发射了光线，但 Specular-to-Diffuse Ratio 很低，最终结果乘以一个极小值后 **几乎不可见** ——除非命中天空或极亮物体 |
 
-### 4.2 关键洞察
+### 关键洞察
 
 > 在那些 **光追结果贡献极小的区域** ，反正最终会被低权重压制并交给降噪器模糊掉，那为什么还要在那里发射那么多光线呢？
 
@@ -197,16 +197,16 @@ $$\text{FinalPixel} = \text{RasterizedResult} + \text{RayTracedRadiance} \times 
 
 ---
 
-## 五、优化一：可变速率光线追踪（Variable Rate Ray Tracing）
+## 优化一：可变速率光线追踪（Variable Rate Ray Tracing）
 
-### 5.1 核心思想
+### 核心思想
 
 - 不同屏幕区域对光追结果的 **需求程度不同**
 - **高 Specular Ratio 的区域** → 需要更多光线（结果贡献大）
 - **低 Specular Ratio 的区域** → 可以大幅减少光线（反正贡献微小，降噪器会处理）
 - 将 **光线预算（Ray Budget）** 按需分配
 
-### 5.2 实现步骤
+### 实现步骤
 
 #### Step 1：计算每个 Tile 的最大比率
 
@@ -233,7 +233,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
   - 误差越大，越倾向于选择另一个方向来补偿
 - 这样在统计意义上，总光线数 **趋近于目标预算**
 
-### 5.3 效果
+### 效果
 
 - 低贡献区域的光线数量被大幅削减
 - 高贡献区域（如水面、金属表面）保持密集采样
@@ -241,7 +241,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 六、关键术语速查
+## 关键术语速查
 
 | 术语 | 含义 |
 |------|------|
@@ -259,13 +259,13 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 一、采样分配模式（Sample Allocation Patterns）
+## 采样分配模式（Sample Allocation Patterns）
 
-### 1.1 为什么只选择 2 的幂次
+### 为什么只选择 2 的幂次
 
 - 光线数量只选择 **2 的幂次（Power of 2）** ，原因是可以用非常简单的方式在 **16×16 Tile** 内分配采样点
 
-### 1.2 各级别的分配策略
+### 各级别的分配策略
 
 | 光线数 / Tile | 分配方式 |
 |:---:|:---|
@@ -274,7 +274,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 | **64** | 将棋盘格中的小方块 **放大** ，形成更稀疏但规则的采样图案 |
 | **更低（32, 16, 8…）** | 继续按相同思路 **缩放** ，得到越来越少的光线 |
 
-### 1.3 时域积累（Temporal Integration）
+### 时域积累（Temporal Integration）
 
 - 为了在低采样率下仍能覆盖完整的像素信息，采用 **逐帧轮换像素位置** 的方式
 - 每帧对 **像素计数器递增** ，确保不同帧采样不同的像素位置
@@ -282,9 +282,9 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 二、可变速率追踪的实际效果
+## 可变速率追踪的实际效果
 
-### 2.1 可视化结果
+### 可视化结果
 
 演讲者展示了一张 **热力图** 风格的可视化：
 
@@ -294,7 +294,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 | **黄色** | 中等数量，介于红色与蓝色之间 |
 | **蓝色** | 每 Tile 仅发射约 **6~8 条光线** ，对应低反射贡献区域 |
 
-### 2.2 观察到的规律
+### 观察到的规律
 
 - **高反射率表面** → 反射贡献大 → 分配更多光线（红色区域）
 - **低反射率 / 非反射表面** → 仍然发射光线，但 **数量显著减少**
@@ -303,9 +303,9 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 三、光线发散性问题（Ray Divergence）
+## 光线发散性问题（Ray Divergence）
 
-### 3.1 问题根源
+### 问题根源
 
 光线追踪性能中一个巨大瓶颈是 **光线的发散程度（Divergence）** ——即同一批光线在空间中方向和位置的分散程度越大，GPU 的缓存命中率越低，性能越差。
 
@@ -324,20 +324,20 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
   - 由于法线朝向极度混乱，反射光线 **几乎朝所有方向发散**
 - 这类内容导致性能 **下降约 4 倍** ——走近围栏时帧率骤降到正常场景的 1/4
 
-### 3.2 为什么必须解决
+### 为什么必须解决
 
 - 如果不解决，玩家在特定场景会遭遇 **严重的帧率波动**
 - 目标：即使无法让最差情况变得完美，至少要 **拉平性能曲线** ，让最好和最差场景之间的差距缩小
 
 ---
 
-## 四、光线分箱（Ray Binning / Ray Sorting）
+## 光线分箱（Ray Binning / Ray Sorting）
 
-### 4.1 核心思想
+### 核心思想
 
 将方向和位置 **相似** 的光线 **分组到同一个 Bin** 中，使同组光线在追踪时具有更好的 **空间和方向一致性（Coherence）** ，从而提升 GPU 缓存命中率。
 
-### 4.2 Bin Index 的构造方式
+### Bin Index 的构造方式
 
 对每条光线计算一个 **Bin 索引** ，由两部分组成：
 
@@ -360,7 +360,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 [  2bit V + 2bit H  |  8bit Lon + 8bit Lat ]
 ```
 
-### 4.3 可视化效果
+### 可视化效果
 
 - 将 Bin Index 映射为颜色后，可以直观看到：
   - **颜色相近的区域** = 光线方向和位置相似 = 被分到同一个 Bin
@@ -368,7 +368,7 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 五、关键要点总结
+## 关键要点总结
 
 | 优化手段 | 解决的问题 | 核心机制 |
 |:---|:---|:---|
@@ -383,14 +383,14 @@ $$\text{TileBudget}_i = \frac{\max(\text{SpecularRatio}_i)}{\sum_j \max(\text{Sp
 
 ---
 
-## 一、光线分箱的具体实现步骤（Ray Binning Implementation）
+## 光线分箱的具体实现步骤（Ray Binning Implementation）
 
-### 1.1 可视化理解
+### 可视化理解
 
 - 在可视化图中，即使只是普通的 **噪声 BRDF 采样** ，也可以清晰看到：**颜色相同的像素被归入了同一个桶（Bucket）**
 - 这意味着方向和位置相近的光线被重新编组在一起
 
-### 1.2 四步分箱算法
+### 四步分箱算法
 
 已知每条光线都有一个 **Bin Index** （由屏幕位置 + 光线方向编码而成），接下来的分箱流程如下：
 
@@ -419,9 +419,9 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 二、Screen Space Reflections（SSR）混合管线
+## Screen Space Reflections（SSR）混合管线
 
-### 2.1 问题：部分物体无法出现在光追反射中
+### 问题：部分物体无法出现在光追反射中
 
 #### 具体案例
 
@@ -437,7 +437,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 - 如果玩家开启 RTX 后反而 **看到更少的反射** ，体验会非常糟糕
 - 团队认为这 "太烂了（sucked a lot）"，必须解决
 
-### 2.2 解决方案：将 SSR 融入光追管线
+### 解决方案：将 SSR 融入光追管线
 
 核心思路：**先尝试屏幕空间追踪，失败时再用光线追踪兜底**
 
@@ -453,7 +453,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
        └── 获取材质数据 → 送入同一个光照管线
 ```
 
-### 2.3 关键设计：重新光照（Re-lighting）
+### 关键设计：重新光照（Re-lighting）
 
 #### 为什么不直接取 SSR 的颜色值
 
@@ -470,7 +470,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 - 结果：**SSR 与光追反射之间完全没有可见的不连续**
   - 即使采样位置只有亚像素级别的偏移，经过降噪后也完全不可见
 
-### 2.4 SSR 命中的拒绝判定（Rejection Criteria）
+### SSR 命中的拒绝判定（Rejection Criteria）
 
 - 在 SSR 的交点位置，采样 **深度缓冲（Depth Buffer）**
 - 比较 SSR 计算得到的交点深度与深度缓冲中的实际深度
@@ -478,7 +478,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 > 参考实现：**Sakovic & Katal, 2015** 的层级式屏幕空间追踪方法
 
-### 2.5 SSR 混合带来的额外好处
+### SSR 混合带来的额外好处
 
 | 免费获得的内容 | 说明 |
 |:---:|:---|
@@ -493,7 +493,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 三、关键术语速查
+## 关键术语速查
 
 | 术语 | 含义 |
 |------|------|
@@ -509,15 +509,15 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 一、光线追踪结果的碎片整理（Defrag）
+## 光线追踪结果的碎片整理（Defrag）
 
-### 1.1 问题：Miss 光线导致光照着色器空转
+### 问题：Miss 光线导致光照着色器空转
 
 - 光线追踪完成后，部分光线 **命中（Hit）** 了物体，部分 **未命中（Miss）** 而击中了天空
 - 天空不需要复杂的光照计算
 - 如果直接将所有光线送入光照着色器，**Miss 的线程无事可做** ，导致 GPU 利用率低下（大量线程空闲等待）
 
-### 1.2 解决方案：碎片整理（Defrag）
+### 解决方案：碎片整理（Defrag）
 
 与之前光线分箱使用相同的思路，再做一次 **紧凑化（Compaction）** ：
 
@@ -534,14 +534,14 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 二、光照计算优化：Per-Cell Light Lists
+## 光照计算优化：Per-Cell Light Lists
 
-### 2.1 问题：朴素光照仍然太慢
+### 问题：朴素光照仍然太慢
 
 - 即使碎片整理后光照着色器"满负荷"运行，仍然需要约 **2 毫秒**
 - 原因很明显：之前的做法是 **遍历所有光源** ——这就是最朴素的 **延迟渲染（Deferred Rendering）** 做法的老毛病
 
-### 2.2 解决方案：Purcell 风格的世界空间光源链表
+### 解决方案：Purcell 风格的世界空间光源链表
 
 灵感来自 **Purcell 等人的光线追踪渲染器** ，使用 **世界空间网格 + 链表** 来组织光源：
 
@@ -568,14 +568,14 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 三、降噪管线（Denoising Pipeline）
+## 降噪管线（Denoising Pipeline）
 
-### 3.1 问题：1 SPP 的结果极度噪声
+### 问题：1 SPP 的结果极度噪声
 
 - 每像素只发射 1 条光线（甚至更少），结果 **非常嘈杂** ，无法直接使用
 - 需要降噪，但 **绝不能发射更多光线** ——预算不允许
 
-### 3.2 两种数据复用策略
+### 两种数据复用策略
 
 | 策略 | 含义 |
 |:---:|:---|
@@ -586,9 +586,9 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 
 ---
 
-## 四、BRDF 空间滤波器（BRDF Spatial Filter）
+## BRDF 空间滤波器（BRDF Spatial Filter）
 
-### 4.1 核心思想
+### 核心思想
 
 每条光线采样了 BRDF 高光波瓣上的一个方向。邻近像素的光线也各自采样了它们自己的 BRDF 波瓣。关键洞察：
 
@@ -597,7 +597,7 @@ $$\text{FinalIndex} = \text{BinOffset} + \text{LocalOffset}$$
 - 那么可以问：**如果邻居的采样方向落在"我的" BRDF 上，它的权重是多少？**
 - 据此调整邻居采样的贡献权重，做 **加权求和**
 
-### 4.2 数学表达
+### 数学表达
 
 本质上是一个 **加权平均** ：
 
@@ -605,14 +605,14 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 
 其中权重 $w_i$ 基于邻居采样方向在 **当前像素 BRDF 波瓣** 上的评估值。
 
-### 4.3 与原始论文的差异
+### 与原始论文的差异
 
 | 方面 | 原始论文（2015） | BFV 实现 |
 |:---:|:---:|:---:|
 | 采样数量 | 固定 **4 个** 邻居 | **大幅增加** 邻居数量 |
 | 原因 | SSR 噪声较低，4 个够用 | 1 SPP 光追噪声极高，4 个远远不够 |
 
-### 4.4 自适应核大小（Adaptive Kernel Size）
+### 自适应核大小（Adaptive Kernel Size）
 
 #### 问题
 
@@ -632,15 +632,15 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 
 ---
 
-## 五、核大小的距离估计问题
+## 核大小的距离估计问题
 
-### 5.1 难点：不知道"想象中的平面"距离多远
+### 难点：不知道"想象中的平面"距离多远
 
 - 计算锥体投影需要知道反射目标平面的 **距离**
 - 但我们只有 **随机采样到的一个命中距离** ，这个值 **噪声极大**
 - 如果直接使用，核大小会 **逐帧剧烈波动** ，导致时域不稳定
 
-### 5.2 两步解决方案
+### 两步解决方案
 
 #### 第一步：空间平均
 
@@ -655,7 +655,7 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 
 ---
 
-## 六、关键术语速查
+## 关键术语速查
 
 | 术语 | 含义 |
 |------|------|
@@ -672,9 +672,9 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 
 ---
 
-## 一、BRDF 空间滤波器的实现细节补充
+## BRDF 空间滤波器的实现细节补充
 
-### 1.1 平均光线距离的时域积累
+### 平均光线距离的时域积累
 
 - 为了计算合适的 **滤波核大小（Kernel Size）** ，需要知道反射物体的 **平均距离**
 - 使用 **虚拟反射点（Virtual Reflection Point）** 从前一帧进行 **重投影（Reprojection）**
@@ -684,7 +684,7 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
   - 原因：如果前帧数据存在，它对平均距离的估计 **非常准确**
   - 经过几帧积累后，平均距离趋于稳定，核大小也趋于稳定
 
-### 1.2 LDS 数据共享实现
+### LDS 数据共享实现
 
 - 当前线程的 BRDF 核可能 **非常大** ，覆盖的像素远超当前线程拥有的数据
 - 使用 **LDS（Local Data Share / 共享内存）** 在 **Warp/Wave 内共享** 额外像素的信息
@@ -693,16 +693,16 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 - 实际支持的最大滤波核可以相当大，但实践中 **运行时稍小一些**
 - 最大支持 **81 taps**（即 9×9 范围内的采样点）
 
-### 1.3 空间滤波后的结果
+### 空间滤波后的结果
 
 - 即使使用 81 taps 的 BRDF 空间滤波，结果 **仍然有明显噪声**
 - 必须继续进行 **时域降噪**
 
 ---
 
-## 二、时域降噪（Temporal Denoising）
+## 时域降噪（Temporal Denoising）
 
-### 2.1 核心挑战：Ghosting（鬼影）
+### 核心挑战：Ghosting（鬼影）
 
 - 时域滤波的基本操作：将当前帧与前帧结果 **混合（Blend）**
 - 但必须决定前帧的样本是否仍然 **有效** ，否则会产生 **鬼影（Ghosting）**
@@ -714,7 +714,7 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
   - 走近后波瓣投影变小 → 反射应该变 **清晰**
   - 如果不做拒绝，前帧的模糊结果会 **持续残留** ，反射永远无法变清晰
 
-### 2.2 拒绝机制：利用 BRDF 滤波器的邻域信息
+### 拒绝机制：利用 BRDF 滤波器的邻域信息
 
 #### 关键洞察
 
@@ -740,14 +740,14 @@ $$L_{\text{filtered}}(p) = \frac{\sum_{i \in \text{neighbors}} w_i \cdot L_i}{\s
 
 ---
 
-## 三、高斯后处理滤波器（Gaussian Post-Filter）
+## 高斯后处理滤波器（Gaussian Post-Filter）
 
-### 3.1 问题：时域滤波后仍有残余噪声
+### 问题：时域滤波后仍有残余噪声
 
 - 经过 BRDF 空间滤波 + 时域滤波后，噪声大幅减少但 **仍未完全消除**
 - 此时团队决定 **放弃物理正确性** ，转向实用主义
 
-### 3.2 高斯模糊方案
+### 高斯模糊方案
 
 #### 核大小的确定
 
@@ -774,7 +774,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 - 其中 **RayT** 是光线命中距离，乘以查找表值即得屏幕空间下的实际核大小
 
-### 3.3 过度模糊问题与修正
+### 过度模糊问题与修正
 
 #### 问题
 
@@ -788,7 +788,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 - 没有精确的数学推导，而是通过 **视觉对比调参** 完成
 - 虽然不够"优雅"，但 **实际效果良好**
 
-### 3.4 残余伪影
+### 残余伪影
 
 - 在大多数 **真实游戏场景** 中效果很好
 - 仍存在的问题主要出现在 **极端病态场景** 中：
@@ -797,9 +797,9 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 四、最终管线性能概览
+## 最终管线性能概览
 
-### 4.1 各阶段耗时
+### 各阶段耗时
 
 | 管线阶段 | 耗时（ms） | 备注 |
 |:---:|:---:|:---|
@@ -810,7 +810,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 五、关键技术总结
+## 关键技术总结
 
 | 技术点 | 核心思路 |
 |:---|:---|
@@ -826,9 +826,9 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 一、完整光追反射管线的性能分解
+## 完整光追反射管线的性能分解
 
-### 1.1 各阶段耗时一览
+### 各阶段耗时一览
 
 | 阶段 | 耗时 (ms) | 备注 |
 |:---|:---:|:---|
@@ -844,7 +844,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 > ⚠️ 演讲者不记得这是在哪个 GPU 上测量的，建议将这些数字视为 **相对比例** 而非绝对值。
 
-### 1.2 关键观察
+### 关键观察
 
 - **对比原始方案**：仅光线求交就需要 **18 ms** ，现在整个管线（含求交 + 降噪 + 光照）仅 **6.3 ms**
 - 追踪前的所有优化步骤（分箱、SSR 混合）**加起来不到 0.5 ms** ，却让追踪本身性能大幅提升
@@ -853,9 +853,9 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 二、进入 DXR 硬件光追部分（Johannes 接手）
+## 进入 DXR 硬件光追部分（Johannes 接手）
 
-### 2.1 两大核心任务
+### 两大核心任务
 
 | 任务 | 描述 |
 |:---:|:---|
@@ -864,9 +864,9 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 三、加速结构构建（Acceleration Structure Building）
+## 加速结构构建（Acceleration Structure Building）
 
-### 3.1 两级加速结构回顾
+### 两级加速结构回顾
 
 #### 底层加速结构（BLAS - Bottom Level Acceleration Structure）
 
@@ -879,7 +879,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 - 将多个 BLAS **实例化** 并组合，代表 **整个游戏世界**
 - 每个实例包含一个变换矩阵（位置、旋转、缩放）
 
-### 3.2 动态物体的处理
+### 动态物体的处理
 
 - 对于 **非静态物体** （角色、载具、物理交互物体等）：
   1. 运行一个 **Compute Shader** 变换顶点
@@ -888,9 +888,9 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 四、剔除问题（Culling Problem）
+## 剔除问题（Culling Problem）
 
-### 4.1 传统剔除在光追中失效
+### 传统剔除在光追中失效
 
 | 传统剔除技术 | 为什么对光追无效 |
 |:---:|:---|
@@ -900,7 +900,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 > 核心矛盾：光线 **可以射向场景中的任何位置** ，传统基于摄像机视角的剔除策略全部失效。
 
-### 4.2 "不剔除"的天真尝试
+### "不剔除"的天真尝试
 
 - 最简单的方案：**干脆不做任何剔除**
 - 在 **鹿特丹（Rotterdam）** 关卡的测试结果：
@@ -910,7 +910,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 | 顶层实例数（TLAS Instances） | **~20,000** |
 | 每帧底层重建次数（BLAS Rebuilds/Frame） | **~1,000** |
 
-### 4.3 性能灾难
+### 性能灾难
 
 - **CPU 端**：处理 20,000 个实例 + 1,000 次 BLAS 重建的管理开销 **极其昂贵**
 - **GPU 端**：执行 1,000 次 BLAS 重建本身消耗 **远超预算的毫秒数**
@@ -918,7 +918,7 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 五、预期后续内容
+## 预期后续内容
 
 根据演讲的叙事节奏，Johannes 接下来应该会讲解：
 
@@ -935,15 +935,15 @@ $$\text{ScreenSpaceKernel}_{w,h} = \text{LUT}(\text{angle}, \text{roughness}) \t
 
 ---
 
-## 一、加速结构的剔除策略（Culling Heuristic）
+## 加速结构的剔除策略（Culling Heuristic）
 
-### 1.1 问题回顾
+### 问题回顾
 
 - 不做剔除时：**20,000 个顶层实例** + **1,000 次 BLAS 重建/帧** → 开销无法承受
 - 但传统剔除（视锥、遮挡）对光追 **理论上不适用** ，因为光线可以射向任何方向
 - 妥协：**明知剔除是"错误"的，仍然使用** ，接受少量伪影换取可用性能
 
-### 1.2 启发式剔除：角度阈值法（Culling Angle）
+### 启发式剔除：角度阈值法（Culling Angle）
 
 #### 核心思想
 
@@ -963,7 +963,7 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
 
 > 本质：物体在摄像机视角中的 **张角** 太小 → 即使被反射也几乎看不到 → 剔除。
 
-### 1.3 不同阈值的效果对比
+### 不同阈值的效果对比
 
 | 阈值 | 视觉质量 | 性能 |
 |:---:|:---|:---|
@@ -971,7 +971,7 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
 | **4°** | 卡车轮子消失、部分远处路牌消失，但整体可接受 | 大幅改善 |
 | **15°** | 明显可见大量物体缺失 | 极端性能但质量太差 |
 
-### 1.4 4° 剔除的实际收益
+### 4° 剔除的实际收益
 
 | 指标 | 无剔除 | 4° 剔除 | 降幅 |
 |:---:|:---:|:---:|:---:|
@@ -984,9 +984,9 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
 
 ---
 
-## 二、BLAS 进一步优化
+## BLAS 进一步优化
 
-### 2.1 交错式更新（Staggered Full / Incremental Updates）
+### 交错式更新（Staggered Full / Incremental Updates）
 
 | 更新类型 | 描述 |
 |:---:|:---|
@@ -997,22 +997,22 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
   - 例如：第 1 帧完整重建，第 2~N 帧增量更新，第 N+1 帧再完整重建……
   - 增量更新会导致 BVH 质量 **逐步退化** ，但由于每帧都做，退化程度有限
 
-### 2.2 构建偏好：速度优先
+### 构建偏好：速度优先
 
 - 告诉驱动程序：**以最快速度构建，牺牲光追质量**
   - 对应 DXR 的 `D3D12_RAYTRACING_ACCELERATION_STRUCTURE_BUILD_FLAG_PREFER_FAST_BUILD`
 - BVH 质量稍差 → 追踪时多遍历一些节点 → 但构建本身快很多
 
-### 2.3 异步计算（Async Compute）
+### 异步计算（Async Compute）
 
 - 将加速结构的构建放在 **异步计算队列** 上，与图形渲染 **并行执行**
 - 额外节省 **~0.8 ms**
 
 ---
 
-## 三、材质数据获取与命中着色器
+## 材质数据获取与命中着色器
 
-### 3.1 核心要求：光栅化 vs 光追结果必须完全一致
+### 核心要求：光栅化 vs 光追结果必须完全一致
 
 - 对于同一个三角形上的同一个采样点：
   - **光栅化像素着色器** 产生的材质输出
@@ -1020,14 +1020,14 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
   - **必须完全相同（Exact Match）**
 - 否则反射中的表面会与直接可见的表面产生 **不一致** ，造成视觉割裂
 
-### 3.2 DXR 着色器类型
+### DXR 着色器类型
 
 | 着色器类型 | 触发条件 |
 |:---:|:---|
 | **Closest Hit Shader** | 在离光线原点 **最近的命中表面** 上执行 |
 | **Any Hit Shader** | 在光线路径上的 **每个潜在命中点** 上执行（用于半透明、Alpha Test 等） |
 
-### 3.3 Frostbite 的着色器系统
+### Frostbite 的着色器系统
 
 - 美术在 **Shader Graph（着色器图）** 中工作：
   - 输入：纹理、常量参数等
@@ -1036,7 +1036,7 @@ $$\theta = \arctan\left(\frac{r}{d}\right)$$
 - 项目中有 **数千个** 这样的着色器图，且 **持续更新**
 - **手动转换为光追着色器是不可能的** ，必须自动化
 
-### 3.4 命中着色器模板（Hit Shader Template）
+### 命中着色器模板（Hit Shader Template）
 
 ```hlsl
 // 伪代码：基本命中着色器流程
@@ -1068,9 +1068,9 @@ void ClosestHitMain(inout Payload payload, BuiltInTriangleIntersectionAttributes
 
 ---
 
-## 四、命中着色器的实际问题
+## 命中着色器的实际问题
 
-### 4.1 屏幕空间梯度不可用
+### 屏幕空间梯度不可用
 
 #### 问题
 
@@ -1101,15 +1101,15 @@ void ClosestHitMain(inout Payload payload, BuiltInTriangleIntersectionAttributes
 
 ---
 
-## 一、纹理 Mip Level 问题
+## 纹理 Mip Level 问题
 
-### 1.1 问题本质
+### 问题本质
 
 - 传统光栅化中，GPU 利用 **屏幕空间梯度（Screen-Space Gradients）** 自动计算纹理的 Mip Level
 - 光线追踪中 **没有屏幕空间梯度** ——每条光线独立，不存在相邻像素的概念
 - 正确计算 Mip Level 需要额外的工作（如光线微分 / Ray Differentials），有人专门研究过，但团队没有时间
 
-### 1.2 团队的解决方案
+### 团队的解决方案
 
 > **永远采样 Mip Level 0（最高分辨率）**
 
@@ -1123,9 +1123,9 @@ void ClosestHitMain(inout Payload payload, BuiltInTriangleIntersectionAttributes
 
 ---
 
-## 二、Alpha Test 与 Any Hit Shader
+## Alpha Test 与 Any Hit Shader
 
-### 2.1 问题：忽略 Alpha Test 的灾难
+### 问题：忽略 Alpha Test 的灾难
 
 - 像素着色器中有一条关键指令：**`clip` / `discard`**——当 Alpha 值低于阈值时终止该像素的着色
 - 典型场景：**树木和植被**，叶片是一张带 Alpha 通道的四边形
@@ -1133,7 +1133,7 @@ void ClosestHitMain(inout Payload payload, BuiltInTriangleIntersectionAttributes
   - 光线击中树叶的透明部分 → 返回 **黑色** 而非穿透继续追踪
   - 视觉效果极差——树木反射变成黑色方块
 
-### 2.2 解决方案：使用 Any Hit Shader
+### 解决方案：使用 Any Hit Shader
 
 ```
 Any Hit Shader 逻辑：
@@ -1145,13 +1145,13 @@ Any Hit Shader 逻辑：
    → 接受命中，交给 Closest Hit Shader 处理
 ```
 
-### 2.3 性能问题：Any Hit Shader 极其昂贵
+### 性能问题：Any Hit Shader 极其昂贵
 
 - 树木等植被有 **大量重叠三角面**
 - 每个潜在交点都会触发 Any Hit Shader → 纹理采样 → 对比阈值
 - 在热力图可视化中：**树木和植被是整个场景中最亮（最昂贵）的区域**
 
-### 2.4 使用策略总结
+### 使用策略总结
 
 | 着色器类型 | 使用方式 |
 |:---:|:---|
@@ -1160,9 +1160,9 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 三、Payload 设计与验证
+## Payload 设计与验证
 
-### 3.1 Payload 格式 = G-Buffer 格式
+### Payload 格式 = G-Buffer 格式
 
 - Closest Hit Shader 返回的数据（Payload）**完全对齐 G-Buffer 格式**
 - 三大好处：
@@ -1173,7 +1173,7 @@ Any Hit Shader 逻辑：
 | **紧凑高效** | G-Buffer 已经是高度优化的紧凑格式，Payload 尺寸小 |
 | **可验证性** | 可以直接对比光栅化输出与光追输出 |
 
-### 3.2 正确性验证方法
+### 正确性验证方法
 
 ```
 验证流程：
@@ -1189,9 +1189,9 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 四、着色器编译的巨大开销
+## 着色器编译的巨大开销
 
-### 4.1 规模
+### 规模
 
 | 指标 | 数值 |
 |:---:|:---:|
@@ -1201,14 +1201,14 @@ Any Hit Shader 逻辑：
 - 这些着色器需要编译为 **Collection（类似光追 PSO）** 才能使用
 - 在单帧内编译 **完全不可能**
 
-### 4.2 两种策略
+### 两种策略
 
 | 策略 | 描述 | 选择 |
 |:---:|:---|:---:|
 | **运行时流式编译** | 物体加载时编译着色器，可能出现弹出和闪烁 | ❌ |
 | **加载画面预编译** | 在关卡加载时编译该关卡所有着色器 | ✅ 采用 |
 
-### 4.3 实际加载时间
+### 实际加载时间
 
 | 场景 | 耗时 |
 |:---:|:---:|
@@ -1219,14 +1219,14 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 五、粒子（透明广告牌）的光追渲染
+## 粒子（透明广告牌）的光追渲染
 
-### 5.1 为什么粒子在 BFV 中极其重要
+### 为什么粒子在 BFV 中极其重要
 
 - 二战题材 → **火焰、烟雾、爆炸** 无处不在
 - 技术上：粒子 = **透明广告牌（Transparent Billboards）** = 始终面向摄像机的平面
 
-### 5.2 基本渲染算法
+### 基本渲染算法
 
 ```
 粒子光追流程：
@@ -1249,7 +1249,7 @@ Any Hit Shader 逻辑：
 6. 最终与不透明物体的颜色进行 Alpha 合成
 ```
 
-### 5.3 为什么需要单独的加速结构
+### 为什么需要单独的加速结构
 
 - 粒子 **每帧都在变化** （位置、大小、数量）
 - 与不透明几何体混在一起会极大增加 BLAS 重建开销
@@ -1257,7 +1257,7 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 六、阶段性总结
+## 阶段性总结
 
 到目前为止，整个光追反射管线的完整架构已清晰：
 
@@ -1281,22 +1281,22 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 一、粒子的朝向问题（Billboard Orientation）
+## 粒子的朝向问题（Billboard Orientation）
 
-### 1.1 问题
+### 问题
 
 - 粒子是 **面向摄像机的公告板（Camera-Aligned Billboards）**
 - 当光线从 **非摄像机方向**（如反射方向）击中粒子时，公告板的朝向是"错的"
 - 从镜面/反射角度看，粒子会 **明显呈现扁平的面片形状** ，破坏体积感
 
-### 1.2 尝试过的方案
+### 尝试过的方案
 
 | 方案 | 描述 | 结果 |
 |:---:|:---|:---:|
 | **面向光线旋转** | 让每个粒子始终正对入射光线方向（90° 垂直） | ❌ 需要 **Intersection Shader**（昂贵），代码复杂，效果不理想 |
 | **交替旋转 90°** | 每隔一个粒子绕 Y 轴旋转 90° | ✅ 采用 |
 
-### 1.3 最终方案：交替旋转
+### 最终方案：交替旋转
 
 ```
 对于每个粒子：
@@ -1313,15 +1313,15 @@ Any Hit Shader 逻辑：
 
 ---
 
-## 二、粒子追踪的性能优化
+## 粒子追踪的性能优化
 
-### 2.1 问题：循环追踪的开销
+### 问题：循环追踪的开销
 
 - 之前的方案：沿光线循环查找所有半透明交点
 - 如果一条光线穿过 N 个粒子 → 实际上需要追踪 **N 次光线**
 - 烟雾/火焰场景中开销约 **~1 ms**，不可接受
 
-### 2.2 优化方案：Any Hit Shader + 加权混合 OIT
+### 优化方案：Any Hit Shader + 加权混合 OIT
 
 #### 基本思路
 
@@ -1354,7 +1354,7 @@ D3D12_RAYTRACING_PIPELINE_FLAG_SKIP_PROCEDURAL_PRIMITIVES
 // 你的 Any Hit Shader 必须能正确处理重复执行
 ```
 
-### 2.3 效果对比
+### 效果对比
 
 | 方案 | 性能 | 视觉质量 |
 |:---:|:---:|:---|
@@ -1363,7 +1363,7 @@ D3D12_RAYTRACING_PIPELINE_FLAG_SKIP_PROCEDURAL_PRIMITIVES
 
 ---
 
-## 三、Q&A 环节精华
+## Q&A 环节精华
 
 ### Q1：Any Hit Shader 处理粒子时是否限制命中数量？
 
@@ -1413,7 +1413,7 @@ D3D12_RAYTRACING_PIPELINE_FLAG_SKIP_PROCEDURAL_PRIMITIVES
 
 ---
 
-## 四、完整管线总览回顾
+## 完整管线总览回顾
 
 ```
 ┌─────────────────────────────────────────────────────────┐
