@@ -6,7 +6,7 @@ description: RenderDoc调试技巧
 
 # RenderDoc 实战指南：基础、启动与核心调试流程
 
-## 1. 工具定位与基础认知
+## 工具定位与基础认知
 
 RenderDoc 是图形渲染调试的核心工具，适用于解决 **80% 的通用图形渲染问题**（如资源绑定错误、管线状态异常）。
 
@@ -19,11 +19,11 @@ RenderDoc 是图形渲染调试的核心工具，适用于解决 **80% 的通用
 
 ---
 
-## 2. 应用程序的启动与注入（Launch & Attach）
+## 应用程序的启动与注入（Launch & Attach）
 
 RenderDoc 的核心原理是在图形 API 初始化之前将自身逻辑 **注入（Inject）** 到目标进程中。
 
-### 2.1 通用程序（.exe）启动
+### 通用程序（.exe）启动
 对于自研引擎或普通图形程序，需手动配置路径。
 
 * **关键配置：**
@@ -33,7 +33,7 @@ RenderDoc 的核心原理是在图形 API 初始化之前将自身逻辑 **注�
     * **技巧：** 使用 **Process Explorer** 查看运行中进程的 Properties，获取准确的命令行参数和工作目录。
 * **状态确认：** 启动后左上角出现 Overlay 信息，即代表注入成功。
 
-### 2.2 Unity 引擎集成
+### Unity 引擎集成
 Unity 编辑器启动后无法直接注入，因为图形 API 已初始化。
 
 * **前置条件：** 安装 RenderDoc 时，其路径会被写入注册表，Unity 启动时会读取该注册表。
@@ -43,7 +43,7 @@ Unity 编辑器启动后无法直接注入，因为图形 API 已初始化。
     3.  **资源重建：** Unity 会强制销毁并重建所有图形资源（耗时操作），以便 RenderDoc 钩住（Hook）底层 API。
     4.  界面出现小相机图标，点击即可截帧。
 
-### 2.3 Unreal Engine (UE) 集成
+### Unreal Engine (UE) 集成
 UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 * **配置方法：**
@@ -56,7 +56,7 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 ---
 
-## 3. 截帧文件（Capture）管理
+## 截帧文件（Capture）管理
 
 * **存储位置：** 默认保存在临时目录 `%TEMP%` 下。
 * **文件格式：** `.rdc`。
@@ -64,9 +64,9 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 ---
 
-## 4. 调试界面与高效定位技巧
+## 调试界面与高效定位技巧
 
-### 4.1 Event Browser（事件浏览器）与定位策略
+### Event Browser（事件浏览器）与定位策略
 如何在一个陌生的渲染管线中快速找到目标 Draw Call？
 
 * **方法一：管线结构法**
@@ -78,27 +78,27 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 
 
-### 4.2 性能计时（Profiling）
+### 性能计时（Profiling）
 * **功能：** 点击小闹钟图标可显示 Draw Call 耗时。
 * **警示：** 该时间仅供**参考**，**绝对不准确**。RenderDoc 自身的 Hook 开销会影响计时。严谨的性能分析必须使用 Nsight 或 Snapdragon Profiler。
 
-### 4.3 API Inspector
+### API Inspector
 * **功能：** 查看当前 Event 调用的底层图形 API（DirectX/OpenGL/Vulkan）。
 * **筛选：** 默认开启漏斗图标（只显示 Action），仅显示 `DrawCall`、`Clear`、`Dispatch` 等对 RT 产生实质影响的操作。
 * **SetPass 查看：** 展开 Action 可查看 Draw Call 之前的状态设置（绑定 Shader、Buffer、Texture 等）。
 
 ---
 
-## 5. 核心功能：Texture Viewer（纹理视图）
+## 核心功能：Texture Viewer（纹理视图）
 
 这是图形工程师使用频率最高的功能（约占 80%）。
 
-### 5.1 输入与输出
+### 输入与输出
 * **Inputs:** 当前 Draw Call 绑定的资源（SRV）。
 * **Outputs:** 当前 Draw Call 渲染的目标（RTV）。
 * **操作：** 将 Input 列表拖拽到副窗口，可实现输入输出同屏对比。
 
-### 5.2 通道检查（Channels）与实战案例
+### 通道检查（Channels）与实战案例
 通过单独查看 R、G、B、A 通道来分析数据打包情况。
 
 * **案例 A：字体/UI 图集**
@@ -117,7 +117,7 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 
 
-### 5.3 图像校正（Display Controls）
+### 图像校正（Display Controls）
 解决预览图“全黑”或“倒置”的问题。
 
 * **Flip Y（翻转）：**
@@ -131,11 +131,11 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 
 
-## 6. 高级纹理查看技巧
+## 高级纹理查看技巧
 
 在 Texture Viewer 中，除了基础的通道查看，还有针对特殊格式和复杂资源的调节工具。
 
-### 6.1 Range 工具（数值范围重映射）
+### Range 工具（数值范围重映射）
 用于查看 **非 0~1 范围** 的纹理数据，如深度图（Depth Buffer）或高动态范围（HDR）纹理。
 
 * **问题现象：**
@@ -147,7 +147,7 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 
 
-### 6.2 Subresource（子资源）查看
+### Subresource（子资源）查看
 用于检查复杂的纹理结构，如 Mipmaps、Cubemaps 或 Texture Arrays。
 
 * **Mipmap 检查：**
@@ -159,42 +159,42 @@ UE 没有实时热加载机制，通常需要在启动阶段注入。
 
 ---
 
-## 7. Overlay 叠加视图（可视化调试）
+## Overlay 叠加视图（可视化调试）
 
 Overlay 功能位于 Texture Viewer 上方工具栏，是排查渲染错误的“手术刀”。
 
 
 
-### 7.1 网格与绘制识别
+### 网格与绘制识别
 * **Highlight Drawcall（高亮绘制）：**
     * 将当前 Draw Call 渲染的像素以粉紫色高亮显示。
 * **Wireframe Mesh（线框模式）—— *推荐***
     * **核心优势：** 相比 Highlight，线框模式不仅能定位物体，还能直接暴露**网格拓扑结构**（Topology）问题。
 
-### 7.2 渲染测试反馈
+### 渲染测试反馈
 * **Depth Test（深度测试）：**
     * **绿色：** 测试通过（可见）。
     * **红色：** 测试失败（被遮挡）。
     * *注意：* 如果红色区域完全没有像素显示，通常是因为被 **Early-Z / Pre-Z** 提前剔除。
 * **Stencil Test / Backface Culling：** 同样以红绿颜色区分通过与否。
 
-### 7.3 NaN / Inf（非法数值）检测
+### NaN / Inf（非法数值）检测
 * **实战案例：** 屏幕出现不明原因黑斑或全黑。
 * **成因：** Shader 计算中出现 **除以 0** 或非法运算，产生 `Infinity`（无穷大）或 `NaN`（非数字）。这些坏值经过 Bloom 等后处理扩散，导致屏幕变黑。
 * **作用：** 该模式会高亮显示所有非法的像素值，帮助快速定位计算错误的源头。
 
 ---
 
-## 8. 渲染隔离与 Quad Overdraw 分析
+## 渲染隔离与 Quad Overdraw 分析
 
-### 8.1 Clear Before Pass / Draw（清除背景）
+### Clear Before Pass / Draw（清除背景）
 解决现代图形管线（如 UE5）为了优化，在 Draw Call 之间不清除 RT（Render Target）导致的画面重叠干扰问题。
 
 * **Clear Before Pass：** 在当前 Pass 开始前清除背景，只看当前 Pass 的内容。
 * **Clear Before Draw：** 在当前 Draw Call 开始前清除背景，**只看这一个物体的渲染结果**。
 * **价值：** 在复杂的延迟渲染或后处理链中，快速剥离出当前绘制的具体内容。
 
-### 8.2 Quad Overdraw（四边形过度绘制）—— *性能优化利器*
+### Quad Overdraw（四边形过度绘制）—— *性能优化利器*
 显示屏幕上每个像素被 Shader 计算了多少次。
 
 
@@ -208,15 +208,15 @@ Overlay 功能位于 Texture Viewer 上方工具栏，是排查渲染错误的�
 
 ---
 
-## 9. 深度像素调试
+## 深度像素调试
 
-### 9.1 纹理信息与依赖追踪
+### 纹理信息与依赖追踪
 * **状态栏信息：** 鼠标悬停在纹理上，底部状态栏会显示 UV 坐标、视口坐标（Viewport Pos）以及拾取的颜色值（Picked Color）。
 * **依赖查找（Find Usage）：**
     * **操作：** 右键 Input 或 Output 列表中的资源。
     * **作用：** 快速定位该纹理在哪些 Event 被作为 RT 写入（Write），或在哪些 Event 被作为 SRV 读取（Read）。例如快速找到 G-Buffer 的生成 Pass 或 Lighting Pass。
 
-### 9.2 Pixel History（像素历史）
+### Pixel History（像素历史）
 追溯一个像素在当前帧的“前世今生”。
 
 
@@ -227,7 +227,7 @@ Overlay 功能位于 Texture Viewer 上方工具栏，是排查渲染错误的�
     * **Test Status：** 红色代表被 Depth/Stencil 剔除（Failed），绿色代表执行了 Pixel Shader（Passed）。
     * **Data Change：** 显示 Shader 执行前（Pre-modification）和执行后（Post-modification）的颜色/深度值变化。
 
-### 9.3 Shader Debugger（着色器调试）
+### Shader Debugger（着色器调试）
 RenderDoc 最硬核的功能，用于单步调试 GPU 指令。
 
 
@@ -245,7 +245,7 @@ RenderDoc 最硬核的功能，用于单步调试 GPU 指令。
 
 
 
-## 10. Shader 调试进阶：逆向执行与模拟机制
+## Shader 调试进阶：逆向执行与模拟机制
 
 RenderDoc 的 Shader Debugger 拥有传统 CPU 调试器难以实现的“时光倒流”功能。
 
@@ -260,18 +260,18 @@ RenderDoc 的 Shader Debugger 拥有传统 CPU 调试器难以实现的“时光
 
 ---
 
-## 11. Mesh Viewer（网格视图）与几何调试
+## Mesh Viewer（网格视图）与几何调试
 
 Mesh Viewer 用于查看顶点着色器（VS）处理前后的几何数据状态。
 
-### 11.1 视图对比
+### 视图对比
 * **VS Input（输入）：** 网格的原始数据（模型空间）。包含 Position, Normal, Tangent, Color, UV 等语义（Semantic）。
 * **VS Output（输出）：** 经过顶点着色器处理后的数据。
     * **视觉特征：** 显示的是 **屏幕空间（Screen Space）** 的投影结果。如果关闭 `Fit` 适配，你会看到网格实际渲染在屏幕的哪个角落。
 
 
 
-### 11.2 实战案例：消失的图标
+### 实战案例：消失的图标
 **问题描述：** 场景中某个 UI 图标未显示，怀疑是 Draw Call 丢失。
 **排查步骤（自底向上）：**
 1.  **验证绘制：** 使用 **Overlay -> Wireframe Mesh**。
@@ -286,11 +286,11 @@ Mesh Viewer 用于查看顶点着色器（VS）处理前后的几何数据状态
 
 ---
 
-## 12. Pipeline State（管线状态）全景解析
+## Pipeline State（管线状态）全景解析
 
 该面板展示当前 Event 激活的 GPU 管线阶段，是理解渲染流程的地图。
 
-### 12.1 管线架构演进
+### 管线架构演进
 * **标准图形管线：**
     * **IA (Input Assembler)** -> **VS** -> **RS** -> **PS** -> **OM**。
     * **Tessellation（曲面细分）：** 当启用时，**Hull Shader (HS)** 和 **Domain Shader (DS)** 会被点亮，否则置灰。
@@ -301,7 +301,7 @@ Mesh Viewer 用于查看顶点着色器（VS）处理前后的几何数据状态
 
 
 
-### 12.2 Input Assembler (IA) 深度解析
+### Input Assembler (IA) 深度解析
 IA 阶段负责从内存读取顶点数据并组装成图元。
 
 * **Input Layout（输入布局）：** 定义了 Shader 语义（Semantic）与 Buffer 内存的映射关系。
@@ -320,11 +320,11 @@ IA 阶段负责从内存读取顶点数据并组装成图元。
 
 # RenderDoc 实战指南：问题定位与 Shader 调试实战
 
-## 13. Pipeline State：全流程问题定位
+## Pipeline State：全流程问题定位
 
 在 Pipeline State 面板中，我们可以深入检查渲染管线的每一个环节，从而从底层反推上层逻辑错误。
 
-### 13.1 核心着色器阶段
+### 核心着色器阶段
 RenderDoc 的 Pipeline State 界面对以下阶段展示逻辑基本一致：
 * **VS (Vertex Shader):** 顶点处理。
 * **PS (Pixel Shader):** 像素着色。
@@ -338,7 +338,7 @@ RenderDoc 的 Pipeline State 界面对以下阶段展示逻辑基本一致：
     * **UAV (Unordered Access View):** 可读写资源（RWTexture, RWBuffer）。
     * **Constant Buffer:** 常量缓冲。点击箭头可直接查看 Buffer 内的具体数值，通过数值反推其用途。
 
-### 13.2 Rasterizer (光栅化) 与 OM (输出合并)
+### Rasterizer (光栅化) 与 OM (输出合并)
 * **Rasterizer State:** 检查剔除模式（Cull Mode）、填充模式（Fill Mode）、视口（Viewport）设置。
 * **Output Merger:**
     * **Render Targets (RT):** 查看当前绑定的所有输出目标及其格式。
@@ -348,7 +348,7 @@ RenderDoc 的 Pipeline State 界面对以下阶段展示逻辑基本一致：
 
 ---
 
-## 14. 实战案例复盘：从底层反推上层 Bug
+## 实战案例复盘：从底层反推上层 Bug
 
 ### 案例 A：PCSS 软阴影在特定显卡失效
 **问题描述：** 同事实现的 PCSS（百分比渐进软阴影）算法，在编辑器和 GTX 16 系显卡上正常，但在 GTX 10 系显卡上效果错误。
@@ -386,14 +386,14 @@ RenderDoc 的 Pipeline State 界面对以下阶段展示逻辑基本一致：
 
 ---
 
-## 15. RenderDoc 核心应用场景与 QA
+## RenderDoc 核心应用场景与 QA
 
-### 15.1 适用人群
+### 适用人群
 * **Engine Programmer / TA:** 图形算法开发、Bug 排查、性能优化。
 * **Client Programmer:** 学习竞品游戏的渲染方案（如拆解某个特效的实现）。
 * **非游戏行业:** 只要使用图形 API 的应用均可调试。
 
-### 15.2 概念辨析：Pass vs Draw Call vs Render Target
+### 概念辨析：Pass vs Draw Call vs Render Target
 * **MRT (Multiple Render Targets):** 多目标渲染（如同时输出颜色和法线）通常算作**一个 Pass**，因为它们共享同一次 RT 设置。
 * **Render Pass 定义：**
     * **DirectX 11:** 通常指一次 `OMSetRenderTargets` 调用。
@@ -403,11 +403,11 @@ RenderDoc 的 Pipeline State 界面对以下阶段展示逻辑基本一致：
 
 
 
-## 16. 高级截帧技巧：第三方游戏与模拟器
+## 高级截帧技巧：第三方游戏与模拟器
 
 RenderDoc 不仅能调试自研程序，还能对市面上的商业游戏（如 Steam 游戏）或模拟器进行逆向分析。
 
-### 16.1 Global Process Hooking（全局钩子）
+### Global Process Hooking（全局钩子）
 **场景：** 很多商业游戏（如 Steam 平台游戏）无法直接通过 `.exe` 路径启动，因为它们依赖启动器（Launcher）或 DRM 验证。
 **操作步骤：**
 1.  **开启 Global Hook：** 在 RenderDoc 菜单栏选择 `File` -> `Inject into Process` (或 Global Hook 选项)。
@@ -417,7 +417,7 @@ RenderDoc 不仅能调试自研程序，还能对市面上的商业游戏（如 
 
 
 
-### 16.2 模拟器截帧避坑
+### 模拟器截帧避坑
 **问题：** 截取安卓模拟器画面时，经常截出无效帧（只有视频编解码画面或插值帧）。
 **原因：** 模拟器为了流畅度，可能在后端进行了**帧插值（Frame Interpolation）**或画面后处理，导致 RenderDoc 抓不到真正的渲染指令流。
 **解决方案：**
@@ -426,11 +426,11 @@ RenderDoc 不仅能调试自研程序，还能对市面上的商业游戏（如 
 
 ---
 
-## 17. 核心原理揭秘：RenderDoc 是如何工作的？
+## 核心原理揭秘：RenderDoc 是如何工作的？
 
 RenderDoc 的本质是 **Hook（挂钩）技术**与 **中间层（Wrapper）模式**的结合。
 
-### 17.1 Hook 的基本流派
+### Hook 的基本流派
 * **Inline Hook (内联钩子):**
     * **原理：** 直接修改目标函数（如 `CreateDevice`）内存前几个字节的汇编指令，插入 `JMP` 跳转到自定义函数。
     * **工具：** 微软 Detours 库是经典实现。
@@ -441,7 +441,7 @@ RenderDoc 的本质是 **Hook（挂钩）技术**与 **中间层（Wrapper）模
 
 
 
-### 17.2 RenderDoc 的实现方式：Wrapper Class（包装类）
+### RenderDoc 的实现方式：Wrapper Class（包装类）
 RenderDoc 主要采用 **代理模式（Proxy Pattern）** 进行封装，而非简单的 Inline Hook。
 
 * **继承重写：** RenderDoc 定义了一个 `WrappedDevice` 类，直接继承自图形 API 的标准接口（如 `ID3D11Device`）。
@@ -456,9 +456,9 @@ RenderDoc 主要采用 **代理模式（Proxy Pattern）** 进行封装，而非
 
 ---
 
-## 18. 进阶功能：统计、脚本与 Mod 制作
+## 进阶功能：统计、脚本与 Mod 制作
 
-### 18.1 Statistics（统计视图）
+### Statistics（统计视图）
 **功能：** 宏观分析当前帧的性能指标。
 
 **应用：**
@@ -467,21 +467,21 @@ RenderDoc 主要采用 **代理模式（Proxy Pattern）** 进行封装，而非
 
 
 
-### 18.2 Shader Modding（着色器魔改）
+### Shader Modding（着色器魔改）
 RenderDoc 可作为 Shader 逆向与修改的辅助工具，原理类似 **3DMigoto**。
 
 * **机制：** 获取 Shader 的哈希值（Hash），导出汇编或反编译代码（HLSL/GLSL），修改后注入回游戏。
 * **插件扩展：** RenderDoc 支持插件，可以将 DXBC（二进制字节码）反编译回可读的 HLSL 代码。
 * **实战：** 直接在 RenderDoc 中利用插件将 DXBC 转为 HLSL，修改逻辑后点击 `Apply`，实现类似“Mod”的效果（如修改角色渲染、去除雾效等）。
 
-### 18.3 Python Shell 自动化
+### Python Shell 自动化
 **功能：** RenderDoc 暴露了 Python API。
 
 **用途：** 编写脚本自动化处理数据，例如批量统计场景中所有纹理的格式分布，或自动导出特定条件的 Mesh 资源。
 
 ---
 
-## 19. 课后作业与练习
+## 课后作业与练习
 
 讲师布置了两个作业，旨在考察调试能力与探索精神。
 
@@ -499,7 +499,7 @@ RenderDoc 可作为 Shader 逆向与修改的辅助工具，原理类似 **3DMig
 
 ---
 
-## 20. 行业问答与职业建议
+## 行业问答与职业建议
 
 ### Q1: Unity vs. Unity 中国（团结引擎）？
 * **现状：** 国内大部分存量项目仍使用标准版 Unity。

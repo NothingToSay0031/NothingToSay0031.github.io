@@ -57,7 +57,7 @@ title: '《鸣潮》UE4多平台效果与性能优化实践'
 
 《鸣潮》采用了一套混合定制的 TAA 方案，核心在于平衡**鬼影（Ghosting）**与**闪烁（Flickering）**。
 
-### 3.1 渲染流程调整
+### 渲染流程调整
 
 *   **位置后移:** 将 TAA Pass 从默认位置移到了 **Bloom** 和 **ToneMapping** 之后。
     
@@ -66,7 +66,7 @@ title: '《鸣潮》UE4多平台效果与性能优化实践'
 *   **定制 Velocity Pass:** 增加了专门的 **Velocity Buffer** (速度缓冲) 用于计算动态物体的历史回溯。
     
 
-### 3.2 鬼影优化 (Ghosting)
+### 鬼影优化 (Ghosting)
 
 核心是历史像素混合（History Clamping）的精度与性能权衡。
 
@@ -87,7 +87,7 @@ title: '《鸣潮》UE4多平台效果与性能优化实践'
     *   **RGB 空间:** 低配机型使用，省去色彩空间转换开销，降低 5-tap 采样的带宽压力。
         
 
-### 3.3 角色勾边的特殊难题 (The "Outline" Problem)
+### 角色勾边的特殊难题 (The "Outline" Problem)
 
 这是二次元游戏特有的性能痛点。
 

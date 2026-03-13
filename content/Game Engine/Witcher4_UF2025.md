@@ -17,7 +17,7 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 1\. 项目背景与合作模式
 -------------
 
-### 1.1 为什么选择 60 FPS？
+### 为什么选择 60 FPS？
 
 *   **视觉流动性 (Fluidity):** 相比 30 或 40 FPS，60 FPS 能带来显著更平滑的视觉体验和操作响应。
     
@@ -26,7 +26,7 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 *   **可行性验证:** 这是一个技术 Demo（非最终游戏成品），旨在验证大规模开放世界在当前硬件限制下的技术边界。
     
 
-### 1.2 联合开发模式 (Co-dev)
+### 联合开发模式 (Co-dev)
 
 *   **双赢策略:** Epic 提供底层引擎专长，CDPR 提供构建庞大密集开放世界的实战经验。
     
@@ -40,7 +40,7 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 
 在 16.6ms 的帧预算下，团队设定了以下极具挑战性的图形学目标：
 
-### 2.1 动态全局光照 (Dynamic GI)
+### 动态全局光照 (Dynamic GI)
 
 *   **目标:** 支持 **硬件加速的光线追踪 (Hardware Ray Tracing)**。
     
@@ -53,7 +53,7 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
     *   支持移动物体在反射中的实时更新。
         
 
-### 2.2 复杂植被与环境构建
+### 复杂植被与环境构建
 
 *   **压力测试对象:** **云杉林 (Spruce Trees)**。
     
@@ -64,7 +64,7 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 *   **管线:** 建立了一套能支持从资产创建到场景组装的全流程管线。
     
 
-### 2.3 无缝体验 (Hitch-free Experience)
+### 无缝体验 (Hitch-free Experience)
 
 *   **流式加载 (Streaming):** 确保高速移动（如骑马奔跑）时，数据加载不会导致主线程卡顿。
     
@@ -78,13 +78,13 @@ The Road to 60 fps in The Witcher 4 Unreal Engine 5 Tech Demo
 
 对于 60 FPS 的目标，每一帧的时间极其宝贵。
 
-### 3.1 黄金公式
+### 黄金公式
 
 $$
 T_{frame}\le 16.66ms
 $$
 
-### 3.2 预算分配
+### 预算分配
 
 工程师需要帮助美术和策划理解预算，以便在不牺牲帧率的前提下最大化艺术愿景：
 
@@ -176,7 +176,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 核心思想是将传统的单线程逻辑打散，利用 **Worker Threads** 进行大规模并行计算，仅在必要时回到主线程同步。
 
-### 2.1 执行流程 (Execution Flow)
+### 执行流程 (Execution Flow)
 
 1.  **启动 (Kickstart):** 由调度器（QueueTicks）初始化帧，处理 2500+ 个对象的更新顺序。
     
@@ -201,7 +201,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 5.  **帧结束 (End of Frame):** 打包数据发送给渲染线程。
     
 
-### 2.2 关键优化数据
+### 关键优化数据
 
 *   **Mass to AnimNext Translator:** 这是一个定制处理器，接管了 800+ 个骨骼网格体 (Skeletal Meshes) 的 Tick 逻辑，取代了传统的 Tick 行为。
     
@@ -221,7 +221,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 渲染线程同样遵循“移出关键路径”的原则，大量利用并行指令生成。
 
-### 3.1 渲染流程
+### 渲染流程
 
 1.  **数据接收:** 接收 Game Thread 的更新数据。
     
@@ -251,7 +251,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 基于 **Unreal Insights** 的分析数据，展示了在次世代主机（13个可用核心）上的实际表现。
 
-### 4.1 极限压力场景 (300 NPCs)
+### 极限压力场景 (300 NPCs)
 
 *   **CPU 利用率:** 达到 **87%** (全核心)。
     
@@ -262,7 +262,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
     *   **关键路径:** Game Thread 仍有约 2ms 的等待时间（等待动画和移动任务完成）。
         
 
-### 4.2 平衡场景 (200 NPCs) - 推荐配置
+### 平衡场景 (200 NPCs) - 推荐配置
 
 通过减少 100 个 NPC，性能表现发生质变，展示了系统的线性扩展能力：
 
@@ -305,14 +305,14 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 为了挤出每一毫秒的性能，团队利用了 UE 5.6 全新的 Profiling 工具来最大化 GPU 的并发利用率。
 
-### 1.1 Unreal Insights 5.6 新特性
+### Unreal Insights 5.6 新特性
 
 *   **双队列可视化:** 现在的 GPU Profiler 可以同时显示 **Graphics Queue (图形队列)** 和 **Async Compute Queue (异步计算队列)**。
     
 *   **依赖关系追踪:** 新增红色箭头显示不同队列中事件的 **Dependencies (依赖关系)**，这对于理解调度流 (Scheduling Flow) 和同步点至关重要。
     
 
-### 1.2 异步计算策略 (Async Compute Strategy)
+### 异步计算策略 (Async Compute Strategy)
 
 *   **核心原理:** GPU 的 Shader 单元很少能达到 100% 的资源利用率。Async Compute 允许在图形队列的空隙（Bubbles）中并发执行计算任务，以此缩短总帧时间。
     
@@ -336,7 +336,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 面对数十亿三角面的高密度森林，传统的植被渲染方法（Alpha Mask, WPO）在 Nanite 体系下已不再适用。团队为此研发了一套全新的渲染管线（预计 UE 5.7 进入主线）。
 
-### 2.1 传统方法的痛点
+### 传统方法的痛点
 
 *   **Alpha Mask:** 导致 Nanite 产生严重的 **Overdraw (过度绘制)**，且 Opacity Mask 函数开销昂贵。
     
@@ -347,7 +347,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
     *   _原因:_ 顶点位置不可预测，导致 Cluster Bounds (包围盒) 必须设置得非常保守，严重破坏剔除效率。
         
 
-### 2.2 解决方案：Nanite + Skeletal Mesh
+### 解决方案：Nanite + Skeletal Mesh
 
 *   **核心技术 1：Nanite Assemblies (部件组装)**
     
@@ -377,7 +377,7 @@ Demo 将世界分为两类典型的负载场景，分别进行针对性优化：
 
 Kevin 分享了针对 Nanite 的底层优化原则，核心在于减少软件光栅化的开销和避免 Helper Lanes。
 
-### 3.1 减少 Helper Lanes (辅助像素)
+### 减少 Helper Lanes (辅助像素)
 
 *   **背景:** GPU 通常以 2x2 像素块 (Quad) 为单位计算微分。对于高密度网格，这会产生大量无效的 Helper Lanes。
     
@@ -388,7 +388,7 @@ Kevin 分享了针对 Nanite 的底层优化原则，核心在于减少软件光
 *   **工具:** 使用 `Nanite Visualizer -> Overdraw` 或 Stats 检查 Helper Lanes 数量（目标是接近 0）。
     
 
-### 3.2 保持“快速路径” (Fast Path)
+### 保持“快速路径” (Fast Path)
 
 *   **原则:** 避免使用 **Programmable Rasterization (可编程光栅化)**。
     
@@ -397,7 +397,7 @@ Kevin 分享了针对 Nanite 的底层优化原则，核心在于减少软件光
 *   **工具:** 使用调试视图检查哪些物体是非 Fast Path。
     
 
-### 3.3 谨慎使用 Tessellation (曲面细分)
+### 谨慎使用 Tessellation (曲面细分)
 
 *   **风险:** 如果材质中的 **Displacement Range (置换范围)** 设置得比实际效果大，会导致 Nanite 极大地扩张 Cluster Bounds，导致剔除失效和光栅化浪费。
     
@@ -429,7 +429,7 @@ Lumen 与硬件光线追踪：60 FPS 的优化艺术
 
 为了在主机上维持性能，Demo 并没有将所有物体放入同一个光追结构中，而是采用了**近景与远景分离**的策略。
 
-### 1.1 近场 (Near Field)
+### 近场 (Near Field)
 
 *   **范围:** 摄像机周围  $150m$ 。
     
@@ -442,7 +442,7 @@ Lumen 与硬件光线追踪：60 FPS 的优化艺术
     *   **更新开销:** 约  $0.5ms$ ，全部运行在 **Async Compute (异步计算)** 上，不占用图形队列时间。
         
 
-### 1.2 远场 (Far Field)
+### 远场 (Far Field)
 
 *   **结构:** 独立的 **TLAS (Top Level Acceleration Structure)**。
     
@@ -462,7 +462,7 @@ Lumen 与硬件光线追踪：60 FPS 的优化艺术
 
 动态物体（角色、变形地形）是光追更新 (BLAS Update/Refit) 的性能杀手。
 
-### 2.1 角色与骨骼网格体
+### 角色与骨骼网格体
 
 *   **挑战:** 场景中角色众多，全量更新会导致 **RT Scene Update** 爆炸。
     
@@ -479,7 +479,7 @@ Lumen 与硬件光线追踪：60 FPS 的优化艺术
     *   **按需计算:** Skin Cache 的更新与光追场景绑定。如果角色不在光追场景中（被剔除），则完全不进行蒙皮计算，避免浪费计算资源。
         
 
-### 2.2 地形 (Landscape)
+### 地形 (Landscape)
 
 *   **处理方式:** 地形被视为动态物体（因为涉及 LOD 变形）。
     
@@ -515,7 +515,7 @@ Lumen 与硬件光线追踪：60 FPS 的优化艺术
 
 Kevin 列举了两个常见的导致 Lumen 性能骤降的场景及其修复方案。
 
-### 4.1 陷阱一：无限制的反射光线 (Unbounded Reflection Rays)
+### 陷阱一：无限制的反射光线 (Unbounded Reflection Rays)
 
 *   **问题:** 对于高光泽度（低 Roughness）材质，Lumen 会发射昂贵的硬件光线追踪反射。如果满屏都是湿漉漉的泥地或水坑，开销巨大。
     
@@ -528,7 +528,7 @@ Kevin 列举了两个常见的导致 Lumen 性能骤降的场景及其修复方�
     *   **收益:** 速度提升 **3倍**，且视觉差异几乎不可察觉。
         
 
-### 4.2 陷阱二：单层水体下的过度计算 (Single Layer Water)
+### 陷阱二：单层水体下的过度计算 (Single Layer Water)
 
 *   **问题:** 渲染半透明水体时，Lumen 会先计算水底物体的光照，再计算水面的光照。且水底物体通常是“湿润”的（低粗糙度），会触发上述的昂贵反射计算。
     
@@ -587,7 +587,7 @@ Kevin 列举了两个常见的导致 Lumen 性能骤降的场景及其修复方�
 
 VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中，阴影渲染开销巨大。团队通过以下 bespoke（定制）优化来降低消耗。
 
-### 1.1 几何体与剔除优化
+### 几何体与剔除优化
 
 *   **Nanite Voxel Representation:** Nanite 自身的体素化表示天然加速了阴影深度的渲染。
     
@@ -602,7 +602,7 @@ VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中�
     *   远处的树木停止动画  $→$  标记为静态  $→$  阴影贴图可以被缓存，无需每帧重绘。
         
 
-### 1.2 动态质量平衡 (Automatic Quality Balancing)
+### 动态质量平衡 (Automatic Quality Balancing)
 
 *   **景深感知降质 (DOF-aware Quality Drop):**
     
@@ -617,7 +617,7 @@ VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中�
     *   **方案:** 当阴影超预算时，优先**仅降低 VSM 的质量/分辨率**，保持主画面清晰度。
         
 
-### 1.3 非 Nanite 物体优化 (Non-Nanite Optimization)
+### 非 Nanite 物体优化 (Non-Nanite Optimization)
 
 *   **GPU Skin Cache Bounds:**
     
@@ -633,7 +633,7 @@ VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中�
 
 为了在 4K 输出下维持 60 FPS，团队设计了一套复杂的**两级上采样流水线**。
 
-### 2.1 基础架构：TSR (Temporal Super Resolution)
+### 基础架构：TSR (Temporal Super Resolution)
 
 *   **主分辨率 (Primary Resolution):** 渲染几何体、光照的基础分辨率。
     
@@ -644,7 +644,7 @@ VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中�
     *   **逻辑:** 设定在 1080p 是为了保证 TSR 的上采样倍率控制在 **2x** 以内（这是保证画质的甜点区）。
         
 
-### 2.2 创新点：二级屏幕百分比 (Secondary Screen Percentage)
+### 创新点：二级屏幕百分比 (Secondary Screen Percentage)
 
 为了避免后处理 (Post Processing) 在 4K 下产生的巨大开销，引入了二级缩放。
 
@@ -668,14 +668,14 @@ VSM 与 Nanite 是天作之合，但在动态且树木茂密的开放世界中�
 
 虽然平均帧率达标，但在镜头切换 (Camera Cuts) 时极易掉帧。
 
-### 3.1 镜头切换掉帧的原因
+### 镜头切换掉帧的原因
 
 *   **历史数据丢失:** 遮挡剔除 (Occlusion Culling) 依赖上一帧的深度数据 (HZB)。
     
 *   **过绘制爆炸:** 镜头突变后，没有上一帧数据做剔除，GPU 必须渲染视锥体内的所有东西，导致严重的 Overdraw。
     
 
-### 3.2 解决方案：数据预热 (Priming)
+### 解决方案：数据预热 (Priming)
 
 *   **Ray Tracing Priming:**
     

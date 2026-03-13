@@ -254,7 +254,7 @@ date: '2025-11-02T14:16:31+08:00'
 
 在风格化场景中使用 Nanite, Lumen 和 TSR 时需要注意的兼容性问题。
 
-#### 1\. Nanite
+#### Nanite
 
   * **可以使用吗？** **可以**。像素着色器（Pixel Shader）的评估不受影响。
   * **严重限制 (Keep in mind)：**
@@ -264,7 +264,7 @@ date: '2025-11-02T14:16:31+08:00'
       * **需要！前提是你用了 Lumen 或 VSM (虚拟阴影贴图)。**
       * **原因：** Lumen 和 VSM 处理**非Nanite（non-Nanite）物体的开销远高于**处理Nanite物体。为了GPU性能，你应该尽可能多地将物体转为Nanite。
 
-#### 2\. Lumen
+#### Lumen
 
   * **适用场景：**
       * 与简单的材质和**基于后处理的风格化**效果配合良好（因为后处理不在乎光是来自Lumen还是直接光照）。
@@ -278,7 +278,7 @@ date: '2025-11-02T14:16:31+08:00'
           * **后果：** 在切换镜头时，Lumen的GI更新会产生**强烈的延迟（strong delay / lag）**。
           * *建议：* 使用**伪造的点光源（pseudo point lights）**来代替。
 
-#### 3\. TSR (Temporal Super Resolution)
+#### TSR (Temporal Super Resolution)
 
   * **核心问题：** TSR 会**合成前几帧的信息**来实现抗锯齿和上采样。
   * **风格化渲染的冲突：**

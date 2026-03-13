@@ -24,12 +24,12 @@ date: 2026-02-17 21:15:50
 
 **静态分支 (Static Branching)** 是在编译阶段确定的逻辑路径，它直接决定了最终生成的二进制代码（如 **DXBC**、**SPIR-V**）的结构。
 
-### 2.1 宏 (Macro) 与指令剪裁
+### 宏 (Macro) 与指令剪裁
 * **机制：** 使用 `#ifdef` / `#else` 等预处理指令控制代码块。
 * **编译结果：** 未被激活的分支代码会**被完全剔除**，不会出现在最终的 Shader 二进制文件中。
     * *案例：* 开启级联阴影（Cascade Shadow）的 Shader 编译后指令行数（如 211 行）多于未开启版本（如 190 行）。
 
-### 2.2 Keyword 的声明与定义
+### Keyword 的声明与定义
 * **声明组 (Keyword Group)：** 通过 `#pragma multi_compile` 或 `shader_feature` 声明一组互斥或并存的功能开关。
 * **定义方式：**
     * **直接定义：** 激活变体时直接定义对应的宏（如 `_MAIN_LIGHT_SHADOWS`）。
@@ -44,11 +44,11 @@ date: 2026-02-17 21:15:50
 
 开发者常试图通过传递 **Uniform 变量** 并在 Shader 中使用 `if/else` 来代替宏，以减少变体数量。这种做法在 GPU 的 SIMD（单指令多数据）架构下有特殊的性能考量。
 
-### 3.1 GPU 并行机制
+### GPU 并行机制
 * **执行单位：** GPU 以 **Warp** (NV) 或 **Wavefront** (AMD) 为单位调度线程（通常为 32 或 64 个线程）。
 * **锁步执行 (Lock-step)：** 同一个 Warp 内的所有线程必须执行相同的指令。
 
-### 3.2 `[branch]` vs `[flatten]`
+### `[branch]` vs `[flatten]`
 当 Shader 中存在 `if-else` 时，编译器或开发者可以选择两种策略：
 
 * **`[flatten]` (扁平化/推测执行)：**
@@ -68,11 +68,11 @@ date: 2026-02-17 21:15:50
 
 ## 4. 变体 (Variant) 的本质与组合爆炸
 
-### 4.1 错误实践：复制粘贴
+### 错误实践：复制粘贴
 * **现象：** 为了添加新效果（如“腮红”），将整个 Shader 文件复制一份并重命名。
 * **后果：** 随着功能（阴影、雾效、反射）增加，Shader 文件数量呈指数级失控，维护成本极高。
 
-### 4.2 变体计数原理
+### 变体计数原理
 * **定义：** 一个 **Shader Variant** 是所有生效 **Keyword** 的特定组合。
 * **指数增长公式：**
     假设有 $N$ 个 Keyword 组，每组包含 $k_i$ 个互斥选项（包含默认的 disable 状态），总变体数 $V$ 为：
@@ -81,7 +81,7 @@ date: 2026-02-17 21:15:50
     * 开关 A (2种状态) $\times$ 开关 B (2种状态) $\times$ 模式 C (3种状态) = $2 \times 2 \times 3 = 12$ 个变体。
     * 每增加一个二选一的 Feature，变体总数 **翻倍**。
 
-### 4.3 管理的必要性
+### 管理的必要性
 * **构建与内存压力：** 变体数量的指数级增长会导致打包时间过长、安装包体积增大以及运行时内存占用飙升。
 * **核心目标：** 在灵活性（功能组合）与性能（包体、加载时间、绘制效率）之间寻找平衡。
 
@@ -93,12 +93,12 @@ date: 2026-02-17 21:15:50
 
 ## 1\. 领域特定语言 (DSL) 与图形 API 差异
 
-### 1.1 ShaderLab 与 DSL
+### ShaderLab 与 DSL
 
   * **DSL (Domain Specific Language):** Unity 的 **ShaderLab** 本质上是一种封装了 **HLSL/CG** 的 DSL，专门用于描述渲染状态和着色器代码。
   * **编译目标:** DSL 最终会被编译为特定平台的 **Source Code**（源码）或 **Binary**（二进制字节码）。
 
-### 1.2 不同图形 API 的 Shader 处理方式
+### 不同图形 API 的 Shader 处理方式
 
 不同的图形 API 对 Shader 的加载和编译流程处理不同：
 
@@ -117,7 +117,7 @@ date: 2026-02-17 21:15:50
 
 在底层 API（如 D3D）的视角中，变体本质上就是一组 **宏定义 (Macros)** 的组合。
 
-### 2.1 D3D\_SHADER\_MACRO 结构
+### D3D\_SHADER\_MACRO 结构
 
 以 DirectX 为例，编译 Shader 时使用的 `D3DCompile` 接口，其第二个参数 `pDefines` 决定了变体的生成。它通常是一个结构体数组：
 
@@ -157,14 +157,14 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 ## 4\. 变体的代价：内存与预热 (Warmup)
 
-### 4.1 包体大小 vs. 运行时内存
+### 包体大小 vs. 运行时内存
 
   * **压缩欺骗性:** 在 Asset Bundle 中，Shader 代码（文本或二进制）的压缩率极高（例如几百 MB 压缩后仅几 MB）。
   * **运行时膨胀:** 游戏运行时需要将 Shader **解压** 并加载到内存中。
       * **风险点:** 实际占用的内存可能高达 **数 GB**，导致 OOM (Out of Memory)。
   * **分析工具:** 使用 Unity 的 **Memory Profiler** 或 **Windows Performance Analyzer** (Memory 模块) 可查看 ShaderLab 的真实内存占用。
 
-### 4.2 预热 (Pre-warming) 与卡顿
+### 预热 (Pre-warming) 与卡顿
 
   * **动态编译卡顿:** 如果不预热，GPU 在首次渲染某物体时才创建 Shader/PSO，会导致显著的掉帧。
   * **预热策略:** 在加载阶段（Loading Screen）集中编译 Shader。
@@ -175,13 +175,13 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 ## 5\. 补充：Q\&A 与职业建议 (针对图形程序)
 
-### 5.1 移动端性能陷阱：Raymarching & SDF
+### 移动端性能陷阱：Raymarching & SDF
 
   * **问题:** 虽然 **SDF (Signed Distance Field)** 和 **Raymarching** 在 Shadertoy 上效果很炫，但在移动端架构上极其昂贵。
   * **原因:** 步进计算（Raymarching step）会导致大量的 **Cache Miss** (纹理/内存缓存未命中)，轻易撑爆移动 GPU 的 **On-chip Tile Memory**。
   * **工业界解法:** 实际项目中通常使用 **几何替身**、**特效面片 (Billboards)** 或简化的几何算法来模拟体积光等效果，而非纯数学步进。
 
-### 5.2 学习与成长建议
+### 学习与成长建议
 
   * **作品集方向:** 推荐复刻风格化渲染（如《原神》、《崩坏：星穹铁道》）或 PDR 流程。
   * **自我驱动:** 工作中要主动寻找跨引擎的对标实现。
@@ -204,14 +204,14 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 开发者（TA/图形程序）在编写 Shader 代码时，应根据计算负载权衡使用 **宏分支 (Macro)** 还是 **动态分支 (Dynamic Branching)**。
 
-### 2.1 动态分支 (`if/else`) 的适用场景
+### 动态分支 (`if/else`) 的适用场景
 * **何时使用：**
     * 逻辑简单，分支差异仅为少量的 **ALU** (算术逻辑单元) 运算（如加法、乘法）。
     * 代码行数少（例如 10 行以内），不包含昂贵的数学运算（如 `sin`, `cos`, `tan`）。
     * **控制方式：** 通过 **Uniform** 变量传入常量缓冲区 (Constant Buffer)，GPU 实时判断执行。
 * **优势：** 避免变体数量增加，现代 GPU 的 ALU 运算非常廉价且迅速。
 
-### 2.2 必须使用变体 (Macro) 的场景
+### 必须使用变体 (Macro) 的场景
 * **性能陷阱：** 如果 `if/else` 分支中包含大量计算或 **纹理采样 (Texture Sampling)**：
     * **Warp Divergence：** 两个分支可能都会被执行（或分线程执行），导致开销倍增。
     * **Cache Missing：** 随机采样（如噪声图）可能导致缓存未命中，引发带宽暴涨。
@@ -224,7 +224,7 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 这是 ShaderLab 中最易混淆的概念，二者在 **打包 (Build)** 时的行为截然不同。
 
-### 3.1 `multi_compile` (全排列组合)
+### `multi_compile` (全排列组合)
 * **行为：** 无论变体是否被使用，引擎都会编译该指令组下 **所有** Keyword 的组合。
 * **计算公式：** 笛卡尔积（全排列）。
     $$Total = GroupA \times GroupB \times GroupC...$$
@@ -233,7 +233,7 @@ D3D_SHADER_MACRO specificVariant[] = {
     * 组 B: `C`, `D`, `E` (3个)
     * **结果：** $2 \times 3 = 6$ 个变体会被打入包中。
 
-### 3.2 `shader_feature` (按需打包)
+### `shader_feature` (按需打包)
 * **行为：** 仅编译构建过程中被 **材质 (Material)** 实际引用了的变体组合。
 * **示例：**
     * 定义了 `A/B` 和 `C/D/E`。
@@ -241,7 +241,7 @@ D3D_SHADER_MACRO specificVariant[] = {
     * **结果：** 仅打包 **1** 个变体 `(A, C)`，其余组合被丢弃。
 * **适用场景：** 材质属性开关、非全局性的效果特性。
 
-### 3.3 混合使用时的组合逻辑
+### 混合使用时的组合逻辑
 当 Shader 中同时存在 `multi_compile` 和 `shader_feature` 时，最终变体数计算如下：
 $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutations)$$
 
@@ -291,13 +291,13 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 讲师介绍了一种基于 **可序列化对象 (ScriptableObject)** 和 **反射 (Reflection)** 的高级剔除工具。
 
-### 3.1 核心设计思路
+### 核心设计思路
 * **模块化条件:** 将每个剔除逻辑（如“检查 Keyword A”、“检查 Pass 名称”）抽象为一个实现了公共接口的类。
 * **反射加载:** 工具自动扫描所有实现了该接口的子类，构建 UI 列表，无需手动注册新规则。
 * **组合逻辑:** 支持多条件组合（AND/OR 逻辑）。
     * *示例:* `(PassName == "Forward") AND (Keyword == "SOFT_SHADOWS")` $\rightarrow$ **剔除**。
 
-### 3.2 关键功能特性
+### 关键功能特性
 * **精准剔除:**
     * **条件剔除:** “如果 A 存在且 B 不存在 $\rightarrow$ 剔除”。
     * **Pass 过滤:** 针对特定渲染路径（Forward/Deferred）进行剔除。
@@ -308,7 +308,7 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 
 
-### 3.3 接口实现：`IPreprocessShaders`
+### 接口实现：`IPreprocessShaders`
 Unity 提供了标准接口 `IPreprocessShaders`。
 * **回调方法:** `void OnProcessShader(Shader shader, ShaderSnippetData snippet, IList<ShaderCompilerData> data)`
 * **工作流:**
@@ -332,7 +332,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ## 5. 变体收集 (Variant Collection) 的前奏
 
-### 5.1 为什么要收集？
+### 为什么要收集？
 * **热更新 (Hotfix) 与分包 (AssetBundles):**
     * 在现代商业项目中，Shader 通常被打入独立的 AssetBundle 中以便热更。
     * 材质 (Material) 引用了 Shader，但如果 Shader 单独打包，必须明确记录它需要哪些变体。
@@ -352,7 +352,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ## 2. 基础方法：Unity 原生工具
 
-### 2.1 手动创建 SVC
+### 手动创建 SVC
 * **操作:** `Create` -> `Shader Variant Collection`.
 * **原理:** 一个 SVC 文件本质上就是一个变体列表（Shader + Pass + Keywords）。
 * **痛点 (手动维护):**
@@ -360,7 +360,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
     * **性能问题:** 编辑器面板在渲染大量变体时会严重卡顿。
     * **组合困难:** 难以手动处理新 Keyword 与现有 Keyword 的全排列组合。
 
-### 2.2 自动跑测收集 (Unity 提供的半自动化)
+### 自动跑测收集 (Unity 提供的半自动化)
 * **操作:** `Project Settings` -> `Graphics` -> 底部 `Shader Loading`。
     * 点击 `Clear` 清除旧数据。
     * 运行游戏，覆盖所有流程。
@@ -374,14 +374,14 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ## 3. 进阶方法论：动态法 vs. 静态法
 
-### 3.1 动态法 (Runtime Collection)
+### 动态法 (Runtime Collection)
 * **原理:** 通过修改引擎源码或分析日志，在游戏运行时实时捕获实际使用的变体。
 * **Unity 官方建议 (针对源码授权客户):** 在底层 `PlayShader` 处埋点，获取真实变体请求并发送至服务器，由服务器聚合生成 SVC。
 * **优缺点:**
     * ✅ 数据真实准确。
     * ❌ 依然依赖人工或自动化测试跑流程，无法避免覆盖率问题。
 
-### 3.2 静态法 (Static Analysis - 讲师推荐)
+### 静态法 (Static Analysis - 讲师推荐)
 * **核心理念:** 既然 `shader_feature` 只有被材质引用才会被打包，那么只要**静态分析**所有打包资源引用的材质，就能反推出所有需要的变体。
 * **算法逻辑:**
     1.  扫描项目构建清单（Build Settings 场景列表、资源配置表）。
@@ -399,7 +399,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 讲师展示了一款基于静态分析的工具，用于解决材质收集难题。
 
-### 4.1 收集策略 (Collectors)
+### 收集策略 (Collectors)
 工具支持多种收集维度的扩展：
 * **指定材质:** 单独添加（调试用）。
 * **全项目材质:** 扫描 `Assets` 目录（包含垃圾资源，不推荐）。
@@ -410,7 +410,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
     * 针对使用 AssetBundle 构建的项目，读取策划配置表（包含 Prefabs、Direct Assets）。
     * 提取这些资源引用的材质。
 
-### 4.2 工作流
+### 工作流
 1.  **配置收集器:** 添加“场景依赖”或“配置表依赖”收集规则。
 2.  **执行收集:** 工具扫描并生成一份确定的材质列表。
 3.  **生成变体:** 遍历材质列表，解析 Keyword 组合，自动更新 SVC 文件。
@@ -440,7 +440,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 讲师展示的工具集成了 **收集** $\rightarrow$ **解析** $\rightarrow$ **写入** 的全流程。
 
-### 2.1 核心工作流
+### 核心工作流
 1.  **收集器配置 (Collector Setup):** 添加“场景依赖收集器”，扫描 Build Settings 中的所有场景，提取所有引用的 150+ 个材质。
 2.  **变体解析 (Parsing):**
     * 输入：150 个材质。
@@ -451,7 +451,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
     * **原生痛点：** Unity 原生面板在显示上千个变体时会卡顿，且无法搜索。
     * **优化：** 工具提供了搜索过滤功能（如搜索 "HDRP/Lit"），方便开发者快速检查收集结果。
 
-### 2.2 批处理执行器 (Batch Executor)
+### 批处理执行器 (Batch Executor)
 针对 `multi_compile` 的组合问题，工具提供了增强功能：
 * **手动/自动解析：** 能够扫描 Shader 源码中的 `#pragma multi_compile` 指令。
 * **组合生成：** 自动生成特定 Keyword（如 `_ADDITIONAL_LIGHTS` + `_SHADOWS_SOFT`）的组合，强制加入 SVC 中，确保这些动态切换的路径被覆盖。
@@ -462,7 +462,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 收集完变体后，如何执行预热是影响用户体验的关键。
 
-### 3.1 一次性预热 (One-time Warmup)
+### 一次性预热 (One-time Warmup)
 * **API:** `ShaderVariantCollection.WarmUp()`
 * **问题：**
     * **阻塞主线程：** 这是一个同步操作，会完全卡死游戏画面。
@@ -473,14 +473,14 @@ Unity 提供了标准接口 `IPreprocessShaders`。
         * **iPhone X (Metal):** 可能高达 **1分钟**（受 Metal 编译器后端影响）。
     * **体验：** 进度条卡死不动，玩家会误以为游戏崩溃。
 
-### 3.2 渐进式预热 (Incremental Warmup)
+### 渐进式预热 (Incremental Warmup)
 * **Unity 2022+:** 提供了原生异步/分帧预热接口。
 * **低版本方案 (分片策略):**
     * **切分:** 将大的 SVC 文件拆分为 20 个小的 SVC 对象。
     * **分帧:** 每帧（或每几帧）调用一次 `WarmUp()`，每次只编译一小部分。
     * **优势:** 虽然总耗时可能增加，但游戏画面/进度条能保持刷新，用户体验更好。
 
-### 3.3 定制化策略 (针对 iPhone X 等慢速设备)
+### 定制化策略 (针对 iPhone X 等慢速设备)
 * **痛点:** iPhone X 首次预热耗时过长 (1分多钟)。
 * **优化方案 (分阶段预热):**
     * **Phase 1 (首次启动):** 仅预热 **前30分钟** 游戏内容所需的变体（约占总量的 30%~50%）。让玩家快速进入游戏，剩余变体在游戏过程中遇到时实时编译（轻微卡顿作为妥协）。
@@ -492,7 +492,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 为什么现代游戏（《黑神话：悟空》、《使命召唤》、《三角洲行动》）启动时都要编译很久？
 
-### 4.1 图形 API 的差异
+### 图形 API 的差异
 * **OpenGL:**
     * 首次：慢（从源码编译）。
     * 二次启动：**快**。驱动支持二进制缓存 (Program Binary)，直接加载上次编译好的结果。

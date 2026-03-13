@@ -9,20 +9,20 @@ date: 2026-02-17 21:20:50
 
 [Unity渲染底层架构剖析](https://weixin.qq.com/sph/A0THpPhdV)
 
-## 1. 渲染架构分层模型 (Layered Architecture)
+## 渲染架构分层模型 (Layered Architecture)
 
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202602172115555.png)
 
 Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系统到上层 C# 脚本层层封装，以实现跨平台兼容和逻辑解耦。
 
-### 1.1 系统与窗口层 (System & Window)
+### 系统与窗口层 (System & Window)
 * **最底层：系统窗口 (System Window)**
     * 对应操作系统原生的窗口句柄，例如 Windows 的 **HWND** 或 Android 的 **Surface**。
 * **封装层：窗口管理 (Window Wrapper)**
     * 涉及 **EGL** 或 **WGL** 等接口，负责创建窗口上下文、管理 Surface 以及处理 **Swap Buffer**（交换缓冲区）。
     * **商业引擎策略：** 商业引擎（如 Unity）通常不直接使用 GLFW、SDL、Qt 等开源封装库，而是自行封装窗口管理类，以直接调用 EGL/WGL 从而获得更精细的控制。
 
-### 1.2 图形 API 层 (Graphics API)
+### 图形 API 层 (Graphics API)
 * **接口定义 (Headers):** 由标准组织或厂商定义的规范。
     * **Khronos Group:** OpenGL, Vulkan。
     * **Microsoft:** Direct3D 11, Direct3D 12。
@@ -30,19 +30,19 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 * **驱动实现 (Implementation):** 由硬件厂商（NVIDIA, AMD, ARM/Qualcomm）提供的动态链接库（.dll/.so）。
     * 关系类比：API 是头文件（Header），显卡驱动是实现文件（.cpp/impl）。
 
-### 1.3 渲染硬件接口层 (RHI - Render Hardware Interface)
+### 渲染硬件接口层 (RHI - Render Hardware Interface)
 * **核心作用：** 解决上层逻辑需要针对不同图形 API 编写多套代码的问题。通过统一的抽象接口屏蔽底层 API 差异。
 * **Unity 实现：** 在 Unity 中，这一层被称为 **GfxDevice**。
 * **功能：** 所有的 Draw Call、资源创建等操作都通过 **GfxDevice** 转发，确保上层业务逻辑（如材质系统、光照系统）是通用的。
 
-### 1.4 引擎渲染层 (Render Layer - C++)
+### 引擎渲染层 (Render Layer - C++)
 * **职责：** 连接 RHI 与上层脚本，处理高性能的渲染逻辑。
 * **核心功能：**
     * **Batching & Sorting:** 批处理与渲染排序。
     * **Culling:** 视锥体剔除等可见性判断。
     * **Platform Adaptation:** 处理不同平台的特定适配逻辑。
 
-### 1.5 可编程渲染管线层 (SRP - C#)
+### 可编程渲染管线层 (SRP - C#)
 * **位置：** 最上层，直接面向开发者。
 * **组成：**
     * 官方管线：**URP** (Universal Render Pipeline), **HDRP** (High Definition Render Pipeline)。
@@ -50,11 +50,11 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 
 ---
 
-## 2. 渲染管线 (Render Pipeline) 概念辨析
+## 渲染管线 (Render Pipeline) 概念辨析
 
 
 
-### 2.1 语义区别
+### 语义区别
 在图形开发中，"Pipeline" 一词常有两种语境，需严格区分：
 * **GPU Pipeline (GPU 流水线):**
     * 指 GPU 硬件处理单个 Draw Call 的通用流程。
@@ -66,11 +66,11 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 
 ---
 
-## 3. Built-in 管线 vs. SRP 管线
+## Built-in 管线 vs. SRP 管线
 
 
 
-### 3.1 Built-in Pipeline (内置管线)
+### Built-in Pipeline (内置管线)
 * **架构特点：** 逻辑定死（Hardcoded）。
 * **工作流：** 引擎预定义了如 **ForwardBase**、**ForwardAdd** 等 Pass。
 * **控制方式：**
@@ -78,7 +78,7 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
     * 通过 Camera 上的开关（如是否开启 HDR、深度图）进行有限的配置。
     * **局限性：** 开发者无法完全控制管线的执行流，只能在预设的插槽中填空。
 
-### 3.2 Scriptable Render Pipeline (SRP)
+### Scriptable Render Pipeline (SRP)
 * **架构特点：** 起始状态为空 (Empty Canvas)，完全可定制。
 * **工作流：**
     * 由开发者在 C# 中显式定义每一帧的执行逻辑。
@@ -87,7 +87,7 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
     * **配置灵活性：** 所有的渲染指令（如 `DrawingSettings`、`FilteringSettings`）都由代码构建并注入管线。
     * **性能剔除：** 如果某个 Pass 不需要（例如特定条件下不渲染半透明物体），在 SRP 中可以直接跳过该逻辑，而不仅仅是渲染全黑。
 
-### 3.3 SRP 极简实现流程
+### SRP 极简实现流程
 1.  **资产定义：** 创建继承自 `RenderPipelineAsset` 的可序列化资产。
 2.  **实例创建：** 资产负责创建 `RenderPipeline` 实例。
 3.  **渲染循环 (Render Loop):**
@@ -101,11 +101,11 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 
 # SRP 渲染流程与 CommandBuffer 机制详解
 
-## 1\. 渲染对象的绘制方式：从微观到宏观
+## 渲染对象的绘制方式：从微观到宏观
 
 在 Scriptable Render Pipeline (SRP) 中，绘制物体主要分为两种模式：底层的单物体绘制与高层的场景批量渲染。
 
-### 1.1 单物体绘制 (Low-Level approach)
+### 单物体绘制 (Low-Level approach)
 
 类似于 OpenGL/DirectX 的 Demo 写法，适用于绘制特定的辅助几何体或简单的 Debug 图形。
 
@@ -117,7 +117,7 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
     5.  执行 CommandBuffer。
   * **结果：** 屏幕上出现一个独立的网格物体。
 
-### 1.2 场景批量渲染 (Production approach)
+### 场景批量渲染 (Production approach)
 
 在商业引擎（如 Unity）中，不会手动逐个绘制场景物体。引擎通过 **“剔除 (Culling) + 过滤 (Filtering)”** 的方式来批量管理渲染。
 
@@ -134,7 +134,7 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 
 -----
 
-## 2\. CommandBuffer 与 Context 的底层交互
+## CommandBuffer 与 Context 的底层交互
 
 很多开发者容易混淆 **CommandBuffer** (命令缓冲区) 与 **ScriptableRenderContext** (渲染上下文) 的关系，导致渲染逻辑出错。
 
@@ -146,18 +146,18 @@ Unity 引擎的渲染架构采用了典型的分层设计，从底层操作系�
 
 -----
 
-## 3\. ProfilingScope 的正确用法与常见陷阱 (重点)
+## ProfilingScope 的正确用法与常见陷阱 (重点)
 
 在 SRP 开发中，使用 `ProfilingScope` 配合 `using` 语法块可以在 **Frame Debugger** 中生成清晰的层级结构。但如果对底层机制理解不清，极易导致层级错乱。
 
-### 3.1 核心机制
+### 核心机制
 
 `ProfilingScope` 的构造函数和 `Dispose` 方法本质上是在操作 CommandBuffer 的 **Sample** 指令。
 
   * **构造函数 (`new ProfilingScope`)** $\rightarrow$ 调用 `cmd.BeginSample("Name")`。
   * **结束销毁 (`Dispose/End using`)** $\rightarrow$ 调用 `cmd.EndSample("Name")`。
 
-### 3.2 正确的写法模式
+### 正确的写法模式
 
 必须确保 `BeginSample` 和 `EndSample` 命令都被 **及时提交** 到 Context 中，且包围住中间的绘制指令。
 
@@ -183,7 +183,7 @@ context.ExecuteCommandBuffer(cmd);
 cmd.Clear();
 ```
 
-### 3.3 常见错误案例分析
+### 常见错误案例分析
 
 #### 错误 A：漏写第一个 Execute (Scope 包裹不住绘制)
 
@@ -206,13 +206,13 @@ cmd.Clear();
 
 -----
 
-## 4\. 渲染硬件接口 (RHI) 简介
+## 渲染硬件接口 (RHI) 简介
 
-### 4.1 概念
+### 概念
 
 **RHI (Render Hardware Interface)** 是引擎底层对不同图形 API 的抽象封装，位于 Unity 架构的 **GfxDevice** 层。
 
-### 4.2 架构设计
+### 架构设计
 
   * **GfxDevice (基类):** 定义了所有渲染所需的通用接口（如 DrawCall, CreateTexture），但只有虚函数定义，没有具体实现。
   * **具体实现类 (Subclasses):**
@@ -228,18 +228,18 @@ cmd.Clear();
 
 # RHI 抽象与 CommandBuffer 执行机制深度解析
 
-## 1\. RHI (Render Hardware Interface) vs. Graphics API
+## RHI (Render Hardware Interface) vs. Graphics API
 
 虽然 RHI 基于图形 API (如 OpenGL, DirectX, Vulkan) 构建，但两者在定位与功能上存在本质区别：
 
-### 1.1 核心区别
+### 核心区别
 
   * **Graphics API (DX11, Vulkan, etc.):** 专注于**硬件能力的直接暴露**。它不知道什么是“材质 (Material)”或“全局纹理 (Global Texture)”，只认识 Buffer、Texture、Shader State 等底层资源。
   * **RHI (GfxDevice):** 专注于**引擎功能的实现**。它不仅是对 API 的封装，还补全了商业引擎所需的上层概念。
       * **概念补全:** 引入材质系统、全局着色器变量 (Global Properties) 等 API 不具备的概念。
       * **平台抹平:** 对于不支持某些特性（如 DXR 光追）的后端（如 GLES），RHI 会提供空实现 (Stub) 或报错，保证上层代码的统一性。
 
-### 1.2 材质 (Material) 的本质
+### 材质 (Material) 的本质
 
 对于底层图形 API，不存在 "Material" 类。材质是引擎层面的抽象，本质是以下数据的集合：
 
@@ -249,9 +249,9 @@ cmd.Clear();
 
 -----
 
-## 2\. CommandBuffer 的底层数据结构
+## CommandBuffer 的底层数据结构
 
-### 2.1 结构本质：可扩展二进制序列 (Extensible Binary Buffer)
+### 结构本质：可扩展二进制序列 (Extensible Binary Buffer)
 
 CommandBuffer 在 C++ 底层并非存储对象列表，而是一个紧凑的**纯字节数组 (Byte Vector)**。
 
@@ -265,7 +265,7 @@ CommandBuffer 在 C++ 底层并非存储对象列表，而是一个紧凑的**�
           * `SetRenderTarget`: 可能包含 ColorBuffer, DepthBuffer, MipLevel 等。
       * 由于数据长度可变，无法通过数组下标直接访问第 N 个命令，必须线性解析。
 
-### 2.2 数据流向图解
+### 数据流向图解
 
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202602172115650.png)
 
@@ -273,9 +273,9 @@ CommandBuffer 在 C++ 底层并非存储对象列表，而是一个紧凑的**�
 
 -----
 
-## 3\. ScriptableRenderContext (Context) 的底层结构
+## ScriptableRenderContext (Context) 的底层结构
 
-### 3.1 结构本质：指令结构体数组 (Vector of Command Structs)
+### 结构本质：指令结构体数组 (Vector of Command Structs)
 
 Context 在底层是一个 `std::vector<CommandStruct>`，与 CommandBuffer 的紧凑布局不同。
 
@@ -289,11 +289,11 @@ Context 在底层是一个 `std::vector<CommandStruct>`，与 CommandBuffer 的�
 
 -----
 
-## 4\. 渲染指令的执行流程 (Submit & Loop)
+## 渲染指令的执行流程 (Submit & Loop)
 
 当调用 `context.Submit()` 时，引擎在**主线程**开始执行指令队列。
 
-### 4.1 上层循环 (Context Loop)
+### 上层循环 (Context Loop)
 
 Context 因为是结构体数组，可以直接遍历：
 
@@ -315,7 +315,7 @@ for (auto& cmd : context.commands) {
 }
 ```
 
-### 4.2 内部循环 (CommandBuffer Parser)
+### 内部循环 (CommandBuffer Parser)
 
 当遇到 `ExecuteCommandBuffer` 类型时，进入二级解析器。由于是二进制流，必须通过指针偏移进行迭代：
 
@@ -347,7 +347,7 @@ while (ptr < buffer.end) {
 
 -----
 
-## 5\. RHI 的具体调用 (Dispatcher)
+## RHI 的具体调用 (Dispatcher)
 
 解析出的命令最终会调用 `GfxDevice` 接口，并分发到具体平台的实现。
 
@@ -356,7 +356,7 @@ while (ptr < buffer.end) {
       * 如果是 **DirectX 11**: 调用 `GfxDeviceD3D11::Clear` $\rightarrow$ `ID3D11DeviceContext::ClearRenderTargetView`。
       * 如果是 **Vulkan**: 调用 `GfxDeviceVK::Clear` $\rightarrow$ `vkCmdClearAttachments`。
 
-### 5.1 线程模型 (Thread Model)
+### 线程模型 (Thread Model)
 
   * 上述解析与调用通常发生在 **主线程 (Main Thread)**。
   * 如果在 Project Settings 中开启了 **Multithreaded Rendering**，则主线程仅负责生成中间指令（GfxCmd），实际的图形 API 调用会发送到 **渲染线程 (Render Thread)** 执行。
@@ -379,19 +379,19 @@ while (ptr < buffer.end) {
 
 # Unity 多线程渲染与 Mesh Pipeline 架构
 
-## 1. 多线程渲染架构 (Multi-threaded Rendering)
+## 多线程渲染架构 (Multi-threaded Rendering)
 
 Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免主线程阻塞。
 
 
 
-### 1.1 开启机制
+### 开启机制
 * **配置位置：** Project Settings $\rightarrow$ Player $\rightarrow$ Other Settings $\rightarrow$ **Multithreaded Rendering**。
 * **生效原理：**
     * 该选项并非运行时动态切换，而是构建（Build）时写入 **boot.config** 配置文件。
     * 应用启动时读取配置，决定是否初始化渲染线程。
 
-### 1.2 架构实现：生产者-消费者模型
+### 架构实现：生产者-消费者模型
 * **设计模式：** 标准的 **Producer-Consumer** (生产者-消费者) 模型。
 * **核心组件：**
     * **Main Thread (生产者):** 持有一个 **Proxy GfxDevice**（代理设备，通常称为 `ClientGfxDevice`）。
@@ -405,11 +405,11 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
 
 ---
 
-## 2. Mesh Pipeline (网格管线) 抽象
+## Mesh Pipeline (网格管线) 抽象
 
 ![](https://raw.githubusercontent.com/NothingToSay0031/Images/main/202602172115461.png)
 
-### 2.1 商业引擎 vs. 原生开发
+### 商业引擎 vs. 原生开发
 * **原生开发 (Raw API):** 开发者需要手动管理每一个 Draw Call，手动绑定 VBO/IBO，手动处理状态切换。
 * **引擎抽象 (Mesh Pipeline):**
     * 引擎不再关注单个“三角形”或“顶点”，而是管理 **Renderer 组件**（`MeshRenderer`, `SkinnedMeshRenderer`, `Terrain` 等）。
@@ -417,13 +417,13 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
 
 ---
 
-## 3. SRP 中的渲染流程控制
+## SRP 中的渲染流程控制
 
 在 Scriptable Render Pipeline 中，渲染流程被标准化为 **Cull (剔除) $\rightarrow$ Filter (过滤) $\rightarrow$ Sort (排序) $\rightarrow$ Draw (绘制)**。
 
 
 
-### 3.1 视锥体剔除 (Culling)
+### 视锥体剔除 (Culling)
 * **API:** `context.Cull(ref cullingParameters)`
 * **CullingResults:**
     * 返回值 `CullingResults` 本质上是一个 **Handle (句柄)** 或指针。
@@ -433,13 +433,13 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
     * 遍历结构，判断物体包围盒（AABB）是否与相机视锥体（Frustum）相交。
     * 输出结果：可见物体的**索引列表**（例如：Index List `[2, 5, 8]`）。
 
-### 3.2 过滤与收集 (Filtering & Gathering)
+### 过滤与收集 (Filtering & Gathering)
 即使物体可见，也不一定在当前 Pass 渲染，需通过 **FilteringSettings** 进行二次筛选：
 * **Render Queue Range:** 指定渲染队列范围（如 `[2000, 2500]` 仅渲染不透明物体）。
 * **Layer Mask:** 游戏对象的 Layer（如 `Default`, `Water`）。
 * **Rendering Layer Mask:** SRP 特有的高级掩码（可用于实现类似贴花或特定光照组的功能）。
 
-### 3.3 绘制设置与排列组合 (Drawing & Permutations)
+### 绘制设置与排列组合 (Drawing & Permutations)
 * **API:** `context.DrawRenderers(cullingResults, ref drawingSettings, ref filteringSettings)`
 * **Shader Tag ID:** 指定渲染哪个 Pass（如 `UniversalForward` 或 `SRPDefaultUnlit`）。
     * **多 Pass 机制 (Multi-Pass expansion):**
@@ -449,7 +449,7 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
     $$DrawItems = VisibleObjects \times MaterialCounts \times MatchingPassCounts$$
     * 即：一个物体如果有 2 个材质，每个材质的 Shader 有 2 个匹配的 Pass，该物体将产生 $1 \times 2 \times 2 = 4$ 个 Draw Calls（在未合批前）。
 
-### 3.4 渲染排序 (Sorting)
+### 渲染排序 (Sorting)
 * **目的：**
     * **Opaque (不透明):** 只有 **Front-to-Back** (从近到远) 排序能利用 Early-Z 优化减少 Overdraw。
     * **Transparent (半透明):** 必须 **Back-to-Front** (从远到近) 排序以保证正确的混合（Blending）结果。
@@ -462,17 +462,17 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
 
 # Mesh Pipeline 的执行细节与 Job System 优化
 
-## 1. 渲染排列组合 (Permutation) 与合批 (Batching)
+## 渲染排列组合 (Permutation) 与合批 (Batching)
 
 在进行实际的 Draw Call 之前，引擎需要对“哪个物体、用哪个材质、画哪个 Pass”进行排列组合，并尝试合并可合并的渲染任务。
 
-### 1.1 排列组合 (Permutation)
+### 排列组合 (Permutation)
 一个 `MeshRenderer` 不等于一个 Draw Call。最终的绘制列表是基于以下逻辑生成的：
 * **LightMode:** SRP 指定绘制带有特定 `LightMode` (如 "UniversalForward") 的 Pass。
 * **Permutation:** 遍历物体的所有材质 $\rightarrow$ 遍历材质的所有 Pass $\rightarrow$ 匹配 LightMode。
     * 如果一个材质有两个 Pass 匹配当前 `LightMode`（例如描边效果可能通过两个 Pass 实现），该物体会被绘制两次。
 
-### 1.2 合批 (Batching) 逻辑
+### 合批 (Batching) 逻辑
 引擎将 256 个 Render Node（渲染节点）划分为一个 **Job (工作单元)** 进行并行处理。在每个 Job 内部，引擎会尝试合并 Draw Call：
 * **条件:**
     * 相同的 Mesh (如果启用了 GPU Instancing)。
@@ -485,17 +485,17 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
 
 ---
 
-## 2. 渲染数据的多线程准备 (Preparation)
+## 渲染数据的多线程准备 (Preparation)
 
 `context.DrawRenderers` 这一行代码在 C# 端几乎没有开销（Zero Cost），因为它只是向底层发送了一个“请求”。真正的繁重工作发生在 `context.Submit` 之后的多线程准备阶段。
 
-### 2.1 DrawRenderers 的底层行为
+### DrawRenderers 的底层行为
 1.  **指令入队:** 往底层 Command List 中添加一个类型为 `DrawRenderers` 的指令。
 2.  **数据存储:** 具体的配置（Culling, Filtering, Sorting Settings）被存储在一个独立的 **List** 中。
 3.  **Index 指向:** Command List 中的指令仅存储一个指向该 List 的 `Index`，避免大对象拷贝。
 4.  **初始状态:** 该任务的状态标记为 `Waiting`。
 
-### 2.2 Submit 后的多线程处理 (Dispatch)
+### Submit 后的多线程处理 (Dispatch)
 当调用 `context.Submit()` 时，主线程遍历指令列表，发现 `DrawRenderers` 指令处于 `Waiting` 状态，触发 **Dispatch (派遣)** 逻辑：
 
 1.  **任务划分 (Job Splitting):**
@@ -516,15 +516,15 @@ Unity 的多线程渲染旨在将逻辑处理与图形 API 调用解耦，避免
 
 ---
 
-## 3. Job System 与性能分析 (Profiling)
+## Job System 与性能分析 (Profiling)
 
-### 3.1 Job System 的核心思想
+### Job System 的核心思想
 Unity (和 Unreal) 使用 Job System 来充分利用多核 CPU。
 * **抽象:** 将独立的逻辑（如剔除、排序、粒子更新）封装为 Job。
 * **依赖 (Dependency):** 定义 Job 之间的先后顺序（例如：必须先排序，才能分组）。
 * **Steal:** 空闲线程可以“窃取”其他线程的任务，保证负载均衡。
 
-### 3.2 Profiler 视图解读
+### Profiler 视图解读
 * **蓝色 (Scripting):** C# 脚本层的调用消耗。
 * **绿色 (Engine):** C++ 引擎底层的执行消耗。
 * **Culling (剔除):**
@@ -538,7 +538,7 @@ Unity (和 Unreal) 使用 Job System 来充分利用多核 CPU。
 
 ---
 
-## 4. 总结：Mesh Pipeline 执行流
+## 总结：Mesh Pipeline 执行流
 
 1.  **C# 调用:** `context.DrawRenderers` (仅仅是记录命令，极快)。
 2.  **Submit 触发:** `context.Submit` 开始执行命令列表。
@@ -557,10 +557,10 @@ Unity (和 Unreal) 使用 Job System 来充分利用多核 CPU。
 
 # Render Job 执行与合批提交 (Batching & Submission)
 
-## 1. Render Job 的执行环境 (Threading Model)
+## Render Job 的执行环境 (Threading Model)
 Render Job 是实际处理渲染逻辑（合批、数据准备）的工作单元。它的执行线程取决于平台和配置。
 
-### 1.1 基本模式 (OpenGLES / DX11)
+### 基本模式 (OpenGLES / DX11)
 * **执行线程:** 通常在 **Main Thread (主线程)**。
 * **流程:**
     1.  主线程执行 Job (For-loop)。
@@ -568,14 +568,14 @@ Render Job 是实际处理渲染逻辑（合批、数据准备）的工作单元
     3.  通过 `GfxDevice` 接口提交给 **Render Thread (渲染线程)**。
     4.  渲染线程调用底层图形 API (如 `ID3D11DeviceContext::Draw`).
 
-### 1.2 多线程渲染模式 (Graphics Jobs Mode)
+### 多线程渲染模式 (Graphics Jobs Mode)
 * **开关:** Project Settings $\rightarrow$ Graphics Jobs (注意与 Multithreaded Rendering 区分)。
 * **执行线程:** **Worker Threads (工作线程)**。
 * **流程:**
     * 渲染任务被分发到多个 Worker 线程并行执行。
     * 每个 Worker 线程计算完毕后，将结果提交给 Render Thread。
 
-### 1.3 现代 API 模式 (Vulkan / DX12 / Metal)
+### 现代 API 模式 (Vulkan / DX12 / Metal)
 现代 API 支持多线程命令录制 (Multi-threaded Command Recording)，这彻底改变了渲染流程。
 * **主要区别:**
     * **DX11/GLES:** 只能单线程录制命令。即使在 Worker 线程准备数据，最终必须汇聚到一个线程提交 API 调用。
@@ -586,17 +586,17 @@ Render Job 是实际处理渲染逻辑（合批、数据准备）的工作单元
 
 ---
 
-## 2. 合批器 (Batcher) 的工作原理
+## 合批器 (Batcher) 的工作原理
 
 合批的核心是在 Render Job 内部遍历物体，尽可能将它们合并为一个 Batch。
 
-### 2.1 预筛选 (Pre-filtering)
+### 预筛选 (Pre-filtering)
 * **SRP Batcher Compatibility:**
     * 在开始合批逻辑前，首先快速扫描 Render Nodes。
     * 检查物体是否兼容 SRP Batcher（例如 shader 是否支持）。
     * 如果当前物体不支持，直接作为单独的 Draw Call 提交，跳过合批逻辑。
 
-### 2.2 合批状态机 (State Machine)
+### 合批状态机 (State Machine)
 合批器维护当前 Batch 的状态（Shader, Keywords, Render State 等）。
 * **输入:** 待渲染的物体列表 (Iterating Objects)。
 * **比较器 (Comparator):** 比较 `CurrentObject.State` vs `LastBatch.State`。
@@ -616,14 +616,14 @@ Render Job 是实际处理渲染逻辑（合批、数据准备）的工作单元
 
 ---
 
-## 3. 数据提交与内存管理 (Flush & Memory)
+## 数据提交与内存管理 (Flush & Memory)
 
-### 3.1 批量提交 (Batch Submission)
+### 批量提交 (Batch Submission)
 Render Job 不会每处理一个物体就调一次 `GfxDevice`（那样会有巨大的锁开销和函数调用开销）。
 * **策略:** 将整个 Batch（包含多个物体）作为一个**数据包 (Packet)** 提交给 Render Thread。
 * **渲染线程行为:** Render Thread 拿到这个 Batch Packet 后，再进行内部循环，逐个执行 SetPass 和 DrawCall。
 
-### 3.2 内存预分配 (Pre-allocation)
+### 内存预分配 (Pre-allocation)
 为了避免频繁的 `new/malloc` 导致的性能劣化（GC 或 堆碎片）：
 * **Pre-allocate:** 提交前，根据 Batch 中的物体数量预估所需内存大小，预留指针。
 * **Commit:** 实际写入数据时才通过 `Commit` 锁定并使用内存块。
@@ -639,23 +639,23 @@ Render Job 不会每处理一个物体就调一次 `GfxDevice`（那样会有巨
 
 # 渲染数据提交与常量缓冲区 (Constant Buffer) 优化
 
-## 1\. Native Graphics Jobs 与命令录制
+## Native Graphics Jobs 与命令录制
 
 当使用现代图形 API（DX12, Vulkan, Metal）并开启 **Native Graphics Jobs** 时，渲染流程发生了根本性变化。
 
-### 1.1 传统模式 (Main/Render Thread)
+### 传统模式 (Main/Render Thread)
 
   * **Flush 操作:** 在 Render Job 中仅准备数据（数据包）。
   * **Submit:** 将数据包发送到渲染线程。
   * **Record:** 渲染线程单线程调用 API 进行命令录制。
 
-### 1.2 Native Graphics Jobs 模式
+### Native Graphics Jobs 模式
 
   * **Flush 操作:** 直接在 **Worker Thread (工作线程)** 中调用底层的命令录制函数（如 `GfxDevice::RecordCommand`）。
   * **并行化:** 多个 Job 并行录制 Command List。
   * **Submit:** 主线程或渲染线程仅负责最终的 `ExecuteCommandLists` 提交，极大降低了渲染线程的瓶颈。
 
-### 1.3 调试技巧 (Profile Graphics Jobs)
+### 调试技巧 (Profile Graphics Jobs)
 
 默认情况下，Unity Editor 为了稳定性隐藏了 Graphics Jobs 的 Profiler 数据。若要强制查看：
 
@@ -669,11 +669,11 @@ Render Job 不会每处理一个物体就调一次 `GfxDevice`（那样会有巨
 
 -----
 
-## 2\. UnityPerDraw 常量缓冲区 (Constant Buffer) 机制
+## UnityPerDraw 常量缓冲区 (Constant Buffer) 机制
 
 `UnityPerDraw` 是 Unity shader 中最常用的 CBUFFER，存储每个物体特有的数据（如 MVP 矩阵、光照探针数据）。
 
-### 2.1 数据准备 (Data Preparation)
+### 数据准备 (Data Preparation)
 
   * **反射 (Reflection):** Shader 编译时，引擎通过反射分析出该 Shader 需要哪些 PerDraw 数据。
       * 引用 `unity_ObjectToWorld` $\rightarrow$ 开启 Transform Feature。
@@ -684,7 +684,7 @@ Render Job 不会每处理一个物体就调一次 `GfxDevice`（那样会有巨
       * CPU 端分配内存：`Size = SingleObjectSize * 10`。
       * 循环填充：遍历 10 个物体，根据 Mask 将矩阵、SH 系数等写入内存。
 
-### 2.2 数据上传与绑定 (Upload & Bind)
+### 数据上传与绑定 (Upload & Bind)
 
 RHI 层对 CBUFFER 的更新进行了深度优化，隐藏了底层 API 的差异。
 
@@ -706,7 +706,7 @@ RHI 层对 CBUFFER 的更新进行了深度优化，隐藏了底层 API 的差�
     2.  Draw Object 2: `Map` 小 Buffer $\rightarrow$ Copy Data 2 $\rightarrow$ `Draw`。
   * **劣势:** 频繁的 Lock/Unlock 和 PCIe 传输，性能较差。
 
-### 2.3 动态池化 (Dynamic Pooling)
+### 动态池化 (Dynamic Pooling)
 
 Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 512B, ... 128KB）。
 
@@ -714,7 +714,7 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 -----
 
-## 3\. 总结：从 Job 到 GPU 的数据流
+## 总结：从 Job 到 GPU 的数据流
 
 1.  **Render Job (Worker):**
       * 计算 Feature Mask。
@@ -734,18 +734,18 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 # Material 数据管理与合批 (Batching) 优化策略
 
-## 1. Material Constant Buffer (UnityPerMaterial) 的底层机制
+## Material Constant Buffer (UnityPerMaterial) 的底层机制
 
 与 `UnityPerDraw`（每物体数据，高频更新）不同，`UnityPerMaterial` 存储的是材质属性（如 BaseColor, Smoothness），其更新频率较低，且所有权归材质对象所有。
 
-### 1.1 数据结构与存储
+### 数据结构与存储
 * **CPU 端:** 每个 Material 对象在 CPU 内存中持有一个 Buffer。
 * **数据映射:**
     * 引擎维护一个 **Property Map**，记录 Shader 中属性名（如 `_BaseColor`）对应的偏移量（Offset）。
     * 当调用 `material.SetFloat/SetColor` 时，引擎根据 Offset 直接修改 CPU Buffer 中的数据。
 * **Dirty Flag:** 修改数据会将材质标记为“脏 (Dirty)”。
 
-### 1.2 数据上传 (CPU to GPU)
+### 数据上传 (CPU to GPU)
 * **时机:** 在渲染准备阶段（Culling 后），如果检测到 Material 标脏。
 * **流程:**
     1.  **Check Size:** 检查材质属性大小是否发生变化（例如 Shader 变体切换导致 Buffer 变大）。
@@ -759,11 +759,11 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 ---
 
-## 2. 三种合批技术的对比与原理
+## 三种合批技术的对比与原理
 
 在 Unity 中，减少 DrawCall 的核心目的是减少 **Render State Change (渲染状态切换)**，尤其是 **SetPass Call**。
 
-### 2.1 Static Batching (静态合批)
+### Static Batching (静态合批)
 * **原理:** 将多个使用相同材质的静态物体（Static Flag）合并成一个巨大的 Mesh。
 * **限制:**
     * **严格同材质:** 必须完全相同的 Material 实例。
@@ -771,7 +771,7 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
     * **不可移动:** 物体必须是静态的。
 * **评价:** 牺牲内存换 CPU，现代项目中用得越来越谨慎。
 
-### 2.2 Dynamic Batching (动态合批)
+### Dynamic Batching (动态合批)
 * **原理:** 每一帧在 CPU 端实时变换顶点，将小网格合并。
 * **限制:**
     * **严格同材质。**
@@ -779,7 +779,7 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
     * **CPU 开销:** 每帧的 CPU 变换和数据上传开销可能超过 DrawCall 节省的开销。
 * **评价:** 在现代 CPU/GPU 架构下，通常**收益甚微**，甚至负优化。
 
-### 2.3 SRP Batcher (SRP 合批) - 现代标准
+### SRP Batcher (SRP 合批) - 现代标准
 * **原理:** **不合并 DrawCall，而是合并 SetPass Call。**
     * 多个 DrawCall 如果使用相同的 Shader Variant（即使 Material 实例不同），只需设置一次 Shader State (`SetPass`)。
     * 每个物体的 Transform 和 Material 数据分别绑定到 **CBUFFER** (`UnityPerDraw`, `UnityPerMaterial`)。
@@ -795,7 +795,7 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 ---
 
-## 3. Draw Call vs. SetPass Call
+## Draw Call vs. SetPass Call
 
 我们常说的“减少 Draw Call”其实是不准确的，真正的性能杀手是 **SetPass Call**。
 
@@ -806,7 +806,7 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 ---
 
-## 4. 优化建议：如何利用好 SRP Batcher
+## 优化建议：如何利用好 SRP Batcher
 
 1.  **Shader 兼容性:** 确保自定义 Shader 支持 SRP Batcher（在 Inspector 中查看兼容性提示）。
 2.  **减少 Shader Variant (变体):**
@@ -825,11 +825,11 @@ Unity 底层维护了一个 CBUFFER 池，通常按 2 的幂次分级（256B, 51
 
 # Shader 加载机制与变体 (Variant) 管理优化
 
-## 1\. Shader 的生命周期与内存管理
+## Shader 的生命周期与内存管理
 
 Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解这一过程对于优化内存和启动时间至关重要。
 
-### 1.1 初始化与解压 (Initialization & Decompression)
+### 初始化与解压 (Initialization & Decompression)
 
   * **Bundle Data:** 打包后的 AssetBundle 中存储的是压缩的 Shader 数据 (LZ4/LZMA)。
   * **Awake:**
@@ -839,7 +839,7 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
     4.  **Binary Data:** 此时，Shader 代码仍以**平台相关的二进制数据 (Binary Data)** 形式存在于 CPU 内存中（如 DXBC, GLSL Binary, SPIR-V），尚未上传 GPU。
     5.  **Metadata Cleanup:** 创建完 SubPrograms 后，销毁中间层的 Metadata。
 
-### 1.2 GPU 程序创建 (GPU Program Creation)
+### GPU 程序创建 (GPU Program Creation)
 
   * **触发时机:**
       * **首次使用 (First Use):** 渲染时遇到了某个变体。
@@ -853,7 +853,7 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
       * **DX11:** `CreateVertexShader`。
       * **DX12/Vulkan:** 不需要创建传统的 Program 对象，而是将 ByteCode 缓存起来，用于后续创建 Pipeline State Object (PSO)。
 
-### 1.3 内存优化的启示
+### 内存优化的启示
 
 1.  **变体剔除 (Variant Stripping):**
       * **问题:** 如果一个变体永远未被用到（也未预热），其 CPU Binary Data 会**一直驻留在内存中**。
@@ -868,11 +868,11 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
 
 -----
 
-## 2\. 变体匹配机制 (Variant Matching)
+## 变体匹配机制 (Variant Matching)
 
 当渲染请求一个变体（例如 `Keywords: A B`），但该变体未被打包时，引擎如何处理？
 
-### 2.1 打分算法 (Scoring)
+### 打分算法 (Scoring)
 
 引擎会遍历所有已打包的变体，计算一个“匹配分数”，选择分数最高的那个（通常是 Fallback）。
 
@@ -885,9 +885,9 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
 
 -----
 
-## 3\. 渲染状态优化与底层 API
+## 渲染状态优化与底层 API
 
-### 3.1 批量资源绑定 (Batch Resource Binding)
+### 批量资源绑定 (Batch Resource Binding)
 
   * **现状:** 有时 RenderDoc 中会看到连续的 API 调用：
     ```cpp
@@ -901,7 +901,7 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
       * 即使是 DX11/GL，也支持 `PSSetShaderResources(StartSlot, Count, Views)`。
       * 理想情况是**一次调用设置多个纹理**。
 
-### 3.2 Material Buffer 内存类型优化
+### Material Buffer 内存类型优化
 
   * **问题:** `UnityPerMaterial` 使用的是 **Host Memory (CPU 内存)**，通过 PCIe 总线映射给 GPU。
       * 每次 GPU 读取（渲染）都要走 PCIe 总线。
@@ -923,11 +923,11 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
 
 # 材质内存优化与 GPU Driven 渲染架构
 
-## 1\. 材质系统内存优化策略
+## 材质系统内存优化策略
 
 在通用引擎架构中，材质数据的更新往往是性能瓶颈。针对 `UnityPerMaterial`（低频更新数据），可以通过优化内存驻留策略来减少 PCIe 带宽消耗。
 
-### 1.1 显存驻留优化 (Staging Buffer 机制)
+### 显存驻留优化 (Staging Buffer 机制)
 
   * **常规模式 (Host Memory):**
       * Unity 默认通常申请 **CPU/GPU Shared Buffer** (Host Visible)。
@@ -940,7 +940,7 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
         3.  后续帧渲染时，GPU 直接从显存读取数据 (Device Local)。
       * **收益:** 极大减少了每帧渲染时的 PCIe 传输耗时，因为数据就在 GPU 芯片旁。
 
-### 1.2 动态更新策略 (Heuristic Update)
+### 动态更新策略 (Heuristic Update)
 
 针对材质更新频率的不同，可以设计自适应的底层机制：
 
@@ -952,14 +952,14 @@ Unity 中 Shader 的加载过程涉及多次数据转换与内存操作，理解
 
 -----
 
-## 2\. 渲染管线架构深度优化
+## 渲染管线架构深度优化
 
 Profiler 分析显示，渲染的主要开销往往集中在两块：
 
 1.  **Culling:** 视锥体剔除计算。
 2.  **Render Job:** 渲染数据的准备与序列化（将数据 IO 写入到多线程 Buffer 中）。
 
-### 2.1 通用架构 vs. 专用架构
+### 通用架构 vs. 专用架构
 
   * **通用引擎的负担:** Unity 为了兼容所有情况（通用剔除、排序、各种 Filter），带来了巨大的维护开销和数据结构冗余。
   * **定制化优化 (Domain Specific):**
@@ -967,7 +967,7 @@ Profiler 分析显示，渲染的主要开销往往集中在两块：
       * **通用方案:** 引擎对每根草做剔除、排序、合批 $\rightarrow$ CPU 爆炸。
       * **优化方案:** 利用 **Domain Knowledge** (领域知识)。草不需要精确排序，也不需要逐根剔除。可以将 1000 根草打包为一个 **Chunk** 进行粗粒度剔除。
 
-### 2.2 GPU Driven Rendering (GPU 驱动渲染)
+### GPU Driven Rendering (GPU 驱动渲染)
 
 为了彻底消除 CPU 端的 Culling 和 Data Preparation 开销，可以将管线逻辑移至 GPU。
 
@@ -983,11 +983,11 @@ Profiler 分析显示，渲染的主要开销往往集中在两块：
 
 -----
 
-## 3\. Native Plugin 原生渲染插件开发
+## Native Plugin 原生渲染插件开发
 
 当 Unity 内置功能无法满足需求（如接入特定版本的 DLSS、专有抗锯齿库、视频编解码 AVPro）或需要极致性能时，需要开发 Native Plugin 直接操作底层图形 API。
 
-### 3.1 核心工作流
+### 核心工作流
 
 1.  **C++ 端:** 编写动态链接库 (.dll / .so)，实现具体的图形逻辑（如 DX12, Vulkan 调用）。
 2.  **C\# 端:**
@@ -995,7 +995,7 @@ Profiler 分析显示，渲染的主要开销往往集中在两块：
       * **Event:** 定义 `IssuePluginEvent` 接口。
       * **Submit:** 通过 `CommandBuffer.IssuePluginEvent(callback, eventID)` 在渲染管线的特定时机触发 C++ 回调。
 
-### 3.2 资源句柄映射 (Resource Interop)
+### 资源句柄映射 (Resource Interop)
 
 Unity 提供了接口将上层对象转换为底层 API 的原生指针 (Native Handle)。
 
@@ -1006,7 +1006,7 @@ Unity 提供了接口将上层对象转换为底层 API 的原生指针 (Native 
   * **Mesh:** 可以获取顶点和索引缓冲区的指针 `mesh.GetNativeVertexBufferPtr()`。
   * **ComputeBuffer:** `buffer.GetNativeBufferPtr()`。
 
-### 3.3 代码示例逻辑
+### 代码示例逻辑
 
 ```csharp
 // 1. 创建 RT 并确保硬件资源已分配
@@ -1031,11 +1031,11 @@ cmd.IssuePluginEvent(GetRenderEventFunc(), eventID);
 
 # Native Plugin 外部资源创建与 Bindless 架构
 
-## 1\. 外部资源的创建与共享 (External Resources)
+## 外部资源的创建与共享 (External Resources)
 
 在 Native Plugin 中使用 DirectX/Vulkan 创建资源，并让 Unity “视如己出”地使用它们，是高级插件开发的核心能力。
 
-### 1.1 资源句柄传递 (Handle Passing)
+### 资源句柄传递 (Handle Passing)
 
 不同图形 API 的资源句柄含义不同，在 C++ 和 C\# 之间传递时需注意：
 
@@ -1045,7 +1045,7 @@ cmd.IssuePluginEvent(GetRenderEventFunc(), eventID);
   * **Vulkan:** `VkImage`。
   * **Metal:** `id<MTLTexture>`。
 
-### 1.2 创建外部纹理 (CreateExternalTexture)
+### 创建外部纹理 (CreateExternalTexture)
 
 Unity 提供了 `Texture2D.CreateExternalTexture` 方法来包装底层的原生指针。
 
@@ -1060,7 +1060,7 @@ material.mainTexture = tex;
 
   * **应用场景:** 视频播放器 (AVPro Video) 解码出的纹理直接在 Unity 中渲染，无需 CPU 回读。
 
-### 1.3 插件生命周期 (Plugin Lifecycle)
+### 插件生命周期 (Plugin Lifecycle)
 
 Native Plugin 必须遵循特定的初始化与销毁流程，以确保与 Unity 渲染线程的安全交互。
 
@@ -1070,11 +1070,11 @@ Native Plugin 必须遵循特定的初始化与销毁流程，以确保与 Unity
 
 -----
 
-## 2\. 状态追踪与恢复 (State Tracking)
+## 状态追踪与恢复 (State Tracking)
 
 Unity 引擎底层维护了一套复杂的渲染状态（Render State），如果 Native Plugin 擅自修改了这些状态（如修改了 RootSignature, PipelineState），会导致 Unity 后续的渲染出错。
 
-### 2.1 状态失效标志 (State Invalidation Flags)
+### 状态失效标志 (State Invalidation Flags)
 
 在调用 `IssuePluginEvent` 时，可以通过 flags 告知引擎插件修改了哪些状态，让 Unity 在回调结束后自动恢复。
 
@@ -1084,11 +1084,11 @@ Unity 引擎底层维护了一套复杂的渲染状态（Render State），如�
 
 -----
 
-## 3\. 高级案例：Shader Complexity View (复杂度视图)
+## 高级案例：Shader Complexity View (复杂度视图)
 
 这是一个通过 Native Plugin 实现 Unity 缺失功能的经典案例（类似 UE 的 Shader Complexity）。
 
-### 3.1 实现原理 (Hook & Override)
+### 实现原理 (Hook & Override)
 
 1.  **Hook Creation:** 在 C++ 层拦截 Pixel Shader (PS) 的创建。
 2.  **Instruction Counting:** 分析 DXBC/DXIL 字节码，统计每个 PS 的指令数 (Instruction Count)。
@@ -1101,11 +1101,11 @@ Unity 引擎底层维护了一套复杂的渲染状态（Render State），如�
 
 -----
 
-## 4\. Bindless (无绑定) 架构与 Unity
+## Bindless (无绑定) 架构与 Unity
 
 **Bindless** 是现代图形 API (DX12/Vulkan) 的一项重要特性，允许 Shader 访问几乎无限数量的资源，而无需频繁绑定 Descriptor Table。
 
-### 4.1 传统绑定 vs. Bindless
+### 传统绑定 vs. Bindless
 
   * **传统 (Bound):**
       * Shader: `Texture2D _MainTex : register(t0);`
@@ -1117,7 +1117,7 @@ Unity 引擎底层维护了一套复杂的渲染状态（Render State），如�
       * CPU: 一次性将所有纹理上传到一个巨大的 Descriptor Heap。
       * **优势:** DrawCall 之间无需切换纹理绑定，只需传递一个整数索引 (Index)。
 
-### 4.2 Unity 的支持现状
+### Unity 的支持现状
 
   * **Unity 现状:** 默认不支持 Bindless（因为要兼容老旧平台）。
   * **Native Plugin 实现:**
@@ -1132,11 +1132,11 @@ Unity 引擎底层维护了一套复杂的渲染状态（Render State），如�
 
 # Bindless 渲染架构与平台适配底层原理
 
-## 1\. Bindless Rendering (无绑定渲染) 与 Visibility Buffer
+## Bindless Rendering (无绑定渲染) 与 Visibility Buffer
 
 随着光线追踪（Ray Tracing）和现代 GPU 架构的发展，传统的“绑定槽位（Slot-based Binding）”模式已成为瓶颈。**Bindless** 技术通过全局堆访问彻底改变了资源管理方式。
 
-### 1.1 核心理念
+### 核心理念
 
   * **传统模式的局限：**
       * 每个 Draw Call 必须显式绑定纹理到特定槽位（如 `t0`, `t1`）。
@@ -1152,7 +1152,7 @@ Unity 引擎底层维护了一套复杂的渲染状态（Render State），如�
         float4 color = myTex.Sample(sampler, uv);
         ```
 
-### 1.2 Visibility Buffer (V-Buffer) 架构
+### Visibility Buffer (V-Buffer) 架构
 
 Bindless 是实现 **Visibility Buffer** 的基础技术：
 
@@ -1165,11 +1165,11 @@ Bindless 是实现 **Visibility Buffer** 的基础技术：
 
 -----
 
-## 2\. 在 Unity 中 Hack 实现 Bindless (Native Plugin)
+## 在 Unity 中 Hack 实现 Bindless (Native Plugin)
 
 由于 Unity 的 RHI 层（尤其是在旧版本或兼容模式下）默认不支持 Bindless，可以通过 Native Plugin 对底层 DX12 进行 Hook 来强行实现。
 
-### 2.1 实现原理 (Hooking DX12)
+### 实现原理 (Hooking DX12)
 
 插件通过拦截 Unity 底层的 D3D12 调用来注入 Bindless 所需的逻辑：
 
@@ -1180,7 +1180,7 @@ Bindless 是实现 **Visibility Buffer** 的基础技术：
       * 获取 Unity 创建的主 SRV Descriptor Heap 的 **基地址 (Base Address)** 和 **容量 (Capacity)**。
       * 通常 Unity 会分配一个巨大的堆（例如 200,000 个描述符）。
 
-### 2.2 内存布局策略 (Collision Avoidance)
+### 内存布局策略 (Collision Avoidance)
 
   * **Unity 的行为:** 作为一个“黑盒”，Unity 通常采用线性分配器 (Linear Allocator)，每一帧从堆的 **头部 (Front)** 开始向后分配资源。
   * **插件的策略:** 为了不与 Unity 冲突，插件通常从堆的 **尾部 (Back)** 向前分配 Bindless 资源。
@@ -1191,11 +1191,11 @@ Bindless 是实现 **Visibility Buffer** 的基础技术：
 
 -----
 
-## 3\. 新平台适配 (New Platform Porting)
+## 新平台适配 (New Platform Porting)
 
 当需要将引擎移植到一个全新的操作系统或硬件平台时，核心工作在于 **窗口系统 (Window System)** 与 **图形上下文 (Graphics Context)** 的对接。
 
-### 3.1 适配分层策略
+### 适配分层策略
 
 1.  **标准图形接口 (EGL/WGL):**
       * 如果新平台支持标准的 EGL（嵌入式图形库），适配工作量较小。
@@ -1203,7 +1203,7 @@ Bindless 是实现 **Visibility Buffer** 的基础技术：
 2.  **自定义图形接口:**
       * 如果平台使用私有 API（如 PS4/PS5 GNM, Switch NVN），则需要重写整个 **RHI (GfxDevice)** 层。
 
-### 3.2 案例：Android 平台适配流程
+### 案例：Android 平台适配流程
 
 1.  **Java 层 (SDK):**
       * Android Activity 管理生命周期。
