@@ -9,8 +9,7 @@ Avowed: A GPU Technical Retrospective | Unreal Fest Orlando 2025
 [Avowed: A GPU Technical Retrospective | Unreal Fest Orlando 2025](https://www.youtube.com/watch?v=BKaAzhMHJZ0)
 
 
-1\. 项目简介与背景
------------
+## 项目简介与背景
 
 *   **演讲者:** Matt Campbell (黑曜石娱乐，高级图形工程师 / 《Avowed》首席图形工程师)
     
@@ -57,8 +56,7 @@ Avowed: A GPU Technical Retrospective | Unreal Fest Orlando 2025
     *   _(本次分享重点关注前三项)_
         
 
-2\. 主机性能目标 (已发售状态)
-------------------
+## 主机性能目标 (已发售状态)
 
 讲座详细列出了 Xbox Series S 和 X 的不同模式配置，这对于理解性能权衡至关重要。
 
@@ -112,8 +110,7 @@ Avowed: A GPU Technical Retrospective | Unreal Fest Orlando 2025
     *   **关键备注:** 切换到软件光追和 VSM **并非因为 GPU 限制**，而是因为 60Hz 模式下遇到了 **CPU 瓶颈**。
         
 
-3\. 深入探讨：Nanite
----------------
+## 深入探讨：Nanite
 
 Nanite 被认为是《Avowed》项目成功的最大贡献者之一。
 
@@ -172,8 +169,7 @@ Nanite 被认为是《Avowed》项目成功的最大贡献者之一。
     *   **优化 2:** 调整流式传输大小。放弃了“一个 World Partition 区块 = 一个流式单元”的理想化设定，改为使用更细粒度的单元，以便更早地剔除“膝盖高度及以下”的小型杂物。
         
 
-4\. 深入探讨：Nanite 植被 (Foliage)
-----------------------------
+## 深入探讨：Nanite 植被 (Foliage)
 
 植被是另一个需要美术团队投入巨大精力的领域。
 
@@ -234,8 +230,7 @@ Nanite 被认为是《Avowed》项目成功的最大贡献者之一。
     3.  **保持稀疏 (Sparse):** 几何体保持稀疏似乎有助于 Nanite 更好地进行栅格化。
         
 
-5\. 性能对比：优化前后 (XSS @ 30Hz)
---------------------------
+## 性能对比：优化前后 (XSS @ 30Hz)
 
 以下数据清晰地展示了上述 Nanite 和植被优化的惊人效果。
 
@@ -287,8 +282,7 @@ Nanite 被认为是《Avowed》项目成功的最大贡献者之一。
     *   _(优化后的新问题：出现了 2ms 的 Graphics Q Stall，等待 Async Pass)_
 
 
-6\. 深入探讨：Lumen
---------------
+## 深入探讨：Lumen
 
 Lumen 是团队决定从 UE4 迁移到 UE5 的**首要驱动力 (primary driver)**。虽然 Nanite 很棒，但 Lumen 提供的动态全局光照 (GI) 是实现项目艺术目标不可或缺的。
 
@@ -526,8 +520,7 @@ Lumen 是一个“极其复杂的猛兽”。
 
 ---
 
-7\. 深入探讨：阴影 (Shadows)
----------------------
+## 深入探讨：阴影 (Shadows)
 
 **阴影**是《Avowed》团队在性能上**最大的痛点和挣扎点 (bulk of our performance struggles)**。它们包含了团队最多的引擎修改和优化。
 
@@ -703,8 +696,7 @@ Lumen 是一个“极其复杂的猛兽”。
 
 ---
 
-8\. 光追 (Ray Tracing) 的最终优化与成本
------------------------------
+## 光追 (Ray Tracing) 的最终优化与成本
 
 *   **时序调整:**
     
@@ -744,8 +736,7 @@ Lumen 是一个“极其复杂的猛兽”。
     *   **最终结论:** 这就是团队**无法**在 Xbox 60Hz 性能模式下负担 HWRT 的**根本原因**。CPU 成本将其推高到了预算之上，迫使其在 60Hz 模式下回退到 Software Lumen 和 VSM。
         
 
-9\. 虚拟纹理 (Virtual Textures - VTs)
----------------------------------
+## 虚拟纹理 (Virtual Textures - VTs)
 
 *   **应用范围:** 游戏中的**几乎所有纹理**都使用了 VT 系统。
     
@@ -790,8 +781,7 @@ Lumen 是一个“极其复杂的猛兽”。
         *   **影响:** 如果材质先加载，会导致**无效的 VT 绑定 (Invalid virtual texture binding)**，直到材质被重新加载（例如角色法线贴图丢失）。
             
 
-10\. 最终总结与核心建议
---------------
+## 最终总结与核心建议
 
 ### 💡 Nanite
 
@@ -831,8 +821,7 @@ Lumen 是一个“极其复杂的猛兽”。
 *   时刻监控你的纹理池。
     
 
-11\. 跨领域的开发建议 (Agnostic Advice)
--------------------------------
+## 跨领域的开发建议 (Agnostic Advice)
 
 *   **尽早确定基准硬件 (Benchmark Hardware):**
     

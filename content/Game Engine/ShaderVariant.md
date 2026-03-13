@@ -5,7 +5,7 @@ date: 2026-02-17 21:15:50
 
 # Shader 变体管理与工程实践原理
 
-## 1. 工程视角：从上层引擎到底层 API 的映射
+## 工程视角：从上层引擎到底层 API 的映射
 
 在大型 3D 游戏项目中，Shader 的管理是一个核心的工程挑战。理解这一点的关键在于建立**上层引擎架构**与**底层图形 API** 之间的认知映射。
 
@@ -20,7 +20,7 @@ date: 2026-02-17 21:15:50
 
 ---
 
-## 2. 静态分支：宏定义与 Shader 变体
+## 静态分支：宏定义与 Shader 变体
 
 **静态分支 (Static Branching)** 是在编译阶段确定的逻辑路径，它直接决定了最终生成的二进制代码（如 **DXBC**、**SPIR-V**）的结构。
 
@@ -40,7 +40,7 @@ date: 2026-02-17 21:15:50
 
 ---
 
-## 3. 动态分支：Uniform 变量与 GPU 执行流
+## 动态分支：Uniform 变量与 GPU 执行流
 
 开发者常试图通过传递 **Uniform 变量** 并在 Shader 中使用 `if/else` 来代替宏，以减少变体数量。这种做法在 GPU 的 SIMD（单指令多数据）架构下有特殊的性能考量。
 
@@ -66,7 +66,7 @@ date: 2026-02-17 21:15:50
 
 ---
 
-## 4. 变体 (Variant) 的本质与组合爆炸
+## 变体 (Variant) 的本质与组合爆炸
 
 ### 错误实践：复制粘贴
 * **现象：** 为了添加新效果（如“腮红”），将整个 Shader 文件复制一份并重命名。
@@ -91,7 +91,7 @@ date: 2026-02-17 21:15:50
 
 # Shader 编译管线与变体（Variant）的底层机制
 
-## 1\. 领域特定语言 (DSL) 与图形 API 差异
+## 领域特定语言 (DSL) 与图形 API 差异
 
 ### ShaderLab 与 DSL
 
@@ -113,7 +113,7 @@ date: 2026-02-17 21:15:50
 
 -----
 
-## 2\. 变体 (Variant) 的底层实现：宏定义
+## 变体 (Variant) 的底层实现：宏定义
 
 在底层 API（如 D3D）的视角中，变体本质上就是一组 **宏定义 (Macros)** 的组合。
 
@@ -141,7 +141,7 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 -----
 
-## 3\. 跨平台 Shader 编译管线 (Unity 为例)
+## 跨平台 Shader 编译管线 (Unity 为例)
 
 打包时，引擎会将 ShaderLab + HLSL 转换为目标平台的原生格式。
 
@@ -155,7 +155,7 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 -----
 
-## 4\. 变体的代价：内存与预热 (Warmup)
+## 变体的代价：内存与预热 (Warmup)
 
 ### 包体大小 vs. 运行时内存
 
@@ -173,7 +173,7 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 -----
 
-## 5\. 补充：Q\&A 与职业建议 (针对图形程序)
+## 补充：Q\&A 与职业建议 (针对图形程序)
 
 ### 移动端性能陷阱：Raymarching & SDF
 
@@ -194,13 +194,13 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 # 变体管理策略：从个人规范到引擎宏定义
 
-## 1. 变体管理的双重维度
+## 变体管理的双重维度
 
 在工程实践中，变体管理通常被拆分为两个独立但相关的环节，开发者常将二者混淆：
 * **变体收集 (Variant Collection):** 确定项目中实际需要哪些变体。
 * **变体剔除 (Variant Stripping):** 在构建阶段主动移除不需要的变体，这是控制数量的关键手段。
 
-## 2. 个人开发层面的优化策略
+## 个人开发层面的优化策略
 
 开发者（TA/图形程序）在编写 Shader 代码时，应根据计算负载权衡使用 **宏分支 (Macro)** 还是 **动态分支 (Dynamic Branching)**。
 
@@ -220,7 +220,7 @@ D3D_SHADER_MACRO specificVariant[] = {
 
 ---
 
-## 3. Unity 宏定义指令详解：`multi_compile` vs `shader_feature`
+## Unity 宏定义指令详解：`multi_compile` vs `shader_feature`
 
 这是 ShaderLab 中最易混淆的概念，二者在 **打包 (Build)** 时的行为截然不同。
 
@@ -252,7 +252,7 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 ---
 
-## 4. 扩展资源
+## 扩展资源
 
 * **参考文章：** **搜狐畅游引擎部** 在知乎发布的[文章](https://zhuanlan.zhihu.com/p/698315064)。
 * 详细记录了工具的使用与工程实践。
@@ -261,7 +261,7 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 # 变体剔除 (Variant Stripping) 与收集 (Collection) 详解
 
-## 1. 概念澄清：剔除与收集的区别
+## 概念澄清：剔除与收集的区别
 
 在工程实践中，必须严格区分两个概念：
 * **变体收集 (Collection):**
@@ -275,7 +275,7 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 ---
 
-## 2. 传统剔除方案的痛点
+## 传统剔除方案的痛点
 
 早期的变体剔除通常基于简单的配置文件（如 JSON），但这存在显著缺陷：
 
@@ -287,7 +287,7 @@ $$Total = (MultiCompile\_Permutations) \times (Active\_ShaderFeature\_Permutatio
 
 ---
 
-## 3. 高级剔除工具设计
+## 高级剔除工具设计
 
 讲师介绍了一种基于 **可序列化对象 (ScriptableObject)** 和 **反射 (Reflection)** 的高级剔除工具。
 
@@ -318,7 +318,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 4. 变体丢失排查指南
+## 变体丢失排查指南
 
 当打包后发现物体变成粉色（Shader 丢失），或效果与编辑器内不一致时，排查步骤如下：
 
@@ -330,7 +330,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 5. 变体收集 (Variant Collection) 的前奏
+## 变体收集 (Variant Collection) 的前奏
 
 ### 为什么要收集？
 * **热更新 (Hotfix) 与分包 (AssetBundles):**
@@ -344,13 +344,13 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 # 变体收集 (Variant Collection) 实战：痛点与解决方案
 
-## 1. 变体收集的核心作用
+## 变体收集的核心作用
 * **AssetBundle 隔离问题:** 默认情况下，AssetBundle 相互独立。若 Shader 在 Bundle A，而引用该 Shader 的材质在 Bundle B，打包 Bundle A 时无法得知 Bundle B 中的变体需求。
 * **解决方案:** 提前收集所有需要的变体组合，写入 **SVC (Shader Variant Collection)** 文件，并将 SVC 与 Shader 打包在同一个 Bundle 中。这样 Shader Bundle 就明确知道需要包含哪些变体。
 
 ---
 
-## 2. 基础方法：Unity 原生工具
+## 基础方法：Unity 原生工具
 
 ### 手动创建 SVC
 * **操作:** `Create` -> `Shader Variant Collection`.
@@ -372,7 +372,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 3. 进阶方法论：动态法 vs. 静态法
+## 进阶方法论：动态法 vs. 静态法
 
 ### 动态法 (Runtime Collection)
 * **原理:** 通过修改引擎源码或分析日志，在游戏运行时实时捕获实际使用的变体。
@@ -395,7 +395,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 4. 自研工具：材质收集器 (Material Collector)
+## 自研工具：材质收集器 (Material Collector)
 
 讲师展示了一款基于静态分析的工具，用于解决材质收集难题。
 
@@ -423,7 +423,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 # 变体收集进阶：多光源预热与工具实践
 
-## 1. 静态收集的局限与补充
+## 静态收集的局限与补充
 
 虽然静态分析材质能解决 **引用丢失 (AssetBundle Isolation)** 问题，确保 `shader_feature` 不丢失，但对于 `multi_compile` 的动态切换，静态分析存在盲区。
 
@@ -436,7 +436,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 2. 工具演示：一键式变体收集
+## 工具演示：一键式变体收集
 
 讲师展示的工具集成了 **收集** $\rightarrow$ **解析** $\rightarrow$ **写入** 的全流程。
 
@@ -458,7 +458,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 3. 预热 (Warmup) 策略：对抗卡顿
+## 预热 (Warmup) 策略：对抗卡顿
 
 收集完变体后，如何执行预热是影响用户体验的关键。
 
@@ -488,7 +488,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 4. 行业现象：“正在编译着色器”
+## 行业现象：“正在编译着色器”
 
 为什么现代游戏（《黑神话：悟空》、《使命召唤》、《三角洲行动》）启动时都要编译很久？
 
@@ -503,7 +503,7 @@ Unity 提供了标准接口 `IPreprocessShaders`。
 
 ---
 
-## 5. 总结
+## 总结
 
 变体管理是一个系统工程：
 1.  **写 Shader:** 区分 `multi_compile` 和 `shader_feature`，合理使用宏。

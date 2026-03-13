@@ -9,7 +9,7 @@ Stochastic Tile-Based Lighting in HypeHype
 [SIGGRAPH 2025 Advances: STOCHASTIC TILE-BASED LIGHTING IN HYPEHYPE](https://www.youtube.com/watch?v=8O44TBN4sQc)
 
 
-1\. 核心背景与挑战
+核心背景与挑战
 -----------
 
 HypeHype 是一个 **UGC (用户生成内容) 平台**，其核心挑战在于渲染技术必须**跨平台（从 99 美元的廉价手机到高端 PC）** 都能稳健运行。
@@ -55,7 +55,7 @@ HypeHype 是一个 **UGC (用户生成内容) 平台**，其核心挑战在于�
 
 * * *
 
-2\. 现有方案评估（为什么不适用）
+现有方案评估（为什么不适用）
 ------------------
 
 在设计新算法前，团队评估了两种主流方案，但它们都无法满足上述所有约束。
@@ -94,7 +94,7 @@ HypeHype 是一个 **UGC (用户生成内容) 平台**，其核心挑战在于�
 
 * * *
 
-3\. 解决方案：随机切片式光照 (Stochastic Tile-Based Lighting)
+解决方案：随机切片式光照 (Stochastic Tile-Based Lighting)
 -------------------------------------------------
 
 HypeHype 结合了上述两种方案的优点，设计了一种专为移动端 TBR 架构优化的新算法。
