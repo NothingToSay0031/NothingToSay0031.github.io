@@ -20,13 +20,13 @@ UE5 的 Lumen 反射管线通过三个关键的 Compute Shader 完美解决了�
 
 ## 任务筛选
 
-### Shader: ReflectionTileClassificationBuildListsCS
+### ReflectionTileClassificationBuildListsCS
 
 **核心目标** ：粗粒度剔除（Culling）。不要为屏幕上的“空像素”启动光线追踪。
 
 Lumen 并不会对屏幕上的所有像素全部发射光线。这一步将屏幕划分为 `8x8`的 **Tile** ，并检查每个 Tile 是否包含需要反射的物体（通过 `LumenTileBitmask`）。
 
-### 1. 源码分析：Z-Order 曲线与 Wave Ops
+### Z-Order 曲线与 Wave Ops
 
 代码使用了 **Wave Intrinsics** 来高效构建两个列表：`RWReflectionTileData`（活跃 Tile）和 `RWReflectionClearTileData`（空 Tile）。
 
@@ -60,7 +60,7 @@ if (bTileUsed)
 }
 ```
 
-### 2. 技术亮点
+### 技术亮点
 
 - **原子操作优化** ：原本需要每个线程执行一次 `InterlockedAdd`（高争用），现在变成了每 32⁄64 个线程执行一次。性能提升显著。
 - **Indirect Draw/Dispatch** ：生成的 `RWReflectionTileIndirectArgs`将直接用于驱动后续的 Shader（`DispatchIndirect`），这意味着 CPU 不需要知道 GPU 到底要算多少个 Tile，实现了 GPU Driven Pipeline。
@@ -71,13 +71,13 @@ if (bTileUsed)
 
 ## 光线过滤
 
-### Shader: ReflectionCompactTracesCS
+### ReflectionCompactTracesCS
 
 **核心目标** ：细粒度剔除。剔除那些射出去但没有击中物体、或者被判定为无效的光线。
 
 在 Tile 分类后，我们生成了光线（`ReflectionGenerateRaysCS`，生成了 RayBuffer）。但在进行昂贵的 Shading 计算之前，我们需要把“未命中（Miss）”或“被遮挡”的光线剔除掉，把有效的 Trace 紧凑地排在一起。
 
-### 1. 源码分析：两级紧凑化 (Two-Level Compaction)
+### 两级紧凑化 (Two-Level Compaction)
 
 这个 Shader 展示了极其精妙的 **Wave -> Group -> Global** 三层数据流压缩技巧。
 
@@ -115,7 +115,7 @@ if (bTraceValid)
 }
 ```
 
-### 2. 技术亮点
+### 技术亮点
 
 - **层次化原子操作** ： 
 - L1 (Wave): 0 原子操作（寄存器指令）。 
@@ -129,13 +129,13 @@ if (bTraceValid)
 
 ## 一致性优化
 
-### Shader: ReflectionSortTracesByMaterialCS
+### ReflectionSortTracesByMaterialCS
 
 **核心目标** ：最大化 Shader 执行的一致性（Coherency）。
 
 在光线追踪中，如果相邻的线程处理不同的材质（例如：线程1算皮肤，线程2算水面，线程3算金属），GPU 必须串行执行所有这些材质的分支逻辑，导致严重的**线程发散** 。 此 Shader 使用计数排序（Counting Sort / Bin Sort）将相同材质 ID 的光线聚拢在一起。
 
-### 1. 源码分析：局部桶排序 (Local Bin Sort)
+### 局部桶排序 (Local Bin Sort)
 
 **关键代码逻辑：** 
 
@@ -166,7 +166,7 @@ uint OutputIndex = GroupOffset + Offsets[BinIndex] + Hash[...];
 RWCompactedTraceTexelData[OutputIndex] = TraceDataCache[...];
 ```
 
-### 2. 技术亮点
+### 技术亮点
 
 - **Thread Coarsening** ：一个线程处理 16 个光线。这增加了指令级并行度（ILP），隐藏了显存访问延迟。
 - **解决 Divergence** ：排序后，同一个 Wave 内的线程极大概率都在处理同一种材质。这使得后续的 Shading Pass 可以满效率运行，避免了“线程 1 等线程 2 跑完不同分支”的情况。
@@ -203,13 +203,13 @@ RWCompactedTraceTexelData[OutputIndex] = TraceDataCache[...];
 
 我们将代码分为四个阶段来解读：初始化、计数（Counting）、前缀和（Prefix Sum）、重排（Reorder/Scatter）。
 
-#### 1\. 设置与定义 (Setup)
+#### 设置与定义 (Setup)
 
   * **线程粗化 (Thread Coarsening)**: `ELEMENTS_PER_THREAD 16` 表示每个线程通过循环处理 16 个元素。这是为了隐藏内存延迟并提高指令吞吐量。
   * **分桶 (Binning)**: `NUM_BINS` 定义了桶的数量（这里是线程组大小的一半）。代码通过 `MaterialId % NUM_BINS` 将材质映射到这些桶里。
   * **共享内存 (LDS)**: `Bins` 用于存储每个桶里有多少个元素；`Offsets` 用于存储每个桶在排序后数组中的起始位置。
 
-#### 2\. 阶段一：初始化共享内存
+#### 阶段一：初始化共享内存
 
 ```cpp
 if (GroupThreadId < NUM_BINS)
@@ -222,7 +222,7 @@ GroupMemoryBarrierWithGroupSync();
 
 线程协作将共享内存清零，并使用 Barrier 确保所有线程都看清零完成。
 
-#### 3\. 阶段二：读取数据、解码与计数 (Read & Count)
+#### 阶段二：读取数据、解码与计数 (Read & Count)
 
 这是 **计数排序 (Counting Sort)** 的第一步。
 
@@ -239,7 +239,7 @@ GroupMemoryBarrierWithGroupSync();
       * 它在共享内存中对应的桶计数 +1。
       * **重要**: `Hash` 数组保存了 `InterlockedAdd` 的**返回值**。这个返回值是加法发生**之前**的值。这意味着 `Hash` 记录了当前这个元素**在这个桶内部是第几个**（桶内偏移量）。这是后续确定最终位置的关键。
 
-#### 4\. 阶段三：计算前缀和 (Prefix Sum / Scan)
+#### 阶段三：计算前缀和 (Prefix Sum / Scan)
 
 这一步是为了计算每个桶在输出数组中的**起始偏移量**。代码分为两个分支：
 
@@ -260,7 +260,7 @@ GroupMemoryBarrierWithGroupSync();
 
 此时，`Offsets[k]` 存储了第 `k` 个桶之前所有桶的元素总和。
 
-#### 5\. 阶段四：重排与写回 (Scatter / Write)
+#### 阶段四：重排与写回 (Scatter / Write)
 
 这是 **计数排序** 的最后一步，将数据写到正确的位置。
 
@@ -291,7 +291,7 @@ FComputeShaderUtils::AddPass(
    (uint32)ECompactedReflectionTracingIndirectArgs::NumTracesDiv256); // <--- 关键在这里！
 ```
 
-#### 1\. 关键参数 `NumTracesDiv256`
+#### 关键参数 `NumTracesDiv256`
 
 Shader `SetupCompactedTracesIndirectArgsCS`：
 
@@ -303,7 +303,7 @@ WriteDispatchIndirectArgs(RWReflectionCompactTracingIndirectArgs, 2, DivideAndRo
 C++ 中的 `NumTracesDiv256` 对应的就是这个 `Index 2`。这意味着 Dispatch 的线程组数量是：
 $$\text{GroupCount} = \lceil \frac{\text{TotalRays}}{256} \rceil$$
 
-#### 2\. 数学上的“不匹配”与“超额调度”
+#### 数学上的“不匹配”与“超额调度”
 
 让我们算一下账：
 
@@ -318,7 +318,7 @@ $$\text{GroupCount} = \lceil \frac{\text{TotalRays}}{256} \rceil$$
   * **结果**：
     **Dispatch 的 Group 数量是实际需要的 4 倍** ($1024 / 256 = 4$)。
 
-#### 3\. 为什么这样跑没问题？
+#### 为什么这样跑没问题？
 
 虽然调度了 4 倍的 Group，但逻辑是完全安全的，因为 Shader 内部有严格的**边界检查**：
 
