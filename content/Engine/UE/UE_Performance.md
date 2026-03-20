@@ -11,7 +11,7 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
 
 [ari.games](https://ari.games/how-to-profile-unreal-engine-games/)
 
-## 一、 通用性能分析理念 (Profiling in general)
+## 通用性能分析理念 (Profiling in general)
 
 
 *   **核心观点：** 帧预算 (16.66ms @ 60fps, 33.33ms @ 30fps) 就像金钱。你需要评估那些看起来很酷但开销昂贵的特性是否“值得”购买。
@@ -25,7 +25,7 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
     *   **移动端：** 需要保留余量来控制**发热和功耗**。
         
 
-## 二、 何时进行优化？
+## 何时进行优化？
 
 *   **打破陈规：** “过早的优化是万恶之源”这句话过于绝对。
     
@@ -38,7 +38,7 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
 *   **反馈循环：** 带着“优化意识”（1）开发，会让“Profiler暴露的问题”（2）更少。而（2）中暴露的问题，会反过来补充和加强你的“优化意识”（1）。
     
 
-## 三、 优化准则
+## 优化准则
 
 
 1.  **目标明确：** 只在**未达到目标帧数**的时候进行优化。如果已经60fps了，就直接交付 (ship it)。
@@ -54,9 +54,9 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
     *   **How do we fix it? (怎么修？)** —— 在明确知道 What 和 Why 之后才动手修复。
         
 
-## 四、 UE Profiling 核心工具
+## UE Profiling 核心工具
 
-### 1\. Unreal Insights
+### Unreal Insights
 
 *   **启动方式：** `Tools -> Run Unreal Insights`，或直接运行 `UnrealInsights.exe`。
     
@@ -71,7 +71,7 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
     *   `-tracehost=[IP]`：连接到另一台电脑进行分析。
         
 
-### 2\. Profile GPU
+### Profile GPU
 
 *   **启动方式：**
     
@@ -90,7 +90,7 @@ title: "Maximizing Your Game's Performance in Unreal Engine"
     *   在**打包后**的包体中：它会将分析结果打印到控制台或日志 (Log) 文件中。
         
 
-## 五、 优化的实际案例 (基于 Lyra)
+## 优化的实际案例 (基于 Lyra)
 
 
 ### 情景1：编辑器帧数低 (GPU Bound)
