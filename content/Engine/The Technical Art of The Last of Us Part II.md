@@ -1,3 +1,8 @@
+---
+title: "The Technical Art of The Last of Us Part II"
+date: 2026-03-27 10:01:00
+---
+
 # The Technical Art of The Last of Us Part II
 
 [The Technical Art of The Last of Us Part II by Waylon Brinck and Steven Tang || SIGGRAPH 2020 - YouTube](https://www.youtube.com/watch?v=tvBIqPHaExQ&list=PLdbCjIV0Pl9Ab3rfs15E3b7PiQyBNZmRU&index=12)
